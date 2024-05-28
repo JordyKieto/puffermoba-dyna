@@ -1,11 +1,11 @@
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'github/copilot.vim'
+Plug 'supermaven-inc/supermaven-nvim'
 Plug 'wookayin/semshi', { 'do': ':UpdateRemotePlugins' }
 
 call plug#end()
 
-"" Crazy things to make this all work: you need node (curl from website latest), manually pip update greenlet and pynvim, :UpdatePlugins :UpdateRemotePlugins
+autocmd VimEnter * ++once lua require('supermaven-nvim').setup({})
 
 set nocompatible
 
@@ -48,8 +48,8 @@ hi Normal                                               guifg=Cyan guibg=#061a1a
 hi SignColumn                                                      guibg=#061a1a
 hi Comment      term=bold       ctermfg=Cyan            guifg=White
 hi Constant     term=underline  ctermfg=Cyan            guifg=White
-hi Special      term=bold       ctermfg=Red             guifg=Blue
-hi Identifier   term=underline  cterm=bold ctermfg=Cyan guifg=Blue
+hi Special      term=bold       ctermfg=Red             guifg=LightBlue
+hi Identifier   term=underline  cterm=bold ctermfg=Cyan guifg=LightBlue
 hi Statement    term=bold       ctermfg=Yellow gui=bold guifg=Red
 hi PreProc      term=underline  ctermfg=LightBlue       guifg=Red
 hi Type         term=underline  ctermfg=LightGreen      guifg=Red gui=bold
@@ -59,9 +59,9 @@ hi Operator                     ctermfg=Red             guifg=Red
 hi Ignore                       ctermfg=black           guifg=bg
 hi Error        term=reverse ctermbg=Red ctermfg=White  guibg=Red guifg=#ff0000
 hi Todo term=standout ctermbg=Yellow ctermfg=Black guifg=Black guibg=Yellow gui=bold
-hi LineNr ctermfg=Blue guifg=Blue
+hi LineNr ctermfg=LightBlue guifg=LightBlue
 
-hi ParenHighlight ctermfg=magenta guifg=Blue
+hi ParenHighlight ctermfg=magenta guifg=LightBlue
 match ParenHighlight /[\\\.\,\+\-\*\=(){}\[\]]/
 
 

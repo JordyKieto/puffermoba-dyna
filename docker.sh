@@ -5,7 +5,7 @@ username="pufferai"  # replace with your Docker Hub username
 dockerfile=""  # Dockerfile to use
 name="puffertank"
 image="puffertank"
-tag="latest"
+tag="1.0"
 
 # Function for building Docker image
 build() {
@@ -45,6 +45,7 @@ test() {
             -e WAYLAND_DISPLAY \
             -e XDG_RUNTIME_DIR \
             -e PULSE_SERVER \
+            -p 8000:8000 \
             ${username}/${image}:${tag} bash
     fi
     # Attach to the running container

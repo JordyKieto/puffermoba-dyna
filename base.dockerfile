@@ -1,11 +1,11 @@
-FROM nvcr.io/nvidia/cuda:12.1.0-runtime-ubuntu20.04
+FROM nvcr.io/nvidia/cuda:12.1.0-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
     # Basics
-    vim git curl cmake htop screen software-properties-common sudo \
+    vim git curl htop screen software-properties-common sudo \
     # Python
     && apt-add-repository -y ppa:deadsnakes/ppa \ 
     && apt-get install -y python3.11 \
@@ -24,4 +24,4 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # PyTorch
 RUN python3.11 -m pip install --upgrade pip
-RUN pip3 install --no-cache-dir torch==2.1.0 torchvision
+RUN pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121 -U
