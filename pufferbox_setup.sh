@@ -1,11 +1,12 @@
 #!/bin/bash
 
+# REMEMBER TO UPDATE DOCKER PULL FLAG WHEN UPDATING THIS SCRIPT
+
 # Run this script as root. Prerequisites:
 #   1. Disable secure boot in BIOS settings! Otherwise, NVIDIA drivers will not work.
-#   2. apt-get update && apt-get install -y git
+#   2. Upgrade system and REBOOT:
+#          apt-get update && apt-get upgrade && apt-get dist-upgrade && apt-get install git
 #   3. cd /home/puffer && git clone https://github.com/pufferai/puffertank
-
-apt update -y
 
 # Install essentials
 apt-get install -y \
@@ -31,32 +32,20 @@ fi
 cat "cd /home/puffer/puffertank && bash docker.sh test" >> /home/puffer/.bashrc
 
 # Docker
-#if ! command -v docker &> /dev/null; then
-#    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
-#    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-#    apt update
-#    apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin
-#    sudo usermod -aG docker puffer
-#    docker pull pufferai/puffertank:1.0
-#fi
-# Add Docker's official GPG key:
 if ! command -v docker &> /dev/null; then
     sudo apt-get update
     sudo apt-get install ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
     sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
 fi
-
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-
-
-
 
 # Update the package list to reflect new repositories
 apt-get update -y
