@@ -41,15 +41,14 @@ if ! command -v docker &> /dev/null; then
 
     # Add the repository to Apt sources:
     echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable" | \
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 fi
 
 # Update the package list to reflect new repositories
 apt-get update -y
 
-apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Install the NVIDIA driver using the Debian non-free repository
 apt-get install -t experimental -y nvidia-driver
