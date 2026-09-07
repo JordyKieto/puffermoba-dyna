@@ -84,7 +84,7 @@ typedef struct {
 // ------------------------------------------------------------------ config -
 typedef struct {
     unsigned int seed;
-    int tracks, episodes, max_steps, threads;
+    int tracks, track_start, episodes, max_steps, threads;
     float epsilon;
     int bots[MAX_BOTS], n_bots;
     const char* dump_prefix;
@@ -141,7 +141,8 @@ static int dump_tracks(const Config* cfg, const char* prefix) {
                            (uint32_t)cfg->tracks, cfg->seed};
     fwrite(&hdr, sizeof(hdr), 1, f);
 
-    for (int env_idx = 0; env_idx < cfg->tracks; env_idx++) {
+    for (int i = 0; i < cfg->tracks; i++) {
+        int env_idx = cfg->track_start + i;
         Race env;
         env_configure(&env, cfg, env_idx);
         init(&env);
@@ -194,7 +195,7 @@ static void* worker(void* arg) {
 
     for (int job_id = job->job_start; job_id < job->job_end; job_id++) {
         int bot_slot = job_id / cfg->tracks;
-        int env_idx = job_id % cfg->tracks;
+        int env_idx = cfg->track_start + (job_id % cfg->tracks);
         int bot_kind = cfg->bots[bot_slot];
 
         Race env;
@@ -363,6 +364,9 @@ static void usage(void) {
         "  --bots LIST      comma separated: whisker,straight,random,centerline\n"
         "  --seed N         global seed (default 42)\n"
         "  --tracks N       number of distinct tracks / env_idx values (default 32)\n"
+        "  --track-start N  first env_idx (default 0). With --tracks this cuts a\n"
+        "                   disjoint slice of track space, so train and holdout\n"
+        "                   corpora cannot overlap.\n"
         "  --episodes N     episodes per (bot, track) (default 10)\n"
         "  --max-steps N    episode timer (default 2000)\n"
         "  --epsilon F      per-step random action probability (default 0)\n"
@@ -376,7 +380,7 @@ static void usage(void) {
 
 int main(int argc, char** argv) {
     Config cfg = {
-        .seed = 42, .tracks = 32, .episodes = 10, .max_steps = 2000,
+        .seed = 42, .tracks = 32, .track_start = 0, .episodes = 10, .max_steps = 2000,
         .threads = 8, .epsilon = 0.0f, .dump_prefix = NULL,
         .record_prefix = NULL, .record_episodes = 1,
         .width = 1080, .height = 720, .track_width = 75,
@@ -395,6 +399,7 @@ int main(int argc, char** argv) {
         if      (!strcmp(a, "--bots"))      snprintf(bots_arg, sizeof(bots_arg), "%s", NEXT());
         else if (!strcmp(a, "--seed"))      cfg.seed = (unsigned)atoi(NEXT());
         else if (!strcmp(a, "--tracks"))    cfg.tracks = atoi(NEXT());
+        else if (!strcmp(a, "--track-start")) cfg.track_start = atoi(NEXT());
         else if (!strcmp(a, "--episodes"))  cfg.episodes = atoi(NEXT());
         else if (!strcmp(a, "--max-steps")) cfg.max_steps = atoi(NEXT());
         else if (!strcmp(a, "--epsilon"))   cfg.epsilon = (float)atof(NEXT());
@@ -457,7 +462,8 @@ int main(int argc, char** argv) {
         // Sorted by job_id so output is byte-identical for any --threads.
         for (int j = 0; j < n_jobs; j++) {
             printf("%s %d %016llx\n", BOT_NAMES[cfg.bots[j / cfg.tracks]],
-                   j % cfg.tracks, (unsigned long long)hashes[j]);
+                   cfg.track_start + (j % cfg.tracks),
+                   (unsigned long long)hashes[j]);
         }
         free(aggs); free(hashes);
         return 0;
@@ -470,10 +476,10 @@ int main(int argc, char** argv) {
     }
 
     if (json_path) {
-        fprintf(out, "{\n  \"seed\": %u,\n  \"tracks\": %d,\n  \"episodes\": %d,\n"
+        fprintf(out, "{\n  \"seed\": %u,\n  \"tracks\": %d,\n  \"track_start\": %d,\n  \"episodes\": %d,\n"
                      "  \"max_steps\": %d,\n  \"epsilon\": %g,\n"
                      "  \"state_version\": %d,\n  \"obs_dim\": %d,\n  \"bots\": {\n",
-                cfg.seed, cfg.tracks, cfg.episodes, cfg.max_steps, cfg.epsilon,
+                cfg.seed, cfg.tracks, cfg.track_start, cfg.episodes, cfg.max_steps, cfg.epsilon,
                 RACE_STATE_VERSION, RACE_OBS_SIZE);
         for (int b = 0; b < cfg.n_bots; b++) {
             Agg* g = &total[b];

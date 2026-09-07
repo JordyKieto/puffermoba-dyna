@@ -130,6 +130,25 @@ def decode_angles(obs: np.ndarray) -> dict[str, np.ndarray]:
     }
 
 
+
+def denorm(obs: np.ndarray, hdr: dict) -> dict[str, np.ndarray]:
+    """Recover the raw env quantities the track lookup needs.
+
+    `hdr` is a shard header (racewm.shards.read_header); the normalization
+    constants travel with the data so this can never be applied against the
+    wrong config.
+    """
+    o = np.asarray(obs)
+    p = int(hdr["total_points"])
+    phase = np.arctan2(o[..., INDEX["sin_near_point"]], o[..., INDEX["cos_near_point"]])
+    return {
+        "px": o[..., INDEX["px_norm"]] * hdr["width"],
+        "py": o[..., INDEX["py_norm"]] * hdr["height"],
+        "ang": np.arctan2(o[..., INDEX["sin_ang"]], o[..., INDEX["cos_ang"]]),
+        # near_point_idx is an integer index encoded as a phase; round back.
+        "near_point_idx": (np.rint((phase % (2 * np.pi)) / (2 * np.pi) * p).astype(np.int64) % p),
+    }
+
 if __name__ == "__main__":
     print(f"Race state contract v{STATE_VERSION}")
     print(f"  obs_size    {OBS_SIZE}")
