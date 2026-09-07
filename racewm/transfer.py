@@ -95,8 +95,16 @@ class EncoderPolicy(nn.Module):
 
 # ---------------------------------------------------------------- stage: WM
 def train_wm(corpus, horizon, epochs, hidden, out_dir, device="cpu", seed=0,
-             max_seqs=60_000):
-    """Multi-step dynamics training with a separable encoder."""
+             max_seqs=60_000, slices=None):
+    """Multi-step dynamics training with a separable encoder.
+
+    `slices` controls what the encoder is pretrained on. This matters more than
+    it looks: the dynamics model is action-conditioned, so it consumes
+    (s, a, s') INCLUDING the action. Pretraining on the `expert` slice
+    therefore lets the encoder see the very trajectories -- and the very expert
+    actions -- that BC is later given as labels, which would inflate any
+    apparent label efficiency. Pass the non-expert slices for a clean test.
+    """
     from .train_wm_multistep import load_sequences_multi
     torch.manual_seed(seed)
     K = horizon
@@ -112,8 +120,12 @@ def train_wm(corpus, horizon, epochs, hidden, out_dir, device="cpu", seed=0,
     y_mu = y.mean(0, keepdim=True).to(device)
     y_sd = y.std(0, keepdim=True).clamp_min(1e-8).to(device)
 
-    obs, act, env = load_sequences_multi(corpus, "train", K + 1,
+    use_slices = slices or dataset.WM_SLICES
+    obs, act, env = load_sequences_multi(corpus, "train", K + 1, slices=use_slices,
                                          max_seqs=max_seqs, seed=seed)
+    n_steps = epochs * max(1, len(obs) // 512)
+    print(f"    pretrain slices={use_slices}  windows={len(obs):,}  "
+          f"transitions seen={n_steps*512*K:,}", flush=True)
     bank = geometry.TrackBank(shards.load_tracks(f"{corpus}/train.tracks.bin"),
                               flat.header, device)
     slots = bank.slots(env)
@@ -137,12 +149,12 @@ def train_wm(corpus, horizon, epochs, hidden, out_dir, device="cpu", seed=0,
         for i in range(0, len(O) - batch + 1, batch):
             idx = perm[i:i + batch]
             s = O[idx, 0]
-            sl = slots[idx]
+            b_slots = slots[idx]
             loss = 0.0
             for k in range(K):
                 a = torch.zeros(len(s), contract.NUM_ACTIONS, device=device)
                 a[torch.arange(len(s), device=device), A_[idx, k]] = 1.0
-                gm = bank.local_window(s, sl)
+                gm = bank.local_window(s, b_slots)
                 extra = (torch.cat([a, gm], 1) - ex_mu) / ex_sd
                 delta = net((s - obs_mu) / obs_sd, extra) * y_sd + y_mu
                 s = M.project_state(s + delta)
@@ -157,12 +169,14 @@ def train_wm(corpus, horizon, epochs, hidden, out_dir, device="cpu", seed=0,
     out = Path(out_dir); out.mkdir(parents=True, exist_ok=True)
     torch.save({"encoder": net.encoder.state_dict(), "hidden": hidden,
                 "horizon": K, "obs_mu": obs_mu.cpu(), "obs_sd": obs_sd.cpu(),
+                "slices": list(use_slices), "n_windows": int(len(obs)),
+                "transitions_seen": int(n_steps * 512 * K),
                 "schema_hash": contract.schema_hash()}, out / "encoder.pt")
     return out / "encoder.pt"
 
 
 # ---------------------------------------------------------------- stage: BC
-def train_bc_transfer(corpus, budget, encoder_path, freeze, epochs, hidden,
+def train_bc_transfer(corpus, budget, encoder_path, freeze, steps, hidden,
                       out_rpo, device="cpu", seed=0):
     torch.manual_seed(seed)
     tr = dataset.load_split(corpus, "train", slices=("expert",), with_geometry=False,
@@ -189,18 +203,23 @@ def train_bc_transfer(corpus, budget, encoder_path, freeze, epochs, hidden,
     xn, xvn = (x_tr - mu.cpu()) / sd.cpu(), (x_va - mu.cpu()) / sd.cpu()
     params = [q for q in net.parameters() if q.requires_grad]
     opt = torch.optim.AdamW(params, lr=1e-3, weight_decay=1e-4)
-    batch = min(4096, max(64, len(xn) // 4))
+    batch = min(1024, max(64, len(xn)))
     g = torch.Generator().manual_seed(seed)
 
+    # FIXED gradient-step budget, identical for every arm and every label
+    # budget. The earlier version ran `epochs` passes with a capped batch, so
+    # the number of updates scaled with dataset size: 120 steps at 5k labels
+    # against 720 at 100k. Scratch was simply undertrained at small budgets,
+    # which shows up as a spurious jump between 20k and 30k labels and would
+    # be misread as pretraining buying label efficiency.
+    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=steps)
     t0 = time.time()
-    for _ in range(epochs):
-        net.train()
-        perm = torch.randperm(len(xn), generator=g)
-        for i in range(0, max(1, len(xn) - batch + 1), batch):
-            idx = perm[i:i + batch]
-            loss = nn.functional.cross_entropy(net(xn[idx]), y_tr[idx])
-            opt.zero_grad(set_to_none=True)
-            loss.backward(); opt.step()
+    net.train()
+    for _ in range(steps):
+        idx = torch.randint(0, len(xn), (min(batch, len(xn)),), generator=g)
+        loss = nn.functional.cross_entropy(net(xn[idx]), y_tr[idx])
+        opt.zero_grad(set_to_none=True)
+        loss.backward(); opt.step(); sched.step()
     net.eval()
     with torch.no_grad():
         acc = float((net(xvn).argmax(1) == y_va).float().mean())

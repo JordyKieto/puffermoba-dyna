@@ -73,14 +73,14 @@ better than persistence at the horizon they plan over. Giving them a *better*
 critic made them *worse*, and the planner that searched hardest scored last —
 the signature of model exploitation.
 
-**Dynamics pretraining transfers to imitation learning — but only short
-horizon.** Initialising a BC policy from a world-model encoder is worth **+23%
-return at 2k labels and +20% at 10k (8σ)**, and the gain vanishes by 50k. The
-catch: only *one-step* pretraining transfers. The long-horizon model is the
-better world model — it is what fixed @100 rollout divergence — and it is the
-*worse* backbone for control, statistically indistinguishable from random init.
-Rollout stability and action-discriminative structure are not the same
-objective.
+**Dynamics pretraining helps imitation learning only marginally, and only when
+labels are very scarce.** Initialising a BC policy from a world-model encoder is
+worth **+8.6% return (2σ) at 2,000 expert labels** and nothing measurable beyond
+5,000 — with 359k extra pretraining transitions as the price. An earlier version
+of this experiment reported +23% at 7σ; that was an artefact of unequal gradient
+budgets, and the correction is written up in
+[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) E11. Long-horizon pretraining does not
+transfer at all, even though it produces the *better* world model.
 
 **Imagination needed three separate fixes to stop being harmful**, each found
 by an online measurement disagreeing with an in-model one, ending at rough
@@ -122,11 +122,11 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
   function was necessary and not sufficient.
 - **Accurate dynamics do not imply a good planner.** Low one-step error says
   nothing about the tail a planner deliberately seeks out.
-- **Accurate dynamics do not imply a good representation either.** The best
-  world model here made the worst backbone for control. Choose a pretraining
-  objective by measuring transfer, not rollout accuracy — the asymmetry that
-  makes pretraining worth it (unlabelled dynamics data is cheap, expert labels
-  are not) is far sharper for RGB than it is here.
+- **Accurate dynamics do not imply a good representation either.** The
+  long-horizon model is the better world model and the worse backbone. Choose a
+  pretraining objective by measuring transfer, not rollout accuracy.
+- **Hold optimization fixed before claiming sample efficiency.** Scaling epochs
+  with dataset size turned a null result into a 7σ one; see E11's retraction.
 
 ---
 

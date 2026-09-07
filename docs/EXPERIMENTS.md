@@ -365,66 +365,96 @@ failure.
 
 ## E11 — Does a dynamics-pretrained backbone help imitation learning?
 
-`racewm/transfer.py`. Train a world model, initialise a BC policy from its
-encoder, compare against BC from scratch — across pretraining horizons and
-across label budgets.
+`racewm/transfer.py`. Pretrain a world model, initialise a BC policy from its
+encoder, compare against BC from scratch.
 
-Requires a **separable encoder**, since the world model consumes 77 inputs and
-a policy consumes 30:
+### Setup
 
-    encoder(obs)                -> z         shared, transferable (73k params)
+A **separable encoder**, because the world model consumes 77 inputs and a
+policy consumes 30:
+
+    encoder(obs)                -> z (256)   shared, transferable, 73k params
     dynamics([z, action, geom]) -> delta     world-model only
-    policy(z)                   -> 3 actions BC only
+    policy(z)                   -> 3 logits  BC only
 
-This is also the shape a vision encoder would take into a policy, which is why
-it was built this way rather than transferring hidden layers by index.
+Also the shape a vision encoder would take into a policy, which is why it was
+built this way rather than transferring hidden layers by index.
 
-Full sweep, single seed, online return on holdout:
+**How the transfer is done, exactly.** Load the 2-layer encoder
+(30→256→256, SiLU) from the dynamics checkpoint; attach a **freshly
+initialised** head (256→256→SiLU→256→3); train **all** parameters with
+cross-entropy. The `frozen` variant instead freezes the encoder and trains only
+the head. The pretrainer's observation normalization travels with the encoder,
+so it sees inputs from the distribution it was fitted on.
 
-| labels | scratch | K1 ft | K5 ft | K20 ft | K20 frozen |
-|---|---|---|---|---|---|
-| 2,000 | 7.958 | **9.374** | 6.905 | 7.149 | 8.539 |
-| 10,000 | 8.671 | **10.379** | 8.470 | 8.506 | 8.598 |
-| 50,000 | 10.706 | 10.426 | **11.092** | 11.085 | 9.694 |
-| 450,000 | 10.396 | 9.897 | 10.315 | 10.333 | **11.008** |
+**A "label" is one (state, expert_action) pair** — the cross-entropy target.
+In simulation these are free; in the sim-to-real setting they are expert
+demonstrations and they are the scarce resource. Dynamics data is *not*
+label-free either: the model is action-conditioned and consumes (s, a, s').
+The distinction is between *any* action data (cheap, any policy) and *expert*
+action labels (expensive).
 
-Five seeds on the low-data cells, where transfer should matter most:
+### Sample accounting
 
-| labels | arm | return | vs scratch |
+| | pretraining | BC finetuning |
+|---|---|---|
+| data | 60,000 windows of length K+1 | `budget` labelled pairs |
+| gradient steps | 702 (6 epochs, batch 512) | **2,000** |
+| transitions consumed | **359,424** | 2,000 × min(1024, budget) |
+| actions used | any policy's | expert only |
+
+**Controlled:** architecture, gradient steps (2,000 every arm), batch size,
+optimizer, learning rate and schedule, evaluation protocol (1,600 holdout
+episodes), 3 seeds.
+
+**Not controlled:** total data exposure. The pretrained arm has seen 359,424
+extra transitions — at a 2,000-label budget that is a 180x head start in raw
+samples. Pretraining also costs ~60s of wall clock the scratch arm does not pay.
+
+### Result
+
+Three seeds, online return on holdout. `K1_all` pretrains on all four corpus
+slices; `K1_noexpert` pretrains on whisker/noisy/random only, so no expert
+action ever reaches the encoder.
+
+| labels | scratch | K1_all | K1_noexpert |
 |---|---|---|---|
-| 2,000 | scratch | 7.808 ± 0.273 | — |
-| | **K1 finetune** | **9.607 ± 0.184** | **+23.0% (+7.7σ)** |
-| | K20 finetune | 7.621 ± 0.295 | −2.4% (−0.7σ) |
-| 10,000 | scratch | 8.805 ± 0.213 | — |
-| | **K1 finetune** | **10.600 ± 0.204** | **+20.4% (+8.6σ)** |
-| | K20 finetune | 8.829 ± 0.338 | +0.3% (+0.1σ) |
+| 2,000 | 8.015 ± 0.208 | **8.703 ± 0.427** (+8.6%, 2.0σ) | 8.554 ± 0.441 (+6.7%, 1.6σ) |
+| 5,000 | 8.983 ± 0.126 | 9.168 ± 0.158 (+2.1%, 1.3σ) | 9.068 ± 0.443 (+1.0%, 0.3σ) |
+| 10,000 | 9.990 ± 0.095 | 10.175 ± 0.130 (+1.9%, 1.6σ) | 10.081 ± 0.149 (+0.9%, 0.7σ) |
+| 20,000 | 11.146 ± 0.255 | 11.207 ± 0.166 (+0.5%) | 11.269 ± 0.177 (+1.1%) |
+| 50,000 | 11.278 ± 0.217 | 11.387 ± 0.160 (+1.0%) | 11.559 ± 0.216 (+2.5%, 1.3σ) |
 
-**Finding 1 — dynamics pretraining transfers, strongly, in the low-label
-regime.** +23% and +20% return at 8σ. It also shows offline: val accuracy
-0.7933 / 0.8187 against scratch's 0.7752 / 0.7895. By 50k labels the advantage
-is gone and by 450k every arm converges — the classic transfer curve.
+Validation accuracy is indistinguishable across arms at every budget
+(0.7885–0.7894 at 2k; 0.8480–0.8503 at 50k).
 
-This is the asymmetry worth exploiting: world-model data needs **no action
-labels** and the env runs at ~1M steps/s, while expert labels are the scarce
-resource. That asymmetry is far sharper for RGB and real data than it is here.
+**Finding: dynamics pretraining buys at most a small advantage at very low
+label counts, and nothing beyond.** +8.6% at 2σ with 2,000 labels; everything
+else is under 1.6σ. Excluding the expert slice from pretraining barely changes
+it, so the effect is not an expert-action leak.
 
-**Finding 2 — long-horizon pretraining does not transfer.** K5 and K20 are
-statistically indistinguishable from scratch at low data (+0.1σ, −0.7σ), and
-K20 is nominally *worse* at 2k.
+### RETRACTION — and the confound that caused it
 
-**Finding 3 — and this is the dissociation worth remembering.** The K20 model
-is the *better world model*: multi-step training is what took @100 rollout
-error from diverging (0.88× persistence) to 17.5×. Yet it produces the *worse*
-backbone for control. Rollout stability and action-discriminative structure are
-different objectives, and optimizing hard for the first appears to wash out the
-second.
+A first version of this experiment reported **+23% at 2k and +20% at 10k, both
+above 7σ**, and concluded that dynamics pretraining transfers strongly. **That
+was wrong.**
 
-**Do not assume the best dynamics model yields the best representation.** For
-the RGB half this says: pick the pretraining horizon by measuring transfer, not
-by measuring rollout accuracy.
+The training loop ran a fixed 30 *epochs* with a capped batch size, so the
+number of gradient steps scaled with the dataset: ~120 updates at 2k–20k
+labels against 720 at 100k. The scratch arm was simply **undertrained** at
+small budgets, and the pretrained arm — starting from a usable representation —
+needed fewer updates to reach the same place. The tell was in the curve and I
+nearly missed it: scratch was flat at ~8.8 from 5k to 20k labels, then jumped
+to 11.4 at 30k, and 30k beat 50k. Data curves do not have step changes.
 
-Offline accuracy again failed to rank the arms — val accuracy spans 0.775–0.872
-across a return range of 6.9–11.1.
+With a fixed 2,000-step budget for every arm, scratch at 10k labels goes from
+8.805 to 9.990 and most of the gap disappears.
+
+**Any claim about sample efficiency has to hold optimization fixed**, or it is
+a claim about optimization.
+
+Offline accuracy, once again, failed to separate the arms — but here it was
+telling the truth and the online number was the misleading one.
 
 ---
 
