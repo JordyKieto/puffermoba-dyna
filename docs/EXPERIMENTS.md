@@ -206,15 +206,114 @@ because a second episode starting mid-budget may not finish. The bias runs
 against the best agents (their episodes are longest), so BC's number is if
 anything understated.
 
+## E8 — Fixing the planner's value function (and what it revealed)
+
+`racewm/train_critic.py`: TD(0) on **real** transitions, replacing the
+hand-rolled `alive x clearance` heuristic.
+
+| critic input | V(healthy) | V(about to crash) | gap |
+|---|---|---|---|
+| state only | 0.516 | 0.351 | 0.165 |
+| **state + track geometry** | **0.727** | **0.286** | **0.441** |
+
+Value depends on the track ahead, so state alone was never enough.
+
+The planning reward was also wrong: it subtracted a hand-set `5.0 * p_term`
+against a max step reward of `0.2`, a 25:1 imbalance that paralysed planners
+into pure crash-avoidance. Termination is now a survival weight on downstream
+return, with the critic bootstrapping the tail.
+
+**Result — the opposite of the hypothesis.** Online, the learned critic made
+planners *worse*:
+
+| planner | heuristic critic | learned critic | search effort |
+|---|---|---|---|
+| plan:beam6 | 2.290 | **0.411** | most |
+| plan:gumbel | 2.034 | 0.897 | medium |
+| plan:greedy | 0.775 | 0.753 | least |
+
+More search now produces worse real outcomes. That inversion is **model
+exploitation**: a better critic makes the planner better at finding states
+where the *dynamics* are confidently wrong. Planning is parked here rather than
+iterated further — it is also 100x slower per decision than a policy.
+
+## E9 — Dreamer: freezing, critic anchoring, and an actor constraint
+
+`racewm/train_joint.py`. All arms: 200,000 real transitions, 400 updates,
+H=15, actor warm-started from BC, online on holdout.
+
+**Coupling mode.** "Unfrozen" means the world model keeps training on real
+data; actor gradients still never reach it (that is `--mode full`, included to
+be measured, not adopted).
+
+| mode | return | laps | crash% |
+|---|---|---|---|
+| frozen | 5.493 | 1.717 | 79.9 |
+| **joint** | **7.568** | **2.365** | **65.5** |
+
+Unfreezing is worth **+38%**.
+
+**Entropy is not the lever.** Sweep at joint mode: 0.0 → 7.451, 0.003 → 6.519,
+0.01 → 7.547, 0.03 → 6.444. Spread with no trend; 0.01 was already best.
+
+**Critic anchoring.** Dreamer's critic is fitted purely on imagined
+lambda-returns, so it inherits the model's optimism — the same pathology E8
+found in planners. Adding `anchor_coef * |V_imagined - V_real|` against the
+real-data critic:
+
+| anchor_coef | 0.0 | 0.5 | 1.0 | **2.0** | 5.0 |
+|---|---|---|---|---|---|
+| return | 7.547 | 8.347 | 8.576 | **8.973** | 8.414 |
+
+Saturates at 2.0 and regresses by 5.0. The ceiling is knowable: as the
+coefficient grows the critic simply *becomes* the real-data critic. **~9.0 is
+this lever's limit, and BC is 11.0 — anchoring alone cannot close the gap.**
+
+**Actor constraint.** Anchoring constrains only the critic; the actor is still
+free to walk into states the model mispredicts, which is the standard
+offline-RL failure. Adding `bc_coef * KL(pi || pi_BC)` at anchor 2.0:
+
+| bc_coef | 0.0 | **0.3** | 1.0 | 3.0 | 10.0 | 30.0 | 100.0 |
+|---|---|---|---|---|---|---|---|
+| return | 8.973 | **11.228** | 10.534 | 10.563 | 10.498 | 10.451 | 10.477 |
+
+Peaks at 0.3 and plateaus near 10.5 as the policy collapses back toward BC,
+which is the expected large-coefficient limit and confirms the sweep brackets
+the question.
+
+**Is the peak real?** Four training seeds of the best config, each evaluated on
+3,200 holdout episodes against BC on the identical setting:
+
+| run | return | survive% |
+|---|---|---|
+| seed 0 | 11.282 | 63.3 |
+| seed 1 | 11.278 | 65.9 |
+| seed 2 | 11.383 | 66.1 |
+| seed 3 | 11.004 | 61.6 |
+| **mean** | **11.237 ± 0.16** | **64.2** |
+| BC | 11.016 | 60.3 |
+
+**Verdict: a small real effect, not a win.** Return is +2.0%, roughly 1.4
+sigma, and seed 3 ties BC. Survival is the sturdier signal — all four seeds beat
+BC by ~4 points. Imagination now at least does not *harm* a good policy, which
+is where it started (0.33 return against BC's 8.75), but it is not yet buying
+the real-sample efficiency that would justify it.
+
+The honest summary of the whole imagination line: three separate fixes
+(termination head, critic anchoring, actor constraint) were each necessary to
+get from catastrophic to parity. Each was found by an online measurement
+disagreeing with an in-model one.
+
 ---
 
 ## Open
 
-- Entropy sweep for the Dreamer actor (E6 knob 2).
-- Reward proxy with a lap-time term (E6 knob 1).
-- Dreamer proper: alternate world-model and actor-critic updates with fresh
-  data. The current pipeline trains the world model once, offline, then freezes
-  it — there is no data-collection loop.
+- **A data-collection loop.** Every result above is offline: the corpus is
+  fixed and the policy never gathers its own data. Dreamer's sample-efficiency
+  claim is about *online* interaction, so the central claim has not actually
+  been tested. This is the biggest remaining gap.
+- Reward proxy with a lap-time term (nothing currently rewards being fast).
+- Ensemble pessimism for planning (started, then parked with the planner).
 - **A learned critic** to replace `GreedyPolicyValue`. This is the single most
   likely explanation for E7 and should be tested before any other planning work.
 - Planner distillation, so a planner can be exported and run at C speed.

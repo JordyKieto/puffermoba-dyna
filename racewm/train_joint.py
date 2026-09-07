@@ -76,6 +76,20 @@ def main():
     ap.add_argument("--wm-lr", type=float, default=1e-4)
     ap.add_argument("--ent-coef", type=float, default=0.01)
     ap.add_argument("--bc-init", default="checkpoints/bc_expert_only/best.pt")
+    ap.add_argument("--critic-anchor", default="checkpoints/critic_geom/best.pt",
+                    help="real-data critic used to regularize the imagined critic")
+    ap.add_argument("--bc-coef", type=float, default=0.0,
+                    help="KL(pi || pi_BC) penalty on the ACTOR. Critic anchoring "
+                         "only constrains the value function; without this the "
+                         "policy is still free to walk into states the model "
+                         "mispredicts, which is the standard offline-RL failure "
+                         "(TD3+BC, AWAC). As this grows the policy collapses back "
+                         "onto BC, so it brackets the answer: if no setting beats "
+                         "BC, imagination is not adding anything here.")
+    ap.add_argument("--anchor-coef", type=float, default=0.0,
+                    help="weight on |V_imagined - V_real|. 0 disables, which is "
+                         "plain Dreamer: a critic fitted only on imagined "
+                         "returns, and therefore on the model's own optimism")
     ap.add_argument("--hidden", type=int, default=256)
     ap.add_argument("--layers", type=int, default=3)
     ap.add_argument("--device", default="cpu")
@@ -141,6 +155,28 @@ def main():
                                                  weights_only=False)["model"])
         print(f"actor warm started from {args.bc_init}")
     opt = torch.optim.AdamW(ac.parameters(), lr=args.lr, weight_decay=1e-5)
+
+    # Dreamer's critic is fitted purely on imagined lambda-returns, so it
+    # inherits whatever the world model is optimistic about -- the same
+    # pathology that made planners worse once they had a good critic to chase.
+    # The real-data critic never sees model output, so anchoring to it pulls
+    # the imagined critic back toward values that actually occurred.
+    # Frozen reference policy for the actor-side KL.
+    bc_ref = None
+    if args.bc_coef > 0 and args.bc_init and Path(args.bc_init).exists():
+        bc_ref = ActorCritic(hidden=args.hidden, layers=args.layers).to(dev)
+        _load_actor_weights(bc_ref.actor,
+                            torch.load(args.bc_init, map_location=dev,
+                                       weights_only=False)["model"])
+        bc_ref.eval()
+        for q in bc_ref.parameters():
+            q.requires_grad_(False)
+        print(f"actor KL-anchored to BC (coef {args.bc_coef})")
+
+    anchor = None
+    if args.anchor_coef > 0 and Path(args.critic_anchor).exists():
+        anchor = planning.LearnedValue(args.critic_anchor, bank, dev)
+        print(f"critic anchored to {args.critic_anchor} (coef {args.anchor_coef})")
 
     cfg = dict(vars(args), n_real=len(real), corpus_manifest=man)
     cp = ckpt_mod.Checkpointer("checkpoints", run_name, config=cfg,
@@ -225,6 +261,28 @@ def main():
         actor_loss = -((logps * adv * alive.detach()).mean() + args.ent_coef * ents.mean())
         critic_loss = (((values - ret) ** 2) * alive.detach()).mean()
         loss = actor_loss + 0.5 * critic_loss
+
+        bc_kl_val = float("nan")
+        if bc_ref is not None:
+            z_all = (states.reshape(-1, contract.OBS_SIZE) - obs_mu) / obs_sd
+            cur_logits, _ = ac(z_all)
+            with torch.no_grad():
+                ref_logits, _ = bc_ref(z_all)
+            kl = torch.nn.functional.kl_div(
+                torch.log_softmax(cur_logits, -1),
+                torch.log_softmax(ref_logits, -1),
+                log_target=True, reduction="batchmean")
+            loss = loss + args.bc_coef * kl
+            bc_kl_val = float(kl.detach())
+
+        anchor_loss_val = float("nan")
+        if anchor is not None:
+            flat_states = states.reshape(-1, contract.OBS_SIZE)
+            with torch.no_grad():
+                v_real = anchor(flat_states, slots.repeat_interleave(H, 0))
+            anchor_loss = ((values.reshape(-1) - v_real) ** 2).mean()
+            loss = loss + args.anchor_coef * anchor_loss
+            anchor_loss_val = float(anchor_loss.detach())
         # In `full`, this backward also reaches the world model -- the actor can
         # improve its objective by changing what the model predicts.
         opt.zero_grad(set_to_none=True)
@@ -241,7 +299,9 @@ def main():
             imag_ret = float((rewards * alive).sum(1).mean())
             p = trk.log(it + 1, samples=0, actor_loss=float(actor_loss.detach()),
                         critic_loss=float(critic_loss.detach()),
-                        wm_loss=wm_loss_val, imagined_return=imag_ret,
+                        wm_loss=wm_loss_val, anchor_loss=anchor_loss_val,
+                        bc_kl=bc_kl_val,
+                        imagined_return=imag_ret,
                         survival=float(alive[:, -1].mean()),
                         entropy=float(ents.mean().detach()),
                         real_transitions=len(real),
