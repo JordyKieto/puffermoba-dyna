@@ -160,8 +160,11 @@ def main():
 
     obs = env.reset()
     history, t0 = [], time.time()
-    print(f"{'iter':>6}{'imagined':>13}{'imag_ret':>10}{'hold_ret':>10}{'surv%':>7}"
-          f"{'train_ret':>11}{'surv%':>8}{'sec':>7}")
+    # Every column except imag_ret is a REAL-environment evaluation.
+    # surv% is the fraction of episodes that did NOT crash: higher is better.
+    print(f"{'iter':>6}{'imagined':>13}{'DREAM_ret':>11}"
+          f"{'REAL_hold_ret':>14}{'hold_surv%':>11}"
+          f"{'REAL_train_ret':>15}{'train_surv%':>12}{'sec':>7}")
 
     for it in range(args.iters):
         O = torch.zeros(args.rollout, args.envs, contract.OBS_SIZE, device=dev)
@@ -224,9 +227,10 @@ def main():
                                 imag_ret=imag_ret, real_ret=real_ret,
                                 real_surv=real_surv, train_ret=train_ret,
                                 train_surv=train_surv))
-            print(f"{it+1:>6}{env.imagined_steps:>13,}{imag_ret:>10.3f}"
-                  f"{real_ret:>10.3f}{real_surv:>7.1f}{train_ret:>11.3f}"
-                  f"{train_surv:>8.1f}{time.time()-t0:>7.0f}", flush=True)
+            print(f"{it+1:>6}{env.imagined_steps:>13,}{imag_ret:>11.3f}"
+                  f"{real_ret:>14.3f}{real_surv:>11.1f}"
+                  f"{train_ret:>15.3f}{train_surv:>12.1f}"
+                  f"{time.time()-t0:>7.0f}", flush=True)
         trk.log(it + 1, samples=args.rollout * args.envs,
                 imagined_return=imag_ret, real_return=real_ret,
                 train_return=train_ret,

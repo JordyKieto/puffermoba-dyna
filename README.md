@@ -119,8 +119,11 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 
 ## What limits it
 
-- **World-model quality, not imagined compute.** PPO gains saturate around 10M
-  imagined steps and are flat to 28M. Past that point more dreaming is wasted.
+- **Not world-model quality, and not imagined compute.** PPO saturates around
+  10M imagined steps. Making the model **8.3x better at horizon 100** (144.8x
+  persistence, on 5x the track diversity) moved the ceiling **+3%**. The
+  remaining candidate is the observation itself — the policy sees two whisker
+  readings, and BC measured a ~10.5 accuracy-point ceiling from exactly that.
 - **Whatever the dynamics read must be in the model's input.** Track geometry
   is episode-constant so it looked like configuration; omitting it made the
   state fail a Markov test (+19% history gain). A one-hot track ID did *not*

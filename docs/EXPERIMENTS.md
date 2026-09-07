@@ -677,6 +677,119 @@ The fix is to recalibrate against the policy being trained rather than against
 the corpus — which is a step toward the online loop, and costs real environment
 steps that have to be accounted for separately.
 
+## E15 — Scaling the world model does NOT raise the PPO ceiling
+
+E14 plateaued at ~10.5 return around 10M imagined steps, and I attributed the
+saturation to world-model quality. This tests that directly by making the model
+much better and changing nothing else.
+
+| | E14 | E15 |
+|---|---|---|
+| tracks | 128 (96 train) | **640 (480 train)** |
+| transitions | 818k | **3.5M** |
+| autoregressive K | 10 | **20** |
+| sequences | 120k | 250k |
+| termination head AP | 0.926 | **0.965** |
+| holdout difficulty bias | 1.36x easier | **1.07x** |
+
+### The world model improved enormously
+
+Closed-loop rollout on holdout, vs persistence:
+
+| horizon | E14 model | **E15 model** |
+|---|---|---|
+| @1 | 23.6x | **57.7x** |
+| @5 | 107x | **149.5x** |
+| @20 | 72.6x | **145.6x** |
+| @100 | 17.5x | **144.8x** |
+
+Raw errors `0.00179 / 0.00233 / 0.00738 / 0.01364` — the error is nearly **flat
+across horizons**. @100 is only 7.6x @1, against 23.5x for the E14 model. This
+model essentially stops compounding over 100 steps.
+
+A separate finding fell out of the one-step stage: on 480 tracks the *one-step*
+model reached 5.35x persistence at @100, where the 96-track one-step model
+**diverged** (0.88x). Track diversity alone fixed the divergence that motivated
+autoregressive training in the first place. E2's conclusion needs qualifying:
+multi-step training was partly compensating for a corpus with too few tracks.
+
+### PPO reached the same ceiling anyway
+
+| | peak holdout | peak train | at imagined steps |
+|---|---|---|---|
+| E14 (weaker model) | 10.516 | — | 19.7M |
+| **E15 (8.3x better model)** | **10.839** | **7.544** | 16.4M |
+
+**+3% for an 8.3x better world model at horizon 100.** Flat from ~10M imagined
+steps to 26M, exactly as before.
+
+**Finding: model quality was not the ceiling, and my E14 diagnosis was wrong.**
+Saturation looked like a model limit and was not; a dramatically more accurate
+model, on 5x the track diversity, buys almost nothing.
+
+On the difficulty-matched axis the policy sits at **7.54 on train tracks**
+against `centerline` (the privileged expert) at ~7.25 and BC-expert at ~8.31 —
+it matches the scripted expert and remains below behaviour cloning.
+
+The remaining candidate constraint is the **observation**, not the model: the
+policy sees two whisker readings, and E3 measured a ~10.5 accuracy-point
+ceiling from exactly that (84.70% without geometry against 95.23% with). If so,
+no amount of world-model or imagined-compute scaling moves it, and the lever is
+what the agent can see.
+
+## E16 — Differentiable bilevel teacher world (preliminary)
+
+`racewm/meta_teacher.py`. Two neural worlds: **M_R** frozen in parameters but
+differentiable through its inputs, and **M_T** a mutable teacher optimized so
+that a policy trained inside it performs well *in M_R*.
+
+    M_T* = argmax_{M_T} J_{M_R}( theta + alpha * grad_theta J_{M_T}(theta) )
+
+so the meta-gradient is the mixed second derivative and the inner update must
+be functional with `create_graph=True`; an in-place optimizer step severs the
+graph and yields exactly zero.
+
+**Actions are marginalized, not sampled.** With three actions the expected
+reward and expected next state are computed exactly at each step, removing the
+score-function estimator entirely — no REINFORCE variance, no Gumbel bias, and
+a clean quantity to differentiate twice. Termination enters as a differentiable
+survival weight rather than a sampled event.
+
+### Verification first
+
+```
+||dJ_R/dM_T||          2.931e-03   (0 of 10 tensors unused)
+control, graph severed 0.000e+00   (must be 0)
+```
+
+The control is the point: with `create_graph=False` the gradient is *exactly*
+zero, so what reaches M_T is genuinely the second-order path and not a leak
+through a first-order one.
+
+### 300 meta-steps, 1 inner update, H=5
+
+| step | J_T (teacher world) | J_R (reference) | drift from M_R |
+|---|---|---|---|
+| 0 | 0.133 | 0.1336 | 0.09% |
+| 150 | 2.253 | 0.1431 | 4.43% |
+| 299 | **2.986** | **0.1311** | 5.29% |
+
+**The mechanism works; the teaching effect is absent.** J_R is flat within noise
+(0.123–0.146 throughout) while the teacher drifts 5.3% from M_R.
+
+**A degenerate mode is already visible.** J_T rose **22x** while J_R did not
+move: the teacher is making its own world lavishly rewarding rather than
+instructive. J_T is not the objective, so this is a side effect — most likely
+the meta-gradient finding it cheaper to inflate `||grad_theta J_T||`, which
+scales how far `theta'` travels, than to shape *where* it travels.
+
+**This is not yet a verdict.** One inner gradient step from a fixed random
+initialization at H=5 leaves almost no dynamic range in J_R for a teacher to
+influence; the question asked was close to null. The ordered next tests are
+more inner steps (the real scalability question — second-order memory grows
+linearly in K), longer horizons, and an explicit guard against the degenerate
+step-size mode.
+
 ---
 
 ## Open
