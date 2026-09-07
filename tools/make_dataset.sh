@@ -31,7 +31,7 @@
 # 0.02 took centerline from 5.6 laps to 1.9; eps 0.08 took whisker from 2.6 to
 # 0.55. Cloning that would mean cloning a policy far worse than the one we have.
 #
-#   tools/make_dataset.sh [NAME] [EPISODES]
+#   tools/make_dataset.sh [NAME] [EPISODES] [TRAIN_N] [VAL_N] [HOLDOUT_N]
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -43,9 +43,18 @@ FRAMESKIP="${FRAMESKIP:-4}"
 MAXSTEPS="${MAXSTEPS:-2000}"
 THREADS="${THREADS:-10}"
 
-TRAIN_START=0;   TRAIN_N=96
-VAL_START=96;    VAL_N=16
-HOLDOUT_START=112; HOLDOUT_N=16
+# Track counts are arguments now. The first corpus used 96/16/16 and the
+# 16-track holdout turned out to be 1.4x EASIER than train for every agent
+# (centerline 7.49 vs 10.22, whisker 4.03 vs 5.80) -- a small-sample artifact
+# that inflated every absolute number in the project. More holdout tracks
+# shrinks that bias; tools/check_split_difficulty.sh measures what remains.
+# $1 NAME, $2 EPISODES, then the track counts.
+TRAIN_N="${3:-480}"
+VAL_N="${4:-80}"
+HOLDOUT_N="${5:-80}"
+TRAIN_START=0
+VAL_START=$TRAIN_N
+HOLDOUT_START=$((TRAIN_N + VAL_N))
 
 BIN="$ROOT/build/race_eval"
 [ -x "$BIN" ] || { echo "build first: tools/build.sh eval" >&2; exit 1; }

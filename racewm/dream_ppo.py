@@ -78,17 +78,32 @@ def gae(rew, val, crashed, truncated, last_val, gamma=0.99, lam=0.95):
 
 
 def evaluate(ac, obs_mu, obs_sd, tag, episodes=100):
+    """Evaluate on holdout AND train tracks.
+
+    Holdout is measured 1.4x easier than train for every agent -- centerline
+    7.49 vs 10.22, whisker 4.03 vs 5.80, this policy 7.26 vs 10.52 -- because
+    16 tracks is a small sample and these happen to be easy ones. Agent-vs-agent
+    comparisons on holdout stay valid, but a holdout number read on its own
+    overstates absolute skill, and the dream anchors to TRAIN states, so the
+    train figure is the one comparable to imagined return.
+    """
     rpo = f"/tmp/dreamppo_{tag}.rpo"
     export_policy.export(ac.actor, obs_mu.cpu().numpy(), obs_sd.cpu().numpy(), rpo)
-    r = subprocess.run(["./build/race_eval", "--bots", "policy", "--policy", rpo,
-                        "--tracks", "16", "--track-start", "112",
-                        "--episodes", str(episodes), "--threads", "10"],
-                       capture_output=True, text=True)
-    for l in r.stdout.splitlines():
-        if l.strip().startswith("policy"):
-            f = l.split()
-            return float(f[2]), float(f[4])
-    return float("nan"), float("nan")
+
+    def run(start, n):
+        r = subprocess.run(["./build/race_eval", "--bots", "policy", "--policy", rpo,
+                            "--tracks", str(n), "--track-start", str(start),
+                            "--episodes", str(episodes), "--threads", "10"],
+                           capture_output=True, text=True)
+        for l in r.stdout.splitlines():
+            if l.strip().startswith("policy"):
+                f = l.split()
+                return float(f[2]), float(f[4])
+        return float("nan"), float("nan")
+
+    ho_r, ho_s = run(112, 16)
+    tr_r, tr_s = run(0, 96)
+    return ho_r, ho_s, tr_r, tr_s
 
 
 def main():
@@ -145,8 +160,8 @@ def main():
 
     obs = env.reset()
     history, t0 = [], time.time()
-    print(f"{'iter':>6}{'imagined':>13}{'imag_ret':>10}{'real_ret':>10}{'surv%':>8}"
-          f"{'entropy':>9}{'sec':>7}")
+    print(f"{'iter':>6}{'imagined':>13}{'imag_ret':>10}{'hold_ret':>10}{'surv%':>7}"
+          f"{'train_ret':>11}{'surv%':>8}{'sec':>7}")
 
     for it in range(args.iters):
         O = torch.zeros(args.rollout, args.envs, contract.OBS_SIZE, device=dev)
@@ -198,21 +213,23 @@ def main():
                 ent_val = float(ent.detach())
 
         imag_ret = float(R.sum(0).mean())
-        real_ret = real_surv = float("nan")
+        real_ret = real_surv = train_ret = train_surv = float("nan")
         if (it + 1) % args.eval_every == 0 or it == 0:
-            real_ret, real_surv = evaluate(ac, obs_mu, obs_sd, run_name,
-                                           args.eval_episodes)
+            real_ret, real_surv, train_ret, train_surv = evaluate(
+                ac, obs_mu, obs_sd, run_name, args.eval_episodes)
             cp.save(step=it + 1, model=ac, optimizer=opt,
                     extra={"obs_mu": obs_mu.cpu(), "obs_sd": obs_sd.cpu()},
                     metrics={"real_return": real_ret})
             history.append(dict(iter=it + 1, imagined=env.imagined_steps,
                                 imag_ret=imag_ret, real_ret=real_ret,
-                                real_surv=real_surv))
+                                real_surv=real_surv, train_ret=train_ret,
+                                train_surv=train_surv))
             print(f"{it+1:>6}{env.imagined_steps:>13,}{imag_ret:>10.3f}"
-                  f"{real_ret:>10.3f}{real_surv:>8.1f}{ent_val:>9.3f}"
-                  f"{time.time()-t0:>7.0f}", flush=True)
+                  f"{real_ret:>10.3f}{real_surv:>7.1f}{train_ret:>11.3f}"
+                  f"{train_surv:>8.1f}{time.time()-t0:>7.0f}", flush=True)
         trk.log(it + 1, samples=args.rollout * args.envs,
                 imagined_return=imag_ret, real_return=real_ret,
+                train_return=train_ret,
                 entropy=ent_val, imagined_steps=env.imagined_steps,
                 real_transitions=meta["n_real"])
 

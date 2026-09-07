@@ -1,20 +1,31 @@
 # Race World Model
 
-**Building a world model that can step in either modality — symbolic game state
-or RGB — and transfer the rules between them.**
+**Scalable world models for reinforcement learning: how well can a policy be
+trained inside a learned model instead of the environment, and what actually
+limits it.**
 
-The long goal is sim-to-real: a hand-crafted semantic game state exists in
-simulation and does not exist in the real world, where you only have pixels. A
-model that learns dynamics over structured state *and* over RGB, sharing the
-same latent rules, can be trained where the state is free and deployed where it
-is not. This repository is the symbolic half, built first and built to be
-measured, so the RGB half has something honest to attach to.
+A world model that is accurate enough to train in turns environment
+interaction — usually the scarce, expensive, sometimes dangerous resource —
+into compute. This repository builds that end to end on a small, fast
+environment and measures every step of it: the state contract, the model, the
+policy trained purely in imagination, and the real-environment behaviour that
+is the only thing that counts.
+
+Small and fast is the point. The environment runs at ~1M steps/s, so every
+experiment reaches significance in seconds and negative results are cheap.
+Partial observability, compounding error, model exploitation, covariate shift
+and calibration failure all show up for real at this scale — and being able to
+run each question to a conclusion in a minute is what surfaced the six
+measurement bugs catalogued in the methodology, most of which had produced
+plausible, publishable-looking numbers.
 
 The testbed is **Race** (PufferLib Ocean's `whisker_racer`): a car on a
 procedural Bézier track, two whisker rangefinders, three discrete steering
-actions, ~1M env steps/sec. Small enough to run every experiment to
-significance in seconds, rich enough that partial observability, compounding
-error and model exploitation all show up for real.
+actions.
+
+Multimodal RGB and sim-to-real are natural extensions of this and are noted
+where the results bear on them, but they are extensions. The core question is
+whether a learned model can carry RL training, and where it stops.
 
 ---
 
@@ -106,40 +117,27 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 
 ---
 
-## What generalizes to the RGB half
+## What limits it
 
+- **World-model quality, not imagined compute.** PPO gains saturate around 10M
+  imagined steps and are flat to 28M. Past that point more dreaming is wasted.
 - **Whatever the dynamics read must be in the model's input.** Track geometry
-  is episode-constant, so it looked like configuration; omitting it made the
-  state test fail (+19% history gain). A one-hot track ID did *not* fix it —
-  only the actual local geometry did. The RGB analogue is scene structure that
-  a single frame does not carry.
+  is episode-constant so it looked like configuration; omitting it made the
+  state fail a Markov test (+19% history gain). A one-hot track ID did *not*
+  substitute — only the actual local geometry did.
 - **Terminal states can be unobservable.** Race overwrites the crash frame
-  during reset, so the corpus contains zero crash states while 33% of *imagined*
+  during reset, so the corpus holds zero crash states while 33% of *imagined*
   states looked like crashes. A model cannot learn what it never saw; it can
-  learn to predict that termination is coming. This is why Dreamer carries an
-  explicit `continue` head.
-- **Fit critics on real data, not model output.** A critic fitted inside the
-  model inherits its optimism, and the policy then optimizes straight into it.
-- **Offline, the actor needs a behaviour constraint.** Fixing the value
-  function was necessary and not sufficient.
-- **Calibrate termination against the policy you are training, not the corpus.**
-  An aggregate calibration that is exact on corpus behaviour (1.01×) still cut
-  a trained policy's imagined episodes 38% short.
-- **Accurate dynamics do not imply a good planner.** Low one-step error says
-  nothing about the tail a planner deliberately seeks out.
-- **Accurate dynamics do not imply a good representation either.** The
-  long-horizon model is the better world model and the worse backbone. Choose a
-  pretraining objective by measuring transfer, not rollout accuracy.
-- **Hold optimization fixed before claiming sample efficiency.** Scaling epochs
-  with dataset size turned a null result into a 7σ one; see E11's retraction.
-- **Pretrain on inferring hidden state, not on predicting dynamics.** Ablated
-  head by head, privileged distillation carried all of the transfer and
-  dynamics carried none.
-- **A world-model objective is a way to spend unlabelled data, not a better
-  inductive bias.** The same geometry head is worth +56% as pretraining on 830k
-  transitions and nothing as an auxiliary loss sharing BC's 500-sample batch.
-
----
+  learn to predict that termination is coming. Hence an explicit head.
+- **Termination calibration is not one number.** Matching the aggregate rate
+  still left imagined episodes unimodal where real ones are bimodal — the head
+  cannot express "safe for 500 steps", and no rescaling fixes that.
+- **Model exploitation did not appear.** Diagnosed twice, wrong twice: a GAE
+  time-limit bug, then a track-set mismatch. The dream is 0.94x *pessimistic*
+  on return, and a policy cannot exploit a model that underestimates it.
+- **Accurate dynamics imply neither a good planner nor a good representation.**
+  Search through the model never beat following the policy, and the best world
+  model made the worst backbone for control.
 
 ## Running it
 

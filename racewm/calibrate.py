@@ -97,6 +97,12 @@ def main():
     print(f"\n  holdout AP before {ap(zh, yh):.4f}  after {ap(zh / T_ + b_, yh):.4f}  "
           f"(monotone rescaling cannot change ranking)")
 
+    # NLL calibration fixes the AGGREGATE termination count. It does not fix
+    # the survival DISTRIBUTION, which is what a policy trained inside the
+    # model actually experiences -- see racewm/survival.py. An analytic
+    # estimate from the mean hazard is useless here because the corpus mixes
+    # policies with wildly different crash rates; it has to be measured by
+    # rolling a policy in the dream.
     torch.save({"temperature": T_, "bias": b_, "head": args.head,
                 "schema_hash": contract.schema_hash()}, args.out)
     print(f"\nwrote {args.out}")

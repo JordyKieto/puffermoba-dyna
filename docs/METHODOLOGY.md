@@ -169,6 +169,57 @@ matched it at 13× lower cost, while MCTS lost to depth-1 greedy. Modern MCTS
 (Gumbel MuZero) is the right choice for discrete actions *in general*; it was
 the wrong choice here, and only measurement showed that.
 
+## 11. Audit the accounting before reporting a headline
+
+Not after. This is the rule that would have caught the worst error in this
+project.
+
+A dream-PPO run was written up as reaching "91% of BC's return with 200k real
+transitions". The `--real-budget 200000` flag capped the normalization
+statistics and the reset-anchor buffer — and nothing else. The world model that
+run depended on had been trained on the full 817,669-transition split. True
+cost: **830,245 unique real transitions, 4.2x the claim and 1.8x MORE than the
+BC baseline it was being favourably compared against.** The claim inverted.
+
+No code was wrong. The accounting was, and no test could fail because no test
+existed.
+
+**A method's real-sample cost is the union over every component it depends on**
+— pretraining, world model, termination head, critic, calibration rollouts,
+reset anchors — not the budget flag of the last script you ran. Components
+sharing a corpus overlap, so the honest figure is *unique* transitions, capped
+by corpus size, not the sum.
+
+Track labelled and unlabelled separately. They are different currencies:
+`(s, a, s')` from any policy is cheap, expert demonstrations are not, and a
+method that trades 2x more of the former for none of the latter is making a
+real claim that summing them together destroys.
+
+```bash
+python3 -m racewm.accounting --run <run> --corpus-size <N> --claim <what you were about to publish>
+```
+
+Exits non-zero when the claim is off by more than 5%. Run it in the same breath
+as the result.
+
+### The fast checks worth running every time
+
+None of these take more than a minute, and each caught a real error here.
+
+| check | what it catches | caught |
+|---|---|---|
+| `racewm.accounting --claim` | sample-cost claims that don't survive the dependency chain | a 4.2x overstatement that inverted a headline |
+| thread-count invariance | shared mutable state in "read-only" inference | policy activations shared across threads: 6.4 return on 1 thread, 0.29 on 8 |
+| same policy, both environments | evaluating two things and calling them one | dream-vs-real compared *different track sets* at *different truncation limits* |
+| scripted bot on train vs holdout | a holdout split that is not difficulty-matched | holdout is 1.4x easier than train for every agent |
+| equal gradient steps across arms | optimization differences reported as data efficiency | a null transfer result presented as 7 sigma |
+| positive control on any gate | a test with no power | confirmed the Markov gate could detect a state it should reject |
+
+The pattern behind all of them: **every apparent world-model pathology in this
+project turned out to be an evaluation error.** Model exploitation was
+diagnosed twice and was wrong twice — first a GAE time-limit bug, then a
+track-set mismatch. Suspect the harness before the model.
+
 ---
 
 ## The pattern worth internalising
@@ -181,6 +232,8 @@ plausible numbers:
 | policy activations shared across threads | 6.4 return on 1 thread, 0.29 on 8 | thread-invariance gate |
 | corpus contained no crash states | imagination "survived" 100% of rollouts | online eval disagreeing |
 | BC warm start silently failed | a clean frozen-vs-joint comparison of nothing | reading the state-dict keys |
+| real-sample budget flag capped the wrong thing | a headline claiming 4.2x less data than it used | auditing the dependency chain |
+| holdout tracks 1.4x easier than train | every absolute number inflated | running a scripted bot on both splits |
 
 None crashed. None failed a test that existed at the time. Each was found
 because an online, behavioural measurement disagreed with an offline or
