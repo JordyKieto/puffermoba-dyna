@@ -101,7 +101,8 @@ def load_sim(wm_path, term_path, bank, x_mu, x_sd, y_mu, y_sd, device="cpu"):
 
 
 @torch.no_grad()
-def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97):
+def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97,
+                    prior=None, prior_coef=1.0):
     """Enumerate every action sequence to `depth`; return the best first action.
 
     Batched over B x A^depth: the whole tree is one wide tensor, so cost is
@@ -128,11 +129,31 @@ def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97):
         ret += (gamma ** depth) * survive * value_fn(states, sl)
 
     ret = ret.view(B, A, n_leaves // A).max(dim=2).values     # best per first action
+    ret = _apply_prior(ret, s, prior, prior_coef)
     return ret.argmax(dim=1), ret
 
 
+def _apply_prior(scores, s, prior, coef):
+    """Blend a policy prior into per-root-action scores.
+
+    Search over a learned model with no prior is the weakest configuration
+    there is: it re-derives the policy from scratch every step, through a model
+    it can exploit. AlphaZero and MuZero both guide search with a prior for
+    exactly this reason. Measured here, unguided search scored 2.29 against a
+    BC policy worth 11.0 -- it had no policy to improve on.
+
+    As coef grows the planner collapses onto the prior, which brackets the
+    question: if no setting beats the prior alone, search is not adding value.
+    """
+    if prior is None or coef == 0.0:
+        return scores
+    logp = torch.log_softmax(prior.logits(s), dim=-1)
+    return scores + coef * logp
+
+
 @torch.no_grad()
-def plan_beam(sim, s, slots, depth, beam=6, value_fn=None, gamma=0.97):
+def plan_beam(sim, s, slots, depth, beam=6, value_fn=None, gamma=0.97,
+              prior=None, prior_coef=1.0):
     """Beam search: expand every action, keep the best `beam` partials.
 
     Exhaustive enumeration is A^depth leaves -- 243 at depth 5, and each of the
@@ -178,8 +199,15 @@ def plan_beam(sim, s, slots, depth, beam=6, value_fn=None, gamma=0.97):
         sl = slots.repeat_interleave(k, 0)
         width = k
 
-    best = ret.view(B, width).argmax(dim=1)
-    return first.view(B, width)[torch.arange(B, device=dev), best], ret
+    # Collapse the beam to a per-root-action value, then blend the prior.
+    per_action = torch.full((B, A), -1e30, device=dev)
+    fw = first.view(B, width)
+    rw = ret.view(B, width)
+    for a0 in range(A):
+        m = (fw == a0)
+        per_action[:, a0] = torch.where(m, rw, torch.full_like(rw, -1e30)).max(dim=1).values
+    per_action = _apply_prior(per_action, s, prior, prior_coef)
+    return per_action.argmax(dim=1), per_action
 
 
 @torch.no_grad()
@@ -198,8 +226,12 @@ def plan_gumbel(sim, s, slots, depth, n_sims=16, value_fn=None, gamma=0.97,
     if seed is not None:
         g.manual_seed(seed)
 
-    logits = (torch.zeros(B, A, device=dev) if prior_logits is None
-              else prior_logits.to(dev))
+    if prior_logits is None:
+        logits = torch.zeros(B, A, device=dev)
+    elif hasattr(prior_logits, "logits"):
+        logits = torch.log_softmax(prior_logits.logits(s), dim=-1).to(dev)
+    else:
+        logits = prior_logits.to(dev)
     gumbel = -torch.log(-torch.log(
         torch.rand(B, A, generator=g).clamp_min(1e-20))).clamp_min(1e-20).to(dev)
 
@@ -292,3 +324,43 @@ class LearnedValue:
                 raise ValueError("LearnedValue needs slots to gather geometry")
             x = torch.cat([s, self.bank.local_window(s, slots)], dim=1)
         return self.net((x - self.mu) / self.sd)
+
+
+class ActorCriticHead:
+    """A trained Dreamer actor-critic used as BOTH the search prior and the
+    leaf value.
+
+    Planners previously used `critic_geom`, a critic fitted by TD(0) on the
+    BEHAVIOUR data -- so it valued states under the scripted bots, not under
+    the policy the search would actually follow afterwards. The actor-critic's
+    own critic is on-policy for the improved actor, which is what a search
+    bootstrap is supposed to be.
+    """
+
+    def __init__(self, path, hidden=256, layers=3, device="cpu"):
+        from .dreamer import ActorCritic
+        ck = torch.load(path, map_location=device, weights_only=False)
+        cfg = ck.get("config", {})
+        self.ac = ActorCritic(hidden=cfg.get("hidden", hidden),
+                              layers=cfg.get("layers", layers)).to(device)
+        self.ac.load_state_dict(ck["model"])
+        self.ac.eval()
+        for q in self.ac.parameters():
+            q.requires_grad_(False)
+        ex = ck.get("extra") or {}
+        self.mu = ex.get("obs_mu")
+        self.sd = ex.get("obs_sd")
+
+    def _norm(self, s):
+        if self.mu is None:
+            return s
+        return (s - self.mu) / self.sd
+
+    @torch.no_grad()
+    def logits(self, s):
+        return self.ac.actor(self._norm(s))
+
+    @torch.no_grad()
+    def __call__(self, s, slots=None):
+        _, v = self.ac(self._norm(s))
+        return v

@@ -310,7 +310,13 @@ def main():
                   f"surv={float(alive[:,-1].mean()):.3f}  H={float(ents.mean()):.3f}  "
                   f"wm={wm_loss_val:.5f}  imagined={imagined_total:,}  "
                   f"({p['wall_clock_s']:.0f}s)")
+            # Save the observation normalization with the weights. Without it
+            # anything that reloads this actor (a search prior, an evaluation
+            # harness) silently feeds it unnormalized inputs and still gets
+            # plausible-looking actions.
             cp.save(step=it + 1, model=ac, optimizer=opt,
+                    extra={"obs_mu": obs_mu.cpu(), "obs_sd": obs_sd.cpu(),
+                           "hidden": args.hidden, "layers": args.layers},
                     metrics={"imagined_return": imag_ret})
 
     secs = time.time() - t0

@@ -308,6 +308,61 @@ The honest summary of the whole imagination line: three separate fixes
 get from catastrophic to parity. Each was found by an online measurement
 disagreeing with an in-model one.
 
+## E10 — Planning with the actor-critic as prior and value
+
+Two omissions from E5/E8, found by asking whether the planner had ever been
+given the Dreamer actor-critic:
+
+1. **`prior_logits` was defined but never passed.** Every planner searched
+   blind. `plan_exhaustive` and `plan_beam` did not even accept a prior.
+   AlphaZero and MuZero both *guide* search with a policy prior; unguided
+   search re-derives the policy from scratch at every step, through a model it
+   can exploit.
+2. **Planners used `critic_geom`** — a critic fitted by TD(0) on the
+   *behaviour* data, valuing states under the scripted bots rather than under
+   the policy the search would follow afterwards.
+
+Both fixed: `ActorCriticHead` exposes a trained actor-critic as both the search
+prior and the leaf value.
+
+All agents in ONE harness (mixing `race_eval` and leaderboard numbers is
+invalid — the leaderboard censors long episodes, which is why it reports BC at
+5.925 against `race_eval`'s 11.016 for the identical policy):
+
+| agent | return | laps | crash% | µs/decision |
+|---|---|---|---|---|
+| actor (Dreamer policy) | **6.346** | 1.983 | 71.2 | 10 |
+| plan:greedy + prior | 6.296 | 1.968 | 71.8 | 127 |
+| bc | 5.925 | 1.852 | 75.2 | 10 |
+| centerline | 4.817 | 1.505 | 81.4 | 16 |
+| whisker | 2.640 | 0.825 | 94.5 | 3 |
+| plan:beam6 + prior | 0.432 | 0.135 | 100.0 | 877 |
+
+Prior strength sweep, `plan:greedy`: 0.792 (no prior) → 6.296 / 6.218 / 6.347
+at coef 1 / 3 / 10. An 8x jump, then flat.
+
+**Finding.** Depth-1 search with a prior is not merely close to the actor, it
+*is* the actor: identical laps, crash rate, idle fraction and reversal rate, at
+12.7x the cost. The scales explain why — the critic's V spread across states is
+0.5 while the prior's spread across actions is 7.4, so the prior outvotes the
+search 15:1 and the model contributes nothing to the decision.
+
+Depth-5 beam remains catastrophic (0.432) even with the prior, because the
+prior is applied only at the root while the expansion stays unguided. Five
+levels of model exploitation swamp one root correction.
+
+**Conclusion: planning through this world model does not beat following the
+policy.** With a good prior it degenerates to the policy; without one it is
+actively harmful. The untested variant is a PUCT-style prior at every node
+rather than root-only — which is what AlphaZero actually does, and the only
+version that could plausibly change this verdict.
+
+**Bug found here.** The actor-critic was rebound to the variable `head`, which
+already held the termination head, so the *second* planner in each run received
+the actor-critic as its termination model and got 77-dim world-model inputs.
+The first planner always worked, which made it look like a beam-specific
+failure.
+
 ---
 
 ## Open
@@ -317,7 +372,12 @@ disagreeing with an in-model one.
   claim is about *online* interaction, so the central claim has not actually
   been tested. This is the biggest remaining gap.
 - Reward proxy with a lap-time term (nothing currently rewards being fast).
-- Ensemble pessimism for planning (started, then parked with the planner).
+- Ensemble pessimism for planning (started, then parked).
+- PUCT-style prior at every search node, the one untested variant that could
+  change E10's verdict.
+- **Do not compare numbers across harnesses.** `race_eval` and the leaderboard
+  censor differently; the same BC policy reads 11.016 and 5.925. Always put
+  competing agents in one run.
 - **A learned critic** to replace `GreedyPolicyValue`. This is the single most
   likely explanation for E7 and should be tested before any other planning work.
 - Planner distillation, so a planner can be exported and run at C speed.

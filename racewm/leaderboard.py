@@ -129,26 +129,36 @@ class PolicyAgent(Agent):
 
 class PlannerAgent(Agent):
     """Plans through the learned world model, acts in the real env."""
-    def __init__(self, name, sim, bank, slots, kind, depth, value, n_sims=16, seed=0):
+    def __init__(self, name, sim, bank, slots, kind, depth, value,
+                 n_sims=16, seed=0, prior=None, prior_coef=1.0):
         self.name = name
         self.sim, self.bank, self.slots = sim, bank, slots
         self.kind, self.depth, self.n_sims, self.seed = kind, depth, n_sims, seed
         self.value = value
+        # A policy prior. Unguided search re-derives the policy from scratch at
+        # every step, through a model it can exploit; guided search refines a
+        # policy that already works. AlphaZero and MuZero both do the latter.
+        self.prior, self.prior_coef = prior, prior_coef
         self.t = 0
 
     def act(self, obs, pool):
         s = torch.from_numpy(np.ascontiguousarray(obs))
         self.t += 1
+        pk = dict(prior=self.prior, prior_coef=self.prior_coef)
         if self.kind == "greedy":
-            a, _ = planning.plan_exhaustive(self.sim, s, self.slots, 1, self.value)
+            a, _ = planning.plan_exhaustive(self.sim, s, self.slots, 1, self.value, **pk)
         elif self.kind == "exhaustive":
-            a, _ = planning.plan_exhaustive(self.sim, s, self.slots, self.depth, self.value)
+            a, _ = planning.plan_exhaustive(self.sim, s, self.slots, self.depth,
+                                            self.value, **pk)
         elif self.kind.startswith("beam"):
             w = int(self.kind[4:]) if len(self.kind) > 4 else 6
-            a, _ = planning.plan_beam(self.sim, s, self.slots, self.depth, w, self.value)
+            a, _ = planning.plan_beam(self.sim, s, self.slots, self.depth, w,
+                                      self.value, **pk)
         elif self.kind == "gumbel":
             a, _ = planning.plan_gumbel(self.sim, s, self.slots, self.depth,
-                                        self.n_sims, self.value, seed=self.seed + self.t)
+                                        self.n_sims, self.value,
+                                        prior_logits=self.prior,
+                                        seed=self.seed + self.t)
         else:
             raise ValueError(self.kind)
         return a.cpu().numpy()
@@ -234,6 +244,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--wm", default="checkpoints/wm_multistep_warm/best.pt")
+    ap.add_argument("--actor-critic", default=None,
+                    help="trained actor-critic used as BOTH the search prior "
+                         "and the leaf value; without it planners search blind "
+                         "against a behaviour-policy critic")
+    ap.add_argument("--prior-coef", type=float, default=1.0)
     ap.add_argument("--critic", default="checkpoints/critic_geom/best.pt",
                     help="learned V(s) from train_critic.py; falls back to the\n"
                          "hand-rolled heuristic if the file is missing")
@@ -318,14 +333,25 @@ def main():
             slots = bank.slots(pool.env_idx)
             sim = planning.WorldModelSim(net, bank, x_mu, x_sd, y_mu, y_sd,
                                          head, t_mu, t_sd)
-            if Path(args.critic).exists():
+            prior = None
+            # NOT `head`: that name already holds the termination head, and
+            # rebinding it here fed the actor-critic 77-dim world-model inputs
+            # as if it were the termination head on the *next* planner in the
+            # loop. The first planner always worked, which is what made it
+            # confusing.
+            if args.actor_critic and Path(args.actor_critic).exists():
+                ac_head = planning.ActorCriticHead(args.actor_critic)
+                value, prior = ac_head, ac_head
+                vname = f"actor-critic prior+value (coef {args.prior_coef})"
+            elif Path(args.critic).exists():
                 value = planning.LearnedValue(args.critic, bank)
-                vname = "learned critic"
+                vname = "behaviour critic, NO prior"
             else:
                 value = planning.GreedyPolicyValue()
                 vname = "HEURISTIC (no critic found)"
             A = PlannerAgent(f"plan:{kind}", sim, bank, slots, kind,
-                             args.depth, value, args.n_sims)
+                             args.depth, value, args.n_sims,
+                             prior=prior, prior_coef=args.prior_coef)
             r = run_agent(A, pool, args.planner_steps); pool.close()
             if r: rows.append((A.name, r))
             print(f"  {A.name:<22} done  [{vname}]")
