@@ -17,14 +17,19 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
 DEFAULT_PATHS = (
     Path(os.environ.get("RACE_SECRETS_FILE", "")) if os.environ.get("RACE_SECRETS_FILE") else None,
+    REPO_ROOT / "secrets.env",          # gitignored; the normal place
     Path.home() / "Documents" / "dev" / "sunnypilot" / "secrets.yaml",
 )
 
 WANDB_KEYS = ("WANDB_API_KEY", "WANDB_KEY", "WANDB_TOKEN")
+WANDB_PROJECT_KEYS = ("WANDB_PROJECT",)
+WANDB_ENTITY_KEYS = ("WANDB_ENTITY",)
 S3_KEYS = ("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_DEFAULT_REGION",
-           "AWS_REGION", "S3_BUCKET", "S3_ENDPOINT_URL", "AWS_ENDPOINT_URL")
+           "AWS_REGION", "S3_BUCKET", "S3_PREFIX", "S3_ENDPOINT_URL", "AWS_ENDPOINT_URL")
 
 
 def _parse(path: Path) -> dict[str, str]:
@@ -65,6 +70,14 @@ def get(*names: str, default: str | None = None) -> str | None:
 
 def wandb_key() -> str | None:
     return get(*WANDB_KEYS)
+
+
+def wandb_project(default: str = "race-wm") -> str:
+    return get(*WANDB_PROJECT_KEYS, default=default) or default
+
+
+def wandb_entity() -> str | None:
+    return get(*WANDB_ENTITY_KEYS)
 
 
 def s3_config() -> dict[str, str]:

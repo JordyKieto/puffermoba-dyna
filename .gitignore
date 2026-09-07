@@ -26,3 +26,10 @@ venv/
 .DS_Store
 .vscode/
 *.swp
+
+# Credentials. Never commit. racewm/secrets.py reads secrets.env from the repo
+# root; keep real values here and out of git.
+secrets.env
+.env
+.env.*
+*.pem

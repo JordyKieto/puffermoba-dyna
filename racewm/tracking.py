@@ -18,15 +18,16 @@ from typing import Any
 
 from . import contract, secrets
 
-PROJECT = "race-wm"
+PROJECT = secrets.wandb_project()
 
 
 class RunTracker:
     def __init__(self, name: str, config: dict[str, Any] | None = None,
-                 project: str = PROJECT, group: str | None = None,
+                 project: str | None = None, group: str | None = None,
                  tags: list[str] | None = None, mode: str = "auto",
                  log_dir: str | Path = "logs"):
         """mode: 'auto' (wandb if usable), 'wandb' (required), 'offline', 'off'."""
+        project = project or secrets.wandb_project()
         self.name = name
         self.config = dict(config or {})
         # Pin the contract into every run: a loss curve is meaningless without
@@ -63,7 +64,8 @@ class RunTracker:
 
         secrets.export_to_env(*secrets.WANDB_KEYS)
         self.run = wandb.init(
-            project=project, name=name, group=group, tags=tags,
+            project=project, entity=secrets.wandb_entity(),
+            name=name, group=group, tags=tags,
             config=self.config, mode="offline" if mode == "offline" else "online",
             settings=wandb.Settings(console="off"),
         )
