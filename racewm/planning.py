@@ -44,14 +44,12 @@ class WorldModelSim:
     """
 
     def __init__(self, net, bank, x_mu, x_sd, y_mu, y_sd,
-                 term_head=None, term_mu=None, term_sd=None,
-                 crash_penalty: float = 5.0):
+                 term_head=None, term_mu=None, term_sd=None):
         self.net, self.bank = net, bank
         self.x_mu, self.x_sd, self.y_mu, self.y_sd = x_mu, x_sd, y_mu, y_sd
         self.term_head = term_head
         self.term_mu = term_mu if term_mu is not None else x_mu
         self.term_sd = term_sd if term_sd is not None else x_sd
-        self.crash_penalty = crash_penalty
 
     @torch.no_grad()
     def step(self, s, slots, a_idx):
@@ -70,9 +68,14 @@ class WorldModelSim:
         else:
             p_term = torch.zeros(n, device=s.device)
 
+        # Exactly what the env pays: reward_yellow per forward sector
+        # crossing, which score_norm accumulates. The old version subtracted a
+        # hand-set 5.0 * p_term, dwarfing a max step reward of 0.2 and
+        # paralysing planners into pure crash-avoidance. Termination now lives
+        # where it belongs -- forfeited future return, carried by the critic
+        # and applied as a survival weight on everything downstream.
         i = contract.INDEX
-        progress = (s2[:, i["score_norm"]] - s[:, i["score_norm"]]) * 100.0
-        reward = progress - self.crash_penalty * p_term
+        reward = (s2[:, i["score_norm"]] - s[:, i["score_norm"]]) * 100.0
         return s2, reward, p_term
 
 
@@ -109,16 +112,20 @@ def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97):
     states = s.repeat_interleave(n_leaves, 0)
     sl = slots.repeat_interleave(n_leaves, 0)
     ret = torch.zeros(B * n_leaves, device=s.device)
+    survive = torch.ones(B * n_leaves, device=s.device)
 
     for d in range(depth):
         block = A ** (depth - d - 1)
         acts = (torch.arange(n_leaves, device=s.device) // block) % A
         acts = acts.repeat(B)
-        states, r, _ = sim.step(states, sl, acts)
-        ret += (gamma ** d) * r
+        states, r, p_term = sim.step(states, sl, acts)
+        # Reward past a likely crash is not collectable, so weight it by the
+        # probability of still being alive to collect it.
+        ret += (gamma ** d) * survive * r
+        survive = survive * (1 - p_term)
 
     if value_fn is not None:
-        ret += (gamma ** depth) * value_fn(states)
+        ret += (gamma ** depth) * survive * value_fn(states, sl)
 
     ret = ret.view(B, A, n_leaves // A).max(dim=2).values     # best per first action
     return ret.argmax(dim=1), ret
@@ -141,6 +148,7 @@ def plan_beam(sim, s, slots, depth, beam=6, value_fn=None, gamma=0.97):
     states = s
     sl = slots
     ret = torch.zeros(B, device=dev)
+    survive = torch.ones(B, device=dev)
     first = torch.full((B,), -1, dtype=torch.long, device=dev)
     width = 1
 
@@ -149,19 +157,23 @@ def plan_beam(sim, s, slots, depth, beam=6, value_fn=None, gamma=0.97):
         rep = states.repeat_interleave(A, 0)
         rep_sl = sl.repeat_interleave(A, 0) if d == 0 else sl.repeat_interleave(A, 0)
         acts = torch.arange(A, device=dev).repeat(n)
-        nxt, r, _ = sim.step(rep, rep_sl, acts)
-        cand_ret = ret.repeat_interleave(A, 0) + (gamma ** d) * r
+        nxt, r, p_term = sim.step(rep, rep_sl, acts)
+        surv = survive.repeat_interleave(A, 0)
+        cand_ret = ret.repeat_interleave(A, 0) + (gamma ** d) * surv * r
+        cand_surv = surv * (1 - p_term)
         cand_first = (acts if d == 0 else first.repeat_interleave(A, 0))
 
         k = min(beam, width * A)
         score = cand_ret.view(B, width * A)
         if value_fn is not None and d == depth - 1:
-            score = score + (gamma ** (d + 1)) * value_fn(nxt).view(B, width * A)
+            v = (gamma ** (d + 1)) * cand_surv * value_fn(nxt, rep_sl)
+            score = score + v.view(B, width * A)
         top = score.topk(k, dim=1).indices                       # (B, k)
 
         flat = (torch.arange(B, device=dev)[:, None] * (width * A) + top).reshape(-1)
         states = nxt[flat]
         ret = cand_ret[flat]
+        survive = cand_surv[flat]
         first = cand_first[flat]
         sl = slots.repeat_interleave(k, 0)
         width = k
@@ -204,18 +216,20 @@ def plan_gumbel(sim, s, slots, depth, n_sims=16, value_fn=None, gamma=0.97,
         for _ in range(sims_each):
             for c in range(m):
                 a0 = candidates[:, c]
-                s1, r, _ = sim.step(s, slots, a0)
+                s1, r, pt = sim.step(s, slots, a0)
                 ret = r.clone()
+                surv = 1 - pt
                 st = s1
                 for d in range(1, depth):
                     # Random continuation past the first action: with |A|=3 and
                     # a short horizon this is a cheap unbiased rollout, and it
                     # keeps the comparison against exhaustive honest.
                     ra = torch.randint(0, A, (B,), generator=g).to(dev)
-                    st, rr, _ = sim.step(st, slots, ra)
-                    ret += (gamma ** d) * rr
+                    st, rr, pt2 = sim.step(st, slots, ra)
+                    ret += (gamma ** d) * surv * rr
+                    surv = surv * (1 - pt2)
                 if value_fn is not None:
-                    ret += (gamma ** depth) * value_fn(st)
+                    ret += (gamma ** depth) * surv * value_fn(st, slots)
                 idx = (torch.arange(B, device=dev), a0)
                 counts[idx] += 1
                 q[idx] += (ret - q[idx]) / counts[idx]
@@ -240,8 +254,41 @@ class GreedyPolicyValue:
     def __init__(self, weight: float = 20.0):
         self.weight = weight
 
-    def __call__(self, s):
+    def __call__(self, s, slots=None):
         i = contract.INDEX
         alive = ((s[:, i["flw_length"]] > 1e-3) | (s[:, i["frw_length"]] > 1e-3)).float()
         clearance = 0.5 * (s[:, i["flw_length"]] + s[:, i["frw_length"]])
         return self.weight * alive * clearance
+
+
+class LearnedValue:
+    """V(s) from racewm/train_critic.py, fitted by TD(0) on REAL transitions.
+
+    Real data on purpose: a critic fitted inside the world model inherits the
+    model's optimistic errors, and a planner then searches straight for them.
+    Sees the track geometry as well as the state, which more than doubled the
+    separation between healthy and about-to-crash states (0.165 -> 0.441).
+    """
+
+    def __init__(self, path, bank, device="cpu"):
+        from .train_critic import Critic
+        ck = torch.load(path, map_location=device, weights_only=False)
+        ex = ck.get("extra") or {}
+        cfg = ck["config"]
+        self.use_geom = ex.get("use_geometry", cfg.get("use_geometry", True))
+        self.net = Critic(cfg["d_in"], cfg["hidden"], cfg["layers"]).to(device)
+        self.net.load_state_dict(ck["model"])
+        self.net.eval()
+        for q in self.net.parameters():
+            q.requires_grad_(False)
+        self.mu, self.sd = ex["mu"].to(device), ex["sd"].to(device)
+        self.bank = bank
+
+    @torch.no_grad()
+    def __call__(self, s, slots=None):
+        x = s
+        if self.use_geom:
+            if slots is None:
+                raise ValueError("LearnedValue needs slots to gather geometry")
+            x = torch.cat([s, self.bank.local_window(s, slots)], dim=1)
+        return self.net((x - self.mu) / self.sd)

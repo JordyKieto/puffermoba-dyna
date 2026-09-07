@@ -129,11 +129,11 @@ class PolicyAgent(Agent):
 
 class PlannerAgent(Agent):
     """Plans through the learned world model, acts in the real env."""
-    def __init__(self, name, sim, bank, slots, kind, depth, n_sims=16, seed=0):
+    def __init__(self, name, sim, bank, slots, kind, depth, value, n_sims=16, seed=0):
         self.name = name
         self.sim, self.bank, self.slots = sim, bank, slots
         self.kind, self.depth, self.n_sims, self.seed = kind, depth, n_sims, seed
-        self.value = planning.GreedyPolicyValue()
+        self.value = value
         self.t = 0
 
     def act(self, obs, pool):
@@ -216,6 +216,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--wm", default="checkpoints/wm_multistep_warm/best.pt")
+    ap.add_argument("--critic", default="checkpoints/critic_geom/best.pt",
+                    help="learned V(s) from train_critic.py; falls back to the\n"
+                         "hand-rolled heuristic if the file is missing")
     ap.add_argument("--termination", default="checkpoints/termination/best.pt")
     ap.add_argument("--corpus", default="data/corpus")
     ap.add_argument("--policies", nargs="*", default=[],
@@ -297,11 +300,17 @@ def main():
             slots = bank.slots(pool.env_idx)
             sim = planning.WorldModelSim(net, bank, x_mu, x_sd, y_mu, y_sd,
                                          head, t_mu, t_sd)
+            if Path(args.critic).exists():
+                value = planning.LearnedValue(args.critic, bank)
+                vname = "learned critic"
+            else:
+                value = planning.GreedyPolicyValue()
+                vname = "HEURISTIC (no critic found)"
             A = PlannerAgent(f"plan:{kind}", sim, bank, slots, kind,
-                             args.depth, args.n_sims)
+                             args.depth, value, args.n_sims)
             r = run_agent(A, pool, args.planner_steps); pool.close()
             if r: rows.append((A.name, r))
-            print(f"  {A.name:<22} done")
+            print(f"  {A.name:<22} done  [{vname}]")
 
     rows.sort(key=lambda kv: -kv[1]["ret"])
     print(f"\n{'='*94}\n ONLINE LEADERBOARD -- real env, holdout tracks\n{'='*94}")

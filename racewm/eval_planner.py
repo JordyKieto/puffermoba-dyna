@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import ctypes
 import time
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -33,7 +34,8 @@ class EnvPool:
 
 
 def rollout_planner(net, bank, x_mu, x_sd, y_mu, y_sd, corpus, split,
-                    planner, depth, n_seqs, horizon, device, n_sims=16, seed=0):
+                    planner, depth, n_seqs, horizon, device, n_sims=16, seed=0,
+                    critic_path=None):
     """Score a planner by simulating forward from real holdout states.
 
     Not a substitute for online eval in the real env -- it measures the
@@ -50,7 +52,9 @@ def rollout_planner(net, bank, x_mu, x_sd, y_mu, y_sd, corpus, split,
     s = torch.from_numpy(obs[:, 0]).to(device)
     slots = bank.slots(env_idx)
     sim = planning.WorldModelSim(net, bank, x_mu, x_sd, y_mu, y_sd)
-    value = planning.GreedyPolicyValue()
+    value = (planning.LearnedValue(critic_path, bank)
+             if critic_path and Path(critic_path).exists()
+             else planning.GreedyPolicyValue())
 
     total_r = torch.zeros(len(s), device=device)
     alive = torch.ones(len(s), device=device)
@@ -88,6 +92,7 @@ def main():
     ap.add_argument("--horizon", type=int, default=30)
     ap.add_argument("--n-seqs", type=int, default=256)
     ap.add_argument("--device", default="cpu")
+    ap.add_argument("--critic", default="checkpoints/critic_geom/best.pt")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
@@ -115,7 +120,7 @@ def main():
     for p in args.planners.split(","):
         r = rollout_planner(net, bank, x_mu, x_sd, y_mu, y_sd, args.corpus,
                             "holdout", p, args.depth, args.n_seqs, args.horizon,
-                            args.device, args.n_sims, args.seed)
+                            args.device, args.n_sims, args.seed, args.critic)
         print(f"{p:<14}{r['return']:>10.3f}{r['survival']:>10.3f}"
               f"{r['sec_per_decision']*1e6:>13.1f}us")
 

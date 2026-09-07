@@ -103,6 +103,22 @@ def imagine(sim, ac, s0, slots, H, obs_mu, obs_sd, gen=None):
             torch.stack(alive, 1), s)
 
 
+
+def _load_actor_weights(actor, state_dict):
+    """Load BC weights into the actor trunk.
+
+    BC's PolicyMLP wraps its Sequential in `self.net`, so its keys are
+    "net.0.weight"; ActorCritic.actor IS the Sequential, so its keys are
+    "0.weight". The shapes match and only the prefix differs. This used to be a
+    try/except that printed a warning -- which meant a failed warm start looked
+    like a successful run that had simply learned nothing from BC, and the
+    frozen-vs-joint comparison it was supposed to support was meaningless.
+    Mismatched keys are now a hard error.
+    """
+    fixed = {k[len("net."):] if k.startswith("net.") else k: v
+             for k, v in state_dict.items()}
+    actor.load_state_dict(fixed)   # raises on any real mismatch
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -189,11 +205,8 @@ def main():
     ac = ActorCritic(hidden=args.hidden, layers=args.layers).to(dev)
     if args.bc_init:
         bc = torch.load(args.bc_init, map_location=dev, weights_only=False)
-        try:
-            ac.actor.load_state_dict(bc["model"])
-            print(f"actor warm started from {args.bc_init}")
-        except RuntimeError as e:
-            print(f"could not warm start actor ({e}); training from scratch")
+        _load_actor_weights(ac.actor, bc["model"])
+        print(f"actor warm started from {args.bc_init}")
 
     opt = torch.optim.AdamW(ac.parameters(), lr=args.lr, weight_decay=1e-5)
     cfg = dict(vars(args), n_real=len(real), corpus_manifest=man,
