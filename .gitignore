@@ -1,0 +1,28 @@
+# Build products
+build/
+*.o
+*.a
+*.so
+
+# Generated data. Regenerate deterministically:
+#   build/race_eval --dump data/<name>
+data/
+out/
+replays/
+logs/
+checkpoints/
+wandb/
+
+# raylib is downloaded into the pinned submodule by tools/build.sh
+third_party/pufferlib/raylib-*/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor / OS
+.DS_Store
+.vscode/
+*.swp
