@@ -363,6 +363,69 @@ the actor-critic as its termination model and got 77-dim world-model inputs.
 The first planner always worked, which made it look like a beam-specific
 failure.
 
+## E11 — Does a dynamics-pretrained backbone help imitation learning?
+
+`racewm/transfer.py`. Train a world model, initialise a BC policy from its
+encoder, compare against BC from scratch — across pretraining horizons and
+across label budgets.
+
+Requires a **separable encoder**, since the world model consumes 77 inputs and
+a policy consumes 30:
+
+    encoder(obs)                -> z         shared, transferable (73k params)
+    dynamics([z, action, geom]) -> delta     world-model only
+    policy(z)                   -> 3 actions BC only
+
+This is also the shape a vision encoder would take into a policy, which is why
+it was built this way rather than transferring hidden layers by index.
+
+Full sweep, single seed, online return on holdout:
+
+| labels | scratch | K1 ft | K5 ft | K20 ft | K20 frozen |
+|---|---|---|---|---|---|
+| 2,000 | 7.958 | **9.374** | 6.905 | 7.149 | 8.539 |
+| 10,000 | 8.671 | **10.379** | 8.470 | 8.506 | 8.598 |
+| 50,000 | 10.706 | 10.426 | **11.092** | 11.085 | 9.694 |
+| 450,000 | 10.396 | 9.897 | 10.315 | 10.333 | **11.008** |
+
+Five seeds on the low-data cells, where transfer should matter most:
+
+| labels | arm | return | vs scratch |
+|---|---|---|---|
+| 2,000 | scratch | 7.808 ± 0.273 | — |
+| | **K1 finetune** | **9.607 ± 0.184** | **+23.0% (+7.7σ)** |
+| | K20 finetune | 7.621 ± 0.295 | −2.4% (−0.7σ) |
+| 10,000 | scratch | 8.805 ± 0.213 | — |
+| | **K1 finetune** | **10.600 ± 0.204** | **+20.4% (+8.6σ)** |
+| | K20 finetune | 8.829 ± 0.338 | +0.3% (+0.1σ) |
+
+**Finding 1 — dynamics pretraining transfers, strongly, in the low-label
+regime.** +23% and +20% return at 8σ. It also shows offline: val accuracy
+0.7933 / 0.8187 against scratch's 0.7752 / 0.7895. By 50k labels the advantage
+is gone and by 450k every arm converges — the classic transfer curve.
+
+This is the asymmetry worth exploiting: world-model data needs **no action
+labels** and the env runs at ~1M steps/s, while expert labels are the scarce
+resource. That asymmetry is far sharper for RGB and real data than it is here.
+
+**Finding 2 — long-horizon pretraining does not transfer.** K5 and K20 are
+statistically indistinguishable from scratch at low data (+0.1σ, −0.7σ), and
+K20 is nominally *worse* at 2k.
+
+**Finding 3 — and this is the dissociation worth remembering.** The K20 model
+is the *better world model*: multi-step training is what took @100 rollout
+error from diverging (0.88× persistence) to 17.5×. Yet it produces the *worse*
+backbone for control. Rollout stability and action-discriminative structure are
+different objectives, and optimizing hard for the first appears to wash out the
+second.
+
+**Do not assume the best dynamics model yields the best representation.** For
+the RGB half this says: pick the pretraining horizon by measuring transfer, not
+by measuring rollout accuracy.
+
+Offline accuracy again failed to rank the arms — val accuracy spans 0.775–0.872
+across a return range of 6.9–11.1.
+
 ---
 
 ## Open

@@ -73,6 +73,15 @@ better than persistence at the horizon they plan over. Giving them a *better*
 critic made them *worse*, and the planner that searched hardest scored last —
 the signature of model exploitation.
 
+**Dynamics pretraining transfers to imitation learning — but only short
+horizon.** Initialising a BC policy from a world-model encoder is worth **+23%
+return at 2k labels and +20% at 10k (8σ)**, and the gain vanishes by 50k. The
+catch: only *one-step* pretraining transfers. The long-horizon model is the
+better world model — it is what fixed @100 rollout divergence — and it is the
+*worse* backbone for control, statistically indistinguishable from random init.
+Rollout stability and action-discriminative structure are not the same
+objective.
+
 **Imagination needed three separate fixes to stop being harmful**, each found
 by an online measurement disagreeing with an in-model one, ending at rough
 parity with BC:
@@ -113,6 +122,11 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
   function was necessary and not sufficient.
 - **Accurate dynamics do not imply a good planner.** Low one-step error says
   nothing about the tail a planner deliberately seeks out.
+- **Accurate dynamics do not imply a good representation either.** The best
+  world model here made the worst backbone for control. Choose a pretraining
+  objective by measuring transfer, not rollout accuracy — the asymmetry that
+  makes pretraining worth it (unlabelled dynamics data is cheap, expert labels
+  are not) is far sharper for RGB than it is here.
 
 ---
 
