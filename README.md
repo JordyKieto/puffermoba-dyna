@@ -84,23 +84,23 @@ for RGB, where unlabelled video is cheap and demonstrations are not — and the
 mechanism that worked, inferring hidden semantic state from a partial
 observation, *is* the sim-to-real problem.
 
-**Imagination needed three separate fixes to stop being harmful**, each found
-by an online measurement disagreeing with an in-model one, ending at rough
-parity with BC:
+**PPO trained entirely inside the world model reaches 91% of BC's return with
+zero expert labels.** No real environment steps are taken during training; the
+200k real transitions fit the world model and anchor imagined resets. Peak
+**10.52 return / 60.2% survival** on holdout against BC's ~11.3 — and BC's
+samples are expert-annotated while the world model's are `(s, a, s')` from any
+policy. Gains saturate around 10M imagined steps and are flat to 28M: the
+binding constraint is model quality, not imagined compute.
 
-| | return | survival |
-|---|---|---|
-| first working Dreamer run | 0.33 | — |
-| + termination head | 6.03 | — |
-| + unfreezing the world model | 7.57 | 34.5% |
-| + critic anchored to real data | 8.97 | 47.8% |
-| + actor constrained toward BC | **11.24 ± 0.16** | **64.2%** |
-| *behaviour cloning alone* | *11.02* | *60.3%* |
+**And the dream turned out to be pessimistic, not optimistic.** The same policy
+scores 10.50 in reality against 6.65 in imagination — reward-per-step is exact
+(1.03×) but dreamed episodes die at 213 steps against 345 real. Model
+exploitation never materialised because a policy cannot exploit a model that
+underestimates it. The cause is that termination calibration does not transfer
+across policies: the head was calibrated on corpus behaviour, and the trained
+policy visits a safer distribution.
 
-Return is +2.0% at ~1.4σ with one seed tying BC — a small real effect, not a
-win. Survival is sturdier: all four seeds beat BC by ~4 points.
-
-Full numbers, every sweep and every negative result:
+**Imagination needed three separate fixesFull numbers, every sweep and every negative result:
 **[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md)**. Run identifiers, checkpoints and
 W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 
@@ -122,6 +122,9 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
   model inherits its optimism, and the policy then optimizes straight into it.
 - **Offline, the actor needs a behaviour constraint.** Fixing the value
   function was necessary and not sufficient.
+- **Calibrate termination against the policy you are training, not the corpus.**
+  An aggregate calibration that is exact on corpus behaviour (1.01×) still cut
+  a trained policy's imagined episodes 38% short.
 - **Accurate dynamics do not imply a good planner.** Low one-step error says
   nothing about the tail a planner deliberately seeks out.
 - **Accurate dynamics do not imply a good representation either.** The

@@ -580,6 +580,103 @@ unlabelled data*, not a better inductive bias for BC. The untested variant that
 follows from it is semi-supervised — policy loss on the small labelled batch,
 auxiliary loss on a large separate unlabelled batch, jointly.
 
+## E14 — PPO trained entirely inside the world model
+
+`racewm/dream.py` (vectorized imagined env) + `racewm/dream_ppo.py`. PPO takes
+**zero real environment steps during training**. The 200,000 real transitions
+are spent on fitting the world model and on the buffer of real states that
+imagined episodes reset from. Evaluation is in the canonical environment on
+holdout tracks, every 25 iterations.
+
+### Pre-flight audit
+
+Two things gate this, and only one was ready.
+
+| | result |
+|---|---|
+| reward prediction | MAE 0.0108 against a 0.2 unit; crossing detection precision 0.964 / recall 0.934; total reward bias **1.02x** |
+| termination | **over-predicted 3.05x on holdout** |
+
+The termination head is trained with `pos_weight=65` against a 1.5% positive
+rate, which deliberately biases it toward predicting termination. Uncalibrated,
+imagined episodes end ~3x early. `racewm/calibrate.py` fits a temperature and
+bias on the **val** split by NLL: holdout over-prediction 3.19x → **1.01x**,
+with AP unchanged at 0.8948 (a monotone rescaling cannot reorder).
+
+**Dream-env validation.** Under a random policy the dream reproduces the real
+env almost exactly: mean episode 7 steps (real: 6.9), reward 0.0255/step (real:
+0.0257). Throughput 66k imagined steps/s on CPU.
+
+### Results
+
+| | peak real return | survival | at imagined steps |
+|---|---|---|---|
+| horizon 200 | **10.516** | 60.2% | 19.7M |
+| horizon 15 | 9.404 | 50.7% | 14.7M |
+| *BC on 200k expert labels* | *~11.3* | *60.3%* | *—* |
+
+Gains are rapid to ~3M imagined steps, decelerate to ~10M, and are **flat
+thereafter**: 10.33 ± 0.02 across iterations 150–250 (6.5M additional steps,
+zero gain), still ~10.3 at 28M. **More dreaming saturates — it neither keeps
+helping nor collapses.** The binding constraint is world-model quality, not
+imagined compute.
+
+**91% of BC's return with zero expert action labels.** The world model's 200k
+transitions are `(s, a, s')` from any policy; BC's 200k are expert-annotated.
+
+**Imagined return is useless as a progress signal.** It saturated at 0.97–1.00
+by iteration 25 in both arms and stayed flat while real return moved 6.4 →
+10.5. Exploitation, had it occurred, would have been invisible from inside the
+dream. This is the strongest argument for the canonical-env evaluation.
+
+### Bug: time limits treated as terminations
+
+`done = crashed | truncated` fed straight into GAE's bootstrap. A time limit is
+not the end of the world — the value must bootstrap *through* a truncation and
+stop only at a real termination (Pardo et al. 2018). As written, the policy
+learned that reality stops at `horizon`.
+
+Severity scales with truncation frequency, so it penalized the short-horizon
+arm ~13x harder:
+
+| | before fix (iter 150) | after fix | change |
+|---|---|---|---|
+| horizon 15 | 6.142 | **8.402** | **+37%** |
+| horizon 200 | 10.265 | 10.334 | +0.7% |
+
+Before the fix, horizon 15 declined below its own starting value while imagined
+return kept rising — a perfect imitation of model exploitation that was
+entirely an artifact of this bug.
+
+### The dream is PESSIMISTIC, not optimistic
+
+Running the same trained policy in both environments:
+
+| h=200 policy | return | length | survival | reward/step |
+|---|---|---|---|---|
+| **DREAMED** | 6.649 | 212.7 | **0.0%** | 0.0313 |
+| **ACTUAL** | 10.501 | 345.0 | **60.3%** | 0.0304 |
+| ratio | 0.63x | 0.62x | — | **1.03x** |
+
+The policy performs **~60% better in reality than in imagination** — the
+opposite of model exploitation, and the reason nothing collapsed at 28M steps:
+a policy cannot exploit a model that underestimates it.
+
+Reward-per-step is essentially exact (1.03x), so the dynamics and reward model
+are right. **The entire gap is episode length: 213 dreamed against 345 actual.**
+Every dreamed episode ends in a sampled crash; 60% of real ones survive.
+
+**Calibration does not transfer across policies.** The head was calibrated to
+match the aggregate termination rate on the *corpus* — data from `centerline`,
+`whisker`, `noisy` and `random`. The trained PPO policy visits a different,
+safer state distribution, where the same head still assigns too much crash
+probability. Aggregate calibration on one behaviour distribution says nothing
+about calibration on another.
+
+The fix is to recalibrate against the policy being trained rather than against
+the corpus — which is a step toward the online loop, and costs real environment
+steps that have to be accounted for separately.
+
 ---
 
 ## Open
