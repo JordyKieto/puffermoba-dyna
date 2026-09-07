@@ -73,14 +73,16 @@ better than persistence at the horizon they plan over. Giving them a *better*
 critic made them *worse*, and the planner that searched hardest scored last —
 the signature of model exploitation.
 
-**Dynamics pretraining helps imitation learning only marginally, and only when
-labels are very scarce.** Initialising a BC policy from a world-model encoder is
-worth **+8.6% return (2σ) at 2,000 expert labels** and nothing measurable beyond
-5,000 — with 359k extra pretraining transitions as the price. An earlier version
-of this experiment reported +23% at 7σ; that was an artefact of unequal gradient
-budgets, and the correction is written up in
-[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) E11. Long-horizon pretraining does not
-transfer at all, even though it produces the *better* world model.
+**Dynamics pretraining does not help imitation learning — privileged
+distillation does.** With pretraining scaled to 12.3M samples and finetuning
+held fixed, forward + inverse + termination dynamics is statistically
+indistinguishable from random initialisation (+8.1%, 0.4σ). Training the same
+encoder to predict *track geometry it cannot observe* is worth **+56.3%
+(2.4σ) at 500 labels**. It does not substitute for labels, though: 1,500 extra
+expert labels beat 830,000 unlabelled transitions here. Those economics invert
+for RGB, where unlabelled video is cheap and demonstrations are not — and the
+mechanism that worked, inferring hidden semantic state from a partial
+observation, *is* the sim-to-real problem.
 
 **Imagination needed three separate fixes to stop being harmful**, each found
 by an online measurement disagreeing with an in-model one, ending at rough
@@ -127,6 +129,9 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
   pretraining objective by measuring transfer, not rollout accuracy.
 - **Hold optimization fixed before claiming sample efficiency.** Scaling epochs
   with dataset size turned a null result into a 7σ one; see E11's retraction.
+- **Pretrain on inferring hidden state, not on predicting dynamics.** Ablated
+  head by head, privileged distillation carried all of the transfer and
+  dynamics carried none.
 
 ---
 

@@ -456,6 +456,79 @@ a claim about optimization.
 Offline accuracy, once again, failed to separate the arms — but here it was
 telling the truth and the online number was the misleading one.
 
+## E12 — Scaled multi-task pretraining: what actually transfers
+
+E11 handicapped pretraining (702 gradient steps against BC's 2,000, on 60k of
+817k transitions, one objective). Unlimited cheap dynamics data is the premise
+of the method, so here it gets its best shot: **12,000 steps x 1024 batch =
+12.3M samples** over all 830k transitions, four heads, five ablations. The
+FINETUNING side stays fixed — 2,000 steps, identical architecture, same seeds
+and eval — because blurring that is what produced E11's spurious 7σ.
+
+Heads, all reading `z = encoder(obs)`:
+
+| head | signal |
+|---|---|
+| `fwd` | `[z, a, geom] → Δs` |
+| `inv` | `[z_t, z_{t+1}] → a_t` |
+| `geom` | `z → geom(44)` — privileged distillation |
+| `term` | `[z, a] → done` |
+
+### Ablation, 3 seeds
+
+| labels | scratch | all | fwd_only | **geom_only** | inv_only | no_geom |
+|---|---|---|---|---|---|---|
+| 500 | 3.18 | 4.33 (+36%) | 2.49 (−22%) | **5.48 (+72%, 3.1σ)** | 2.34 (−27%) | 3.25 (+2%) |
+| 1,000 | 4.49 | 5.25 (+17%) | 4.31 (−4%) | 5.29 (+18%) | 3.68 (−18%) | 5.08 (+13%) |
+| 2,000 | 8.02 | 8.85 (+10%) | 8.45 (+5%) | 8.68 (+8%, 2.5σ) | 8.15 (+2%) | 8.72 (+9%) |
+| 5,000 | 8.98 | 9.06 | 8.86 | 8.64 | 8.69 | 9.00 |
+| 10,000 | 9.99 | **9.43 (−5.6%)** | 9.64 | 9.65 | 9.94 | 9.62 |
+
+### Confirmation, 8 seeds
+
+| labels | scratch | no_geom | geom_only |
+|---|---|---|---|
+| 500 | 3.452 ± 0.740 | 3.732 (+8.1%, **0.4σ**) | **5.395 (+56.3%, 2.4σ)** |
+| 2,000 | 7.727 ± 0.798 | 8.278 (+7.1%, **0.7σ**) | 8.646 (+11.9%, 1.2σ) |
+
+### Findings
+
+**Dynamics pretraining does not help.** `no_geom` — forward + inverse +
+termination, 12.3M samples — is statistically indistinguishable from random
+init (0.4σ, 0.7σ). `fwd_only` and `inv_only` are *worse* than scratch at 500
+labels.
+
+**Privileged-information distillation is the entire effect.** Teaching the
+encoder to predict track geometry it cannot observe is worth +56.3% at 2.4σ.
+The encoder recovers ~84% of geometry variance from 30 floats (`geom` loss
+0.157 normalized).
+
+**Inverse dynamics is degenerate here.** Its loss goes to 0.0000: the heading
+change between consecutive states reveals the action exactly, so the task is
+solvable without learning anything transferable. Worth checking before
+assuming inverse dynamics is a useful auxiliary — in a harder environment it
+would not collapse like this.
+
+**Pretraining becomes a liability once labels are sufficient.** At 10,000
+labels every pretrained arm loses to scratch, some at −5.8σ. A pretrained
+representation is a constraint: useful when data is scarce, harmful when it
+is not.
+
+**It does not substitute for labels.** Pretraining consumed 830k transitions;
+had those carried expert labels, BC on them scores ~11.3 against geom_only's
+5.4. More bluntly: **scratch with 2,000 labels (7.727) beats geom_only with
+500 labels (5.395)** — 1,500 extra expert labels are worth more than 830,000
+unlabelled transitions.
+
+### Why this still matters for RGB
+
+Those economics are specific to this setting, where a scripted bot produces
+labels at ~1M/s. For real RGB the ratio inverts: unlabelled video is abundant
+and expert demonstrations are expensive. The result to carry forward is that
+**the mechanism works and it is not the dynamics** — what transfers is learning
+to infer privileged semantic state from an observation that does not contain
+it, which is the sim-to-real problem restated.
+
 ---
 
 ## Open
