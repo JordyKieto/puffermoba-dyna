@@ -132,6 +132,9 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 - **Pretrain on inferring hidden state, not on predicting dynamics.** Ablated
   head by head, privileged distillation carried all of the transfer and
   dynamics carried none.
+- **A world-model objective is a way to spend unlabelled data, not a better
+  inductive bias.** The same geometry head is worth +56% as pretraining on 830k
+  transitions and nothing as an auxiliary loss sharing BC's 500-sample batch.
 
 ---
 

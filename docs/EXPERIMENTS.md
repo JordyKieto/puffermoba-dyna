@@ -529,6 +529,57 @@ and expert demonstrations are expensive. The result to carry forward is that
 to infer privileged semantic state from an observation that does not contain
 it, which is the sim-to-real problem restated.
 
+## E13 — World-model objectives as auxiliary losses during BC
+
+Different mechanism from E11/E12. There the representation is frozen before the
+policy starts, which is why it became a liability once labels were plentiful.
+Here the auxiliary loss shapes the encoder *while* the policy trains, so the
+task loss can outvote it as data grows.
+
+Heads, all on `z = encoder(obs)`: `next_state`, `next_latent`, `multi_state`
+(K=5), `multi_latent` (K=5), `geom`, and `state_latent` (both 1-step heads).
+The auxiliary loss uses the **same batch** as the policy loss, so no arm sees
+more data than another — this isolates the objective from the data.
+
+Latent targets carry a **stop-gradient**. Predicting `encoder(s_{t+1})` with a
+live encoder has a trivial solution (constant z), which is collapse rather than
+learning; BYOL and JEPA avoid it the same way. Latent variance is reported so a
+collapse would show up as a number.
+
+Four seeds, 2,000 gradient steps every arm, lambda = 1.0:
+
+| labels | none | next_state | next_latent | multi_state | multi_latent | geom | state_latent |
+|---|---|---|---|---|---|---|---|
+| 500 | 3.34±1.33 | +13.6% (0.4σ) | +4.5% | +22.8% (0.6σ) | +3.8% | +7.8% | +12.6% |
+| 2,000 | 7.55±0.50 | −1.6% | −0.5% | −4.7% | −0.8% | +2.3% | −1.4% |
+| 10,000 | 10.31±0.18 | −3.0% (−1.1σ) | +0.4% | −2.0% | +0.3% | **+2.4% (+1.5σ)** | −2.5% |
+
+**Finding: no auxiliary objective helps.** The largest effect is 0.6σ, and at
+2,000 and 10,000 labels most arms are flat or slightly negative. Only `geom` is
+consistently non-negative, and only at 1.5σ.
+
+**The auxiliary losses are not being ignored.** Latent variance rises from 0.32
+(no aux) to 0.75 for `next_state` and `state_latent` — more than double. The
+objectives demonstrably reshape the representation; the reshaping just does not
+help the policy.
+
+**Why this differs from E12.** `geom` as *pretraining* was worth +56% (5.395 vs
+3.452 at 500 labels). The identical head as an *auxiliary* is worth nothing:
+
+| | geometry supervision seen |
+|---|---|
+| pretraining (E12) | 830,000 transitions |
+| auxiliary (E13) | 500 states — the label budget |
+
+Sharing the policy's batch is what isolates the objective, and it is also what
+starves it. The E12 gain came from the **extra unlabelled data the objective
+allowed us to consume**, not from the objective regularising the policy.
+
+That distinction is the useful one: a world-model objective is a way to *spend
+unlabelled data*, not a better inductive bias for BC. The untested variant that
+follows from it is semi-supervised — policy loss on the small labelled batch,
+auxiliary loss on a large separate unlabelled batch, jointly.
+
 ---
 
 ## Open
@@ -541,6 +592,10 @@ it, which is the sim-to-real problem restated.
 - Ensemble pessimism for planning (started, then parked).
 - PUCT-style prior at every search node, the one untested variant that could
   change E10's verdict.
+- Semi-supervised variant of E13: auxiliary loss on a large separate
+  unlabelled batch rather than the policy's batch. E13 shows the objective is
+  worthless when starved of data and E12 shows it works when fed; this is the
+  test that separates those.
 - **Do not compare numbers across harnesses.** `race_eval` and the leaderboard
   censor differently; the same BC policy reads 11.016 and 5.925. Always put
   competing agents in one run.
