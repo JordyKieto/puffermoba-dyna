@@ -65,6 +65,18 @@ case "$TARGET" in
         -lm -lpthread -DPLATFORM_DESKTOP
     echo "Built: build/race_eval"
     ;;
+  capi)
+    echo "Compiling libracecapi ($ARCH)..."
+    clang -O2 -DNDEBUG -fPIC -shared "${WARN[@]}" ${SIMD[@]+"${SIMD[@]}"} "${INCLUDES[@]}" \
+        "$ROOT/race/race_capi.c" -o "$ROOT/build/libracecapi.dylib" \
+        "$PUFFER/$RAYLIB_NAME/lib/libraylib.a" "${FRAMEWORKS[@]}" \
+        -lm -lpthread -DPLATFORM_DESKTOP 2>/dev/null \
+      || clang -O2 -DNDEBUG -fPIC -shared "${WARN[@]}" ${SIMD[@]+"${SIMD[@]}"} "${INCLUDES[@]}" \
+        "$ROOT/race/race_capi.c" -o "$ROOT/build/libracecapi.so" \
+        "$PUFFER/$RAYLIB_NAME/lib/libraylib.a" "${FRAMEWORKS[@]}" \
+        -lm -lpthread -DPLATFORM_DESKTOP
+    echo "Built: build/libracecapi"
+    ;;
   play)
     echo "Compiling race_play ($ARCH)..."
     clang -O2 -DNDEBUG "${WARN[@]}" ${SIMD[@]+"${SIMD[@]}"} "${INCLUDES[@]}" \
@@ -88,7 +100,7 @@ case "$TARGET" in
     ( cd "$PUFFER" && bash build.sh race --cpu )
     ;;
   *)
-    echo "usage: tools/build.sh [eval|play|demo|module|link]" >&2
+    echo "usage: tools/build.sh [eval|play|capi|demo|module|link]" >&2
     exit 1
     ;;
 esac

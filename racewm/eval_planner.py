@@ -60,6 +60,9 @@ def rollout_planner(net, bank, x_mu, x_sd, y_mu, y_sd, corpus, split,
             a, _ = planning.plan_exhaustive(sim, s, slots, depth, value)
         elif planner == "gumbel":
             a, _ = planning.plan_gumbel(sim, s, slots, depth, n_sims, value, seed=seed + t)
+        elif planner.startswith("beam"):
+            w = int(planner[4:]) if len(planner) > 4 else 6
+            a, _ = planning.plan_beam(sim, s, slots, depth, w, value)
         elif planner == "greedy":
             a, _ = planning.plan_exhaustive(sim, s, slots, 1, value)
         elif planner == "random":
