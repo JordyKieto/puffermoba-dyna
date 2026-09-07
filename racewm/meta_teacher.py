@@ -141,8 +141,28 @@ def main():
     ap.add_argument("--meta-steps", type=int, default=200)
     ap.add_argument("--meta-lr", type=float, default=1e-4)
     ap.add_argument("--hidden", type=int, default=128)
+    ap.add_argument("--normalize-inner-grad", action="store_true",
+                    help="rescale the inner gradient to unit norm before the "
+                         "student step. The teacher can otherwise win by "
+                         "inflating ||grad J_T||, which scales how far theta' "
+                         "travels, instead of shaping WHERE it travels -- "
+                         "measured as J_T rising 22x while J_R stayed flat.")
+    ap.add_argument("--jt-penalty", type=float, default=0.0,
+                    help="penalty on |J_T| in the meta-objective; a second, "
+                         "blunter guard on the same degenerate mode")
+    ap.add_argument("--reset-student", action="store_true",
+                    help="resample the student init each meta-step, so the "
+                         "teacher must teach a distribution of students rather "
+                         "than overfit one initialization")
     ap.add_argument("--verify", action="store_true",
                     help="check a non-zero meta-gradient reaches the teacher")
+    ap.add_argument("--online-every", type=int, default=0,
+                    help="audit the student in the REAL env every N meta-steps. "
+                         "J_R is measured inside a frozen neural examiner, so a "
+                         "teacher that exploits M_R's errors looks excellent "
+                         "until the policy touches the actual game. This is the "
+                         "only check that catches that.")
+    ap.add_argument("--online-episodes", type=int, default=40)
     ap.add_argument("--out", default="data/meta_teacher.json")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
@@ -164,7 +184,11 @@ def main():
         return env.obs.detach().clone(), env.slots.clone()
 
     def inner_then_outer(theta_in):
-        """One differentiable student update in M_T, scored in M_R."""
+        """K differentiable student updates in M_T, scored in M_R.
+
+        Memory grows linearly in K: every inner step keeps its graph alive so
+        the mixed second derivative can be taken through all of them.
+        """
         s0, slots = sample_states()
         p = {k: v for k, v in theta_in.items()}
         for _ in range(args.inner_steps):
@@ -173,6 +197,12 @@ def main():
             # create_graph keeps dtheta'/dM_T alive. An optimizer step here
             # would detach it and the meta-gradient would be exactly zero.
             grads = torch.autograd.grad(J_T, list(p.values()), create_graph=True)
+            if args.normalize_inner_grad:
+                # Direction, not magnitude. Keeps the norm in the graph so the
+                # teacher still shapes the direction, but removes the trivial
+                # win of simply making the step bigger.
+                gn2 = torch.sqrt(sum((g ** 2).sum() for g in grads)).clamp_min(1e-8)
+                grads = [g / gn2 for g in grads]
             p = {k: v + args.inner_lr * g for (k, v), g in zip(p.items(), grads)}
         s0r, slotsr = sample_states()
         J_R = soft_rollout(policy, p, ref, term, bank, s0r, slotsr,
@@ -215,12 +245,42 @@ def main():
           f"   outer: H={args.h_outer}   meta-lr {args.meta_lr}\n")
     print(f"{'step':>6}{'J_T':>10}{'J_R':>10}{'|dJR/dMT|':>12}{'MT-MR drift':>14}{'sec':>7}")
 
+    from . import export_policy
+    import subprocess
+    man = dataset.load_manifest(args.corpus)
+
+    def audit_online(p_theta, tag):
+        """Run the CURRENT student in the real game. p_theta is the post-update
+        parameter dict, so this measures exactly what J_R scored."""
+        net = Policy(args.hidden, 2)
+        with torch.no_grad():
+            for k, v in net.named_parameters():
+                v.copy_(p_theta[k].detach())
+        rpo = f"/tmp/meta_{tag}.rpo"
+        o_mu, o_sd = norms[4], norms[5]
+        export_policy.export(net.net, o_mu.numpy(), o_sd.numpy(), rpo)
+        out = {}
+        for name, key in (("hold", "holdout"), ("train", "train")):
+            sp = man["splits"][key]
+            r = subprocess.run(["./build/race_eval","--bots","policy","--policy",rpo,
+                "--tracks",str(sp["n_tracks"]),"--track-start",str(sp["track_start"]),
+                "--episodes",str(args.online_episodes),"--threads","10"],
+                capture_output=True, text=True).stdout
+            row = [l for l in r.splitlines() if l.strip().startswith("policy")]
+            out[name] = float(row[0].split()[2]) if row else float("nan")
+        return out
+
     ref_flat = torch.cat([p.detach().flatten() for p in ref.parameters()])
     hist, t0 = [], time.time()
     for step in range(args.meta_steps):
-        J_T, J_R, _ = inner_then_outer(theta)
+        th = theta
+        if args.reset_student:
+            fresh = Policy(args.hidden, 2)
+            th = {k: v.detach().clone().requires_grad_(True)
+                  for k, v in fresh.named_parameters()}
+        J_T, J_R, p_out = inner_then_outer(th)
         meta_opt.zero_grad(set_to_none=True)
-        (-J_R).backward()
+        (-J_R + args.jt_penalty * J_T.abs()).backward()
         gn = float(torch.nn.utils.clip_grad_norm_(teacher.parameters(), 10.0))
         meta_opt.step()
 
@@ -228,10 +288,16 @@ def main():
             with torch.no_grad():
                 t_flat = torch.cat([p.flatten() for p in teacher.parameters()])
                 drift = float((t_flat - ref_flat).norm() / ref_flat.norm())
+            online = {}
+            if args.online_every and (step % args.online_every == 0
+                                      or step == args.meta_steps - 1):
+                online = audit_online(p_out, f"s{step}")
             hist.append(dict(step=step, J_T=float(J_T), J_R=float(J_R),
-                             grad=gn, drift=drift))
+                             grad=gn, drift=drift, online=online))
+            extra = (f"  REAL hold {online['hold']:.3f} train {online['train']:.3f}"
+                     if online else "")
             print(f"{step:>6}{float(J_T):>10.4f}{float(J_R):>10.4f}"
-                  f"{gn:>12.3e}{drift:>14.5f}{time.time()-t0:>7.0f}", flush=True)
+                  f"{gn:>12.3e}{drift:>14.5f}{time.time()-t0:>7.0f}{extra}", flush=True)
 
     Path(args.out).write_text(json.dumps(hist, indent=2))
     print(f"\nJ_R: {hist[0]['J_R']:.4f} -> {hist[-1]['J_R']:.4f}"

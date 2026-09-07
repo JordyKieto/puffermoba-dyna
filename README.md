@@ -138,6 +138,12 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 - **Model exploitation did not appear.** Diagnosed twice, wrong twice: a GAE
   time-limit bug, then a track-set mismatch. The dream is 0.94x *pessimistic*
   on return, and a policy cannot exploit a model that underestimates it.
+- **A bilevel "teacher world" is mechanically sound but untestable at this
+  scale.** Optimizing a mutable world so the policy it teaches performs well in
+  a frozen reference world gives a verified second-order gradient and gains
+  that transfer to reality — but the student, trained by ≤5 differentiable
+  gradient steps, scores *below a random policy*, so there is nothing for a
+  teacher to improve. The blocker is inner-loop cost, not the idea.
 - **Accurate dynamics imply neither a good planner nor a good representation.**
   Search through the model never beat following the policy, and the best world
   model made the worst backbone for control.

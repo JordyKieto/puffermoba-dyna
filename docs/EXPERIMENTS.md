@@ -790,6 +790,99 @@ more inner steps (the real scalability question — second-order memory grows
 linearly in K), longer horizons, and an explicit guard against the degenerate
 step-size mode.
 
+## E17 — Bilevel teacher: guards, replication, and the online audit
+
+Continuing E16 in the order the failure modes appeared.
+
+### 1. More inner steps do not help
+
+| inner steps K | J_R start → end | teacher drift |
+|---|---|---|
+| 1 | 0.1316 → 0.1371 (+4.2%) | 3.98% |
+| 3 | 0.1316 → 0.1360 (+3.3%) | 3.46% |
+| 5 | 0.1316 → 0.1364 (+3.7%) | 3.02% |
+
+Flat in K. Drift *decreases* with K, so the meta-gradient becomes
+better-conditioned without becoming more useful.
+
+### 2. Horizon is the axis that moves, and the guards work
+
+| condition (K=3) | J_R start → end | drift |
+|---|---|---|
+| H=5 | 0.1316 → 0.1360 (+3.3%) | 3.46% |
+| H=10 | 0.1929 → 0.2130 (+10.4%) | 2.11% |
+| H=20 | 0.2191 → 0.2288 (+4.4%) | 1.21% |
+| H=10 + normalized inner grad | 0.2099 → 0.2250 (+7.2%) | **1.05%** |
+| H=10 + normalized + student resampling | 0.2016 → 0.2141 (+6.2%) | 1.12% |
+
+Normalizing the inner gradient **halves the drift** (2.11% → 1.05%) while
+keeping the gain, confirming E16's diagnosis: much of the teacher's earlier
+movement was inflating `||grad J_T||` — how far theta' travels — rather than
+shaping where it travels.
+
+### 3. What is J_R's dynamic range?
+
+The number that makes the rest interpretable:
+
+| | H=5 | H=10 |
+|---|---|---|
+| random policy | 0.1360 ± 0.0020 | 0.1952 ± 0.0074 |
+| fully-trained PPO | 0.1446 | 0.2819 |
+| **range** | **0.0086** | **0.0867** |
+
+So H=5 was measuring nothing: the meta-loop moved J_R to 0.136, which *is* the
+random-policy score, across a range of 0.0086. At H=10 the +0.020 gain is 23%
+of the available range and ~2.4 sigma above random.
+
+### 4. It does not replicate across seeds
+
+| seed | J_R start → end |
+|---|---|
+| 0 | 0.1929 → 0.2130 (**+10.4%**) |
+| 1 | 0.2146 → 0.2110 (**−1.7%**) |
+
+Seed 1 *starts* above where seed 0 finishes. Initialization noise is comparable
+to the entire effect.
+
+### 5. The online audit settles it
+
+J_R is measured inside a frozen neural examiner, so the authoritative check is
+the real environment:
+
+| meta-step | J_R (in M_R) | REAL holdout | REAL train |
+|---|---|---|---|
+| 0 | 0.2016 | 0.099 | 0.093 |
+| 30 | 0.2280 (+13%) | 0.108 (+9%) | 0.105 |
+
+The gain **does** transfer directionally — no evidence the teacher is exploiting
+M_R's errors. But for scale, in the same environment: `random` scores **0.177**,
+`straight` 0.221, `whisker` 2.64, trained PPO 10.8.
+
+**The meta-taught student scores 0.10 — below a random policy.** Three gradient
+steps from a random initialization produce something worse than doing nothing,
+and the teacher search has been optimizing entirely within that regime. Every
+J_R difference measured here is the gap between "much worse than random" and
+"slightly less bad than random".
+
+### Conclusion
+
+The bilevel machinery is correct and verified — non-zero second-order
+meta-gradient, exactly zero with the graph severed, guards that measurably
+suppress the degenerate step-size mode, and gains that transfer directionally
+to the real environment rather than exploiting the examiner.
+
+**The experiment cannot answer the question at this scale.** The binding
+constraint is the inner student budget: a policy trained by K<=5 gradient steps
+is not a policy, so there is no room for a teacher to teach. Making the student
+competent requires many more inner steps, and second-order memory grows
+linearly in K — which is precisely the scalability problem, arrived at
+empirically rather than assumed.
+
+The honest next step is not more meta-optimization. It is a cheaper inner loop —
+implicit differentiation, or truncated backprop through a longer student run —
+so the student reaches at least random-policy competence before asking which
+world taught it best.
+
 ---
 
 ## Open
