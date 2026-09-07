@@ -132,8 +132,16 @@ def main():
     ap.add_argument("--wm", default="checkpoints/wmbig_k20/best.pt")
     ap.add_argument("--termination", default="checkpoints/term_big/best.pt")
     ap.add_argument("--calibration", default="checkpoints/term_big/calibration.pt")
+    ap.add_argument("--warm-steps", type=int, default=0,
+                    help="student updates taken WITHOUT a graph before the "
+                         "differentiable window. Truncated backprop: the "
+                         "student can become competent over many steps while "
+                         "second-order memory stays O(inner-steps). Pure "
+                         "first-order (FOMAML) is not an option here -- "
+                         "severing the graph gives EXACTLY zero gradient to "
+                         "M_T, so the second-order path is the only signal.")
     ap.add_argument("--inner-steps", type=int, default=1,
-                    help="differentiable student updates per meta step")
+                    help="differentiable student updates (the meta-gradient window)")
     ap.add_argument("--inner-lr", type=float, default=0.1)
     ap.add_argument("--h-inner", type=int, default=5)
     ap.add_argument("--h-outer", type=int, default=5)
@@ -154,6 +162,10 @@ def main():
                     help="resample the student init each meta-step, so the "
                          "teacher must teach a distribution of students rather "
                          "than overfit one initialization")
+    ap.add_argument("--probe", type=int, default=0,
+                    help="diagnostic: run N student updates and report real-env "
+                         "competence at checkpoints, to find where the student "
+                         "clears a random policy")
     ap.add_argument("--verify", action="store_true",
                     help="check a non-zero meta-gradient reaches the teacher")
     ap.add_argument("--online-every", type=int, default=0,
@@ -189,8 +201,24 @@ def main():
         Memory grows linearly in K: every inner step keeps its graph alive so
         the mixed second derivative can be taken through all of them.
         """
-        s0, slots = sample_states()
         p = {k: v for k, v in theta_in.items()}
+
+        # Warm-up: detached, so memory is flat in the number of steps. This is
+        # what lets the student reach competence before the teacher is asked to
+        # improve it -- E17 failed because a 3-step student scored below random
+        # in the real env, leaving nothing to teach.
+        for _ in range(args.warm_steps):
+            s0, slots = sample_states()
+            J = soft_rollout(policy, p, teacher, term, bank, s0, slots,
+                             args.h_inner, norms, term_T=T_, term_b=b_)
+            g = torch.autograd.grad(J, list(p.values()), create_graph=False)
+            if args.normalize_inner_grad:
+                gn2 = torch.sqrt(sum((x ** 2).sum() for x in g)).clamp_min(1e-8)
+                g = [x / gn2 for x in g]
+            p = {k: (v + args.inner_lr * x).detach().requires_grad_(True)
+                 for (k, v), x in zip(p.items(), g)}
+
+        s0, slots = sample_states()
         for _ in range(args.inner_steps):
             J_T = soft_rollout(policy, p, teacher, term, bank, s0, slots,
                                args.h_inner, norms, term_T=T_, term_b=b_)
@@ -208,6 +236,54 @@ def main():
         J_R = soft_rollout(policy, p, ref, term, bank, s0r, slotsr,
                            args.h_outer, norms, term_T=T_, term_b=b_)
         return J_T, J_R, p
+
+    from . import export_policy as _ep
+    import subprocess as _sp
+    _man = dataset.load_manifest(args.corpus)
+
+    def audit_online(p_theta, tag):
+        net = Policy(args.hidden, 2)
+        with torch.no_grad():
+            for k, v in net.named_parameters():
+                v.copy_(p_theta[k].detach())
+        rpo = f"/tmp/meta_{tag}.rpo"
+        _ep.export(net.net, norms[4].numpy(), norms[5].numpy(), rpo)
+        out = {}
+        for name, key in (("hold", "holdout"), ("train", "train")):
+            sp = _man["splits"][key]
+            r = _sp.run(["./build/race_eval","--bots","policy","--policy",rpo,
+                "--tracks",str(sp["n_tracks"]),"--track-start",str(sp["track_start"]),
+                "--episodes","40","--threads","10"],
+                capture_output=True, text=True).stdout
+            row = [l for l in r.splitlines() if l.strip().startswith("policy")]
+            out[name] = float(row[0].split()[2]) if row else float("nan")
+        return out
+
+    if args.probe:
+        # How many student updates does it take to clear a random policy in the
+        # REAL environment? Everything downstream is meaningless below that line.
+        print("student competence vs inner-update count (real env)\n")
+        print(f"  reference: random 0.177, straight 0.221, whisker 2.64, PPO 10.8\n")
+        print(f"{'updates':>9}{'J_R':>10}{'REAL hold':>12}{'REAL train':>12}")
+        p = {k: v.detach().clone().requires_grad_(True)
+             for k, v in policy.named_parameters()}
+        for n in range(1, args.probe + 1):
+            s0, slots = sample_states()
+            J = soft_rollout(policy, p, teacher, term, bank, s0, slots,
+                             args.h_inner, norms, term_T=T_, term_b=b_)
+            g = torch.autograd.grad(J, list(p.values()))
+            gn2 = torch.sqrt(sum((x ** 2).sum() for x in g)).clamp_min(1e-8)
+            p = {k: (v + args.inner_lr * x / gn2).detach().requires_grad_(True)
+                 for (k, v), x in zip(p.items(), g)}
+            if n in (1, 5, 10, 25, 50, 100, 200, 400, args.probe):
+                s0r, sr = sample_states()
+                with torch.no_grad():
+                    jr = float(soft_rollout(policy, p, ref, term, bank, s0r, sr,
+                                            args.h_outer, norms, term_T=T_, term_b=b_))
+                o = audit_online(p, f"probe{n}")
+                print(f"{n:>9}{jr:>10.4f}{o['hold']:>12.3f}{o['train']:>12.3f}",
+                      flush=True)
+        return
 
     if args.verify:
         print("VERIFY: does a meta-gradient reach the teacher at all?\n")

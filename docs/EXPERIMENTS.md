@@ -883,6 +883,77 @@ implicit differentiation, or truncated backprop through a longer student run —
 so the student reaches at least random-policy competence before asking which
 world taught it best.
 
+## E18 — Truncated BPTT, a competent student, and the examiner gets exploited
+
+E17 could not answer its question because the student was below random: at K<=5
+differentiable updates it scored 0.09-0.13 in the real environment against a
+random policy's 0.177. This fixes that and the answer changes sign.
+
+### The inner loop, made cheap
+
+Pure first-order (FOMAML-style) is not available here: severing the graph gives
+**exactly zero** gradient to M_T, so the second-order path is the only signal.
+The workable form is truncated BPTT — many *detached* warm-up updates, then a
+short graph-carrying window:
+
+    warm-up (detached)   student reaches competence     memory O(1)
+    graph window K=3     meta-gradient                  memory O(3)
+
+Second-order memory is now independent of how good the student gets.
+
+### How many updates does competence take?
+
+| student updates | J_R | REAL holdout | REAL train |
+|---|---|---|---|
+| 1 | 0.1985 | 0.092 | 0.088 |
+| 5 | 0.2144 | 0.130 | 0.123 |
+| **10** | 0.2468 | **2.419** | 2.746 |
+| 25 | 0.2648 | 3.164 | 3.565 |
+| 200 | 0.3135 | **3.763** | 4.299 |
+| 400 | 0.3002 | 3.216 | 3.560 |
+
+The student crosses random (0.177) between 5 and 10 updates — a step change
+from 0.130 to 2.42. **E17 ran entirely inside the dead zone below that line.**
+
+Already visible here: past ~25 updates J_R keeps climbing (0.265 → 0.314) while
+real performance plateaus at 3.2-3.8. The meta-objective and reality decouple
+at the top end.
+
+### With a competent student, the teacher exploits the examiner
+
+warm=25, K=3, guards on, online audit every 10 meta-steps:
+
+| meta-step | J_R (the objective) | REAL holdout | REAL train |
+|---|---|---|---|
+| 0 | 0.2684 | **3.489** | 3.888 |
+| 10 | 0.2728 | 3.413 | 3.772 |
+| 20 | 0.2794 | 3.023 | 3.528 |
+| 30 | **0.2808 (+4.6%)** | **3.167 (−9.2%)** | 3.634 |
+
+warm=50 shows the same: J_R 0.2890 → 0.2752, real 3.195 → 3.122.
+
+**J_R rises monotonically while real behaviour falls.** The meta-objective and
+reality move in opposite directions.
+
+### Conclusion
+
+This is exploitation of the *frozen reference world*, and it appears precisely
+when the setup becomes capable of answering the question. In E17 the gains
+transferred directionally only because the student was below random — there was
+nothing to exploit. Give the teacher a competent student and real headroom, and
+`argmax_{M_T} J_{M_R}(...)` immediately starts optimizing M_R's errors instead
+of the student's competence.
+
+**A frozen neural examiner is not a safe optimization target.** The authoritative
+environment cannot be an occasional audit; it has to be in the objective, or the
+objective needs an explicit defence against the examiner's failure modes —
+an ensemble of reference worlds, a trust region on M_T, or a disagreement
+penalty in the MOPO/MOReL sense.
+
+Worth noting how this was caught: the meta-objective looked healthy and
+monotone the entire time. Without the real-environment audit in the loop, this
+run would have been written up as a success.
+
 ---
 
 ## Open
