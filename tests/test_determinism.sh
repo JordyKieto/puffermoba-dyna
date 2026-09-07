@@ -54,6 +54,22 @@ echo "== 4. env_idx gives distinct tracks =="
 uniq_tracks=$(grep '^whisker ' "$TMP/r1" | awk '{print $3}' | sort -u | wc -l | tr -d ' ')
 check "$uniq_tracks" "24" "24 tracks produce 24 distinct trajectories"
 
+echo "== 5. a learned policy is thread-invariant too =="
+# Regression test for a real bug: policy activations were scratch buffers
+# inside the shared Policy struct, so workers clobbered each other's forward
+# pass. Nothing crashed -- the policy just silently scored 20x worse on 8
+# threads than on 1, and no existing gate noticed because none ran a policy.
+POL="$ROOT/checkpoints/bc/whisker_only.rpo"
+if [ -f "$POL" ]; then
+    PARGS="--bots policy --policy $POL --tracks 8 --track-start 112 --episodes 5"
+    $BIN $PARGS --threads 1 --hash > "$TMP/p1"
+    $BIN $PARGS --threads 8 --hash > "$TMP/p8"
+    check "$(shasum "$TMP/p1" | cut -d' ' -f1)" "$(shasum "$TMP/p8" | cut -d' ' -f1)" \
+          "policy: 1 thread == 8 threads"
+else
+    echo "  SKIP  no policy at $POL (train one: python3 -m racewm.train_bc)"
+fi
+
 echo
 if [ "$fail" -eq 0 ]; then echo "determinism: ALL PASS"; else echo "determinism: FAILURES"; fi
 exit $fail

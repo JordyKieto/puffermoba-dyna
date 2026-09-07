@@ -8,17 +8,19 @@
 #define RACE_BOTS_H
 
 #include "race.h"
+#include "race_policy.h"
 
 enum {
     BOT_WHISKER = 0,   // greedy wall-avoider on the two whisker readings
     BOT_STRAIGHT,      // always NOOP; the trivial floor
     BOT_RANDOM,        // uniform over {LEFT, NOOP, RIGHT}
     BOT_CENTERLINE,    // privileged: steer onto the local track tangent
+    BOT_POLICY,        // learned net, loaded from a .rpo file
     BOT_KIND_COUNT
 };
 
 static const char* BOT_NAMES[BOT_KIND_COUNT] = {
-    "whisker", "straight", "random", "centerline"
+    "whisker", "straight", "random", "centerline", "policy"
 };
 
 typedef struct {
@@ -27,6 +29,7 @@ typedef struct {
     float deadband;   // whisker difference below which the bot goes straight
     float lookahead;  // pure-pursuit lookahead, in pixels
     int track_idx;    // persistent progress index; -1 = needs re-acquire
+    Policy* policy;   // BOT_POLICY only; shared, read-only across threads
     RaceRng rng;
 } Bot;
 
@@ -36,6 +39,7 @@ static inline void bot_init(Bot* bot, int kind, float epsilon, uint64_t seed, ui
     bot->deadband = 0.02f;
     bot->lookahead = 60.0f;
     bot->track_idx = -1;
+    bot->policy = NULL;
     rng_seed(&bot->rng, seed, seq);
 }
 
@@ -138,6 +142,8 @@ static inline int bot_act(Bot* bot, Race* env) {
         case BOT_STRAIGHT:   return NOOP;
         case BOT_RANDOM:     return rng_below(&bot->rng, 3);
         case BOT_CENTERLINE: return bot_centerline(bot, env);
+        case BOT_POLICY:     return bot->policy ? policy_act(bot->policy, env->observations)
+                                                : NOOP;
         default:             return NOOP;
     }
 }

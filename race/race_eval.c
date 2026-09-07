@@ -22,56 +22,16 @@
 #include "race_hash.h"
 #include "race_replay.h"
 #include "race_shard.h"
+#include "race_policy.h"
 
 #define MAX_BOTS 8
 #define MAX_THREADS 64
 
-// --------------------------------------------------------------- metrics ---
-typedef struct {
-    double n;
-    double ret, len, laps, crossings;
-    double crash, wall, offtrack, trunc;
-    double dist_mean, dist_max;
-    double min_whisker;
-    double reversal_rate, straight_frac;
-    double coverage;
-    double first_crash_step;
-} Agg;
-
-static void agg_add(Agg* a, double ret, double len, double laps, double crossings,
-                    double crash, double wall, double offtrack, double trunc,
-                    double dist_mean, double dist_max, double min_whisker,
-                    double reversal_rate, double straight_frac, double coverage,
-                    double first_crash_step) {
-    a->n += 1;
-    a->ret += ret; a->len += len; a->laps += laps; a->crossings += crossings;
-    a->crash += crash; a->wall += wall; a->offtrack += offtrack; a->trunc += trunc;
-    a->dist_mean += dist_mean; a->dist_max += dist_max;
-    a->min_whisker += min_whisker;
-    a->reversal_rate += reversal_rate; a->straight_frac += straight_frac;
-    a->coverage += coverage; a->first_crash_step += first_crash_step;
-}
-
-static void agg_merge(Agg* dst, const Agg* src) {
-    dst->n += src->n;
-    dst->ret += src->ret; dst->len += src->len; dst->laps += src->laps;
-    dst->crossings += src->crossings;
-    dst->crash += src->crash; dst->wall += src->wall;
-    dst->offtrack += src->offtrack; dst->trunc += src->trunc;
-    dst->dist_mean += src->dist_mean; dst->dist_max += src->dist_max;
-    dst->min_whisker += src->min_whisker;
-    dst->reversal_rate += src->reversal_rate;
-    dst->straight_frac += src->straight_frac;
-    dst->coverage += src->coverage;
-    dst->first_crash_step += src->first_crash_step;
-}
-
 // ----------------------------------------------------------------- tracks ---
 // Track geometry is episode-constant but the dynamics depend on it: the
-// whisker raycast intersects inner_edge/outer_edge, and update_nearest_point
-// walks the centerline. It is therefore part of the Markov state, just the
-// part that does not change within an episode -- so it is dumped once per
-// env_idx rather than once per step. See docs/CONTRACT.md.
+// whisker raycast intersects the edge polylines and update_nearest_point walks
+// the centerline. It is part of the Markov state -- the part that does not
+// change within an episode -- so it is dumped once per env_idx, not per step.
 #define RACE_TRACK_MAGIC 0x52434b31u /* "RCK1" */
 
 typedef struct {
@@ -80,6 +40,32 @@ typedef struct {
     uint32_t n_tracks;
     uint32_t seed;
 } TrackFileHeader;
+
+// --------------------------------------------------------------- metrics ---
+// Grouped so like sits with like: an outcome number and a control-smoothness
+// number answer different questions and should not be read off the same row.
+typedef struct {
+    double n;
+    // OUTCOME
+    double ret, len, survived;
+    // FAILURE
+    double crashed, wall, offtrack, steps_to_crash;
+    // PROGRESS
+    double laps, crossings, sectors_per_100, steps_to_first_lap, lap1_count, coverage;
+    // CONTROL
+    double idle_frac, left_frac, right_frac, reversal_rate;
+    // SAFETY
+    double dist_mean, dist_max, min_whisker, mean_whisker;
+} Agg;
+
+// Agg is all doubles and is summed field-wise. Derive the count from the
+// struct rather than hardcoding it -- a hardcoded length silently drops the
+// last field whenever a metric is added, which is exactly what happened to
+// mean_whisker.
+static void agg_merge(Agg* d, const Agg* s) {
+    double* a = (double*)d; const double* b = (const double*)s;
+    for (size_t i = 0; i < sizeof(Agg) / sizeof(double); i++) a[i] += b[i];
+}
 
 // ------------------------------------------------------------------ config -
 typedef struct {
@@ -90,6 +76,8 @@ typedef struct {
     const char* dump_prefix;
     const char* record_prefix;
     int record_episodes;
+    const char* policy_path;
+    Policy* policy;          // loaded once in main, read-only in workers
     // env config, mirrored from config/race.ini defaults
     int width, height, track_width, num_radial_sectors, num_points;
     int bezier_resolution, frameskip, method;
@@ -207,6 +195,7 @@ static void* worker(void* arg) {
         // env's streams, so swapping policies cannot change track geometry.
         bot_init(&bot, bot_kind, cfg->epsilon, (uint64_t)cfg->seed,
                  0x9E3779B9ull * (uint64_t)(bot_kind + 1) + (uint64_t)env_idx);
+        bot.policy = cfg->policy;   // shared, inference is read-only
 
         c_reset(&env);
         uint64_t h = race_hash_begin(&env);
@@ -223,11 +212,13 @@ static void* worker(void* arg) {
         }
 
         for (int ep = 0; ep < cfg->episodes; ep++) {
-            double ret = 0, dist_sum = 0, dist_max = 0, min_whisk = 1.0;
-            int steps = 0, reversals = 0, straights = 0, prev_turn = NOOP;
-            int first_crash = -1;
+            double ret = 0, dist_sum = 0, dist_max = 0, min_whisk = 1.0, whisk_sum = 0;
+            int steps = 0, reversals = 0, prev_turn = NOOP;
+            int act_count[3] = {0, 0, 0};
+            int first_crash = -1, first_lap_step = -1;
             int visited[RACE_MAX_SECTORS] = {0};
             int start_episode = env.episode_id;
+            int S = cfg->num_radial_sectors;
 
             while (env.episode_id == start_episode) {
                 int a = bot_act(&bot, &env);
@@ -251,10 +242,11 @@ static void* worker(void* arg) {
                 if (d > dist_max) dist_max = d;
                 double mw = env.flw_length < env.frw_length ? env.flw_length : env.frw_length;
                 if (mw < min_whisk) min_whisk = mw;
+                whisk_sum += 0.5 * (env.flw_length + env.frw_length);
                 if (env.current_sector >= 0 && env.current_sector < RACE_MAX_SECTORS) {
                     visited[env.current_sector] = 1;
                 }
-                if (a == NOOP) straights++;
+                if (a >= 0 && a < 3) act_count[a]++;
                 if ((a == LEFT && prev_turn == RIGHT) || (a == RIGHT && prev_turn == LEFT)) {
                     reversals++;
                 }
@@ -279,6 +271,10 @@ static void* worker(void* arg) {
                     job->records_written++;
                 }
 
+                // Completion time: steps to finish one full lap. Only counted
+                // over episodes that actually managed a lap, so it is not
+                // silently inflated by episodes that crashed early.
+                if (first_lap_step < 0 && env.sector_crossings >= S) first_lap_step = steps;
                 if (env.terminated && first_crash < 0) first_crash = steps;
                 if (env.terminated || env.truncated) break;
             }
@@ -287,19 +283,30 @@ static void* worker(void* arg) {
             // delta rather than the (now reset) live fields.
             int crashed = (first_crash >= 0);
             int cov = 0;
-            for (int i = 0; i < cfg->num_radial_sectors; i++) cov += visited[i];
-
+            for (int i = 0; i < S; i++) cov += visited[i];
             double crossings = ret / (cfg->reward_yellow > 0 ? cfg->reward_yellow : 1.0);
-            agg_add(&job->agg[bot_slot], ret, steps,
-                    crossings / (double)cfg->num_radial_sectors, crossings,
-                    crashed ? 1 : 0,
-                    0, 0,             /* cause split filled from log below */
-                    crashed ? 0 : 1,
-                    steps ? dist_sum / steps : 0, dist_max, min_whisk,
-                    steps ? (double)reversals / steps : 0,
-                    steps ? (double)straights / steps : 0,
-                    (double)cov / cfg->num_radial_sectors,
-                    crashed ? first_crash : cfg->max_steps);
+            double inv = steps ? 1.0 / steps : 0.0;
+
+            Agg* g = &job->agg[bot_slot];
+            g->n += 1;
+            g->ret += ret;
+            g->len += steps;
+            g->survived += crashed ? 0 : 1;
+            g->crashed += crashed ? 1 : 0;
+            g->steps_to_crash += crashed ? first_crash : cfg->max_steps;
+            g->laps += crossings / (double)S;
+            g->crossings += crossings;
+            g->sectors_per_100 += crossings * inv * 100.0;
+            if (first_lap_step >= 0) { g->steps_to_first_lap += first_lap_step; g->lap1_count += 1; }
+            g->coverage += (double)cov / S;
+            g->idle_frac += act_count[NOOP] * inv;
+            g->left_frac += act_count[LEFT] * inv;
+            g->right_frac += act_count[RIGHT] * inv;
+            g->reversal_rate += reversals * inv;
+            g->dist_mean += dist_sum * inv;
+            g->dist_max += dist_max;
+            g->min_whisker += min_whisk;
+            g->mean_whisker += whisk_sum * inv;
         }
 
         // Cause-of-death split comes from the env log, which c_step maintains.
@@ -373,6 +380,7 @@ static void usage(void) {
         "  --threads N      worker threads (default 8); never affects results\n"
         "  --dump PREFIX    write transition shards to PREFIX.NNN.bin\n"
         "  --hash           print per-(bot,track) trajectory hashes and exit\n"
+        "  --policy FILE    load a .rpo policy; enables the `policy` bot name\n"
         "  --record PREFIX  write replays to PREFIX.<bot>.<track>.rr\n"
         "  --record-episodes N   episodes per replay (default 1)\n"
         "  --json PATH      write metrics as JSON (default: stdout table)\n");
@@ -383,6 +391,7 @@ int main(int argc, char** argv) {
         .seed = 42, .tracks = 32, .track_start = 0, .episodes = 10, .max_steps = 2000,
         .threads = 8, .epsilon = 0.0f, .dump_prefix = NULL,
         .record_prefix = NULL, .record_episodes = 1,
+        .policy_path = NULL, .policy = NULL,
         .width = 1080, .height = 720, .track_width = 75,
         .num_radial_sectors = 16, .num_points = 16, .bezier_resolution = 4,
         .frameskip = 4, .method = 2,
@@ -406,6 +415,7 @@ int main(int argc, char** argv) {
         else if (!strcmp(a, "--threads"))   cfg.threads = atoi(NEXT());
         else if (!strcmp(a, "--dump"))      cfg.dump_prefix = NEXT();
         else if (!strcmp(a, "--record"))    cfg.record_prefix = NEXT();
+        else if (!strcmp(a, "--policy"))    cfg.policy_path = NEXT();
         else if (!strcmp(a, "--record-episodes")) cfg.record_episodes = atoi(NEXT());
         else if (!strcmp(a, "--json"))      json_path = NEXT();
         else if (!strcmp(a, "--sectors"))   cfg.num_radial_sectors = atoi(NEXT());
@@ -426,6 +436,21 @@ int main(int argc, char** argv) {
     if (cfg.n_bots == 0) { usage(); return 1; }
     if (cfg.threads < 1) cfg.threads = 1;
     if (cfg.threads > MAX_THREADS) cfg.threads = MAX_THREADS;
+
+    // Load before threads start; policy_act only reads, so one copy is shared.
+    Policy pol;
+    if (cfg.policy_path) {
+        if (policy_load(&pol, cfg.policy_path) != 0) return 1;
+        cfg.policy = &pol;
+        fprintf(stderr, "loaded policy %s (%u layers, obs %u -> act %u)\n",
+                cfg.policy_path, pol.h.n_layers, pol.h.obs_dim, pol.h.act_dim);
+    }
+    for (int b = 0; b < cfg.n_bots; b++) {
+        if (cfg.bots[b] == BOT_POLICY && !cfg.policy) {
+            fprintf(stderr, "bot `policy` requires --policy FILE\n");
+            return 1;
+        }
+    }
 
     int n_jobs = cfg.n_bots * cfg.tracks;
     if (cfg.threads > n_jobs) cfg.threads = n_jobs;
@@ -475,48 +500,77 @@ int main(int argc, char** argv) {
         if (!out) { fprintf(stderr, "cannot write %s\n", json_path); return 1; }
     }
 
+    // Every rate is a per-episode mean, so divide once here.
+    #define AVG(f) (g->f / (g->n > 0 ? g->n : 1))
+
     if (json_path) {
-        fprintf(out, "{\n  \"seed\": %u,\n  \"tracks\": %d,\n  \"track_start\": %d,\n  \"episodes\": %d,\n"
-                     "  \"max_steps\": %d,\n  \"epsilon\": %g,\n"
+        fprintf(out, "{\n  \"seed\": %u,\n  \"tracks\": %d,\n  \"track_start\": %d,\n"
+                     "  \"episodes\": %d,\n  \"max_steps\": %d,\n  \"epsilon\": %g,\n"
                      "  \"state_version\": %d,\n  \"obs_dim\": %d,\n  \"bots\": {\n",
-                cfg.seed, cfg.tracks, cfg.track_start, cfg.episodes, cfg.max_steps, cfg.epsilon,
-                RACE_STATE_VERSION, RACE_OBS_SIZE);
+                cfg.seed, cfg.tracks, cfg.track_start, cfg.episodes, cfg.max_steps,
+                cfg.epsilon, RACE_STATE_VERSION, RACE_OBS_SIZE);
         for (int b = 0; b < cfg.n_bots; b++) {
             Agg* g = &total[b];
-            double n = g->n > 0 ? g->n : 1;
+            double lap1 = g->lap1_count > 0 ? g->steps_to_first_lap / g->lap1_count : -1;
             fprintf(out,
-                "    \"%s\": {\"episodes\": %.0f, \"return\": %.4f, \"length\": %.2f,\n"
-                "      \"laps\": %.4f, \"sector_crossings\": %.2f, \"crash_rate\": %.4f,\n"
-                "      \"survival_rate\": %.4f, \"track_coverage\": %.4f,\n"
-                "      \"mean_dist_centerline\": %.3f, \"max_dist_centerline\": %.3f,\n"
-                "      \"min_whisker\": %.4f, \"steer_reversal_rate\": %.4f,\n"
-                "      \"straight_frac\": %.4f, \"steps_to_crash\": %.2f}%s\n",
-                BOT_NAMES[cfg.bots[b]], g->n, g->ret / n, g->len / n,
-                g->laps / n, g->crossings / n, g->crash / n, g->trunc / n,
-                g->coverage / n, g->dist_mean / n, g->dist_max / n,
-                g->min_whisker / n, g->reversal_rate / n, g->straight_frac / n,
-                g->first_crash_step / n,
+                "    \"%s\": {\n"
+                "      \"outcome\":  {\"episodes\": %.0f, \"return\": %.4f, \"length\": %.2f, \"survival_rate\": %.4f},\n"
+                "      \"failure\":  {\"crash_rate\": %.4f, \"wall\": %.4f, \"offtrack\": %.4f, \"steps_to_crash\": %.2f},\n"
+                "      \"progress\": {\"laps\": %.4f, \"sector_crossings\": %.2f, \"sectors_per_100_steps\": %.3f, \"steps_to_first_lap\": %.2f, \"lap_completion_rate\": %.4f, \"track_coverage\": %.4f},\n"
+                "      \"control\":  {\"idle_frac\": %.4f, \"left_frac\": %.4f, \"right_frac\": %.4f, \"reversal_rate\": %.4f},\n"
+                "      \"safety\":   {\"mean_dist_centerline\": %.3f, \"max_dist_centerline\": %.3f, \"min_whisker\": %.4f, \"mean_whisker\": %.4f}\n"
+                "    }%s\n",
+                BOT_NAMES[cfg.bots[b]],
+                g->n, AVG(ret), AVG(len), AVG(survived),
+                AVG(crashed), AVG(wall), AVG(offtrack), AVG(steps_to_crash),
+                AVG(laps), AVG(crossings), AVG(sectors_per_100), lap1,
+                g->lap1_count / (g->n > 0 ? g->n : 1), AVG(coverage),
+                AVG(idle_frac), AVG(left_frac), AVG(right_frac), AVG(reversal_rate),
+                AVG(dist_mean), AVG(dist_max), AVG(min_whisker), AVG(mean_whisker),
                 (b + 1 < cfg.n_bots) ? "," : "");
         }
         fprintf(out, "  },\n  \"records_written\": %ld\n}\n", total_records);
         fclose(out);
         fprintf(stderr, "wrote %s\n", json_path);
     } else {
-        printf("Race eval  seed=%u tracks=%d episodes=%d max_steps=%d eps=%g\n",
-               cfg.seed, cfg.tracks, cfg.episodes, cfg.max_steps, cfg.epsilon);
-        printf("%-12s %7s %8s %8s %7s %7s %8s %8s %8s %8s\n",
-               "bot", "eps", "return", "length", "laps", "crash", "cover",
-               "dist", "revrs", "minwhk");
-        for (int b = 0; b < cfg.n_bots; b++) {
-            Agg* g = &total[b];
-            double n = g->n > 0 ? g->n : 1;
-            printf("%-12s %7.0f %8.3f %8.1f %7.3f %7.3f %8.3f %8.2f %8.3f %8.3f\n",
-                   BOT_NAMES[cfg.bots[b]], g->n, g->ret / n, g->len / n,
-                   g->laps / n, g->crash / n, g->coverage / n,
-                   g->dist_mean / n, g->reversal_rate / n, g->min_whisker / n);
-        }
-        if (total_records) printf("\ntransitions written: %ld\n", total_records);
+        printf("Race eval   seed=%u  tracks=%d..%d  episodes=%d  max_steps=%d  eps=%g\n",
+               cfg.seed, cfg.track_start, cfg.track_start + cfg.tracks - 1,
+               cfg.episodes, cfg.max_steps, cfg.epsilon);
+
+        // Five groups, printed as separate blocks. Reading a smoothness number
+        // off the same row as an outcome number invites comparing things that
+        // are not comparable.
+        printf("\n  OUTCOME                     eps    return    length  survive%%\n");
+        for (int b = 0; b < cfg.n_bots; b++) { Agg* g = &total[b];
+            printf("    %-14s %11.0f %9.3f %9.1f %9.1f\n", BOT_NAMES[cfg.bots[b]],
+                   g->n, AVG(ret), AVG(len), 100*AVG(survived)); }
+
+        printf("\n  FAILURE                  crash%%     wall%%  offtrack%%  steps2crash\n");
+        for (int b = 0; b < cfg.n_bots; b++) { Agg* g = &total[b];
+            printf("    %-14s %10.1f %9.1f %10.1f %12.1f\n", BOT_NAMES[cfg.bots[b]],
+                   100*AVG(crashed), 100*AVG(wall), 100*AVG(offtrack), AVG(steps_to_crash)); }
+
+        printf("\n  PROGRESS                   laps  sect/100  lap1_steps   lap%%   coverage\n");
+        for (int b = 0; b < cfg.n_bots; b++) { Agg* g = &total[b];
+            double lap1 = g->lap1_count > 0 ? g->steps_to_first_lap / g->lap1_count : 0;
+            printf("    %-14s %10.3f %9.2f %11s %6.1f %10.3f\n", BOT_NAMES[cfg.bots[b]],
+                   AVG(laps), AVG(sectors_per_100),
+                   g->lap1_count > 0 ? (snprintf(NULL,0,"%.0f",lap1), ({ static char buf[8][16]; snprintf(buf[b],16,"%.0f",lap1); buf[b]; })) : "-",
+                   100*g->lap1_count/(g->n>0?g->n:1), AVG(coverage)); }
+
+        printf("\n  CONTROL                   idle%%     left%%     right%%  reversals\n");
+        for (int b = 0; b < cfg.n_bots; b++) { Agg* g = &total[b];
+            printf("    %-14s %10.1f %9.1f %10.1f %10.3f\n", BOT_NAMES[cfg.bots[b]],
+                   100*AVG(idle_frac), 100*AVG(left_frac), 100*AVG(right_frac), AVG(reversal_rate)); }
+
+        printf("\n  SAFETY                 dist_avg  dist_max  whisk_min  whisk_avg\n");
+        for (int b = 0; b < cfg.n_bots; b++) { Agg* g = &total[b];
+            printf("    %-14s %10.2f %9.2f %10.3f %10.3f\n", BOT_NAMES[cfg.bots[b]],
+                   AVG(dist_mean), AVG(dist_max), AVG(min_whisker), AVG(mean_whisker)); }
+
+        if (total_records) printf("\n  transitions written: %ld\n", total_records);
     }
+    #undef AVG
 
     free(aggs); free(total); free(hashes);
     return 0;
