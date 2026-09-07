@@ -1,0 +1,169 @@
+"""Planning with the learned world model: exhaustive search vs Gumbel MCTS.
+
+Both plan over the SAME model and the same horizon, so the comparison isolates
+the search procedure rather than the model.
+
+Why these two:
+
+  Exhaustive to depth d. With |A| = 3 this is 3^d leaves -- 243 at d=5, 2187 at
+  d=7. Batched on a GPU-shaped tensor that is nothing. If the tree is small
+  enough to enumerate, MCTS is strictly extra machinery, and the honest thing
+  is to check whether it buys anything before adopting it.
+
+  Gumbel MuZero (Danihelka et al., ICLR 2022). Vanilla MCTS selects by visit
+  counts, which has no policy-improvement guarantee at small simulation budgets
+  -- exactly the regime worth running here. Gumbel top-k sampling plus
+  sequential halving restores the guarantee at n = 2..16 simulations.
+
+Both truncate at the horizon with a learned value, following the whole modern
+line (MuZero, TD-MPC2, Dreamer): plan short, bootstrap the rest. Our own
+measurement says the model is trustworthy to ~20 steps, so planning deeper than
+that would be planning through error.
+"""
+from __future__ import annotations
+
+import math
+
+import numpy as np
+import torch
+
+from . import contract, geometry, model as M
+
+A = contract.NUM_ACTIONS
+
+
+class WorldModelSim:
+    """Batched differentiable-free simulator: (states, actions) -> next states."""
+
+    def __init__(self, net, bank, x_mu, x_sd, y_mu, y_sd, reward_fn=None):
+        self.net, self.bank = net, bank
+        self.x_mu, self.x_sd, self.y_mu, self.y_sd = x_mu, x_sd, y_mu, y_sd
+        self.reward_fn = reward_fn or default_reward
+
+    @torch.no_grad()
+    def step(self, s, slots, a_idx):
+        n = len(s)
+        a = torch.zeros(n, A, device=s.device)
+        a[torch.arange(n, device=s.device), a_idx] = 1.0
+        g = self.bank.local_window(s, slots)
+        x = torch.cat([s, a, g], dim=1)
+        delta = self.net((x - self.x_mu) / self.x_sd) * self.y_sd + self.y_mu
+        s2 = M.project_state(s + delta)
+        return s2, self.reward_fn(s, s2)
+
+
+def default_reward(s, s2):
+    """Reward the env actually pays, read off the predicted state.
+
+    The env grants reward_yellow per forward sector crossing, and score_norm is
+    a running sum of exactly that, so its increase is the reward. A crash is
+    read as both whiskers collapsing to zero, which is what step_frame writes.
+    """
+    i = contract.INDEX
+    progress = (s2[:, i["score_norm"]] - s[:, i["score_norm"]]) * 100.0
+    crashed = ((s2[:, i["flw_length"]] < 1e-3) & (s2[:, i["frw_length"]] < 1e-3)).float()
+    return progress - 5.0 * crashed
+
+
+@torch.no_grad()
+def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97):
+    """Enumerate every action sequence to `depth`; return the best first action.
+
+    Batched over B x A^depth: the whole tree is one wide tensor, so cost is
+    depth forward passes, not A^depth of them.
+    """
+    B = len(s)
+    n_leaves = A ** depth
+    states = s.repeat_interleave(n_leaves, 0)
+    sl = slots.repeat_interleave(n_leaves, 0)
+    ret = torch.zeros(B * n_leaves, device=s.device)
+
+    for d in range(depth):
+        block = A ** (depth - d - 1)
+        acts = (torch.arange(n_leaves, device=s.device) // block) % A
+        acts = acts.repeat(B)
+        states, r = sim.step(states, sl, acts)
+        ret += (gamma ** d) * r
+
+    if value_fn is not None:
+        ret += (gamma ** depth) * value_fn(states)
+
+    ret = ret.view(B, A, n_leaves // A).max(dim=2).values     # best per first action
+    return ret.argmax(dim=1), ret
+
+
+@torch.no_grad()
+def plan_gumbel(sim, s, slots, depth, n_sims=16, value_fn=None, gamma=0.97,
+                prior_logits=None, seed=None, c_visit=50.0, c_scale=1.0):
+    """Gumbel action selection with sequential halving.
+
+    Root actions are scored by Gumbel-perturbed logits plus their simulated
+    value; the candidate set is halved each phase and the surviving actions get
+    the freed simulations. With |A|=3 this reduces to a careful budget split,
+    which is the point -- it shows what MCTS machinery is actually worth here.
+    """
+    B = len(s)
+    dev = s.device
+    g = torch.Generator(device="cpu")
+    if seed is not None:
+        g.manual_seed(seed)
+
+    logits = (torch.zeros(B, A, device=dev) if prior_logits is None
+              else prior_logits.to(dev))
+    gumbel = -torch.log(-torch.log(
+        torch.rand(B, A, generator=g).clamp_min(1e-20))).clamp_min(1e-20).to(dev)
+
+    q = torch.zeros(B, A, device=dev)
+    counts = torch.zeros(B, A, device=dev)
+
+    candidates = torch.arange(A, device=dev).expand(B, A).clone()
+    m = A
+    phases = max(1, int(math.ceil(math.log2(A))))
+    per_phase = max(1, n_sims // phases)
+
+    while m > 1:
+        sims_each = max(1, per_phase // m)
+        for _ in range(sims_each):
+            for c in range(m):
+                a0 = candidates[:, c]
+                s1, r = sim.step(s, slots, a0)
+                ret = r.clone()
+                st = s1
+                for d in range(1, depth):
+                    # Random continuation past the first action: with |A|=3 and
+                    # a short horizon this is a cheap unbiased rollout, and it
+                    # keeps the comparison against exhaustive honest.
+                    ra = torch.randint(0, A, (B,), generator=g).to(dev)
+                    st, rr = sim.step(st, slots, ra)
+                    ret += (gamma ** d) * rr
+                if value_fn is not None:
+                    ret += (gamma ** depth) * value_fn(st)
+                idx = (torch.arange(B, device=dev), a0)
+                counts[idx] += 1
+                q[idx] += (ret - q[idx]) / counts[idx]
+
+        m = max(1, m // 2)
+        sigma = (c_visit + counts.max(dim=1, keepdim=True).values) * c_scale * q
+        score = logits + gumbel + sigma
+        score = score.scatter(1, candidates, score.gather(1, candidates))
+        candidates = score.topk(m, dim=1).indices
+
+    return candidates[:, 0], q
+
+
+class GreedyPolicyValue:
+    """Value head standing in for a learned critic: how much progress remains.
+
+    Real experiments should swap in a trained critic. This exists so the search
+    comparison can run before the Dreamer critic is available, and it is
+    deliberately simple so nothing subtle hides in it.
+    """
+
+    def __init__(self, weight: float = 20.0):
+        self.weight = weight
+
+    def __call__(self, s):
+        i = contract.INDEX
+        alive = ((s[:, i["flw_length"]] > 1e-3) | (s[:, i["frw_length"]] > 1e-3)).float()
+        clearance = 0.5 * (s[:, i["flw_length"]] + s[:, i["frw_length"]])
+        return self.weight * alive * clearance

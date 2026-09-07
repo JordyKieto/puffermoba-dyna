@@ -39,21 +39,40 @@ class DeltaMLP(nn.Module):
         return self.net(x)
 
 
+_CLAMP_CACHE: dict = {}
+
+
+def _clamp_mask(device, dtype):
+    """Boolean row mask marking dimensions that live in [0, 1]."""
+    key = (str(device), dtype)
+    if key not in _CLAMP_CACHE:
+        m = torch.zeros(contract.OBS_SIZE, dtype=torch.bool, device=device)
+        for i in UNIT_DIMS + BINARY_DIMS:
+            m[i] = True
+        _CLAMP_CACHE[key] = m
+    return _CLAMP_CACHE[key]
+
+
 def project_state(s: torch.Tensor) -> torch.Tensor:
     """Push a predicted state back onto the manifold the contract defines.
 
-    Without this, rollouts drift off the valid set within a few steps: the
-    sin/cos pairs stop having unit norm and the model's own encoding of heading
-    becomes meaningless, which compounds every subsequent step.
+    Without this, rollouts leave the valid set within a few steps: the sin/cos
+    pairs stop having unit norm, so the model's own encoding of heading becomes
+    meaningless and every later step compounds it.
+
+    Written without in-place writes. The obvious version (`s = s.clone()` then
+    assigning column slices in a loop) works for a single forward pass but
+    breaks autograd when the model is unrolled, because the repeated slice
+    assignments bump the tensor's version counter between forward and backward.
     """
-    s = s.clone()
+    scale = torch.ones_like(s)
     for i, j in contract.ANGLE_PAIRS:
         n = torch.sqrt(s[:, i] ** 2 + s[:, j] ** 2).clamp_min(1e-6)
-        s[:, i] = s[:, i] / n
-        s[:, j] = s[:, j] / n
-    s[:, UNIT_DIMS] = s[:, UNIT_DIMS].clamp(0.0, 1.0)
-    s[:, BINARY_DIMS] = s[:, BINARY_DIMS].clamp(0.0, 1.0)
-    return s
+        idx = torch.tensor([i, j], device=s.device)
+        scale = scale.index_copy(1, idx, torch.stack([n, n], dim=1))
+    out = s / scale
+    m = _clamp_mask(s.device, s.dtype)
+    return torch.where(m, out.clamp(0.0, 1.0), out)
 
 
 # ------------------------------------------------------------------ baselines
