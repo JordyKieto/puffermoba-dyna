@@ -919,40 +919,55 @@ Already visible here: past ~25 updates J_R keeps climbing (0.265 → 0.314) whil
 real performance plateaus at 3.2-3.8. The meta-objective and reality decouple
 at the top end.
 
-### With a competent student, the teacher exploits the examiner
+### With a competent student: no teaching effect, and a decoupling worth watching
 
 warm=25, K=3, guards on, online audit every 10 meta-steps:
 
 | meta-step | J_R (the objective) | REAL holdout | REAL train |
 |---|---|---|---|
-| 0 | 0.2684 | **3.489** | 3.888 |
+| 0 | 0.2684 | 3.489 | 3.888 |
 | 10 | 0.2728 | 3.413 | 3.772 |
 | 20 | 0.2794 | 3.023 | 3.528 |
-| 30 | **0.2808 (+4.6%)** | **3.167 (−9.2%)** | 3.634 |
+| 30 | 0.2808 | 3.167 | 3.634 |
+| 39 | 0.2786 | **3.426** | 3.871 |
 
-warm=50 shows the same: J_R 0.2890 → 0.2752, real 3.195 → 3.122.
+warm=50: J_R 0.2890 → 0.2864, real 3.195 → 3.110.
 
-**J_R rises monotonically while real behaviour falls.** The meta-objective and
-reality move in opposite directions.
+**Finding: no teaching effect.** J_R drifts up ~4% while real return ends
+essentially where it started (3.489 → 3.426, −1.8%) after ranging 3.02–3.49.
+Both are inside run-to-run noise.
+
+**A correction, and the reason it is recorded here.** An earlier reading of
+this table stopped at step 30 and reported "J_R rises +4.6% while real
+behaviour falls −9.2%" — exploitation of the frozen examiner. Step 39 recovered
+to 3.426 and the claim did not survive. The dip was noise, read as a trend
+because it matched an expected failure mode. Two checkpoints are not a
+direction; this is the same premature-headline error rule 11 exists to prevent,
+appearing in a different form.
+
+What can be said: over 40 meta-steps, optimizing the teacher moved J_R slightly
+up and real behaviour not at all. Whether the two genuinely decouple needs more
+meta-steps and multiple seeds — and the probe's observation that J_R keeps
+climbing past 25 student updates (0.265 → 0.314) while real return plateaus at
+3.2–3.8 is independent evidence that they can.
 
 ### Conclusion
 
-This is exploitation of the *frozen reference world*, and it appears precisely
-when the setup becomes capable of answering the question. In E17 the gains
-transferred directionally only because the student was below random — there was
-nothing to exploit. Give the teacher a competent student and real headroom, and
-`argmax_{M_T} J_{M_R}(...)` immediately starts optimizing M_R's errors instead
-of the student's competence.
+The method now works: verified second-order gradient, memory bounded by the
+graph window rather than student competence, a student that reaches 3.4-3.8
+real return before the teacher is asked to improve it, and an online audit in
+the loop.
 
-**A frozen neural examiner is not a safe optimization target.** The authoritative
-environment cannot be an occasional audit; it has to be in the objective, or the
-objective needs an explicit defence against the examiner's failure modes —
-an ensemble of reference worlds, a trust region on M_T, or a disagreement
-penalty in the MOPO/MOReL sense.
+**The teacher does not yet teach.** 40 meta-steps produced no behavioural gain.
+That is a null result at this budget, not a refutation — the teacher drifts only
+0.75% from M_R over the run, so it has barely explored.
 
-Worth noting how this was caught: the meta-objective looked healthy and
-monotone the entire time. Without the real-environment audit in the loop, this
-run would have been written up as a success.
+The open question is unchanged and now well-posed: does optimizing a teacher
+world improve a *competent* student's real-world behaviour? The apparatus to
+answer it exists; what it needs is meta-steps and seeds, plus a defence against
+examiner exploitation (an ensemble of reference worlds, a trust region on M_T,
+or a disagreement penalty) before the teacher drifts far enough for that to
+bite.
 
 ---
 

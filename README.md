@@ -138,14 +138,13 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 - **Model exploitation did not appear.** Diagnosed twice, wrong twice: a GAE
   time-limit bug, then a track-set mismatch. The dream is 0.94x *pessimistic*
   on return, and a policy cannot exploit a model that underestimates it.
-- **A frozen neural examiner is not a safe optimisation target.** Optimising a
-  mutable "teacher world" so the policy it teaches scores well in a frozen
-  reference world works mechanically — verified second-order gradient, bounded
-  memory via truncated BPTT. But once the student is competent enough for the
-  teacher to matter, the meta-objective rises **+4.6%** while real behaviour
-  falls **−9.2%**: it optimises the examiner's errors, not competence. The
-  authoritative environment has to be in the objective, not an occasional
-  audit.
+- **A bilevel "teacher world" runs, but does not yet teach.** Optimising a
+  mutable world so the policy it teaches scores well in a frozen reference
+  world works mechanically — verified second-order gradient, memory bounded by
+  truncated BPTT, and a student that reaches 3.4–3.8 real return before the
+  teacher is asked to improve it. Over 40 meta-steps the meta-objective drifts
+  up ~4% and real behaviour does not move. A null result at this budget, with
+  the apparatus in place to push it further.
 - **Accurate dynamics imply neither a good planner nor a good representation.**
   Search through the model never beat following the policy, and the best world
   model made the worst backbone for control.
