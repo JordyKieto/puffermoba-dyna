@@ -42,6 +42,7 @@ class Corpus:
     next_obs: np.ndarray   # (N, 30) float32  s_{t+1}
     env_idx: np.ndarray    # (N,)   int32   track id
     slice_id: np.ndarray   # (N,)   int8    index into SLICES
+    done: np.ndarray       # (N,)   bool    terminal at s_t (next_obs is a stub)
     geom: np.ndarray | None  # (N, 44) float32 ego-frame local track geometry
     header: dict
     schema_hash: str
@@ -78,7 +79,7 @@ class Corpus:
         return Corpus(
             obs=self.obs[m], action=self.action[m], reward=self.reward[m],
             next_obs=self.next_obs[m], env_idx=self.env_idx[m],
-            slice_id=self.slice_id[m],
+            slice_id=self.slice_id[m], done=self.done[m],
             geom=None if self.geom is None else self.geom[m],
             header=self.header, schema_hash=self.schema_hash, split=self.split)
 
@@ -96,7 +97,7 @@ def _local_geometry(obs, env_idx, tracks, hdr) -> np.ndarray:
 
 def load_split(corpus_dir: str | Path, split: str, slices=SLICES,
                with_geometry: bool = True, max_rows: int | None = None,
-               seed: int = 0) -> Corpus:
+               seed: int = 0, include_terminal: bool = False) -> Corpus:
     """Load one split. Splits live in separate files over disjoint track
     ranges (see tools/make_dataset.sh), so this cannot accidentally mix them."""
     d = Path(corpus_dir)
@@ -108,7 +109,7 @@ def load_split(corpus_dir: str | Path, split: str, slices=SLICES,
         if name not in slices:
             continue
         try:
-            tr = shards.load(str(d / f"{split}_{name}.*.bin"))
+            tr = shards.load(str(d / f"{split}_{name}.*.bin"), include_terminal)
         except FileNotFoundError:
             continue
         parts.append(tr)
@@ -121,14 +122,15 @@ def load_split(corpus_dir: str | Path, split: str, slices=SLICES,
     reward = np.concatenate([p.reward for p in parts])
     next_obs = np.concatenate([p.next_obs for p in parts])
     env_idx = np.concatenate([p.env_idx for p in parts])
+    done = np.concatenate([p.done for p in parts])
     slice_id = np.concatenate(ids)
 
     if max_rows is not None and len(obs) > max_rows:
         keep = np.random.default_rng(seed).choice(len(obs), max_rows, replace=False)
         keep.sort()
-        obs, action, reward, next_obs, env_idx, slice_id = (
+        obs, action, reward, next_obs, env_idx, slice_id, done = (
             obs[keep], action[keep], reward[keep], next_obs[keep],
-            env_idx[keep], slice_id[keep])
+            env_idx[keep], slice_id[keep], done[keep])
 
     hdr = shards.read_header(shards._shard_paths(str(d / f"{split}_*.bin"))[0])
     geom = None
@@ -137,8 +139,8 @@ def load_split(corpus_dir: str | Path, split: str, slices=SLICES,
         geom = _local_geometry(obs, env_idx, tracks, hdr)
 
     return Corpus(obs=obs, action=action, reward=reward, next_obs=next_obs,
-                  env_idx=env_idx, slice_id=slice_id, geom=geom, header=hdr,
-                  schema_hash=contract.schema_hash(), split=split)
+                  env_idx=env_idx, slice_id=slice_id, done=done, geom=geom,
+                  header=hdr, schema_hash=contract.schema_hash(), split=split)
 
 
 def load_manifest(corpus_dir: str | Path) -> dict:

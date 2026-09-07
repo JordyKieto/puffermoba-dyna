@@ -57,6 +57,9 @@ def main():
     ap.add_argument("--wandb", action="store_true")
     ap.add_argument("--eval", action="store_true", help="online eval on holdout after training")
     ap.add_argument("--eval-episodes", type=int, default=100)
+    ap.add_argument("--real-budget", type=int, default=None,
+                    help="cap on real transitions, for sample-efficiency studies")
+    ap.add_argument("--json-out", default=None)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
@@ -67,7 +70,8 @@ def main():
     dataset.assert_disjoint(args.corpus)
     man = dataset.load_manifest(args.corpus)
     train = dataset.load_split(args.corpus, "train", slices=slices,
-                               with_geometry=args.privileged)
+                               with_geometry=args.privileged,
+                               max_rows=args.real_budget, seed=args.seed)
     val = dataset.load_split(args.corpus, "val", slices=slices,
                              with_geometry=args.privileged)
     print(f"BC on {slices}  train {len(train):,}  val {len(val):,}")
@@ -144,14 +148,17 @@ def main():
             h = man["splits"]["holdout"]
             print(f"\nonline eval on HOLDOUT tracks {h['track_start']}.."
                   f"{h['track_start']+h['n_tracks']-1}, {args.eval_episodes} episodes/track\n")
-            subprocess.run([
+            cmd = [
                 "./build/race_eval", "--bots", "policy,centerline,whisker,random",
                 "--policy", str(out), "--tracks", str(h["n_tracks"]),
                 "--track-start", str(h["track_start"]),
                 "--episodes", str(args.eval_episodes), "--threads", "10",
                 "--frameskip", str(man["frameskip"]),
                 "--max-steps", str(man["max_episode_steps"]),
-            ], check=False)
+            ]
+            if args.json_out:
+                cmd += ["--json", args.json_out]
+            subprocess.run(cmd, check=False)
     trk.finish()
 
 

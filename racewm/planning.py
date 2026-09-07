@@ -33,36 +33,68 @@ A = contract.NUM_ACTIONS
 
 
 class WorldModelSim:
-    """Batched differentiable-free simulator: (states, actions) -> next states."""
+    """Batched simulator over the learned model: (states, actions) -> next states.
 
-    def __init__(self, net, bank, x_mu, x_sd, y_mu, y_sd, reward_fn=None):
+    Termination comes from a learned head, not from a threshold on the
+    predicted state. The crash state is never observable -- c_step zeroes the
+    whiskers and resets before computing observations -- so the corpus contains
+    no state with a whisker below 0.05, and any threshold read off a predicted
+    state is measuring the model's extrapolation rather than a crash. See
+    racewm/train_termination.py.
+    """
+
+    def __init__(self, net, bank, x_mu, x_sd, y_mu, y_sd,
+                 term_head=None, term_mu=None, term_sd=None,
+                 crash_penalty: float = 5.0):
         self.net, self.bank = net, bank
         self.x_mu, self.x_sd, self.y_mu, self.y_sd = x_mu, x_sd, y_mu, y_sd
-        self.reward_fn = reward_fn or default_reward
+        self.term_head = term_head
+        self.term_mu = term_mu if term_mu is not None else x_mu
+        self.term_sd = term_sd if term_sd is not None else x_sd
+        self.crash_penalty = crash_penalty
 
     @torch.no_grad()
     def step(self, s, slots, a_idx):
+        """Returns (next_state, reward, p_terminate)."""
         n = len(s)
         a = torch.zeros(n, A, device=s.device)
         a[torch.arange(n, device=s.device), a_idx] = 1.0
         g = self.bank.local_window(s, slots)
         x = torch.cat([s, a, g], dim=1)
+
         delta = self.net((x - self.x_mu) / self.x_sd) * self.y_sd + self.y_mu
         s2 = M.project_state(s + delta)
-        return s2, self.reward_fn(s, s2)
+
+        if self.term_head is not None:
+            p_term = torch.sigmoid(self.term_head((x - self.term_mu) / self.term_sd))
+        else:
+            p_term = torch.zeros(n, device=s.device)
+
+        i = contract.INDEX
+        progress = (s2[:, i["score_norm"]] - s[:, i["score_norm"]]) * 100.0
+        reward = progress - self.crash_penalty * p_term
+        return s2, reward, p_term
 
 
-def default_reward(s, s2):
-    """Reward the env actually pays, read off the predicted state.
+def load_sim(wm_path, term_path, bank, x_mu, x_sd, y_mu, y_sd, device="cpu"):
+    """Assemble a simulator from a world-model and termination checkpoint."""
+    import torch as _t
+    from . import geometry as _geo
+    from .train_termination import TerminationHead
 
-    The env grants reward_yellow per forward sector crossing, and score_norm is
-    a running sum of exactly that, so its increase is the reward. A crash is
-    read as both whiskers collapsing to zero, which is what step_frame writes.
-    """
-    i = contract.INDEX
-    progress = (s2[:, i["score_norm"]] - s[:, i["score_norm"]]) * 100.0
-    crashed = ((s2[:, i["flw_length"]] < 1e-3) & (s2[:, i["frw_length"]] < 1e-3)).float()
-    return progress - 5.0 * crashed
+    head = t_mu = t_sd = None
+    if term_path:
+        tk = _t.load(term_path, map_location=device, weights_only=False)
+        tc = tk["config"]
+        head = TerminationHead(tc["d_in"], tc["hidden"], tc["layers"]).to(device)
+        head.load_state_dict(tk["model"])
+        head.eval()
+        for q in head.parameters():
+            q.requires_grad_(False)
+        extra = tk.get("extra") or {}
+        t_mu = extra.get("mu", x_mu).to(device) if hasattr(extra.get("mu", x_mu), "to") else x_mu
+        t_sd = extra.get("sd", x_sd).to(device) if hasattr(extra.get("sd", x_sd), "to") else x_sd
+    return WorldModelSim(None, bank, x_mu, x_sd, y_mu, y_sd, head, t_mu, t_sd)
 
 
 @torch.no_grad()
@@ -82,7 +114,7 @@ def plan_exhaustive(sim, s, slots, depth, value_fn=None, gamma=0.97):
         block = A ** (depth - d - 1)
         acts = (torch.arange(n_leaves, device=s.device) // block) % A
         acts = acts.repeat(B)
-        states, r = sim.step(states, sl, acts)
+        states, r, _ = sim.step(states, sl, acts)
         ret += (gamma ** d) * r
 
     if value_fn is not None:
@@ -126,7 +158,7 @@ def plan_gumbel(sim, s, slots, depth, n_sims=16, value_fn=None, gamma=0.97,
         for _ in range(sims_each):
             for c in range(m):
                 a0 = candidates[:, c]
-                s1, r = sim.step(s, slots, a0)
+                s1, r, _ = sim.step(s, slots, a0)
                 ret = r.clone()
                 st = s1
                 for d in range(1, depth):
@@ -134,7 +166,7 @@ def plan_gumbel(sim, s, slots, depth, n_sims=16, value_fn=None, gamma=0.97,
                     # a short horizon this is a cheap unbiased rollout, and it
                     # keeps the comparison against exhaustive honest.
                     ra = torch.randint(0, A, (B,), generator=g).to(dev)
-                    st, rr = sim.step(st, slots, ra)
+                    st, rr, _ = sim.step(st, slots, ra)
                     ret += (gamma ** d) * rr
                 if value_fn is not None:
                     ret += (gamma ** depth) * value_fn(st)

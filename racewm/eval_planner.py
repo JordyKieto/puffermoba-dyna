@@ -66,10 +66,8 @@ def rollout_planner(net, bank, x_mu, x_sd, y_mu, y_sd, corpus, split,
             a = torch.randint(0, contract.NUM_ACTIONS, (len(s),), device=device)
         else:
             raise ValueError(planner)
-        s, r = sim.step(s, slots, a)
-        i = contract.INDEX
-        crashed = ((s[:, i["flw_length"]] < 1e-3) & (s[:, i["frw_length"]] < 1e-3)).float()
-        alive = alive * (1 - crashed)
+        s, r, p_term = sim.step(s, slots, a)
+        alive = alive * (1 - p_term)
         total_r += r * alive
     secs = time.time() - t0
     return {"return": float(total_r.mean()), "survival": float(alive.mean()),

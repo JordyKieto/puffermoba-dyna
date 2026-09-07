@@ -102,29 +102,53 @@ def _shard_paths(pattern: str) -> list[str]:
     return paths
 
 
-def load(pattern: str) -> Transitions:
+def load(pattern: str, include_terminal: bool = False) -> Transitions:
+    """(s, a, r, s') pairs.
+
+    By default terminal transitions are dropped, because c_step resets in place
+    and the record after a terminal already holds the NEXT episode's first
+    observation -- pairing across that boundary would teach the model to
+    teleport.
+
+    `include_terminal=True` keeps them with `done=True` and `next_obs = obs`.
+    The successor is a placeholder that callers must mask out of any dynamics
+    loss; what those rows are for is training a termination predictor.
+
+    This matters more than it sounds. With terminals dropped, the corpus
+    contains ZERO states where a whisker reads below 0.05 -- the model never
+    sees a crash, so anything it predicts near a wall is extrapolation. An
+    actor trained in imagination then optimizes against a region the model
+    invents. Dreamer's `continue` head exists for exactly this reason.
+    """
     paths = _shard_paths(pattern)
     recs = np.concatenate([read_shard(p) for p in paths])
 
-    # A record is a valid (s, a, r, s') pair only when the NEXT record continues
-    # the same episode on the same env. c_step resets in place on termination,
-    # so the record after a terminal already holds the new episode's first obs.
     same_env = recs["env_idx"][:-1] == recs["env_idx"][1:]
     same_ep = recs["episode_id"][:-1] == recs["episode_id"][1:]
-    not_done = (recs["terminated"][:-1] == 0) & (recs["truncated"][:-1] == 0)
-    valid = same_env & same_ep & not_done
+    is_done = (recs["terminated"] != 0) | (recs["truncated"] != 0)
+    valid = same_env & same_ep & ~is_done[:-1]
 
     idx = np.flatnonzero(valid)
-    return Transitions(
-        obs=recs["obs"][idx].astype(np.float32),
-        action=recs["action"][idx].astype(np.int64),
-        reward=recs["reward"][idx].astype(np.float32),
-        next_obs=recs["obs"][idx + 1].astype(np.float32),
-        done=np.zeros(len(idx), dtype=bool),
-        env_idx=recs["env_idx"][idx].astype(np.int32),
-        bot_kind=recs["bot_kind"][idx].astype(np.uint8),
-        schema_hash=contract.schema_hash(),
-    )
+    obs = recs["obs"][idx].astype(np.float32)
+    nxt = recs["obs"][idx + 1].astype(np.float32)
+    act = recs["action"][idx].astype(np.int64)
+    rew = recs["reward"][idx].astype(np.float32)
+    env = recs["env_idx"][idx].astype(np.int32)
+    bot = recs["bot_kind"][idx].astype(np.uint8)
+    done = np.zeros(len(idx), dtype=bool)
+
+    if include_terminal:
+        tidx = np.flatnonzero(is_done)
+        obs = np.concatenate([obs, recs["obs"][tidx].astype(np.float32)])
+        nxt = np.concatenate([nxt, recs["obs"][tidx].astype(np.float32)])
+        act = np.concatenate([act, recs["action"][tidx].astype(np.int64)])
+        rew = np.concatenate([rew, recs["reward"][tidx].astype(np.float32)])
+        env = np.concatenate([env, recs["env_idx"][tidx].astype(np.int32)])
+        bot = np.concatenate([bot, recs["bot_kind"][tidx].astype(np.uint8)])
+        done = np.concatenate([done, np.ones(len(tidx), dtype=bool)])
+
+    return Transitions(obs=obs, action=act, reward=rew, next_obs=nxt, done=done,
+                       env_idx=env, bot_kind=bot, schema_hash=contract.schema_hash())
 
 
 def load_sequences(pattern: str, length: int
