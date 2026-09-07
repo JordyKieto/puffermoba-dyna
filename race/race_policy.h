@@ -20,6 +20,55 @@
 #include <math.h>
 #include "race.h"
 
+// A 4-wide dot product. The naive scalar loop made a learned policy 130x
+// slower than a scripted bot in race_eval -- 27s vs 0.21s for 3,200 episodes,
+// which is 160 GMAC of fully unvectorized work. Online eval is the arbiter for
+// every result in this project, so it has to stay cheap enough to run
+// constantly.
+//
+// The accumulation order is fixed, so this is still deterministic: the same
+// input gives the same output on every run and every thread. It differs from
+// the scalar order in the last bits, which is why the export check compares
+// argmax agreement rather than exact logits.
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+  #include <arm_neon.h>
+  #define RACE_SIMD 1
+#elif defined(__AVX__)
+  #include <immintrin.h>
+  #define RACE_SIMD 2
+#else
+  #define RACE_SIMD 0
+#endif
+
+static inline float race_dot(const float* a, const float* b, int n) {
+#if RACE_SIMD == 1
+    float32x4_t acc = vdupq_n_f32(0.0f);
+    int i = 0;
+    for (; i + 4 <= n; i += 4) {
+        acc = vfmaq_f32(acc, vld1q_f32(a + i), vld1q_f32(b + i));
+    }
+    float sum = vaddvq_f32(acc);
+    for (; i < n; i++) sum += a[i] * b[i];
+    return sum;
+#elif RACE_SIMD == 2
+    __m256 acc = _mm256_setzero_ps();
+    int i = 0;
+    for (; i + 8 <= n; i += 8) {
+        acc = _mm256_add_ps(acc, _mm256_mul_ps(_mm256_loadu_ps(a + i),
+                                               _mm256_loadu_ps(b + i)));
+    }
+    float tmp[8];
+    _mm256_storeu_ps(tmp, acc);
+    float sum = tmp[0]+tmp[1]+tmp[2]+tmp[3]+tmp[4]+tmp[5]+tmp[6]+tmp[7];
+    for (; i < n; i++) sum += a[i] * b[i];
+    return sum;
+#else
+    float sum = 0.0f;
+    for (int i = 0; i < n; i++) sum += a[i] * b[i];
+    return sum;
+#endif
+}
+
 #define RACE_POLICY_MAGIC 0x52504f31u /* "RPO1" */
 #define RACE_POLICY_MAX_LAYERS 12
 // Activations live on the caller's stack, so one Policy really is shared
@@ -129,8 +178,7 @@ static inline int policy_act(const Policy* p, const float* obs) {
         const PolicyLayer* L = &p->layers[l];
         for (int o = 0; o < L->out; o++) {
             const float* row = L->w + (size_t)o * L->in;
-            float acc = L->b[o];
-            for (int i = 0; i < L->in; i++) acc += row[i] * a[i];
+            float acc = L->b[o] + race_dot(row, a, L->in);
             b[o] = (l + 1 < p->h.n_layers) ? policy_activate(acc, p->h.activation) : acc;
         }
         float* t = a; a = b; b = t;

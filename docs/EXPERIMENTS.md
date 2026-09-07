@@ -1,12 +1,16 @@
 # Experiment log
 
-Every number here is on **holdout tracks (env_idx 112–127)**, which no model
-trains on. Corpus `data/corpus`, seed 42, frameskip 4, `max_episode_steps` 2000,
-state contract v1 (`74d4ee48e481be34`).
+Long-form reference. The narrative is in [README.md](../README.md), the
+transferable method in [METHODOLOGY.md](METHODOLOGY.md), and run identifiers /
+checkpoints / evaluation costs in [ARTIFACTS.md](ARTIFACTS.md).
+
+Every number is on **holdout tracks (env_idx 112-127)**, which no model trains
+on. Corpus `data/corpus`, seed 42, frameskip 4, `max_episode_steps` 2000, state
+contract v1 (`74d4ee48e481be34`).
 
 Conventions: **N = 50,000 real transitions** unless stated. "real" means env
 transitions consumed; "imagined" means transitions generated inside the world
-model. They are always reported as separate axes — the claim worth testing is
+model. They are always reported as separate axes -- the claim worth testing is
 real-sample efficiency, not total compute.
 
 ---

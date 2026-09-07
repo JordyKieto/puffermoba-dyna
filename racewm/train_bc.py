@@ -43,7 +43,10 @@ def main():
     ap.add_argument("--epochs", type=int, default=15)
     ap.add_argument("--batch", type=int, default=4096)
     ap.add_argument("--lr", type=float, default=1e-3)
-    ap.add_argument("--hidden", type=int, default=256)
+    # 128x3 was measured to match 256x3 exactly (11.465 vs 11.439 return) at
+    # 3.8x fewer parameters and 2.9x faster online eval. 64x2 does lose real
+    # performance (9.849), so this is the floor, not just the cheapest option.
+    ap.add_argument("--hidden", type=int, default=128)
     ap.add_argument("--layers", type=int, default=3)
     ap.add_argument("--slices", default="expert,whisker",
                     help="which corpus slices to clone (never the noisy ones)")

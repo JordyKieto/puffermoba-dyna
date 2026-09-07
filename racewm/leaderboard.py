@@ -156,42 +156,60 @@ class PlannerAgent(Agent):
 
 # ------------------------------------------------------------------ metrics
 def run_agent(agent, pool, steps, sectors=16, reward_yellow=0.2):
-    """Behavioral metrics matching race_eval's groups."""
+    """Behavioral metrics matching race_eval's groups.
+
+    Per-episode state is kept as numpy columns rather than per-env dicts. The
+    dict version ran a Python loop over every env on every step and cost 8x
+    (101k vs 797k env-steps/s) for statistics that vectorize trivially.
+    """
     obs = pool.reset()
     n = pool.n
-    ep = {k: dict(ret=0.0, steps=0, acts=np.zeros(3), rev=0, prev=NOOP,
-                  dist=0.0, minw=1.0, sect=set()) for k in range(n)}
+    idx = np.arange(n)
+
+    ret = np.zeros(n); length = np.zeros(n, int)
+    acts = np.zeros((n, 3), int); rev = np.zeros(n, int)
+    prev = np.full(n, NOOP); minw = np.ones(n)
+    seen = np.zeros((n, sectors), bool)
     done_eps = []
-    tracks = pool.tracks()
     t0 = time.time()
 
     for _ in range(steps):
         a = np.asarray(agent.act(obs, pool), dtype=np.int32)
-        for k in range(n):
-            e = ep[k]
-            e["acts"][a[k]] += 1
-            if (a[k] == LEFT and e["prev"] == RIGHT) or (a[k] == RIGHT and e["prev"] == LEFT):
-                e["rev"] += 1
-            if a[k] != NOOP:
-                e["prev"] = a[k]
-            e["minw"] = min(e["minw"], float(min(obs[k, I["flw_length"]],
-                                                 obs[k, I["frw_length"]])))
-            ph = np.arctan2(obs[k, I["sin_sector"]], obs[k, I["cos_sector"]])
-            e["sect"].add(int(round((ph % (2 * np.pi)) / (2 * np.pi) * sectors)) % sectors)
+
+        acts[idx, a] += 1
+        rev += ((a == LEFT) & (prev == RIGHT)) | ((a == RIGHT) & (prev == LEFT))
+        turned = a != NOOP
+        prev = np.where(turned, a, prev)
+
+        np.minimum(minw, np.minimum(obs[:, I["flw_length"]],
+                                    obs[:, I["frw_length"]]), out=minw)
+        ph = np.arctan2(obs[:, I["sin_sector"]], obs[:, I["cos_sector"]])
+        sect = (np.rint((ph % (2 * np.pi)) / (2 * np.pi) * sectors).astype(int)) % sectors
+        seen[idx, sect] = True
+
         obs, rew, term, trunc = pool.step(a)
-        for k in range(n):
-            e = ep[k]
-            e["ret"] += float(rew[k]); e["steps"] += 1
-            if term[k] or trunc[k]:
-                crossings = e["ret"] / reward_yellow
+        ret += rew
+        length += 1
+
+        fin = (term != 0) | (trunc != 0)
+        if fin.any():
+            f = np.flatnonzero(fin)
+            crossings = ret[f] / reward_yellow
+            steps_f = np.maximum(length[f], 1)
+            for j, k in enumerate(f):
                 done_eps.append(dict(
-                    ret=e["ret"], steps=e["steps"], crashed=bool(term[k]),
-                    laps=crossings / sectors, coverage=len(e["sect"]) / sectors,
-                    idle=e["acts"][NOOP] / e["steps"], left=e["acts"][LEFT] / e["steps"],
-                    right=e["acts"][RIGHT] / e["steps"], rev=e["rev"] / e["steps"],
-                    minw=e["minw"]))
-                ep[k] = dict(ret=0.0, steps=0, acts=np.zeros(3), rev=0, prev=NOOP,
-                             dist=0.0, minw=1.0, sect=set())
+                    ret=float(ret[k]), steps=int(length[k]),
+                    crashed=bool(term[k]),
+                    laps=float(crossings[j] / sectors),
+                    coverage=float(seen[k].sum() / sectors),
+                    idle=float(acts[k, NOOP] / steps_f[j]),
+                    left=float(acts[k, LEFT] / steps_f[j]),
+                    right=float(acts[k, RIGHT] / steps_f[j]),
+                    rev=float(rev[k] / steps_f[j]),
+                    minw=float(minw[k])))
+            ret[f] = 0; length[f] = 0; acts[f] = 0; rev[f] = 0
+            prev[f] = NOOP; minw[f] = 1.0; seen[f] = False
+
     secs = time.time() - t0
     if not done_eps:
         return None
@@ -201,7 +219,7 @@ def run_agent(agent, pool, steps, sectors=16, reward_yellow=0.2):
     # agent's episodes are exactly the ones that fail to finish. Run with
     # steps >= max_episode_steps so truncation always fires, and report the
     # censored count so a biased run is visible rather than plausible.
-    censored = sum(1 for k in range(n) if ep[k]["steps"] > 0)
+    censored = int((length > 0).sum())
     agg = lambda key: float(np.mean([d[key] for d in done_eps]))
     return dict(episodes=len(done_eps), censored=censored,
                 censored_frac=censored / (len(done_eps) + censored),
