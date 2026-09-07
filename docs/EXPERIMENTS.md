@@ -969,6 +969,101 @@ examiner exploitation (an ensemble of reference worlds, a trust region on M_T,
 or a disagreement penalty) before the teacher drifts far enough for that to
 bite.
 
+## E19 — Control arms, trust regions, and what the bilevel teacher actually shows
+
+Everything here follows from adding the arm E17/E18 lacked: a **control** that
+runs identically -- same warm-up, same differentiable window, same student
+distribution, same evaluation schedule -- and simply never updates M_T.
+
+### The control invalidates the earlier readings
+
+Teacher provably frozen (drift 0.00000 throughout):
+
+| step | J_R | J_E holdout |
+|---|---|---|
+| 0 | 0.2684 | 3.514 |
+| 10 | 0.2724 | 3.310 |
+| 30 | 0.2809 | **3.172** |
+
+**J_R rises +4.7% while J_E falls −9.7%, with no teacher change at all.** The
+exact pattern E18 reported as "the teacher exploits the examiner" reproduces
+with zero teacher involvement.
+
+Two consequences:
+
+1. **J_R is a biased meta-objective independent of any teacher.** It moves
+   opposite to real performance under the null. Any teacher optimizing it
+   inherits that bias, which plausibly explains every degradation attributed to
+   the teacher in E17/E18.
+2. **The noise band is 11.6%** (J_E 3.248–3.643 across 3 control seeds) —
+   larger than any effect claimed in this line of work.
+
+### Trust regions: parameter, representation, none
+
+| arm | meta-lr | drift reached | J_E |
+|---|---|---|---|
+| control (frozen) | — | 0% | 3.514 → 3.172 |
+| free teacher | 1e-3 | ~4–5% | ~3.37 → 2.08–3.24 |
+| free teacher | 1e-2 | 42% | → **0.076** (below random 0.177) |
+| free teacher | 3e-2 | 128% | J_T → **−19,885** |
+| shared encoder (3/5 layers) | 1e-3 | 8.3% | 3.49 → 3.55 → 0.95 → 3.18 |
+
+The shared-encoder arm freezes the first 3 of 5 Linear layers (565,248 params
+shared with M_R), so M_T may express any dynamics that are a function of M_R's
+latent but cannot redefine what a state means. Note the encoder is *expansive*
+(77 → 512), so this restricts expressible physics far less than it sounds — it
+shares a feature basis rather than imposing a bottleneck.
+
+### What the long run shows: variance, not a trend
+
+Extending the shared-encoder arm 5x (150 meta-steps, behavioural audit every
+50) gives J_E of **3.49 → 3.55 → 0.95 → 3.18** while drift grows monotonically
+0.6% → 8.3%.
+
+Behaviourally at each point: crash 88% / 89% / 100% / 92%, laps 1.09 / 1.11 /
+0.30 / 0.99, coverage 0.58 / 0.59 / 0.32 / 0.59.
+
+**There is no trend. There is enormous run-to-run variance**, with a single
+catastrophic-looking excursion at step 100 that fully recovers by step 150.
+
+### Conclusion, and a correction to two of my own reports
+
+The bilevel apparatus is verified and working — second-order gradient confirmed
+non-zero with an exactly-zero control when the graph is severed, memory bounded
+by truncated BPTT, a student that reaches real competence before the teacher is
+asked to improve it, and a full behavioural audit in the real game.
+
+**No teacher effect is demonstrated, in either direction.** Against an 11.6%
+control noise band and a J_E series that swings 0.95–3.55 within one run, none
+of the differences measured here are resolvable.
+
+Two claims in this thread were wrong and are retracted:
+
+- E18's "the teacher exploits the examiner" — the control reproduces the same
+  J_R-up/J_E-down pattern with the teacher frozen.
+- "The shared encoder is the first arm that doesn't degrade" (30 meta-steps,
+  J_E flat at 3.487) and then, on extension, "it collapses 73%" (step 100,
+  J_E 0.95). Both were single points on a series that swings by 3x. The first
+  was a short-run artifact; the second was an outlier read as a trend.
+
+**The methodological finding is the durable one.** Four times in this line of
+work an effect measured over <100 meta-steps, or from two checkpoints, did not
+survive extension — always in the direction of the hypothesis being tested. The
+control arm and the behavioural audit are what caught it, and neither existed
+until late. Any effect here measured over fewer than several hundred meta-steps,
+without a matched control, should be assumed absent.
+
+### What is untested
+
+The one hypothesis not yet examined: a **state-manifold constraint** — teacher
+free to invent any transitions, but its predicted states penalized for leaving
+the manifold of real observations. Every trust region tried so far constrains
+*how far* the teacher moves (step size, parameter norm) or *in what space*
+(shared representation). None constrains it to emit states that exist. That is
+the remaining candidate explanation for why drift has been uniformly
+unproductive, and it is the version that preserves the unrestricted-teacher
+premise: impossible transitions between recognizable states.
+
 ---
 
 ## Open

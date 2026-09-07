@@ -138,13 +138,14 @@ W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
 - **Model exploitation did not appear.** Diagnosed twice, wrong twice: a GAE
   time-limit bug, then a track-set mismatch. The dream is 0.94x *pessimistic*
   on return, and a policy cannot exploit a model that underestimates it.
-- **A bilevel "teacher world" runs, but does not yet teach.** Optimising a
-  mutable world so the policy it teaches scores well in a frozen reference
-  world works mechanically — verified second-order gradient, memory bounded by
-  truncated BPTT, and a student that reaches 3.4–3.8 real return before the
-  teacher is asked to improve it. Over 40 meta-steps the meta-objective drifts
-  up ~4% and real behaviour does not move. A null result at this budget, with
-  the apparatus in place to push it further.
+- **A bilevel "teacher world" runs; no teacher effect is demonstrable.**
+  Optimising a mutable world so the policy it teaches scores well in a frozen
+  reference world works mechanically — verified second-order gradient, memory
+  bounded by truncated BPTT, a competent student, a behavioural audit in the
+  real game. But a **control arm that never updates the teacher** shows the
+  meta-objective rising +4.7% while real return falls −9.7%, so the objective
+  is biased independently of any teacher, and real return swings 0.95–3.55
+  within a single run. Nothing measured here is resolvable against that.
 - **Accurate dynamics imply neither a good planner nor a good representation.**
   Search through the model never beat following the policy, and the best world
   model made the worst backbone for control.

@@ -156,12 +156,45 @@ def main():
                          "travels, instead of shaping WHERE it travels -- "
                          "measured as J_T rising 22x while J_R stayed flat.")
     ap.add_argument("--jt-penalty", type=float, default=0.0,
-                    help="penalty on |J_T| in the meta-objective; a second, "
-                         "blunter guard on the same degenerate mode")
+                    help="penalty on |J_T| in the meta-objective; a blunt guard "
+                         "on the degenerate mode")
+    ap.add_argument("--jt-coef", type=float, default=0.0,
+                    help="weight on J_T in the meta-objective, so the teacher is "
+                         "rewarded for the student doing well in BOTH worlds "
+                         "rather than only in the reference")
+    ap.add_argument("--align-coef", type=float, default=0.0,
+                    help="penalty on (J_T - J_R)^2. Pressure toward the two "
+                         "worlds AGREEING about how good the student is. This "
+                         "attacks the failure directly: unconstrained, J_T ran "
+                         "to 2.99 and then to -19885 while J_R stayed flat, "
+                         "because nothing tied the teacher's reward scale to "
+                         "anything real. Agreement keeps the teacher free to "
+                         "change its dynamics while stopping it from simply "
+                         "rescaling its own reward.")
     ap.add_argument("--reset-student", action="store_true",
                     help="resample the student init each meta-step, so the "
                          "teacher must teach a distribution of students rather "
                          "than overfit one initialization")
+    ap.add_argument("--share-encoder", type=int, default=0,
+                    help="freeze the first N Linear layers of M_T, so teacher and "
+                         "reference share a representation and differ only in the "
+                         "dynamics head. A trust region in REPRESENTATION space "
+                         "rather than in parameter norm or step size: M_T may "
+                         "invent any physics that is a function of M_R's latent, "
+                         "but cannot redefine what a state means. Motivated by "
+                         "the collapse at 42%% parameter distance, where J_E fell "
+                         "to 0.076 (below random) while J_R only fell to 0.166 -- "
+                         "the signature of a student whose features stopped "
+                         "meaning anything outside M_T. Note this RESTRICTS the "
+                         "unrestricted-teacher hypothesis: it forbids exactly the "
+                         "worlds that represent the task differently.")
+    ap.add_argument("--freeze-teacher", action="store_true",
+                    help="CONTROL ARM: run everything identically -- same warm-up, "
+                         "same differentiable window, same student distribution, "
+                         "same evaluation schedule -- but never update M_T. Any "
+                         "movement in the real-env number is then pure "
+                         "student-training variance, which is the noise band the "
+                         "meta-optimized arm has to beat.")
     ap.add_argument("--probe", type=int, default=0,
                     help="diagnostic: run N student updates and report real-env "
                          "competence at checkpoints, to find where the student "
@@ -186,10 +219,22 @@ def main():
     T_, b_ = meta["temperature"], meta["bias"]
     bank, term = env.bank, env.term
 
+    if args.share_encoder:
+        lins = [m for m in teacher.net if isinstance(m, nn.Linear)]
+        for m in lins[:args.share_encoder]:
+            for q in m.parameters():
+                q.requires_grad_(False)
+        frozen = sum(q.numel() for m in lins[:args.share_encoder]
+                     for q in m.parameters())
+        print(f"shared encoder: first {args.share_encoder} of {len(lins)} Linear "
+              f"layers frozen ({frozen:,} params shared with M_R)")
+
+
     policy = Policy(args.hidden, 2)
     theta = {k: v.detach().clone().requires_grad_(True)
              for k, v in policy.named_parameters()}
-    meta_opt = torch.optim.Adam(teacher.parameters(), lr=args.meta_lr)
+    meta_opt = torch.optim.Adam(
+        [q for q in teacher.parameters() if q.requires_grad], lr=args.meta_lr)
 
     def sample_states():
         env.reset()
@@ -242,6 +287,13 @@ def main():
     _man = dataset.load_manifest(args.corpus)
 
     def audit_online(p_theta, tag):
+        """Full behavioural readout in the REAL game, not just return.
+
+        Return alone hides how a policy is failing. race_eval already reports
+        laps, crash rate and its causes, track coverage, control smoothness and
+        safety margin -- discarding them was throwing away the diagnostic half
+        of every audit.
+        """
         net = Policy(args.hidden, 2)
         with torch.no_grad():
             for k, v in net.named_parameters():
@@ -253,10 +305,23 @@ def main():
             sp = _man["splits"][key]
             r = _sp.run(["./build/race_eval","--bots","policy","--policy",rpo,
                 "--tracks",str(sp["n_tracks"]),"--track-start",str(sp["track_start"]),
-                "--episodes","40","--threads","10"],
+                "--episodes","40","--threads","6"],
                 capture_output=True, text=True).stdout
-            row = [l for l in r.splitlines() if l.strip().startswith("policy")]
-            out[name] = float(row[0].split()[2]) if row else float("nan")
+            rows = [l.split() for l in r.splitlines() if l.strip().startswith("policy")]
+            # race_eval prints one `policy` row per metric group, in order:
+            # OUTCOME / FAILURE / PROGRESS / CONTROL / SAFETY
+            d = {}
+            if len(rows) >= 5:
+                d = dict(ret=float(rows[0][2]), length=float(rows[0][3]),
+                         surv=float(rows[0][4]),
+                         crash=float(rows[1][1]), wall=float(rows[1][2]),
+                         steps2crash=float(rows[1][4]),
+                         laps=float(rows[2][1]), coverage=float(rows[2][5]),
+                         idle=float(rows[3][1]), reversals=float(rows[3][4]),
+                         dist=float(rows[4][1]), minwhisk=float(rows[4][3]))
+            elif rows:
+                d = dict(ret=float(rows[0][2]))
+            out[name] = d
         return out
 
     if args.probe:
@@ -288,7 +353,8 @@ def main():
     if args.verify:
         print("VERIFY: does a meta-gradient reach the teacher at all?\n")
         J_T, J_R, _ = inner_then_outer(theta)
-        g = torch.autograd.grad(J_R, list(teacher.parameters()),
+        g = torch.autograd.grad(J_R, [q for q in teacher.parameters()
+                                       if q.requires_grad],
                                 retain_graph=True, allow_unused=True)
         norm = sum(float((x ** 2).sum()) for x in g if x is not None) ** 0.5
         n_none = sum(1 for x in g if x is None)
@@ -307,16 +373,18 @@ def main():
         s0r, slotsr = sample_states()
         J_R2 = soft_rollout(policy, p2, ref, term, bank, s0r, slotsr,
                             args.h_outer, norms, term_T=T_, term_b=b_)
-        g2 = torch.autograd.grad(J_R2, list(teacher.parameters()),
-                                 allow_unused=True)
+        g2 = torch.autograd.grad(J_R2, [q for q in teacher.parameters()
+                                        if q.requires_grad], allow_unused=True)
         n2 = sum(float((x ** 2).sum()) for x in g2 if x is not None) ** 0.5
         print(f"  control, graph severed: {n2:.3e}  (must be 0)")
         print(f"\n  {'PASS' if norm > 0 and n2 == 0 else 'FAIL'}: the second-order "
               f"path is the only thing carrying signal to M_T")
         return
 
+    trainable = [q for q in teacher.parameters() if q.requires_grad]
     print(f"M_R frozen = {args.wm};  M_T initialized AS M_R "
-          f"({sum(p.numel() for p in teacher.parameters()):,} params, trainable)")
+          f"({sum(q.numel() for q in trainable):,} trainable of "
+          f"{sum(q.numel() for q in teacher.parameters()):,})")
     print(f"inner: {args.inner_steps} step(s), lr {args.inner_lr}, H={args.h_inner}"
           f"   outer: H={args.h_outer}   meta-lr {args.meta_lr}\n")
     print(f"{'step':>6}{'J_T':>10}{'J_R':>10}{'|dJR/dMT|':>12}{'MT-MR drift':>14}{'sec':>7}")
@@ -324,27 +392,6 @@ def main():
     from . import export_policy
     import subprocess
     man = dataset.load_manifest(args.corpus)
-
-    def audit_online(p_theta, tag):
-        """Run the CURRENT student in the real game. p_theta is the post-update
-        parameter dict, so this measures exactly what J_R scored."""
-        net = Policy(args.hidden, 2)
-        with torch.no_grad():
-            for k, v in net.named_parameters():
-                v.copy_(p_theta[k].detach())
-        rpo = f"/tmp/meta_{tag}.rpo"
-        o_mu, o_sd = norms[4], norms[5]
-        export_policy.export(net.net, o_mu.numpy(), o_sd.numpy(), rpo)
-        out = {}
-        for name, key in (("hold", "holdout"), ("train", "train")):
-            sp = man["splits"][key]
-            r = subprocess.run(["./build/race_eval","--bots","policy","--policy",rpo,
-                "--tracks",str(sp["n_tracks"]),"--track-start",str(sp["track_start"]),
-                "--episodes",str(args.online_episodes),"--threads","10"],
-                capture_output=True, text=True).stdout
-            row = [l for l in r.splitlines() if l.strip().startswith("policy")]
-            out[name] = float(row[0].split()[2]) if row else float("nan")
-        return out
 
     ref_flat = torch.cat([p.detach().flatten() for p in ref.parameters()])
     hist, t0 = [], time.time()
@@ -356,9 +403,18 @@ def main():
                   for k, v in fresh.named_parameters()}
         J_T, J_R, p_out = inner_then_outer(th)
         meta_opt.zero_grad(set_to_none=True)
-        (-J_R + args.jt_penalty * J_T.abs()).backward()
-        gn = float(torch.nn.utils.clip_grad_norm_(teacher.parameters(), 10.0))
-        meta_opt.step()
+        # Maximize the student's return in BOTH worlds, with pressure toward
+        # the two worlds agreeing. The teacher may still invent any dynamics it
+        # likes -- it just cannot win by inflating or deflating its own reward
+        # scale relative to the reference.
+        meta_loss = (-(J_R + args.jt_coef * J_T)
+                     + args.align_coef * (J_T - J_R) ** 2
+                     + args.jt_penalty * J_T.abs())
+        meta_loss.backward()
+        gn = float(torch.nn.utils.clip_grad_norm_(
+            [q for q in teacher.parameters() if q.requires_grad], 10.0))
+        if not args.freeze_teacher:
+            meta_opt.step()
 
         if step % 10 == 0 or step == args.meta_steps - 1:
             with torch.no_grad():
@@ -370,8 +426,16 @@ def main():
                 online = audit_online(p_out, f"s{step}")
             hist.append(dict(step=step, J_T=float(J_T), J_R=float(J_R),
                              grad=gn, drift=drift, online=online))
-            extra = (f"  REAL hold {online['hold']:.3f} train {online['train']:.3f}"
-                     if online else "")
+            if online and online.get("hold", {}).get("laps") is not None:
+                h = online["hold"]
+                extra = (f"  J_E {h['ret']:.2f} laps {h['laps']:.2f} "
+                         f"crash {h['crash']:.0f}% cover {h['coverage']:.2f} "
+                         f"idle {h['idle']:.0f}% revrs {h['reversals']:.2f}")
+            elif online:
+                extra = f"  J_E {online['hold'].get('ret', float('nan')):.3f}"
+            else:
+                extra = ""
+            extra += f"  |JT-JR| {abs(float(J_T)-float(J_R)):.4f}"
             print(f"{step:>6}{float(J_T):>10.4f}{float(J_R):>10.4f}"
                   f"{gn:>12.3e}{drift:>14.5f}{time.time()-t0:>7.0f}{extra}", flush=True)
 
