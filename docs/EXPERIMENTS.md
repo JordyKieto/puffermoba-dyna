@@ -1064,6 +1064,107 @@ the remaining candidate explanation for why drift has been uniformly
 unproductive, and it is the version that preserves the unrestricted-teacher
 premise: impossible transitions between recognizable states.
 
+## E20 — A paired test with a fixed student bank: the teacher does nothing
+
+E19's arms were unreadable because each meta-step resampled and re-warmed a
+student, so nearly all the movement in J_E was student-sampling variance. E20
+removes that, and the result is the first properly-powered answer in this line.
+
+### The method fix, and why it is legitimate rather than merely cheaper
+
+The warm-up runs with `create_graph=False`. It contributes **exactly zero** to
+the meta-gradient -- the teacher receives no credit for it. So warming students
+in M_R instead of M_T cannot change what the outer gradient measures. That
+licenses a **fixed bank of 64 students, warmed once in M_R** and cached on disk
+under a hash of the student regime.
+
+Three consequences, and the speed is the least of them:
+
+1. **3.2x faster.** 2.4 s/meta-step -> 0.75 s/meta-step; the 111s bank build is
+   paid once and shared by every arm at that seed. (The earlier suspicion that
+   the shared encoder was slow was wrong: `--share-encoder 3` runs 11 meta-steps
+   in 34s against 35s for a fully trainable teacher. Freezing parameters skips
+   gradient accumulation, not the forward pass.)
+2. **Arms become paired.** Meta-step *t* draws the same student and the same
+   initial states in every arm, so control and encoder differ only by the
+   teacher update and can be differenced step-by-step.
+3. **The student distribution is teacher-independent**, so it cannot co-adapt
+   with the teacher and confound the drift measurement.
+
+Control noise falls from **11.6% to 3.2%** (J_E sd 0.108 on mean 3.347, two
+seeds, all steps) -- a ~4x sharper measurement.
+
+### The result: no effect, with the seeds disagreeing in sign
+
+600 meta-steps x {control, encoder} x {seed 0, seed 1}, J_E over 100 real
+holdout episodes every 100 steps.
+
+| seed | step | ctrl J_E | enc J_E | delta | teacher drift |
+|---|---|---|---|---|---|
+| 0 | 100 | 3.44 | 3.35 | −0.09 | 5.6% |
+| 0 | 300 | 3.46 | 3.26 | −0.20 | 11.1% |
+| 0 | 599 | 3.55 | 3.35 | −0.20 | **15.8%** |
+| 1 | 100 | 3.33 | 3.48 | +0.15 | 6.6% |
+| 1 | 300 | 3.25 | 3.38 | +0.13 | 12.1% |
+| 1 | 599 | 3.45 | 3.48 | +0.03 | **12.8%** |
+
+**Paired delta over all 12 checkpoints: −0.040 ± 0.063, t = −0.64, or −1.2%.**
+
+Seed 0 means −0.200, seed 1 means **+0.120**. The effect is not small-and-
+underpowered; it points in opposite directions in the only two seeds run, which
+is what a genuine absence looks like.
+
+Behaviour is identical too: laps ~1.05, crash ~90%, coverage ~0.57 in both arms.
+
+This is a stronger null than E19's because the teacher actually moved --
+**12.8–15.8% from M_R**, against 8.3% in a run that took 3x longer. A teacher
+16% away from the reference, meta-trained for 600 steps, produces a student that
+scores the same in the real game as one taught by a teacher that never moved.
+
+One real cost of drift: encoder seed 0 hit **J_T = −0.129** at step 200 -- its
+own world scoring the student negatively -- before recovering to +0.333. That
+step is also its worst J_E (2.81). The teacher world goes transiently unstable
+and the student trained in it is briefly worse.
+
+### Correction to E19
+
+E19's headline was: *"J_R rises +4.7% while J_E falls −9.7% with the teacher
+provably frozen, so J_R is a biased meta-objective independent of any teacher."*
+
+**That does not survive the fixed student bank.** Over 600 control steps with
+the student distribution held fixed, the control is flat, and what movement
+there is runs the *other* way:
+
+| | seed 0 | seed 1 |
+|---|---|---|
+| J_R, first -> last | 0.2900 -> 0.2715 | 0.2839 -> 0.2682 |
+| J_E, first -> last | 3.23 -> 3.55 | 3.31 -> 3.45 |
+
+J_R drifts slightly **down** and J_E slightly **up** -- the opposite of the
+claimed bias, and both within noise. The +4.7%/−9.7% was measured over 30
+meta-steps while resampling the student every step: it was student variance in
+two directions at once, not a property of the objective.
+
+So E19 committed the error it was written to document. That makes it the fifth
+instance, and the first where the corrective apparatus (the control arm) was
+already in place but was itself run at too small a budget to be trusted. **A
+control arm is only as good as its own sample size.**
+
+### Standing conclusion
+
+The bilevel apparatus is verified and correct: non-zero second-order gradient
+with an exactly-zero severed-graph control, bounded memory, a competent student,
+a teacher that moves 16%, a paired design, and a real-game audit. Under all of
+that, **optimizing a teacher world through a frozen reference world produces no
+measurable change in real-environment performance, in either direction.**
+
+Neither J_R-as-objective nor teacher drift is where the problem lies. What
+remains untested is the **state-manifold constraint**: every trust region tried
+so far bounds how far the teacher moves or in what space, none requires it to
+emit states that exist. That is the version that preserves the
+"flying to learn driving" premise -- impossible transitions between
+recognizable states -- and it is the next thing to run.
+
 ---
 
 ## Open

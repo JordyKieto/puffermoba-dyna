@@ -40,6 +40,8 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import hashlib
+import pathlib
 import time
 from pathlib import Path
 
@@ -208,6 +210,19 @@ def main():
                          "until the policy touches the actual game. This is the "
                          "only check that catches that.")
     ap.add_argument("--online-episodes", type=int, default=40)
+    ap.add_argument("--bank-size", type=int, default=0,
+                    help="Use a FIXED bank of N pre-warmed students instead of "
+                         "re-warming one inside every meta-step. The warm-up is "
+                         "create_graph=False, so it contributes exactly zero to "
+                         "the meta-gradient -- warming it in M_R instead of M_T "
+                         "therefore changes nothing the outer gradient measures, "
+                         "while (a) paying the warm-up once instead of every "
+                         "meta-step and (b) making the student distribution "
+                         "teacher-independent, so arms become paired.")
+    ap.add_argument("--bank-file", default="data/student_bank",
+                    help="cache path; the student regime is hashed into the "
+                         "filename so a changed regime cannot silently reuse a "
+                         "stale bank, and identical regimes share one file")
     ap.add_argument("--out", default="data/meta_teacher.json")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
@@ -240,6 +255,27 @@ def main():
         env.reset()
         return env.obs.detach().clone(), env.slots.clone()
 
+    def warm(p, world, k):
+        """Detached student updates in `world`.
+
+        create_graph=False here, so this contributes EXACTLY ZERO to the
+        meta-gradient: the teacher receives no credit for the warm-up either
+        way. That is what makes the student bank legitimate -- warming in M_R
+        rather than M_T does not change what the outer gradient measures, it
+        only fixes the distribution of students the teacher is scored on.
+        """
+        for _ in range(k):
+            s0, slots = sample_states()
+            J = soft_rollout(policy, p, world, term, bank, s0, slots,
+                             args.h_inner, norms, term_T=T_, term_b=b_)
+            g = torch.autograd.grad(J, list(p.values()), create_graph=False)
+            if args.normalize_inner_grad:
+                gn2 = torch.sqrt(sum((x ** 2).sum() for x in g)).clamp_min(1e-8)
+                g = [x / gn2 for x in g]
+            p = {k2: (v + args.inner_lr * x).detach().requires_grad_(True)
+                 for (k2, v), x in zip(p.items(), g)}
+        return p
+
     def inner_then_outer(theta_in):
         """K differentiable student updates in M_T, scored in M_R.
 
@@ -252,16 +288,7 @@ def main():
         # what lets the student reach competence before the teacher is asked to
         # improve it -- E17 failed because a 3-step student scored below random
         # in the real env, leaving nothing to teach.
-        for _ in range(args.warm_steps):
-            s0, slots = sample_states()
-            J = soft_rollout(policy, p, teacher, term, bank, s0, slots,
-                             args.h_inner, norms, term_T=T_, term_b=b_)
-            g = torch.autograd.grad(J, list(p.values()), create_graph=False)
-            if args.normalize_inner_grad:
-                gn2 = torch.sqrt(sum((x ** 2).sum() for x in g)).clamp_min(1e-8)
-                g = [x / gn2 for x in g]
-            p = {k: (v + args.inner_lr * x).detach().requires_grad_(True)
-                 for (k, v), x in zip(p.items(), g)}
+        p = warm(p, teacher, 0 if args.bank_size else args.warm_steps)
 
         s0, slots = sample_states()
         for _ in range(args.inner_steps):
@@ -394,13 +421,52 @@ def main():
     man = dataset.load_manifest(args.corpus)
 
     ref_flat = torch.cat([p.detach().flatten() for p in ref.parameters()])
+
+    student_bank = None
+    if args.bank_size:
+        # The regime that defines a bank. Hashed into the filename so that
+        # every arm with the same student regime shares one byte-identical
+        # bank, and a changed regime can never silently reuse a stale one.
+        regime = (f"{args.wm}|{args.hidden}|{args.warm_steps}|{args.h_inner}"
+                  f"|{args.inner_lr}|{int(args.normalize_inner_grad)}"
+                  f"|{args.batch}|{args.bank_size}|{args.seed}")
+        tag = hashlib.sha256(regime.encode()).hexdigest()[:12]
+        bf = pathlib.Path(f"{args.bank_file}_{tag}.pt")
+        if bf.exists():
+            student_bank = torch.load(bf, weights_only=True)
+            print(f"student bank: loaded {len(student_bank)} students from {bf}")
+        else:
+            tb = time.time()
+            student_bank = []
+            for i in range(args.bank_size):
+                torch.manual_seed(args.seed * 100_003 + i)
+                env.g.manual_seed(args.seed * 100_003 + i)
+                fresh = Policy(args.hidden, 2)
+                q = {k: v.detach().clone().requires_grad_(True)
+                     for k, v in fresh.named_parameters()}
+                q = warm(q, ref, args.warm_steps)   # warmed in M_R, not M_T
+                student_bank.append({k: v.detach().clone()
+                                     for k, v in q.items()})
+            bf.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(student_bank, bf)
+            print(f"student bank: built {args.bank_size} students warmed "
+                  f"{args.warm_steps} steps in M_R ({time.time()-tb:.0f}s) -> {bf}")
+
     hist, t0 = [], time.time()
     for step in range(args.meta_steps):
-        th = theta
-        if args.reset_student:
-            fresh = Policy(args.hidden, 2)
-            th = {k: v.detach().clone().requires_grad_(True)
-                  for k, v in fresh.named_parameters()}
+        if student_bank is not None:
+            # Common random numbers: meta-step t sees the same student and the
+            # same initial states in every arm, so arms differ only by the
+            # teacher update and can be compared pairwise.
+            env.g.manual_seed(args.seed * 7_919 + step)
+            th = {k: v.clone().requires_grad_(True)
+                  for k, v in student_bank[step % len(student_bank)].items()}
+        else:
+            th = theta
+            if args.reset_student:
+                fresh = Policy(args.hidden, 2)
+                th = {k: v.detach().clone().requires_grad_(True)
+                      for k, v in fresh.named_parameters()}
         J_T, J_R, p_out = inner_then_outer(th)
         meta_opt.zero_grad(set_to_none=True)
         # Maximize the student's return in BOTH worlds, with pressure toward
