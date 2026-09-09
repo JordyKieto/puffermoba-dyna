@@ -181,16 +181,22 @@ def main():
                      net(torch.cat([x, x - p, l], 1)).detach() * sd + mu)}
 
         hx, hp, hl, hy = X[ho], PREV[ho], LR[ho], Y[ho]
+        hrun = RUN[ho]
+        # each pair must be scored on the task ITS run was trained on; scoring
+        # every run against one task makes the metric meaningless the moment
+        # --vary-task is set
+        tk = lambda j: tasks[int(hrun[j])]
         cand = torch.randperm(len(hx))[:192]
-        lx = torch.tensor([evaluate(hx[j], base_task)[0] for j in cand])
-        ly = torch.tensor([evaluate(hy[j], base_task)[0] for j in cand])
+        lx = torch.tensor([evaluate(hx[j], tk(j))[0] for j in cand])
+        ly = torch.tensor([evaluate(hy[j], tk(j))[0] for j in cand])
         order = (lx - ly).argsort(descending=True)[:64]
         sel, lx_s, ly_s = cand[order], lx[order], ly[order]
         base_l, head = float(lx_s.mean()), float((lx_s - ly_s).mean())
         row = f"  {kk*a.res:>8} {head:>10.4f}"
         for nm, f in preds.items():
             P = f(hx[sel], hp[sel], hl[sel])
-            ml = sum(evaluate(P[i], base_task)[0] for i in range(len(sel))) / len(sel)
+            ml = sum(evaluate(P[i], tk(sel[i]))[0]
+                     for i in range(len(sel))) / len(sel)
             row += f" {100*(base_l-ml)/head:>8.0f}%" if nm != "persist" else \
                    f" {100*(base_l-ml)/head:>8.0f}%"
         print(row)
