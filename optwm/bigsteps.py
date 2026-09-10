@@ -56,6 +56,17 @@ def main():
     ap.add_argument("--fwidth", type=int, default=640)
     ap.add_argument("--mask-state", type=float, default=0.5)
     ap.add_argument("--no-autoreg", action="store_true")
+    ap.add_argument("--chain-hops", type=int, default=0,
+                    help="chain this many jumps and report accuracy AT EVERY "
+                         "HOP, rather than one summary row. This is the test "
+                         "of whether big jumps compose far past convergence.")
+    ap.add_argument("--starts", default="",
+                    help="real step counts to anchor the rollout at. Early in "
+                         "training the loss is still falling steeply and the "
+                         "endpoint is undetermined, so a long jump cannot be "
+                         "answered by predicting convergence -- which is the "
+                         "confound that decides whether big jumps are genuinely "
+                         "easier or merely land on a fixed point.")
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
 
@@ -90,15 +101,19 @@ def main():
 
     hold = rollout_real(task, w0, 0.07, a.steps, a.res, a.batch, SH, seed=777)
     C, L, B = hold
-    start = max(1, NCK // 8)
+    starts = ([max(1, int(v) // a.res) for v in a.starts.split(",")]
+              if a.starts else [max(1, NCK // 8)])
+    print(f"\nanchors (real step -> loss there): " + "  ".join(
+        f"{st*a.res}->{float(L[st]):.4f}" for st in starts))
 
-    print(f"\n{'jump':>6} {'hops':>5} {'REAL':>8} {'no-move':>8} "
-          f"{'TEACHER-F':>10} {'autoreg':>9} {'speedup':>8}")
+    print(f"\n{'jump':>6} {'hops':>5} {'anchor':>7} {'REAL':>8} {'no-move':>8} "
+          f"{'TEACHER-F':>10} {'captured':>9} {'speedup':>8}")
 
+    step_F_last = []
     for k in [int(v) for v in a.ks.split(",")]:
         jump = k * a.res
-        hops = max(1, round(a.total / jump))
-        if start + hops * k >= NCK:
+        hops = a.chain_hops if a.chain_hops else max(1, round(a.total / jump))
+        if max(starts) + hops * k >= NCK:
             print(f"{jump:>6} -- trajectory too short, skipped")
             continue
 
@@ -147,9 +162,10 @@ def main():
                                    .pow(2).mean())
                 opt.zero_grad(set_to_none=True)
                 (loss / H).backward(); opt.step()
+            step_F_last.clear(); step_F_last.append(step_F)
             return step_F
 
-        def free_run(step_F):
+        def free_run(step_F, start):
             st = (C[start].unsqueeze(0), B[start].unsqueeze(0),
                   torch.tensor([[L[start]]]))
             act = torch.tensor([[0.07, jump / 100.0]])
@@ -158,13 +174,40 @@ def main():
                     st = step_F(*st, act)
             return tloss(st[0][0], xtr, ytr, SH)
 
-        tf = free_run(train(1))
-        ar = free_run(train(a.horizon)) if not a.no_autoreg else float("nan")
-        ti = min(start + hops * k, NCK - 1)
+        sf = train(1)
+        if a.chain_hops:
+            for start in starts:
+                st = (C[start].unsqueeze(0), B[start].unsqueeze(0),
+                      torch.tensor([[L[start]]]))
+                act = torch.tensor([[0.07, jump / 100.0]])
+                print(f"\n  chaining {jump}-step jumps from step {start*a.res} "
+                      f"(train loss {float(L[start]):.5f})")
+                print(f"  {'hop':>4} {'step':>7} {'REAL loss':>11} "
+                      f"{'F loss':>10} {'F/REAL':>8} {'F pred loss':>12} "
+                      f"{'rel wt err':>11}")
+                for h in range(1, a.chain_hops + 1):
+                    ti = start + h * k
+                    if ti >= NCK:
+                        break
+                    with torch.no_grad():
+                        st = step_F_last[0](*st, act)
+                    fl = tloss(st[0][0], xtr, ytr, SH)
+                    rl = float(L[ti])
+                    werr = float((st[0][0] - C[ti]).norm() /
+                                 C[ti].norm().clamp_min(1e-9))
+                    print(f"  {h:>4} {ti*a.res:>7} {rl:>11.5f} {fl:>10.5f} "
+                          f"{fl/max(rl,1e-12):>8.2f} "
+                          f"{float(st[2][0,0]):>12.5f} {werr:>10.3f}")
+            continue
         speed = jump * step_mac / f_mac
-        print(f"{jump:>6} {hops:>5} {float(L[ti]):>8.4f} "
-              f"{float(L[start]):>8.4f} {tf:>10.4f} {ar:>9.4f} "
-              f"{speed:>7.1f}x")
+        for start in starts:
+            tf = free_run(sf, start)
+            ti = min(start + hops * k, NCK - 1)
+            real, nomove = float(L[ti]), float(L[start])
+            cap = (100 * (nomove - tf) / (nomove - real)
+                   if abs(nomove - real) > 1e-9 else float("nan"))
+            print(f"{jump:>6} {hops:>5} {start*a.res:>7} {real:>8.4f} "
+                  f"{nomove:>8.4f} {tf:>10.4f} {cap:>8.0f}% {speed:>7.1f}x")
 
     print(f"\n  every arm covers {a.total} real steps; 'hops' is how many F")
     print(f"  calls that took. speedup = MACs of the real steps skipped over")
