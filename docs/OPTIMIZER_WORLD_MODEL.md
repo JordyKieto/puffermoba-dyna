@@ -427,3 +427,112 @@ Each takes 30 seconds to 2 minutes on a laptop CPU. Nothing here needs a GPU.
 What's different here: those learn the *update rule* or the *data*. This tries to
 learn the *trajectory* — skipping the forward/backward passes entirely rather
 than making them cheaper.
+
+---
+
+## 9. A real simulator, big jumps, and why validation undoes it
+
+Experiments 1-3 above were an extrapolator: F needed a `velocity` input it could
+not produce, so real SGD steps had to be interleaved to manufacture its next
+input. The real steps were feeding F, not checking it.
+
+`optwm/sim.py` closes that. F predicts the FULL next state -- weights, momentum,
+loss -- so its output is a valid input to itself:
+
+    state   s = (theta, momentum, loss)
+    action  a = (lr, k)
+    F(s, a) -> s'
+
+Momentum, not velocity, because for SGD-with-momentum
+`theta_{t+1} = theta_t - lr*g + mom*buf`, so with the true buffer in the state
+`lr` enters multiplicatively. With velocity it did not: velocity conflated `lr`
+with the gradient, and F ignored the action entirely (17x too little spread
+across learning rates). Momentum plus randomly masking it during training took
+the correlation between predicted and real outcomes from **+0.299 to +0.856**
+and the spread compression from 17x to 4.2x. The action now works
+directionally; it is still 4x too flat in magnitude.
+
+### Big jumps beat small ones on both axes
+
+Held at fixed total progress -- every arm simulates the same 800 real steps,
+only the jump size varies:
+
+| jump | hops | train loss | captured | speedup |
+|---|---|---|---|---|
+| 50 | 16 | 0.0103 | 73% | 3.6x |
+| 200 | 4 | 0.0086 | 79% | 14.3x |
+| **800** | **1** | **0.0078** | **82%** | **57x** |
+
+Autoregressive training turned out to be unnecessary: with one hop there is
+nothing to compound, and where both were run the two objectives matched.
+
+Jumps also **chain**. Six chained 800-step jumps simulate 4,800 real steps with
+loss falling monotonically at every hop and relative weight error bounded at
+2.7%-11%. Nothing diverges.
+
+### Two accountings, and they disagree completely
+
+The first correction is that "% of loss captured" flatters heavily, because the
+loss curve is steeply convex -- 91% of the *drop* is only ~25% of the *steps*.
+Mapping F's achieved loss back to the real step that reaches it:
+
+| anchor | nominal jump | effective steps | honest speedup |
+|---|---|---|---|
+| 25 | 800 | 195 | 13.9x |
+| 300 | 800 | 300 | 21.4x |
+| 1600 | 800 | 735 | 52.4x |
+
+So F does a *bounded* amount of optimization work per call. Late in training the
+work remaining is small enough to fit in one call and it looks exact; early
+there is far more to do than one call can express.
+
+**The second correction is fatal on this task.** Every number above is train
+loss. The real trajectory's validation loss bottoms at **step 75** and rises
+forever after:
+
+| step | train | val loss | val acc |
+|---|---|---|---|
+| 25 | 0.5093 | 0.6341 | 0.759 |
+| **75** | 0.1993 | **0.3594** | **0.854** |
+| 400 | 0.0150 | 0.4538 | 0.859 |
+| 1200 | 0.0029 | 0.5627 | 0.864 |
+| 4825 | 0.0005 | 0.7031 | 0.865 |
+
+Train loss falls 400x past step 25 while validation loss gets 11% WORSE and
+accuracy moves 0.759 -> 0.865 and then stops. Chaining from step 25, F is worse
+than real on both validation metrics (0.6484 vs 0.5203 at hop 1) and weight
+error is 0.203-0.225 rather than the 0.027-0.066 seen from a late anchor. The
+earlier observation that F *beat* real on validation loss was an artifact of
+anchoring past the overfitting point.
+
+Against the obvious alternative -- just run 50 more real steps:
+
+| path | MACs | val loss | val acc |
+|---|---|---|---|
+| **stop at real step 75** | 4.4e7 | **0.3594** | 0.854 |
+| step 25 + 1 jump (800 steps) | 2.3e7 | 0.6484 | 0.847 |
+| step 25 + 6 jumps (4,800 steps) | 6.5e7 | 0.7632 | 0.851 |
+| real training to step 4,825 | 2.8e9 | 0.7031 | 0.865 |
+
+Fifty real steps beat every jump configuration by ~2x on validation loss.
+F faithfully accelerates a trajectory whose destination is worse than a point it
+already passed.
+
+And structurally: **the window where validation improves is ~75 steps, while
+F's jump granularity is 800 -- ten times larger.** It cannot land inside the
+regime that matters, and the fine-grained alternative measured 0.9x effective
+speedup, worse than simply running the steps.
+
+### What this means
+
+On this task, F accelerates the worthless phase of training and the phase that
+matters is too short to jump through. That is a property of the TASK, not
+obviously of the idea: a 3,075-parameter student on 1,024 noiseless examples
+overfits by step 75, which is exactly why the useful window is tiny.
+
+The consequence is a requirement, not a result: **validating this idea needs a
+task where train and validation improve together over thousands of steps** --
+enough data relative to student capacity that there is no early overfitting
+cliff. That is the regime real pretraining and most fine-tuning actually live
+in. Until the toy has that property, no jump measurement here says anything
+about validation, and train-loss speedups should not be quoted.
