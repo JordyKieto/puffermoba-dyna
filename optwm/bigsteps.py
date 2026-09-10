@@ -40,6 +40,15 @@ from .sim import (init_w, make_task, numel, rollout_real, shapes_for, sfwd,
                   tloss)
 
 
+def val_curve(C, xte, yte, shapes, chunk=64):
+    """Validation loss at every checkpoint of a trajectory."""
+    out = []
+    with torch.no_grad():
+        for i in range(len(C)):
+            out.append(float(F_.cross_entropy(sfwd(C[i], xte, shapes), yte)))
+    return torch.tensor(out)
+
+
 def test_metrics(w, xte, yte, shapes):
     """How the weights actually perform at the task, on held-out data."""
     with torch.no_grad():
@@ -98,6 +107,10 @@ def main():
     TW = torch.stack([c for c, _, _ in trajs])
     TL = torch.stack([l for _, l, _ in trajs])
     TB = torch.stack([b for _, _, b in trajs])
+    TV = torch.stack([val_curve(c, xte, yte, SH) for c, _, _ in trajs])
+    print(f"  validation curves computed; run0 val loss "
+          f"{float(TV[0,0]):.4f} -> min {float(TV[0].min()):.4f} "
+          f"@step {int(TV[0].argmin())*a.res} -> {float(TV[0,-1]):.4f}")
     LRt = torch.tensor(LRs).float()
     NCK = TW.shape[1]
     print(f"{a.runs} trajectories x {a.steps} steps ({time.time()-t0:.0f}s)   "
@@ -108,6 +121,7 @@ def main():
     f_mac = 4 * NP * a.fwidth + a.fwidth ** 2
 
     hold = rollout_real(task, w0, 0.07, a.steps, a.res, a.batch, SH, seed=777)
+    VH = val_curve(hold[0], xte, yte, SH)
     C, L, B = hold
     starts = ([max(1, int(v) // a.res) for v in a.starts.split(",")]
               if a.starts else [max(1, NCK // 8)])
@@ -137,36 +151,43 @@ def main():
         dsd = (TW[j_, i_ + k] - TW[j_, i_]).std(0).clamp_min(1e-8)
         vmu, vsd = TB[j_, i_].mean(0), TB[j_, i_].std(0).clamp_min(1e-8)
         lmu, lsd = TL[j_, i_].mean(), TL[j_, i_].std().clamp_min(1e-8)
+        qmu, qsd = TV[j_, i_].mean(), TV[j_, i_].std().clamp_min(1e-8)
 
         def train(H):
+            # state now carries BOTH losses, and F predicts both
             net = nn.Sequential(
-                nn.Linear(2 * NP + 1 + 2, a.fwidth), nn.SiLU(),
+                nn.Linear(2 * NP + 2 + 2, a.fwidth), nn.SiLU(),
                 nn.Linear(a.fwidth, a.fwidth), nn.SiLU(),
-                nn.Linear(a.fwidth, 2 * NP + 1))
+                nn.Linear(a.fwidth, 2 * NP + 2))
             opt = torch.optim.AdamW(net.parameters(), lr=1e-3,
                                     weight_decay=1e-4)
 
-            def step_F(th, bf, lo, act):
-                o = net(torch.cat([th, bf, (lo - lmu) / lsd, act], 1))
+            def step_F(th, bf, lo, vl, act):
+                o = net(torch.cat([th, bf, (lo - lmu) / lsd,
+                                   (vl - qmu) / qsd, act], 1))
                 return (th + o[:, :NP] * dsd + dmu,
                         o[:, NP:2 * NP] * vsd + vmu,
-                        o[:, 2 * NP:] * lsd + lmu)
+                        o[:, 2 * NP:2 * NP + 1] * lsd + lmu,
+                        o[:, 2 * NP + 1:] * qsd + qmu)
 
             for _ in range(a.epochs):
                 b = idx[torch.randint(0, len(idx), (128,))]
                 j, i = b[:, 0], b[:, 1]
                 act = torch.stack([LRt[j],
                                    torch.full_like(LRt[j], jump / 100.0)], 1)
-                cth, cbf, clo = TW[j, i], TB[j, i], TL[j, i].unsqueeze(1)
+                cth, cbf = TW[j, i], TB[j, i]
+                clo, cvl = TL[j, i].unsqueeze(1), TV[j, i].unsqueeze(1)
                 if a.mask_state > 0:
                     cbf = cbf * (torch.rand(len(j), 1) > a.mask_state).float()
                 loss = 0.0
                 for h in range(1, H + 1):
-                    cth, cbf, clo = step_F(cth, cbf, clo, act)
+                    cth, cbf, clo, cvl = step_F(cth, cbf, clo, cvl, act)
                     ti = i + h * k
                     loss = loss + (((cth - TW[j, ti]) / dsd).pow(2).mean()
                                    + ((cbf - TB[j, ti]) / vsd).pow(2).mean()
                                    + ((clo - TL[j, ti].unsqueeze(1)) / lsd)
+                                   .pow(2).mean()
+                                   + ((cvl - TV[j, ti].unsqueeze(1)) / qsd)
                                    .pow(2).mean())
                 opt.zero_grad(set_to_none=True)
                 (loss / H).backward(); opt.step()
@@ -175,7 +196,8 @@ def main():
 
         def free_run(step_F, start):
             st = (C[start].unsqueeze(0), B[start].unsqueeze(0),
-                  torch.tensor([[L[start]]]))
+                  torch.tensor([[L[start]]]),
+                  torch.tensor([[float(VH[start])]]))
             act = torch.tensor([[0.07, jump / 100.0]])
             for _ in range(hops):
                 with torch.no_grad():
@@ -186,20 +208,18 @@ def main():
         if a.chain_hops:
             for start in starts:
                 st = (C[start].unsqueeze(0), B[start].unsqueeze(0),
-                      torch.tensor([[L[start]]]))
+                      torch.tensor([[L[start]]]),
+                      torch.tensor([[float(VH[start])]]))
                 act = torch.tensor([[0.07, jump / 100.0]])
                 print(f"\n  chaining {jump}-step jumps from step {start*a.res} "
                       f"(train loss {float(L[start]):.5f})")
-                print(f"  {'':>12}{'--- TRAIN loss ---':>22}"
-                      f"{'--- TEST loss ---':>21}{'--- TEST acc ---':>20}"
-                      f"{'':>7}")
-                print(f"  {'hop':>4} {'step':>7} {'REAL':>10} {'F':>10} "
-                      f"{'REAL':>10} {'F':>10} {'REAL':>9} {'F':>9} "
-                      f"{'wt err':>8}")
+                print(f"  {'hop':>4} {'step':>7} {'REAL val':>9} "
+                      f"{'F wts val':>10} {'F PREDICTS':>11} {'pred err':>9} "
+                      f"{'REAL acc':>9} {'F acc':>7} {'wt err':>8}")
                 rtl0, rta0 = test_metrics(C[start], xte, yte, SH)
-                print(f"  {'0':>4} {start*a.res:>7} {float(L[start]):>10.5f} "
-                      f"{'--':>10} {rtl0:>10.4f} {'--':>10} {rta0:>9.3f} "
-                      f"{'--':>9} {'--':>8}")
+                print(f"  {'0':>4} {start*a.res:>7} {rtl0:>9.4f} "
+                      f"{'--':>10} {'--':>11} {'--':>9} {rta0:>9.3f} "
+                      f"{'--':>7} {'--':>8}")
                 for h in range(1, a.chain_hops + 1):
                     ti = start + h * k
                     if ti >= NCK:
@@ -207,15 +227,14 @@ def main():
                     with torch.no_grad():
                         st = step_F_last[0](*st, act)
                     fw = st[0][0]
-                    fl = tloss(fw, xtr, ytr, SH)
-                    rl = float(L[ti])
+                    pred_v = float(st[3][0, 0])       # F's OWN val-loss estimate
                     ftl, fta = test_metrics(fw, xte, yte, SH)
                     rtl, rta = test_metrics(C[ti], xte, yte, SH)
                     werr = float((fw - C[ti]).norm() /
                                  C[ti].norm().clamp_min(1e-9))
-                    print(f"  {h:>4} {ti*a.res:>7} {rl:>10.5f} {fl:>10.5f} "
-                          f"{rtl:>10.4f} {ftl:>10.4f} {rta:>9.3f} "
-                          f"{fta:>9.3f} {werr:>8.3f}")
+                    print(f"  {h:>4} {ti*a.res:>7} {rtl:>9.4f} {ftl:>10.4f} "
+                          f"{pred_v:>11.4f} {pred_v-rtl:>+9.4f} {rta:>9.3f} "
+                          f"{fta:>7.3f} {werr:>8.3f}")
             continue
         speed = jump * step_mac / f_mac
         for start in starts:
