@@ -60,6 +60,38 @@ def sforward(w, x):
     return torch.relu(x @ W1 + b1) @ W2 + b2
 
 
+def sforward_batch(W, x):
+    """(B, NP) weight vectors x (N, D_IN) inputs -> (B, N, D_OUT) logits."""
+    i, parts = 0, []
+    for sh in SHAPES:
+        n = int(torch.tensor(sh).prod())
+        parts.append(W[:, i:i + n].view(-1, *sh)); i += n
+    W1, b1, W2, b2 = parts
+    h = torch.relu(torch.einsum("nd,bdh->bnh", x, W1) + b1[:, None, :])
+    return torch.einsum("bnh,bho->bno", h, W2) + b2[:, None, :]
+
+
+PROBE_N = 32
+PROBE_X = torch.randn(PROBE_N, D_IN,
+                      generator=torch.Generator().manual_seed(4242))
+
+
+def probe_ctx(W, py, lr):
+    """Task context from ONE forward pass on a fixed 32-example probe.
+
+    This is the `context` term in F(z_t, context, k). It costs one forward on
+    32 examples -- O(1) in k, not O(k) forward/backward -- so it does not
+    smuggle back the computation the jump is meant to avoid. It carries what
+    the model currently says on the probe (logits) and what this task wants it
+    to say (labels), which is what tells F which optimization problem it is
+    looking at.
+    """
+    with torch.no_grad():
+        lg = sforward_batch(W, PROBE_X).reshape(len(W), -1)
+    oh = F_.one_hot(py, D_OUT).float().reshape(1, -1).expand(len(W), -1)
+    return torch.cat([lg, oh, lr], 1)
+
+
 def make_task(seed, n=2048):
     """Teacher-student: a fixed random teacher labels gaussian inputs."""
     g = torch.Generator().manual_seed(seed)
@@ -67,7 +99,8 @@ def make_task(seed, n=2048):
     tw = torch.randn(NP, generator=g) * 0.6
     with torch.no_grad():
         y = sforward(tw, x).argmax(1)
-    return x[:n // 2], y[:n // 2], x[n // 2:], y[n // 2:]
+        py = sforward(tw, PROBE_X).argmax(1)
+    return x[:n // 2], y[:n // 2], x[n // 2:], y[n // 2:], py
 
 
 def init_w(seed):
@@ -83,7 +116,7 @@ def init_w(seed):
 
 
 def run(task, w0, lr, steps, every, batch, seed):
-    xtr, ytr, xte, yte = task
+    xtr, ytr, xte, yte, _ = task
     w = w0.clone().requires_grad_(True)
     opt = torch.optim.SGD([w], lr=lr, momentum=0.9)
     g = torch.Generator().manual_seed(seed)
@@ -98,7 +131,7 @@ def run(task, w0, lr, steps, every, batch, seed):
 
 
 def evaluate(w, task):
-    xtr, ytr, xte, yte = task
+    xtr, ytr, xte, yte, _ = task
     with torch.no_grad():
         lg = sforward(w, xte)
         return (float(F_.cross_entropy(lg, yte)),
@@ -107,12 +140,12 @@ def evaluate(w, task):
 
 # ------------------------------------------------------------------- main
 
-def build_F(X, PREV, LR, Y, tr, epochs):
+def build_F(X, PREV, CTX, Y, tr, epochs):
     mu, sd = (Y - X)[tr].mean(0), (Y - X)[tr].std(0).clamp_min(1e-8)
-    net = nn.Sequential(nn.Linear(NP * 2 + 1, 512), nn.SiLU(),
+    net = nn.Sequential(nn.Linear(NP * 2 + CTX.shape[1], 512), nn.SiLU(),
                         nn.Linear(512, 512), nn.SiLU(), nn.Linear(512, NP))
     opt = torch.optim.AdamW(net.parameters(), lr=1e-3, weight_decay=1e-4)
-    xin = torch.cat([X, X - PREV, LR], 1)[tr]
+    xin = torch.cat([X, X - PREV, CTX], 1)[tr]
     tgt = (((Y - X) - mu) / sd)[tr]
     for _ in range(epochs):
         i = torch.randint(0, len(xin), (256,))
@@ -134,6 +167,9 @@ def main():
     ap.add_argument("--resume", type=int, default=150)
     ap.add_argument("--basin-runs", type=int, default=12)
     ap.add_argument("--vary-task", action="store_true")
+    ap.add_argument("--task-context", action="store_true",
+                    help="give F a task context from one forward pass on a "
+                         "fixed probe batch, instead of only the learning rate")
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
 
@@ -154,6 +190,18 @@ def main():
           f"run0 loss {evaluate(trajs[0][0], base_task)[0]:.3f} -> "
           f"{evaluate(trajs[0][-1], base_task)[0]:.3f}")
 
+    def make_ctx(Xa, RUNa, LRa):
+        """Per-pair context. Without --task-context this is just the learning
+        rate, which is what made the varying-task case fail: F could not tell
+        which optimization problem it was looking at."""
+        if not a.task_context:
+            return LRa
+        out = torch.empty(len(Xa), PROBE_N * D_OUT * 2 + 1)
+        for r in RUNa.unique():
+            m = RUNa == r
+            out[m] = probe_ctx(Xa[m], tasks[int(r)][4], LRa[m])
+        return out
+
     print(f"\nKILLER PLOT: real SGD steps eliminated vs quality retained")
     print("  '% of true gain' = fraction of the loss improvement that the true")
     print("  jump achieves, recovered by the method. 0% = no better than doing")
@@ -172,15 +220,16 @@ def main():
         X, Y, PREV = torch.cat(X), torch.cat(Y), torch.cat(PREV)
         LR = torch.tensor(LR).float().unsqueeze(1); RUN = torch.tensor(RUN)
         ho = RUN >= (a.runs - a.holdout)
-        net, mu, sd = build_F(X, PREV, LR, Y, ~ho, a.epochs)
+        CTX = make_ctx(X, RUN, LR)
+        net, mu, sd = build_F(X, PREV, CTX, Y, ~ho, a.epochs)
 
-        preds = {"persist": lambda x, p, l: x,
-                 "mean-d": lambda x, p, l: x + mu,
-                 "velocity": lambda x, p, l: x + (x - p) * kk,
-                 "learned F": lambda x, p, l: x + (
-                     net(torch.cat([x, x - p, l], 1)).detach() * sd + mu)}
+        preds = {"persist": lambda x, p, c: x,
+                 "mean-d": lambda x, p, c: x + mu,
+                 "velocity": lambda x, p, c: x + (x - p) * kk,
+                 "learned F": lambda x, p, c: x + (
+                     net(torch.cat([x, x - p, c], 1)).detach() * sd + mu)}
 
-        hx, hp, hl, hy = X[ho], PREV[ho], LR[ho], Y[ho]
+        hx, hp, hl, hy = X[ho], PREV[ho], CTX[ho], Y[ho]
         hrun = RUN[ho]
         # each pair must be scored on the task ITS run was trained on; scoring
         # every run against one task makes the metric meaningless the moment
@@ -213,10 +262,12 @@ def main():
         C, task, lr = trajs[r], tasks[r], ctxs[r]
         j = max(1, len(C) // 6)
         th, pv = C[j].unsqueeze(0), C[j - 1].unsqueeze(0)
-        starts = {nm: f(th, pv, torch.tensor([[lr]]))[0] for nm, f in preds.items()}
+        cv = (probe_ctx(th, tasks[r][4], torch.tensor([[lr]]))
+              if a.task_context else torch.tensor([[lr]]))
+        starts = {nm: f(th, pv, cv)[0] for nm, f in preds.items()}
         starts["TRUE jump"] = C[min(j + kk, len(C) - 1)]
         for nm, w in starts.items():
-            xtr, ytr, _, _ = task
+            xtr, ytr, _, _, _ = task
             ww = w.clone().requires_grad_(True)
             o = torch.optim.SGD([ww], lr=lr, momentum=0.9)
             g = torch.Generator().manual_seed(777 + r)
