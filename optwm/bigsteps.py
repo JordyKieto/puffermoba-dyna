@@ -40,6 +40,14 @@ from .sim import (init_w, make_task, numel, rollout_real, shapes_for, sfwd,
                   tloss)
 
 
+def test_metrics(w, xte, yte, shapes):
+    """How the weights actually perform at the task, on held-out data."""
+    with torch.no_grad():
+        lg = sfwd(w, xte, shapes)
+        return (float(F_.cross_entropy(lg, yte)),
+                float((lg.argmax(1) == yte).float().mean()))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--hid", type=int, default=128)
@@ -74,7 +82,7 @@ def main():
     SH = shapes_for(a.hid)
     NP = numel(SH)
     task = make_task(SH, 11)
-    xtr, ytr = task[0], task[1]
+    xtr, ytr, xte, yte = task[0], task[1], task[2], task[3]
     w0 = init_w(SH, 0)
     lrs = [0.02, 0.05, 0.1, 0.2]
     print(f"student {NP:,} params (hidden {a.hid})   F width {a.fwidth}   "
@@ -182,22 +190,32 @@ def main():
                 act = torch.tensor([[0.07, jump / 100.0]])
                 print(f"\n  chaining {jump}-step jumps from step {start*a.res} "
                       f"(train loss {float(L[start]):.5f})")
-                print(f"  {'hop':>4} {'step':>7} {'REAL loss':>11} "
-                      f"{'F loss':>10} {'F/REAL':>8} {'F pred loss':>12} "
-                      f"{'rel wt err':>11}")
+                print(f"  {'':>12}{'--- TRAIN loss ---':>22}"
+                      f"{'--- TEST loss ---':>21}{'--- TEST acc ---':>20}"
+                      f"{'':>7}")
+                print(f"  {'hop':>4} {'step':>7} {'REAL':>10} {'F':>10} "
+                      f"{'REAL':>10} {'F':>10} {'REAL':>9} {'F':>9} "
+                      f"{'wt err':>8}")
+                rtl0, rta0 = test_metrics(C[start], xte, yte, SH)
+                print(f"  {'0':>4} {start*a.res:>7} {float(L[start]):>10.5f} "
+                      f"{'--':>10} {rtl0:>10.4f} {'--':>10} {rta0:>9.3f} "
+                      f"{'--':>9} {'--':>8}")
                 for h in range(1, a.chain_hops + 1):
                     ti = start + h * k
                     if ti >= NCK:
                         break
                     with torch.no_grad():
                         st = step_F_last[0](*st, act)
-                    fl = tloss(st[0][0], xtr, ytr, SH)
+                    fw = st[0][0]
+                    fl = tloss(fw, xtr, ytr, SH)
                     rl = float(L[ti])
-                    werr = float((st[0][0] - C[ti]).norm() /
+                    ftl, fta = test_metrics(fw, xte, yte, SH)
+                    rtl, rta = test_metrics(C[ti], xte, yte, SH)
+                    werr = float((fw - C[ti]).norm() /
                                  C[ti].norm().clamp_min(1e-9))
-                    print(f"  {h:>4} {ti*a.res:>7} {rl:>11.5f} {fl:>10.5f} "
-                          f"{fl/max(rl,1e-12):>8.2f} "
-                          f"{float(st[2][0,0]):>12.5f} {werr:>10.3f}")
+                    print(f"  {h:>4} {ti*a.res:>7} {rl:>10.5f} {fl:>10.5f} "
+                          f"{rtl:>10.4f} {ftl:>10.4f} {rta:>9.3f} "
+                          f"{fta:>9.3f} {werr:>8.3f}")
             continue
         speed = jump * step_mac / f_mac
         for start in starts:
