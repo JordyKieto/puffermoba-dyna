@@ -10,7 +10,11 @@ Arms (each its own model and optimizer, same init seed):
   gate_sparse  change gate on everything except movement (x, y, waypoint)
   gate_sparse_w02  gate_sparse with the gate's yes/no loss weighted x0.2
   gate_sparse_w02_all  + gated value loss averaged over all entries (scaled by change rate)
-  baseline     = gate_sparse_w02_all, the adopted baseline
+  baseline_v1  = gate_sparse_w02_all
+  baseline     = baseline_v1 + hero walking loss x10, the adopted baseline
+  walk_only    baseline model and inputs, loss on hero x/y only (diagnostic)
+  hero_mlp     per-hero MLP on its own stats + action + wall patch, walk-only loss (reference)
+  walk_x5/x10  baseline with the hero x/y loss terms weighted x5 / x10
 
 Every round draws one uniform batch and one event batch; arms without event
 sampling train on the uniform batch, arms with it on the event batch, so
@@ -32,6 +36,38 @@ import torch
 from . import train as T
 from .data import KIND, Featurizer, fit_stats, load_store
 from .model import TokenWM
+from ..shards import ACTION_SIZES
+
+class HeroMLP(torch.nn.Module):
+    """Reference: each hero predicts its own next change from its own stats,
+    position, 9x9 wall patch and its action. No attention, no memory, no other
+    units. Everything else is predicted as unchanged (persistence)."""
+
+    def __init__(self, d=256):
+        super().__init__()
+        from .model import Fourier
+        self.d = 1
+        self.fourier = Fourier(8)
+        n_in = 9 + 7 + 32 + 81 + sum(ACTION_SIZES)
+        self.net = torch.nn.Sequential(torch.nn.Linear(n_in, d), torch.nn.GELU(), torch.nn.Linear(d, d),
+                                       torch.nn.GELU(), torch.nn.Linear(d, 13))
+        torch.nn.init.zeros_(self.net[-1].weight); torch.nn.init.zeros_(self.net[-1].bias)
+
+    def set_change_prior(self, rate):
+        pass
+
+    def step(self, f, a, h):
+        B = a.shape[0]
+        onehot = torch.cat([torch.nn.functional.one_hot(a[..., i], n).float() for i, n in enumerate(ACTION_SIZES)], -1)
+        x = torch.cat([f["shared"][:, :10], f["hero"], self.fourier(f["pos"][:, :10]), f["patch"][:, :10], onehot], -1)
+        reg = torch.zeros(B, 206, 13, device=a.device)
+        reg[:, :10] = self.net(x)
+        c = slice(10, 110)
+        return dict(reg=reg, alive_flip=torch.full((B, 206), -6.0, device=a.device),
+                    is_hit=torch.zeros(B, 206, device=a.device),
+                    lane=5 * torch.nn.functional.one_hot(f["lane"], 6).float(),
+                    team=5 * torch.nn.functional.one_hot(f["team"][:, c], 3).float()), h
+
 
 SPARSE = ("q_timer", "w_timer", "e_timer", "mana", "health", "basic_attack_timer",
           "stun_timer", "move_timer", "move_modifier", "xp")   # everything but movement
@@ -41,7 +77,14 @@ ARMS = {
     "gate": dict(gate=True, weights={}, events=False),
     "gate_sparse_w02": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, weights={}, events=False),
     "gate_sparse_w02_all": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False),
-    "baseline": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False),
+    "baseline_v1": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False),
+    "baseline": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                     walk_w=10.0),
+    "walk_only": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                      walk_only=True),
+    "hero_mlp": dict(model="hero_mlp", gate=False, weights={}, events=False, walk_only=True),
+    "walk_x5": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False, walk_w=5.0),
+    "walk_x10": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False, walk_w=10.0),
     "events": dict(gate=False, weights=dict(abilities=3, health=3, deaths=3, attack=2), events=True),
     "both": dict(gate=True, weights=dict(abilities=3, health=3, deaths=3, attack=2), events=True),
 }
@@ -86,7 +129,10 @@ def main():
     for name in args.arms.split(","):
         cfg = ARMS[name]
         torch.manual_seed(0)                              # identical init across arms
-        m = TokenWM(gate=cfg["gate"], gate_fields=cfg.get("gate_fields")).to(dev)
+        if cfg.get("model") == "hero_mlp":
+            m = HeroMLP().to(dev)
+        else:
+            m = TokenWM(gate=cfg["gate"], gate_fields=cfg.get("gate_fields")).to(dev)
         m.set_change_prior(stats.change_rate)
         run = None
         if args.wandb:
@@ -105,6 +151,8 @@ def main():
             T.EFFECT_WEIGHT.clear(); T.EFFECT_WEIGHT.update(a["cfg"]["weights"])
             T.GATE_LOSS_WEIGHT = a["cfg"].get("gate_w", 1.0)
             T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
+            T.WALK_ONLY = a["cfg"].get("walk_only", False)
+            T.HERO_WALK_WEIGHT = a["cfg"].get("walk_w", 1.0)
             sk = T.skill_eval(a["model"], fz, he, stats, kind, dev, val_args)
             a["hist"].append(dict(round=rnd, **sk))
             if a["run"]:
@@ -128,6 +176,8 @@ def main():
             T.EFFECT_WEIGHT.clear(); T.EFFECT_WEIGHT.update(a["cfg"]["weights"])
             T.GATE_LOSS_WEIGHT = a["cfg"].get("gate_w", 1.0)
             T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
+            T.WALK_ONLY = a["cfg"].get("walk_only", False)
+            T.HERO_WALK_WEIGHT = a["cfg"].get("walk_w", 1.0)
             lr = args.lr * min(1.0, rnd / 50)
             for g in a["opt"].param_groups:
                 g["lr"] = lr

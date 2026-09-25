@@ -69,6 +69,8 @@ BASELINE_GATE_FIELDS = ("q_timer", "w_timer", "e_timer", "mana", "health", "basi
                         "stun_timer", "move_timer", "move_modifier", "xp")
 EFFECT_WEIGHT = {}
 GATE_LOSS_WEIGHT = 1.0   # weight on the change gate's yes/no (BCE) loss
+WALK_ONLY = False        # diagnostic: train on hero x/y changes only
+HERO_WALK_WEIGHT = 1.0   # weight on the hero x/y loss terms (walking)
 # gated fields' value loss averaged over "changed" entries only, or over "all"
 # supervised entries (= scaled by the field's change rate, as without the gate)
 GATE_VALUE_NORM = "changed"
@@ -107,6 +109,14 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     flip = (alive0 != alive1).float()
     alive_bce = Fn.binary_cross_entropy_with_logits(pred["alive_flip"], flip, reduction="none")
     hit_bce = Fn.binary_cross_entropy_with_logits(pred["is_hit"], e1[..., F["is_hit"]], reduction="none")
+    if WALK_ONLY:
+        # hero x, y only (fields 0, 1), same Huber on scaled deltas, same masks
+        hs = kind == 0
+        m = mask[:, hs, 0:2].float()
+        e = (pred["value"] if gated else pred["reg"])[:, hs, 0:2]
+        walk = Fn.huber_loss(e, target[:, hs, 0:2], reduction="none", delta=1.0)
+        l = ((walk * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)).sum()
+        return l, {"hero/walking": l}
     parts = {}
     for k, name in enumerate(KIND_NAMES):
         sel = kind == k
@@ -124,7 +134,8 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
             if stats.reg_mask[k, j]:
                 eff = EFFECT_OF[fname]
                 key = f"{name}/{eff}"
-                parts[key] = parts.get(key, 0.0) + EFFECT_WEIGHT.get(eff, 1.0) * per_field[j]
+                w = EFFECT_WEIGHT.get(eff, 1.0) * (HERO_WALK_WEIGHT if k == 0 and fname in ("x", "y") else 1.0)
+                parts[key] = parts.get(key, 0.0) + w * per_field[j]
         if can_flip[k]:
             parts[f"{name}/deaths"] = EFFECT_WEIGHT.get("deaths", 1.0) * alive_bce[:, sel].mean()
         a1 = alive1[:, sel]
@@ -401,9 +412,10 @@ def main():
     ap.add_argument("--gate-fields", default="", help="comma list of gated fields (empty = all)")
     ap.add_argument("--gate-loss-weight", type=float, default=1.0, help="weight on the gate's yes/no loss")
     ap.add_argument("--gate-value-norm", default="changed", choices=("changed", "all"))
+    ap.add_argument("--hero-walk-weight", type=float, default=1.0, help="weight on the hero x/y loss terms")
     ap.add_argument("--baseline", action="store_true",
                     help="the adopted baseline (EXPERIMENTS.md): gate on all fields but movement, "
-                         "yes/no loss x0.2, value loss averaged over all entries")
+                         "yes/no loss x0.2, value loss averaged over all entries, hero walking x10")
     ap.add_argument("--effect-weights", default="", help="semantic loss, e.g. abilities=3,health=3,deaths=3")
     ap.add_argument("--event-frac", type=float, default=0.0,
                     help="fraction of each batch drawn from windows with a cast, damage or death")
@@ -440,12 +452,13 @@ def main():
           flush=True)
     fz = Featurizer(dev)
     kind = torch.from_numpy(KIND).to(dev)
-    global BF16, GATE_LOSS_WEIGHT, GATE_VALUE_NORM
+    global BF16, GATE_LOSS_WEIGHT, GATE_VALUE_NORM, HERO_WALK_WEIGHT
     if args.baseline:
         args.gate, args.gate_fields = True, ",".join(BASELINE_GATE_FIELDS)
-        args.gate_loss_weight, args.gate_value_norm = 0.2, "all"
+        args.gate_loss_weight, args.gate_value_norm, args.hero_walk_weight = 0.2, "all", 10.0
     BF16 = args.bf16
     GATE_LOSS_WEIGHT, GATE_VALUE_NORM = args.gate_loss_weight, args.gate_value_norm
+    HERO_WALK_WEIGHT = args.hero_walk_weight
     EFFECT_WEIGHT.update({k: float(v) for k, v in (kv.split("=") for kv in args.effect_weights.split(",") if kv)})
     gate_fields = [f for f in args.gate_fields.split(",") if f] or None
     model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate,

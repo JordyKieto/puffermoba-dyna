@@ -151,10 +151,15 @@ tick" output. It starts at that field's observed change rate. The change is
 only applied where it says yes. `--gate-fields` limits the gate to chosen
 fields.
 
-**The adopted baseline (`--baseline`)** gates every field except movement.
-Its loss is balanced so the gated fields don't crowd out walking: the gate's
-yes/no loss ×0.2, and each gated field's value loss averaged over all
-supervised ticks. See EXPERIMENTS.md.
+**The adopted baseline (`--baseline`, v2)** gates every field except
+movement. Its loss is balanced so the gated fields don't crowd out walking:
+- the gate's yes/no loss ×0.2;
+- each gated field's value loss averaged over all supervised ticks;
+- the hero x/y terms weighted ×10.
+
+A walking-only test showed that the architecture learns walking as well as a
+per-hero MLP. Without that weighting, the full loss buries it. See
+EXPERIMENTS.md.
 
 **Other heads:**
 - **alive flip:** "this unit dies or spawns this tick";

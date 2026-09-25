@@ -466,39 +466,76 @@ arm; the scaled version gives +9%.
 
 Walking is still below the ungated model (+26 / +67).
 
-## ✅ Current baseline (adopted 2026-09-25)
+### Round 3: why walking is weak, and the fix
 
-Change gate on every delta field **except movement** (x, y, waypoint). Gate
-yes/no loss ×0.2. Gated fields' value loss averaged over all supervised
-entries (scaled by change rate). Actions added to the hero token.
+Same setup; wandb groups `ablate11`, `ablate12`. Walking row only for the
+isolation test (better than copying / error with wrong actions, %):
+
+| arm | round 50 | round 100 | round 162 |
+|---|---|---|---|
+| baseline v1 (full loss) | −13 | +6 | **+15 / +44** |
+| walking-only loss, same architecture | +34 | +43 | **+45 / +123** |
+| per-hero MLP (own stats + action + walls), walking-only loss | +18 | +42 | **+45 / +122** |
+
+**The architecture can learn walking; the full loss buries it.**
+- With only the walking loss, the token transformer matches a plain per-hero
+  MLP (+45%), and learns faster early.
+- So routing and representation are fine. The weakness is loss competition.
+- Both plateau at ~+45%. That's the one-step ceiling with this information:
+  occupancy isn't visible, plus stuns and deaths.
+
+Then the fix, weighting the hero x/y loss terms (full scoreboard):
+
+| effect | baseline v1 | walking ×5 | **walking ×10** |
+|---|---|---|---|
+| walking | +15 / +44 | +31 / +85 | **+35 / +96** |
+| attack | +21 / +16 | +21 / +20 | +22 / +18 |
+| Q | 0 / 0 | 0 / 0 | 0 / 0 |
+| W | +31 / +25 | +31 / +27 | +32 / +30 |
+| E | +28 / +18 | +29 / +21 | +29 / +24 |
+| mana | +21 / +13 | +23 / +15 | +23 / +16 |
+| health | −24 / +8 | −23 / +6 | −22 / +5 |
+
+Walking more than doubles, and no other row pays for it.
+
+## ✅ Current baseline (v2, adopted 2026-09-25)
+
+Baseline v1 plus the **hero walking loss weighted ×10**. In full:
+- change gate on every delta field **except movement** (x, y, waypoint);
+- gate yes/no loss ×0.2;
+- gated fields' value loss averaged over all supervised entries;
+- hero x/y loss terms ×10;
+- actions added to the hero token.
 
 Where it stands, after 162 updates (5-minute test; hero better than copying /
 error with wrong actions, %):
 
-| effect | **baseline** | no gate | gate on all fields |
+| effect | **baseline v2** | baseline v1 | no gate |
 |---|---|---|---|
-| walking | +15 / +43 | **+26 / +67** | +16 / +40 |
-| attack | **+21 / +17** | +20 / +6 | +22 / +17 |
-| Q | 0 / 0 | −27 / +4 | 0 / 0 |
-| W | **+31 / +26** | +11 / +17 | +29 / +28 |
-| E | **+28 / +19** | +3 / +12 | +28 / +14 |
-| mana | **+21 / +13** | +9 / +8 | +19 / +8 |
-| health | −24 / +9 | −19 / 0 | −23 / +8 |
+| walking | **+35 / +96** | +15 / +44 | +26 / +67 |
+| attack | +22 / +18 | +21 / +16 | +20 / +6 |
+| Q | 0 / 0 | 0 / 0 | −27 / +4 |
+| W | **+32 / +30** | +31 / +25 | +11 / +17 |
+| E | **+29 / +24** | +28 / +18 | +3 / +12 |
+| mana | **+23 / +16** | +21 / +13 | +9 / +8 |
+| health | −22 / +5 | −24 / +8 | −19 / 0 |
 
-- **Full training:** `python -m mobawm.wm.train --baseline ...`
-  (sets `--gate --gate-fields <all but movement> --gate-loss-weight 0.2
-  --gate-value-norm all`)
+- **Full training:** `python -m mobawm.wm.train --baseline ...` (sets
+  `--gate --gate-fields <all but movement> --gate-loss-weight 0.2
+  --gate-value-norm all --hero-walk-weight 10`)
 - **5-minute tests:** `python -m mobawm.wm.ablate --arms baseline,<new arm> ...`
+  (`baseline_v1` is kept for comparison)
 
 **Open problems:**
 - Q is stuck at 0 in every arm.
 - Health is worse than copying.
-- Walking is +15 vs +26 for the ungated model.
+- Walking is +35 vs its ~+45 one-step ceiling.
 - Deaths are 0% at 162 updates.
 
 **Candidate next steps:**
 - a "can this press fire" input (the validated cast rule), for Q;
-- keeping health's change-only value loss, for health.
+- per-effect loss weighting (as for walking) for health;
+- walking ×20.
 
 ---
 
