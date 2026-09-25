@@ -4,7 +4,7 @@
 at the fast big-batch recipe, and what does its rollout look like next to the
 real game?
 
-- **Status:** running (started 2026-09-25 22:49, pod `ibkmxiyh4t8vmj`).
+- **Status:** running (started 2026-09-25 22:49 UTC = 15:49 PDT, ends ~16:55 PDT, pod `ibkmxiyh4t8vmj`).
 - **wandb:** https://wandb.ai/drift-ai-models/moba-wm/runs/kxe2bh1k
 
 ## Setup
