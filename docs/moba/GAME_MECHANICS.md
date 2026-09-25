@@ -1,4 +1,4 @@
-# Ocean MOBA: how heroes act
+# Ocean MOBA: game mechanics
 
 What each hero action does, straight from the simulator
 (`third_party/pufferlib/ocean/moba/moba.h`: `step_players`, the `skill_*`
@@ -167,6 +167,100 @@ chosen automatically (see Targeting).
   too; towers keep firing.
 - **Slow** (carry Q and W): half speed for the duration.
 - **Speed boost** (assassin E): double speed for 25 ticks.
+
+## Towers
+
+- **24 towers, 12 per team,** fixed in place along the lanes and at each
+  base. They never move, never regenerate health and never respawn.
+- **They attack enemy heroes and creeps** within an 11×11 box (5 cells each
+  way). Neutrals and other towers are ignored.
+  - The nearest target is hit every 5 ticks.
+  - A tower rescans for targets every 3 ticks and keeps shooting at the last
+    list in between, even if that target has since moved.
+
+  | tier | count | health | damage per hit |
+  |---|---|---|---|
+  | 1 (outermost) | 6 | 1,800 | 110 |
+  | 2 | 6 | 2,000 | 175 |
+  | 3 | 6 | 2,000 | 175 |
+  | 4 (base) | 4 | 2,100 | 175 |
+  | **ancient** | 2 | **4,500** | **0**: ancients don't shoot |
+
+- **Any tower can be attacked at any time:** no tier has to fall before the
+  next is exposed. Towers take damage from heroes (attacks and abilities) and
+  from creeps.
+- **Killing a tower gives no XP.** The last-hitting hero gets the tower reward.
+- **Stuns** don't stop towers.
+
+## Creeps (minions)
+
+- **A wave every 150 ticks:** 5 creeps in each of 6 lanes, 3 per team.
+  - They spawn at their lane's start and walk its waypoints toward the enemy
+    base, moving to the next waypoint once within 2 cells.
+  - They move one cell per tick along the shortest path around walls (BFS),
+    with a small random nudge when blocked.
+- **Stats:** 450 health, 22 damage per hit, attack every 5 ticks, worth
+  **60 XP**.
+- **Targets:** every 5 ticks a creep rescans a 15×15 box (7 cells each way)
+  for enemy heroes, creeps and towers.
+  - If there's an enemy, it chases the nearest one and hits it once adjacent
+    (within 2 cells).
+  - Otherwise it keeps walking its lane.
+  - Between rescans it acts on the last list.
+- **Slots are reused.** There are only 100 creep slots, reused round-robin
+  (30 per wave). A still-alive creep in a reused slot is removed and replaced
+  by the new one at its spawn point.
+- **Can be stunned and slowed** by heroes.
+
+## Neutral monsters
+
+- **18 camps of 4,** off the lanes. They belong to neither team.
+- **Stats:** 500 health, 22 damage per hit, attack every 5 ticks, worth
+  **35 XP**.
+- **Behaviour:**
+  - They attack **heroes only**, any hero within a 7×7 box (3 cells each
+    way), rescanned every 5 ticks.
+  - They chase their target and hit when adjacent.
+  - Without a target, they walk back to their camp.
+- **All 72 respawn every 600 ticks,** at full health, including ones still
+  alive (reset to their camp).
+
+## XP and levels
+
+| kill | XP |
+|---|---|
+| creep | 60 |
+| neutral | 35 |
+| enemy hero | 100 + (the victim's XP ÷ 7.69) |
+| tower | 0 |
+
+- **XP is split evenly** between the killing hero and every allied hero within
+  7 cells (L1) of the victim.
+- **Level** follows fixed XP thresholds (240, 640, 1,160, …, up to level 30).
+  Each level raises max health, max mana and damage by the class's per-level
+  gains.
+
+## Winning
+
+- **The game ends when an ancient is destroyed.** The Dire ancient (unit 204)
+  falling is a Radiant win; the Radiant ancient (205) falling is a Dire win.
+- There's no other win condition and no time limit in the game itself. Our
+  collector stops a game at 20,000 ticks and marks it truncated; none of the
+  corpus games reached that.
+- Ancients don't shoot, and nothing protects them except the towers and units
+  around them.
+
+## Rewards (for RL)
+
+These don't affect the game; they're what a policy is trained on.
+
+- **Per hero, per tick:**
+  - −0.164 when it dies;
+  - +0.0067 per XP gained;
+  - +0.642 when it lands the killing blow on a tower.
+- **Upstream quirk:** a death caused by a tower or creep usually isn't
+  penalized, because the reward is cleared after towers and creeps have acted
+  (see DATA.md).
 
 ## What this means for the world model
 
