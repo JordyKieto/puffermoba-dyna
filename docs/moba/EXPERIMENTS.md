@@ -374,6 +374,55 @@ creep position 11.3 / 38.2 (E2 13.3), creep alive 0.86 / 0.75.
    effect-weighted loss has a different scale; compare scoreboard metrics
    only.
 
+## Ablations: 5-minute A/B tests
+
+**Setup, identical for every arm:**
+- `mobawm/wm/ablate.py`: arms train side by side in one process on
+  identical batches with the same init seed.
+- Data: 300 training games (0–299), scored on 30 held-out games (900–929).
+- Batch 256, bf16, lr 6e-4, **162 updates per arm**.
+- Numbers are hero **better than copying / error with wrong actions**, in %.
+- Early-training trends only; arms within a table are directly comparable.
+- wandb groups `ablate1`–`ablate5`.
+
+| test | arm | walking | attack | Q | W | E | mana | health |
+|---|---|---|---|---|---|---|---|---|
+| framings | base (E2 recipe) | **+26 / +67** | +20 / +6 | −27 / +4 | +11 / +17 | +3 / +12 | +9 / +8 | −19 / 0 |
+| | gate (framing 3) | +16 / +40 | +22 / +18 | 0 / 0 | **+29 / +32** | **+28 / +17** | +19 / +9 | −23 / +8 |
+| | weights + event batches (framing 1) | +25 / +63 | +18 / +2 | −28 / +4 | +14 / +18 | +10 / +16 | +11 / +8 | −17 / 0 |
+| | both | +6 / +23 | +21 / +24 | +1 / 0 | +32 / +29 | +29 / +18 | +22 / +11 | −22 / +15 |
+| gate only rare fields | gate, rare fields | −4 / +8 | +22 / +19 | 0 / 0 | +27 / +22 | +27 / +12 | +17 / +8 | −22 / +7 |
+| same, clip 10 | base | +16 / +42 | +13 / +10 | −27 / +5 | +9 / +16 | +1 / +12 | +9 / +8 | −20 / 0 |
+| | gate, rare fields | −8 / +6 | +28 / +13 | 0 / 0 | +31 / +29 | +28 / +15 | +20 / +11 | −27 / +7 |
+| action tokens | action tokens, attend to all | −3 / +2 | +26 / +1 | 0 / 0 | +31 / +3 | +30 / 0 | +22 / +1 | −29 / 0 |
+| | action tokens, own hero only + own-action bias | +5 / +4 | +29 / +1 | 0 / 0 | +35 / +12 | +30 / +2 | +18 / +2 | −33 / 0 |
+
+**Findings:**
+- **The change gate (framing 3) is what moves the ability rows.** W, E and
+  mana go from near 0 to +19 to +29% better than copying, and Q stops being
+  worse than copying. The cost is walking (+26 → +16).
+- **Effect weights + event-oversampled batches (framing 1) do ~nothing alone**
+  at this scale, and combined with the gate they hurt walking further. This
+  does *not* reproduce the prior study's interaction result.
+- **Gating only the rare fields broke walking** (−4 / −8), and loosening the
+  clip didn't fix it. So clipping isn't the cause. Suspected instead: the
+  gate's yes/no losses dominate the loss and starve walking. Untested.
+- **Action tokens failed; dropped, code not kept in the branch.** 40 tokens
+  (movement + Q/W/E per hero) carrying unified + slot + ability ID + ability
+  numbers + a cast-rule context. The cast rule matched real casts at 77–91%
+  recall and 4–7% false alarms.
+  - Open to all tokens, the model stopped using actions: error with wrong
+    actions ~0 on every row, walking −3%.
+  - Restricted to the own hero, with a learned own-action bias starting at
+    +3: a little better (walking +5 / +4, W +35 / +12). Still far below adding
+    the action to the hero token (walking +16 / **+40**).
+  - Why: the action signal has to travel through attention instead of
+    arriving directly in the hero's token, and 162 updates isn't enough to
+    learn that.
+  - The diff is kept outside git: `runs/experiments/action_tokens.diff`.
+- **Decision:** baseline for further experiments = the change gate on all
+  fields, actions added to the hero token.
+
 ---
 
 ## Proposed next: bigger model (E3) and a throughput sweep (not started)
