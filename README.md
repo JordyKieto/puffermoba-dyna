@@ -53,7 +53,7 @@ skipping it makes a later measurement meaningless.
 8. **Report real and imagined samples as separate axes.**
 
 Written up in full, with the failures that motivated each rule, in
-**[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
+**[docs/race/METHODOLOGY.md](docs/race/METHODOLOGY.md)**.
 
 ---
 
@@ -112,8 +112,8 @@ across policies: the head was calibrated on corpus behaviour, and the trained
 policy visits a safer distribution.
 
 **Imagination needed three separate fixesFull numbers, every sweep and every negative result:
-**[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md)**. Run identifiers, checkpoints and
-W&B: **[docs/ARTIFACTS.md](docs/ARTIFACTS.md)**.
+**[docs/race/EXPERIMENTS.md](docs/race/EXPERIMENTS.md)**. Run identifiers, checkpoints and
+W&B: **[docs/race/ARTIFACTS.md](docs/race/ARTIFACTS.md)**.
 
 ---
 
@@ -168,9 +168,9 @@ loop). The ctypes binding does 797k env-steps/s for agents that cannot be
 exported, such as planners. Planning itself costs ~1.2ms per decision against
 ~8µs for a policy — 150×, and the reason any evaluation here is ever slow.
 
-Layout, contract, replay format and capture: **[docs/CONTRACT.md](docs/CONTRACT.md)**.
-Corpus design: **[docs/DATASET.md](docs/DATASET.md)**.
-Credentials: **[docs/SECRETS.md](docs/SECRETS.md)**.
+Layout, contract, replay format and capture: **[docs/race/CONTRACT.md](docs/race/CONTRACT.md)**.
+Corpus design: **[docs/race/DATASET.md](docs/race/DATASET.md)**.
+Credentials: **[docs/race/SECRETS.md](docs/race/SECRETS.md)**.
 
 ---
 

@@ -1,6 +1,6 @@
 # Artifacts: runs, checkpoints, metrics
 
-Long-form reference. The story is in [README.md](../README.md); the numbers are
+Long-form reference. The story is in [README.md](../../README.md); the numbers are
 in [EXPERIMENTS.md](EXPERIMENTS.md); this is where to look up a specific run.
 
 Everything below is reproducible from a clean checkout: the corpus is

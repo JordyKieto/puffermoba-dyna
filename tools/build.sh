@@ -93,6 +93,27 @@ case "$TARGET" in
         -lm -lpthread -DPLATFORM_DESKTOP
     echo "Built: build/race"
     ;;
+  moba-collect)
+    # MOBA is upstream as-is; only the collector lives in moba/.
+    echo "Compiling moba_collect ($ARCH)..."
+    clang -O2 -DNDEBUG "${WARN[@]}" ${SIMD[@]+"${SIMD[@]}"} \
+        -I"$PUFFER/$RAYLIB_NAME/include" -I"$PUFFER/src" -I"$PUFFER/ocean/moba" -I"$ROOT/moba" \
+        "$ROOT/moba/moba_collect.c" -o "$ROOT/build/moba_collect" -lz \
+        "$PUFFER/$RAYLIB_NAME/lib/libraylib.a" "${FRAMEWORKS[@]}" \
+        -lm -lpthread -DPLATFORM_DESKTOP
+    echo "Built: build/moba_collect"
+    ;;
+  moba-demo)
+    # Upstream demo: pretrained radiant vs scripted dire. Run it from
+    # third_party/pufferlib, which is where its asset paths are relative to.
+    echo "Compiling moba demo ($ARCH)..."
+    clang -O2 -DNDEBUG "${WARN[@]}" ${SIMD[@]+"${SIMD[@]}"} \
+        -I"$PUFFER/$RAYLIB_NAME/include" -I"$PUFFER/src" -I"$PUFFER/vendor" \
+        "$PUFFER/ocean/moba/moba.c" -o "$ROOT/build/moba" \
+        "$PUFFER/$RAYLIB_NAME/lib/libraylib.a" "${FRAMEWORKS[@]}" \
+        -lm -lpthread -DPLATFORM_DESKTOP
+    echo "Built: build/moba  (run: cd third_party/pufferlib && ../../build/moba)"
+    ;;
   module)
     # Delegates to pufferlib's build.sh, which needs OpenMP. Apple clang has no
     # OpenMP, so this target is Linux/container only (see docker/).
@@ -100,7 +121,7 @@ case "$TARGET" in
     ( cd "$PUFFER" && bash build.sh race --cpu )
     ;;
   *)
-    echo "usage: tools/build.sh [eval|play|capi|demo|module|link]" >&2
+    echo "usage: tools/build.sh [eval|play|capi|demo|moba-collect|moba-demo|module|link]" >&2
     exit 1
     ;;
 esac
