@@ -4,6 +4,7 @@
     .venv/bin/python tools/pod.py create --confirm         # H200 (fallback H100 NVL), SSH-ready
     .venv/bin/python tools/pod.py bootstrap                # code, apt, build moba_collect
     .venv/bin/python tools/pod.py data --corpus mix100     # logs S3 -> pod, dense on pod, dense -> S3
+    .venv/bin/python tools/pod.py push --corpus mix1k      # corpus collected ON the pod -> S3
     .venv/bin/python tools/pod.py train NAME -- --train-games 0-90 --held-games 91-99 --minutes 20
     .venv/bin/python tools/pod.py status [NAME]            # tmux, GPU, last log lines
     .venv/bin/python tools/pod.py sync                     # runs/token_wm/ -> ./runs/token_wm/
@@ -275,6 +276,40 @@ def cmd_data(a):
         f"+ pushed to S3):\n{out.strip()}")
 
 
+def cmd_push(a):
+    """A corpus generated ON the pod -> S3 (logs and dense), via presigned PUTs,
+    then verified: every object's size in S3 must equal the file on the pod."""
+    c, bucket = s3()
+    rdir = f"{R_REPO}/data/moba/{a.corpus}"
+    sizes = dict(line.split()[::-1] for line in run(
+        f"cd {rdir} && stat -c '%s %n' logs/*.mbl dense/*.mbs", capture=True).strip().splitlines())
+    lines = []
+    for i, rel in enumerate(sorted(sizes)):
+        key = f"{S3_PREFIX}/{a.corpus}/{rel}"
+        put = c.generate_presigned_url("put_object", Params={"Bucket": bucket, "Key": key}, ExpiresIn=6 * 3600)
+        lines.append(f"curl -sf -X PUT -T {rdir}/{rel} {shlex.quote(put)} || echo FAIL {rel} &")
+        if i % 32 == 31:
+            lines.append("wait")      # a plain script, not xargs: xargs strips the URL's quoting
+    lines.append("wait")
+    script = REPO / "runs" / "pod" / "push.sh"
+    script.write_text("\n".join(lines) + "\n")
+    script.chmod(0o600)
+    rsync_to([script], "/workspace/push.sh")
+    script.unlink()
+    t0 = time.time()
+    out = run("bash /workspace/push.sh; rm -f /workspace/push.sh", capture=True)
+    fails = [l for l in out.splitlines() if l.startswith("FAIL")]
+    s3_sizes = {o["Key"].split(f"{a.corpus}/", 1)[1]: o["Size"]
+                for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=f"{S3_PREFIX}/{a.corpus}/")
+                for o in p.get("Contents", [])}
+    bad = [rel for rel, n in sizes.items() if s3_sizes.get(rel) != int(n)]
+    total = sum(int(n) for n in sizes.values())
+    if fails or bad:
+        raise SystemExit(f"push incomplete: {len(fails)} curl failures, {len(bad)} size mismatches, e.g. {(fails + bad)[:3]}")
+    log(f"pushed and verified {len(sizes)} files, {total / 1e9:.2f} GB -> s3://{bucket}/{S3_PREFIX}/{a.corpus}/ "
+        f"in {time.time() - t0:.0f}s")
+
+
 # --- training -----------------------------------------------------------------
 
 def cmd_train(a):
@@ -326,6 +361,7 @@ def main():
     p = sub.add_parser("kill"); p.add_argument("--confirm", action="store_true")
     sub.add_parser("bootstrap")
     p = sub.add_parser("data"); p.add_argument("--corpus", default="mix100")
+    p = sub.add_parser("push"); p.add_argument("--corpus", required=True)
     p = sub.add_parser("train"); p.add_argument("name"); p.add_argument("train_args", nargs=argparse.REMAINDER)
     p = sub.add_parser("status"); p.add_argument("name", nargs="?"); p.add_argument("--lines", type=int, default=15)
     sub.add_parser("sync")

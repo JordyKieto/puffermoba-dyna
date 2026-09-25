@@ -22,7 +22,7 @@ import torch.nn.functional as Fn
 
 from .. import shards as S
 from .data import (F, KIND, N_KIND, REG_FIELDS, REG_IDX, Featurizer, Store, apply_prediction,
-                   fit_stats, load_games, wave_respawns)
+                   fit_stats, load_store, wave_respawns)
 from .model import TokenWM
 
 
@@ -264,21 +264,20 @@ def main():
     assert not tr_idx & he_idx, "train and held-out games overlap"
     t_load = time.time()
     print(f"loading from {args.data} ({len(files)} files) ...", flush=True)
-    quiet = lambda *a: None
-    train = load_games(files, tr_idx, log=quiet)
-    held = load_games(files, he_idx, log=quiet)
-    t_s = time.time()
-    tr_store, he_store = Store(train, dev), Store(held, dev)
-    del train, held
+    tr_store = load_store(files, tr_idx, dev)
+    he_store = load_store(files, he_idx, dev)
     t_f = time.time()
     stats = fit_stats(tr_store)
-    print(f"store {t_f - t_s:.1f}s, fit_stats {time.time() - t_f:.1f}s", flush=True)
+    print(f"decompress + store {t_f - t_load:.1f}s, fit_stats {time.time() - t_f:.1f}s", flush=True)
     print(f"train {len(tr_store.spans)} games / {tr_store.n_steps} steps ({tr_store.nbytes / 1e9:.2f} GB on {dev}); "
           f"held-out {len(he_store.spans)} games / {he_store.n_steps} steps; loaded in {time.time() - t_load:.0f}s",
           flush=True)
     fz = Featurizer(dev)
     kind = torch.from_numpy(KIND).to(dev)
     model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers).to(dev)
+    # Everything needed to load and roll out this model elsewhere (e.g. the viewer).
+    torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers),
+                    train_games=args.train_games, held_games=args.held_games), out / "stats.pt")
     n_params = sum(p.numel() for p in model.parameters())
     print(f"model: {n_params / 1e6:.2f}M params", flush=True)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
@@ -340,6 +339,7 @@ def main():
                   f"{rec['it_per_s']} it/s  {rec['elapsed_s']:.0f}s", flush=True)
         if it % args.val_every == 0:
             run_val(it)
+            torch.save(model.state_dict(), out / "model.pt")
     run_val(it)
     torch.save(model.state_dict(), out / "model.pt")
 

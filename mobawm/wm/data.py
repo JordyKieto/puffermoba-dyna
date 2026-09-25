@@ -105,6 +105,64 @@ def sample_windows(games, batch, K, rng, starts=None):
             torch.from_numpy(np.stack(ticks)), torch.from_numpy(np.stack(cidx)))
 
 
+# --- parallel loading: every core decompresses games into shared memory ------
+
+_SHM = {}
+
+
+def _attach(names, shapes, dtypes):
+    from multiprocessing import shared_memory
+    for key in names:
+        shm = shared_memory.SharedMemory(name=names[key])
+        _SHM[key] = (shm, np.ndarray(shapes[key], dtype=dtypes[key], buffer=shm.buf))
+
+
+def _load_one(job):
+    path, k, off = job
+    r = S.load_dense(path).load_game(k)
+    n = len(r)
+    _SHM["ent"][1][off:off + n] = r["state"]["entity"]
+    _SHM["act"][1][off:off + n - 1] = r["actions"][:-1]
+    _SHM["tick"][1][off:off + n] = r["state"]["tick"]
+    _SHM["cidx"][1][off:off + n] = r["state"]["creep_idx"]
+    return n
+
+
+def load_store(dense_files, game_indices, device, workers=None) -> "Store":
+    """Decompress the selected games with one process per core straight into
+    shared memory, then copy to the device in chunks. No per-game Python
+    objects, no temporary files."""
+    import os
+    from concurrent.futures import ProcessPoolExecutor
+    from multiprocessing import get_context, shared_memory
+    jobs, spans, off = [], [], 0
+    for path in dense_files:
+        d = S.load_dense(path)
+        for k, (gi, n_rec, _, _) in enumerate(d.games):
+            if game_indices is None or gi in game_indices:
+                jobs.append((str(path), k, off))
+                spans.append((off, n_rec - 1))
+                off += n_rec
+    shapes = dict(ent=(off, N_ENT, len(F)), act=(off, 10, 6), tick=(off,), cidx=(off,))
+    dtypes = dict(ent=np.float32, act=np.uint8, tick=np.int32, cidx=np.int32)
+    shms = {k: shared_memory.SharedMemory(create=True, size=max(1, int(np.prod(shapes[k])) * np.dtype(dtypes[k]).itemsize))
+            for k in shapes}
+    names = {k: v.name for k, v in shms.items()}
+    try:
+        arrays = {k: np.ndarray(shapes[k], dtype=dtypes[k], buffer=shms[k].buf) for k in shapes}
+        arrays["act"][:] = 0
+        workers = workers or min(len(jobs), os.cpu_count() or 1, 160)
+        ctx = get_context("fork") if os.name == "posix" and os.uname().sysname == "Linux" else get_context("spawn")
+        with ProcessPoolExecutor(workers, mp_context=ctx, initializer=_attach,
+                                 initargs=(names, shapes, dtypes)) as ex:
+            list(ex.map(_load_one, jobs, chunksize=1))
+        return Store.from_arrays(arrays, spans, device)
+    finally:
+        for v in shms.values():
+            v.close()
+            v.unlink()
+
+
 class Store:
     """Every game concatenated into device tensors; windows are gathered by
     index arithmetic on the device, so training never touches the CPU.
@@ -132,6 +190,20 @@ class Store:
             self.spans.append((off, n))
             off += n + 1
         self._starts = {}
+
+    @classmethod
+    def from_arrays(cls, a, spans, device, chunk=8192):
+        """Build from contiguous host arrays (see load_store), copying in chunks."""
+        st = cls.__new__(cls)
+        st.device, st.spans, st._starts = device, spans, {}
+        n = len(a["ent"])
+        st.ent = torch.empty(n, N_ENT, len(F), dtype=torch.float32, device=device)
+        for i in range(0, n, chunk):
+            st.ent[i:i + chunk] = torch.from_numpy(a["ent"][i:i + chunk]).to(device)
+        st.act = torch.from_numpy(a["act"].copy()).to(device)   # copy: the shared memory is freed after
+        st.tick = torch.from_numpy(a["tick"].astype(np.int64)).to(device)
+        st.cidx = torch.from_numpy(a["cidx"].astype(np.int64)).to(device)
+        return st
 
     @property
     def n_steps(self) -> int:
