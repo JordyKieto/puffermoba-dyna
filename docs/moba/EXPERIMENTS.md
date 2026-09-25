@@ -1,5 +1,46 @@
 # MOBA token world model: experiment log
 
+## 🎯 TARGET: make every row of this table green
+
+This is the goal of the MOBA world model work. Every experiment below is
+judged by whether it moves rows of this scoreboard to green. It is not
+judged by aggregate loss, which a model can improve while still ignoring
+the abilities.
+
+The question behind each row: **does the model understand what each action
+does?** Two measurements per effect, on held-out games, one step ahead:
+
+- **Beats copying?** How much lower the model's error is than just copying
+  the last frame. wandb `skill/hero/<effect>/beats_copy_pct`.
+- **Uses the buttons?** How much worse the model gets when fed another
+  window's actions. wandb `skill/hero/<effect>/uses_actions_pct`. 0 means it
+  ignores the buttons.
+
+A row is **green** when **beats copying ≥ 80% AND uses the buttons ≥ +50%**.
+Most of these effects are deterministic in the simulator: casting sets a
+fixed cooldown, a move applies a fixed step. So near-exact is achievable,
+and 80% is a floor, not a stretch goal.
+
+| effect | beats copying? | uses the buttons? | status | best run |
+|---|---|---|---|---|
+| walking (hero position) | +43% | +110% ✅ | 🟡 uses the buttons, not accurate enough | E2 |
+| basic attacks | +79% | +59% ✅ | 🟡 almost green | E2 |
+| Q ability | **−38%** ❌ worse than copying | **−9%** ❌ ignores Q | 🔴 doesn't understand Q | E2 |
+| E ability | +19% | **+3%** ❌ ignores E | 🔴 predicts E cooldowns, not from the E button | E2 |
+| W ability | +23% | **+39%** | 🔴 weak | E2 |
+| damage / health | +13% | **−2%** ❌ wrong buttons do as well | 🔴 doesn't link fights to actions | E2 |
+
+- **Update this table after every run** and record which run holds each row's
+  best. The numbers come from the run's `final/onestep_heldout` table (field
+  model error vs copy error vs wrong-actions error), or from the `skill/`
+  curves.
+- **Walking** combines hero x and y; **basic attacks** is the hero attack
+  timer; **Q/W/E** are the hero Q/W/E cooldowns; **damage/health** is hero
+  health.
+
+Then, and only then, the same table for **open-loop rollouts** (64 ticks),
+which is what a dream actually needs.
+
 One entry per run, newest last. Every entry has:
 
 - the wandb run;
