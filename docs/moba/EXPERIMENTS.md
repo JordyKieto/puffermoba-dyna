@@ -142,9 +142,84 @@ windows; model / persistence; lower is better):
 - **Still improving:** the loss slope is negative at the end, so more data and
   more steps are the obvious next lever. That is E2.
 
+## E2 `e2_mix1k` — complete: 10× data, same model
+
+- **wandb:** https://wandb.ai/drift-ai-models/moba-wm/runs/asdg1vl1
+- **Command:** `tools/pod.py train e2_mix1k -- --data data/moba/mix1k/dense --train-games 0-899 --held-games 900-999 --minutes 30 --batch 64 --log-every 100 --val-every 500 --val-batches 4 --wandb`
+- **Data:** `mix1k`, 1,000 games collected on the pod (same controller mix),
+  `s3://puffertank/moba/mix1k/` (30 MB logs + 15.3 GB full state, verified).
+  - Train: games 0–899, 2.40M steps, **51.5 GB resident on the H200**.
+  - Held out: games 900–999, 268k steps.
+- **Setup:** E1's model and hyperparameters, unchanged. Only the data
+  (×10) and the time budget (30 min) differ.
+  - Load 156 s: parallel decompression into shared memory; `fit_stats` 1 s.
+  - 8,823 iterations at ~4.9 it/s. 0 NaNs.
+- **Comparing with E1:** the held-out games differ (E1 used 91–99, E2
+  900–999), so compare each run *against its own persistence baseline*.
+  E1's baseline was 3.911, E2's is 3.889.
+
+**Validation loss:**
+
+| iteration | **val loss** | vs persistence | hero | creep | neutral | tower |
+|---|---|---|---|---|---|---|
+| 0 | **3.889** | — | 0.975 | 1.640 | 0.724 | 0.550 |
+| 1000 | **1.023** | −74% | 0.392 | 0.589 | 0.022 | 0.021 |
+| 2500 | **0.879** | −77% | 0.358 | 0.493 | 0.014 | 0.013 |
+| 4000 | **0.793** | −80% | 0.334 | 0.436 | 0.012 | 0.010 |
+| 7000 | **0.716** | −82% | 0.304 | 0.395 | 0.010 | 0.007 |
+| 8823 (end) | **0.690** | **−82%** | 0.290 | 0.384 | 0.010 | 0.006 |
+
+E1 ended at −76%. The log-loss slope over the last quarter is −0.019 per 1k
+iterations (E1: −0.074). Still improving, but flattening for this model size.
+
+**One-step, held-out** (model / persistence; E1 in brackets):
+
+| field | all entries | changed entries |
+|---|---|---|
+| hero x | **0.32** / 0.56 (0.34 / 0.52) | **0.46** / 1.02 |
+| hero health | **5.63** / 6.44 — *now beats persistence* (E1 6.02 / 5.51) | **16.2** / 20.5 |
+| creep x | **0.26** / 0.55 (0.30 / 0.55) | **0.33** / 0.75 |
+| creep health | **2.28** / 2.51 — *now beats persistence* (E1 3.14 / 2.59) | **16.5** / 34.6 |
+| tower health | 0.51 / **0.36** (0.64 / 0.46) | **18.8** / 46.3 |
+| hero xp | 1.76 / **0.75** | **85.0** / 95.7 |
+| alive flips | recall **43%** (262 / 615), 125 false positives (E1: 14%) | |
+
+**Shuffled-action control:** hero x MAE 0.32 → 0.67 with wrong actions, worse
+than persistence. Still action-driven.
+
+**Open-loop rollouts, held-out** (model / persistence):
+
+| horizon | hero pos L1 | hero hp | creep pos L1 | creep alive acc | tower hp |
+|---|---|---|---|---|---|
+| 1 | **1.76** / 2.33 | **8.0** / 9.5 | **0.55** / 1.11 | 1.00 / 1.00 | **0.31** / 0.46 |
+| 4 | **2.83** / 4.41 | **15.1** / 20.2 | **1.09** / 3.32 | **1.00** / 0.99 | 0.96 / **0.52** |
+| 16 | **6.25** / 11.19 | **36.4** / 44.3 | **2.73** / 10.92 | **0.99** / 0.97 | 4.89 / **2.55** |
+| 64 | **19.6** / 28.6 | 136.2 / **97.5** | **13.3** / 38.2 | **0.90** / 0.75 | 28.2 / **19.9** |
+
+**What we learned** (10× data, same model):
+- **Everything that was working improved.** Validation −82% vs persistence
+  (E1 −76%).
+- **Hero and creep health now beat persistence over all entries,** not only
+  on changes. The false-change problem shrank with more data.
+- **Deaths are learned far better:** alive-flip recall rose from 14% to 43%.
+- **Long-horizon rollouts improved most.** At 64 ticks, hero position error
+  is 19.6 vs 28.6 for persistence; in E1 it was roughly equal. Creep alive
+  agreement is 0.90 vs 0.75.
+- **Still open:**
+  - Tower health and XP remain worse than persistence over all entries.
+  - Open-loop hero health drifts past persistence by 64 ticks.
+
+  These are rare, sparse changes, so the candidate fix is still a change
+  gate on those fields.
+- **The model is now capacity-bound more than data-bound:** the loss slope
+  flattened to −0.019 per 1k iterations. That motivates E3 (a bigger model),
+  plus the batch/bf16 sweep for throughput.
+
 ---
 
-## Proposed next: 10× data, bigger model (not started)
+## Proposed next: bigger model (E3) and a throughput sweep (not started)
+
+*E2 (10× data) is done, above. The capacity numbers below still apply.*
 
 **Capacity check, H200 143 GB.**
 - Full-state data costs 21.4 KB per step (206 × 26 fp32). `mix100` is 5.0 GB;
