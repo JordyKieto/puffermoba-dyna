@@ -79,6 +79,8 @@ def load_model(run: Path, dense: Path, dev):
     train_games = args.get("train_games")
     if (run / "stats.pt").exists():
         d = torch.load(run / "stats.pt", map_location="cpu", weights_only=False)
+        # stats.pt from before the change gate has no change_rate; it is only used by gated models
+        d["stats"].setdefault("change_rate", torch.zeros_like(d["stats"]["reg_scale"]))
         stats, config = Stats(**d["stats"]), d["config"]
         train_games = d.get("train_games", train_games)
     else:
@@ -90,7 +92,7 @@ def load_model(run: Path, dense: Path, dev):
               flush=True)
         stats = fit_stats(Store(load_games([src], idx, log=lambda *_: None), torch.device("cpu")))
     model = TokenWM(**config)
-    model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))
+    model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
     print(f"model {config}, {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M params", flush=True)
     return model.to(dev).eval(), stats, (parse_games(train_games) if train_games else set())
 

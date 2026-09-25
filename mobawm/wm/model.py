@@ -106,9 +106,12 @@ class Block(nn.Module):
 
 
 class TokenWM(nn.Module):
-    def __init__(self, d=128, n_heads=4, n_layers=2):
+    def __init__(self, d=128, n_heads=4, n_layers=2, gate=False):
         super().__init__()
         self.d = d
+        # gate=True: copy by default. Per delta field, a "does this field change
+        # this tick" logit; the value head is only used where it says yes.
+        self.gated = gate
         self.tok = Tokenizer(d)
         self.act = ActionEmbed(d)
         self.mem_in = nn.Linear(d, d)
@@ -116,6 +119,7 @@ class TokenWM(nn.Module):
         self.ln = nn.LayerNorm(d)
         self.gru = nn.GRUCell(d, d)
         self.reg = nn.Linear(d, len(REG_FIELDS))
+        self.change = nn.Linear(d, len(REG_FIELDS)) if gate else None
         self.alive_flip = nn.Linear(d, 1)
         self.is_hit = nn.Linear(d, 1)
         self.lane = nn.Linear(d, 6)
@@ -124,6 +128,19 @@ class TokenWM(nn.Module):
             nn.init.zeros_(head.weight)
             nn.init.zeros_(head.bias)
         nn.init.constant_(self.alive_flip.bias, -6.0)    # start at "no flip"
+        if gate:
+            nn.init.zeros_(self.change.weight)
+            nn.init.zeros_(self.change.bias)
+            # per-(entity, field) prior logit of changing, set from data by set_change_prior;
+            # starting at "nothing changes" everywhere left hero movement (60% of steps) stuck
+            self.register_buffer("change_prior", torch.full((N_ENT, len(REG_FIELDS)), -4.0))
+
+    def set_change_prior(self, change_rate):
+        """Open each gate at its field's base rate. The value head is still zero,
+        so the untrained model is still exactly persistence."""
+        if self.gated:
+            p = change_rate.clamp(1e-4, 1 - 1e-4).to(self.change_prior.device)
+            self.change_prior.copy_(torch.log(p / (1 - p))[torch.from_numpy(KIND).to(p.device)])
 
     def bias_parts(self, f):
         xy = f["xy"]                                      # (B,206,2) cells
@@ -153,8 +170,15 @@ class TokenWM(nn.Module):
         c = slice(10, 110)
         lane_cur = Fn.one_hot(f["lane"], 6).float()
         team_cur = Fn.one_hot(f["team"][:, c], 3).float()
+        value = self.reg(h)
+        out = {}
+        if self.gated:
+            change = self.change(h) + self.change_prior
+            out = dict(change=change, value=value)
+            value = torch.where(change > 0, value, torch.zeros_like(value))   # hard gate at p = 0.5
         return dict(
-            reg=self.reg(h),
+            **out,
+            reg=value,
             alive_flip=self.alive_flip(h).squeeze(-1),
             is_hit=self.is_hit(h).squeeze(-1),
             lane=self.lane(h[:, c]) + 5 * lane_cur,

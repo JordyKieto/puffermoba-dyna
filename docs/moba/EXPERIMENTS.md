@@ -11,7 +11,9 @@ The question behind each row: **does the model understand what each action
 does?** Two measurements per effect, on held-out games, one step ahead:
 
 - **Better than copying?** How much lower the model's error is than just
-  copying the last frame. wandb `skill/hero/<effect>/better_than_copy_pct`.
+  copying the last frame. wandb `skill/hero/<row>/better_than_copy_pct`, with
+  `<row>` one of walking, attack, q, w, e, mana, health: one curve per row of
+  this table, logged at every validation.
 - **Depends on the actions?** Give the model the same state twice: once with
   the actions the heroes really took, once with actions from another moment
   of another game. If the prediction is driven by the actions, its error goes
@@ -19,7 +21,7 @@ does?** Two measurements per effect, on held-out games, one step ahead:
   the error stays the same, the model ignores the actions for that effect and
   predicts from the state alone. Reported as **"+X% error with wrong
   actions"**; 0 means the actions are ignored. wandb
-  `skill/hero/<effect>/action_dependence_pct`.
+  `skill/hero/<row>/action_dependence_pct`.
 
 A row is **green** when it is **≥ 80% better than copying AND has ≥ +50%
 error with wrong actions**. Most of these effects are deterministic in the
@@ -315,6 +317,62 @@ exactly where the fights happen.
    (`moba_restore`), apply two different action sets, and check the model
    predicts both outcomes. It is the direct test of action conditioning,
    and the exact simulator makes it free to generate.
+
+## E3b `e3b_gate_events` — complete (15 min): framings 1 + 3, big batch
+
+- **wandb:** https://wandb.ai/drift-ai-models/moba-wm/runs/65j98z3b
+- **Command:** `tools/pod.py train e3b_gate_events -- --data data/moba/mix1k/dense --train-games 0-899 --held-games 900-999 --minutes 15 --batch 768 --lr 1e-3 --bf16 --gate --effect-weights abilities=3,health=3,deaths=3,attack=2 --event-frac 0.5 --log-every 20 --val-every 100 --val-batches 4 --wandb`
+- **What it tests:** the two framings carried over from the prior study
+  ([PRIOR_WORK.md](PRIOR_WORK.md)):
+  - **Framing 1, semantic loss × event-balanced sampling.** Loss weights per
+    effect (abilities ×3, health ×3, deaths ×3, attack ×2). Half of every
+    batch comes from windows containing a hero cast, hero/tower damage, or a
+    death.
+  - **Framing 3, copy by default.** Per delta field, a "did this field change"
+    gate, BCE on every supervised entry. The value is predicted and trained
+    only where the field changed. Gates start at each field's observed change
+    rate, so the untrained model is exactly persistence.
+- **Scale:** batch 768, bf16, lr 1e-3. 923 iterations in 15 min at ~1 it/s,
+  about 709k training windows (E2: ~565k). GPU 92% utilized, 115 GB.
+
+**Scoreboard** (hero; better than copying / error with wrong actions):
+
+| effect | E2 | **E3b** |
+|---|---|---|
+| walking | +43% / +110% | +26% / +80% |
+| basic attacks | +79% / +59% | +67% / +10% |
+| Q | −38% / −9% | **+14%** / −24% |
+| W | +23% / +39% | +23% / +10% |
+| E | +19% / +3% | +14% / **+16%** |
+| mana | +11% / +29% | +16% / +7% |
+| health | +13% / −2% | −20% / +7% |
+| deaths caught (recall) | 43% | 19% (139 false positives) |
+
+Open loop, held-out, 64 ticks (model / copy): hero position 24.4 / 28.6,
+creep position 11.3 / 38.2 (E2 13.3), creep alive 0.86 / 0.75.
+
+**Outcome: no row turned green.**
+- Q stopped being worse than copying (−38% → +14%).
+- E depends on the actions more (+3% → +16%).
+- Health depends on the actions a little (−2% → +7%).
+- Most other rows are weaker than E2.
+
+**Limitations. This is not a clean test of the framings:**
+1. **Undertrained.** 923 updates vs E2's 8,823. The log-loss slope over the
+   last quarter was **−0.55 per 1k iterations** (E2: −0.019): still falling
+   steeply when it stopped.
+2. **Confounded.** Batch size (64 → 768) and learning rate (3e-4 → 1e-3)
+   changed together with the framings, with no same-batch baseline.
+3. **Every update was clipped.** Gradient norm 9–25 against `clip 1.0`. The
+   effect weights inflate the loss, so the clip discarded most of each
+   gradient's magnitude. zelda-RL's handoff names this exact pattern as the
+   untested suspect for models that start at persistence and then degrade.
+4. **Ability metrics were logged as one "abilities" number during training**
+   (Q/W/E/mana combined). The per-ability split existed only in the final
+   table. Fixed for the next run: per-ability curves every validation.
+5. **Loss values aren't comparable across recipes.** The gated,
+   effect-weighted loss has a different scale; compare scoreboard metrics
+   only.
 
 ---
 

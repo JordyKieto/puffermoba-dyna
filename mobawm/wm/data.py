@@ -219,9 +219,45 @@ class Store:
             self._starts[K] = torch.cat(s).to(self.device)
         return self._starts[K]
 
-    def sample(self, B, K, gen):
+    def event_rows(self):
+        """Rows t whose step t -> t+1 contains a rare event the model must learn:
+        a hero casts Q/W/E (a cooldown jumps up), a hero or tower takes damage,
+        or a unit dies."""
+        if not hasattr(self, "_events"):
+            ev = torch.zeros(len(self.ent), dtype=torch.bool, device=self.device)
+            for i in range(0, len(self.ent) - 1, 16384):
+                e0, e1 = self.ent[i:i + 16384], self.ent[i + 1:i + 16385]
+                n = len(e1)
+                e0 = e0[:n]
+                cast = ((e1[:, :10, [F["q_timer"], F["w_timer"], F["e_timer"]]]
+                         > e0[:, :10, [F["q_timer"], F["w_timer"], F["e_timer"]]])).any(-1).any(-1)
+                hit = (e1[:, :10, F["health"]] < e0[:, :10, F["health"]]).any(-1) | \
+                      (e1[:, 182:, F["health"]] < e0[:, 182:, F["health"]]).any(-1)
+                died = ((e0[..., F["alive"]] > 0) & (e1[..., F["alive"]] == 0)).any(-1)
+                ev[i:i + n] = cast | hit | died
+            for off, n in self.spans:           # the terminal row has no step
+                ev[off + n] = False
+            self._events = ev
+        return self._events
+
+    def event_starts(self, K, burn):
+        """Window starts whose loss steps (burn .. K-1) contain an event."""
+        key = ("ev", K, burn)
+        if key not in self._starts:
+            ev = self.event_rows().long()
+            csum = torch.cat([torch.zeros(1, dtype=torch.long, device=self.device), ev.cumsum(0)])
+            st = self.starts(K)
+            has = csum[st + K] - csum[st + burn] > 0
+            self._starts[key] = st[has]
+        return self._starts[key]
+
+    def sample(self, B, K, gen, event_frac=0.0, burn=0):
         st = self.starts(K)
-        i = st[torch.randint(len(st), (B,), device=self.device, generator=gen)]
+        n_ev = int(round(B * event_frac))
+        i = st[torch.randint(len(st), (B - n_ev,), device=self.device, generator=gen)]
+        if n_ev:
+            es = self.event_starts(K, burn)
+            i = torch.cat([i, es[torch.randint(len(es), (n_ev,), device=self.device, generator=gen)]])
         idx = i[:, None] + torch.arange(K + 1, device=self.device)
         return self.ent[idx], self.act[idx[:, :K]].long(), self.tick[idx], self.cidx[idx]
 
@@ -235,6 +271,7 @@ class Store:
 class Stats:
     reg_scale: torch.Tensor     # (4 kinds, n_reg) RMS of non-zero deltas
     reg_mask: torch.Tensor      # (4, n_reg) bool: this field changes for this kind
+    change_rate: torch.Tensor   # (4, n_reg) fraction of supervised steps where the field changes
     alive_mask: torch.Tensor    # (4,) bool: alive can flip for this kind
     hero_stats: torch.Tensor    # (10 slots, 31 levels, 3): max_health, max_mana, damage; NaN = unseen
     creep_const: dict           # field -> value for alive creeps (constants set by spawn_creep)
@@ -254,6 +291,7 @@ def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
     nreg = len(REG_IDX)
     sumsq = torch.zeros(N_KIND, nreg, dtype=torch.float64, device=dev)
     cnt = torch.zeros(N_KIND, nreg, dtype=torch.float64, device=dev)
+    total = torch.zeros(N_KIND, dtype=torch.float64, device=dev)
     flips = torch.zeros(N_KIND, dtype=torch.float64, device=dev)
     hero = torch.full((10, 31, 3), float("nan"), device=dev)
     c_sum = torch.zeros(6, 2, dtype=torch.float64, device=dev); c_n = torch.zeros(6, dtype=torch.float64, device=dev)
@@ -274,6 +312,7 @@ def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
         valid = ((a0 & a1 & ~rule).unsqueeze(-1) & (d != 0)).double()
         sumsq += torch.einsum("tej,ek->kj", d * d * valid, onehot)
         cnt += torch.einsum("tej,ek->kj", valid, onehot)
+        total += torch.einsum("te,ek->k", (a0 & a1 & ~rule).double(), onehot)
         flips += torch.einsum("te,ek->k", (a0 != a1).double(), onehot)
         # hero max stats by (slot, level): constant per key, so any row will do
         lv = e0[:, :10, F["level"]].long().clamp(0, 30)
@@ -292,7 +331,8 @@ def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
                            for f in ("entity_type", "basic_attack_cd", "xp_on_kill", "damage", "max_health")}
     mask = cnt > 10
     scale = torch.where(mask, (sumsq / cnt.clamp(min=1)).sqrt(), torch.ones_like(sumsq)).clamp(min=1e-3)
-    return Stats(scale.float().cpu(), mask.cpu(), (flips > 0).cpu(), hero.cpu(), creep_const,
+    rate = (cnt / total.clamp(min=1).unsqueeze(-1)).float()
+    return Stats(scale.float().cpu(), mask.cpu(), rate.cpu(), (flips > 0).cpu(), hero.cpu(), creep_const,
                  (c_sum / c_n.clamp(min=1).unsqueeze(-1)).float().cpu().numpy(),
                  (n_sum / n_n.clamp(min=1).unsqueeze(-1)).float().cpu().numpy())
 

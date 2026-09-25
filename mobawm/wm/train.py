@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from contextlib import nullcontext
 import math
 import time
 from pathlib import Path
@@ -56,6 +57,15 @@ EFFECTS = {
     "xp": ("xp",),
 }
 EFFECT_OF = {f: e for e, fs in EFFECTS.items() for f in fs}
+# The target scoreboard's rows (docs/moba/EXPERIMENTS.md), for hero skill metrics:
+# abilities are split per ability so Q, W, E and mana each get their own curve.
+HERO_ROWS = {"walking": ("x", "y"), "attack": ("basic_attack_timer",), "q": ("q_timer",),
+             "w": ("w_timer",), "e": ("e_timer",), "mana": ("mana",), "health": ("health",),
+             "status": ("stun_timer", "move_timer", "move_modifier"), "xp": ("xp",)}
+HERO_ROW_OF = {f: r for r, fs in HERO_ROWS.items() for f in fs}
+# Semantic loss: per-effect weights (--effect-weights). 1.0 = plain sum.
+EFFECT_WEIGHT = {}
+BF16 = False
 
 
 def step_loss(pred, e0, e1, stats, kind, tick, cidx):
@@ -71,7 +81,15 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     alive0, alive1 = e0[..., F["alive"]] > 0, e1[..., F["alive"]] > 0
     scale = stats.reg_scale.to(dev)[kind]
     target = (e1[..., REG_IDX] - e0[..., REG_IDX]) / scale
-    err = Fn.huber_loss(pred["reg"], target, reduction="none", delta=1.0)
+    gated = "change" in pred
+    if gated:
+        # copy by default: BCE on "did this field change" everywhere it is
+        # supervised, value loss only where it really changed
+        changed = target != 0
+        gate_err = Fn.binary_cross_entropy_with_logits(pred["change"], changed.float(), reduction="none")
+        err = Fn.huber_loss(pred["value"], target, reduction="none", delta=1.0)
+    else:
+        err = Fn.huber_loss(pred["reg"], target, reduction="none", delta=1.0)
     # units respawned in place by a wave are applied by rule, not regressed (a teleport to spawn)
     wc, _, wn = wave_respawns(tick, cidx)
     rule = torch.zeros_like(alive0)
@@ -86,14 +104,19 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     for k, name in enumerate(KIND_NAMES):
         sel = kind == k
         m, e = mask[:, sel], err[:, sel]
-        cnt = m.sum((0, 1))
-        per_field = (e * m).sum((0, 1)) / cnt.clamp(min=1)
+        if gated:
+            mc = m & changed[:, sel]
+            per_field = ((gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
+                         + (e * mc).sum((0, 1)) / mc.sum((0, 1)).clamp(min=1))
+        else:
+            per_field = (e * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
         for j, fname in enumerate(REG_FIELDS):
             if stats.reg_mask[k, j]:
-                key = f"{name}/{EFFECT_OF[fname]}"
-                parts[key] = parts.get(key, 0.0) + per_field[j]
+                eff = EFFECT_OF[fname]
+                key = f"{name}/{eff}"
+                parts[key] = parts.get(key, 0.0) + EFFECT_WEIGHT.get(eff, 1.0) * per_field[j]
         if can_flip[k]:
-            parts[f"{name}/deaths"] = alive_bce[:, sel].mean()
+            parts[f"{name}/deaths"] = EFFECT_WEIGHT.get("deaths", 1.0) * alive_bce[:, sel].mean()
         a1 = alive1[:, sel]
         if a1.any():
             parts[f"{name}/got_hit"] = hit_bce[:, sel][a1].mean()
@@ -113,8 +136,12 @@ def run_window(model, fz, batch, stats, kind, burn, dev, loss=True, shuffle_acti
     B, K = act.shape[:2]
     h = torch.zeros(B, S.N_ENTITIES, model.d, device=dev)
     total, parts, preds = 0.0, {}, []
+    amp = torch.autocast("cuda", dtype=torch.bfloat16) if (BF16 and dev.type == "cuda") else nullcontext()
     for t in range(K):
-        pred, h = model.step(feats[t], act[:, t], h)
+        with amp:
+            pred, h = model.step(feats[t], act[:, t], h)
+        pred = {k: v.float() for k, v in pred.items()}
+        h = h.float()
         if t >= burn:
             if loss:
                 l, p = step_loss(pred, ent[:, t], ent[:, t + 1], stats, kind, tick[:, t], cidx[:, t])
@@ -192,7 +219,8 @@ def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
                     for j, fname in enumerate(REG_FIELDS):
                         if not stats.reg_mask[k, j]:
                             continue
-                        a = err.setdefault((kn, EFFECT_OF[fname]), [0.0, 0.0, 0.0])
+                        group = HERO_ROW_OF[fname] if kn == "hero" else EFFECT_OF[fname]
+                        a = err.setdefault((kn, group), [0.0, 0.0, 0.0])
                         if shuffle:
                             a[2] += ae[:, kind == k, j][m].sum().item()
                         else:
@@ -359,6 +387,11 @@ def main():
     ap.add_argument("--rollouts", type=int, default=16)
     ap.add_argument("--log-every", type=int, default=25)
     ap.add_argument("--out", default="runs/token_wm/smoke")
+    ap.add_argument("--gate", action="store_true", help="copy by default: per-field change gate")
+    ap.add_argument("--effect-weights", default="", help="semantic loss, e.g. abilities=3,health=3,deaths=3")
+    ap.add_argument("--event-frac", type=float, default=0.0,
+                    help="fraction of each batch drawn from windows with a cast, damage or death")
+    ap.add_argument("--bf16", action="store_true")
     ap.add_argument("--wandb", action="store_true")
     ap.add_argument("--backfill", help="run dir: attach its report.json to --wandb-id and exit")
     ap.add_argument("--wandb-id")
@@ -391,9 +424,13 @@ def main():
           flush=True)
     fz = Featurizer(dev)
     kind = torch.from_numpy(KIND).to(dev)
-    model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers).to(dev)
+    global BF16
+    BF16 = args.bf16
+    EFFECT_WEIGHT.update({k: float(v) for k, v in (kv.split("=") for kv in args.effect_weights.split(",") if kv)})
+    model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate).to(dev)
+    model.set_change_prior(stats.change_rate)
     # Everything needed to load and roll out this model elsewhere (e.g. the viewer).
-    torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers),
+    torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate),
                     train_games=args.train_games, held_games=args.held_games), out / "stats.pt")
     n_params = sum(p.numel() for p in model.parameters())
     print(f"model: {n_params / 1e6:.2f}M params", flush=True)
@@ -420,7 +457,7 @@ def main():
         print(f"VAL it {it:6d}  loss {vl:.4f}  | {kinds}", flush=True)
         hero = "  ".join(f"{e} {sk.get(f'hero/{e}/better_than_copy_pct', float('nan')):+.0f}%/"
                          f"{sk.get(f'hero/{e}/action_dependence_pct', float('nan')):+.0f}%"
-                         for e in ("movement", "abilities", "attack", "health"))
+                         for e in ("walking", "attack", "q", "w", "e", "mana", "health"))
         print(f"    hero better-than-copy / action-dependence: {hero}  | deaths recall {sk['deaths/recall_pct']:.0f}%", flush=True)
         return vl
 
@@ -435,7 +472,7 @@ def main():
         lr = args.lr * min(1.0, (it + 1) / 100)
         for g in opt.param_groups:
             g["lr"] = lr
-        batch = tr_store.sample(args.batch, args.window, gen)
+        batch = tr_store.sample(args.batch, args.window, gen, event_frac=args.event_frac, burn=args.burn)
         loss, parts, _, _ = run_window(model, fz, batch, stats, kind, args.burn, dev)
         opt.zero_grad()
         loss.backward()
