@@ -106,12 +106,15 @@ class Block(nn.Module):
 
 
 class TokenWM(nn.Module):
-    def __init__(self, d=128, n_heads=4, n_layers=2, gate=False):
+    def __init__(self, d=128, n_heads=4, n_layers=2, gate=False, gate_fields=None):
         super().__init__()
         self.d = d
         # gate=True: copy by default. Per delta field, a "does this field change
         # this tick" logit; the value head is only used where it says yes.
+        # gate_fields limits it to those fields (None = all); the others are
+        # predicted directly, as without the gate.
         self.gated = gate
+        self.gate_fields = list(gate_fields) if gate_fields else list(REG_FIELDS)
         self.tok = Tokenizer(d)
         self.act = ActionEmbed(d)
         self.mem_in = nn.Linear(d, d)
@@ -134,6 +137,7 @@ class TokenWM(nn.Module):
             # per-(entity, field) prior logit of changing, set from data by set_change_prior;
             # starting at "nothing changes" everywhere left hero movement (60% of steps) stuck
             self.register_buffer("change_prior", torch.full((N_ENT, len(REG_FIELDS)), -4.0))
+            self.register_buffer("gate_mask", torch.tensor([f in self.gate_fields for f in REG_FIELDS]))
 
     def set_change_prior(self, change_rate):
         """Open each gate at its field's base rate. The value head is still zero,
@@ -174,8 +178,9 @@ class TokenWM(nn.Module):
         out = {}
         if self.gated:
             change = self.change(h) + self.change_prior
-            out = dict(change=change, value=value)
-            value = torch.where(change > 0, value, torch.zeros_like(value))   # hard gate at p = 0.5
+            out = dict(change=change, value=value, gate_mask=self.gate_mask)
+            closed = self.gate_mask & (change <= 0)                          # hard gate at p = 0.5
+            value = torch.where(closed, torch.zeros_like(value), value)
         return dict(
             **out,
             reg=value,

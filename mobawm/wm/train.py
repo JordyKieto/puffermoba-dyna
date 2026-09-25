@@ -106,8 +106,10 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
         m, e = mask[:, sel], err[:, sel]
         if gated:
             mc = m & changed[:, sel]
-            per_field = ((gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
-                         + (e * mc).sum((0, 1)) / mc.sum((0, 1)).clamp(min=1))
+            gated_f = (gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1) \
+                + (e * mc).sum((0, 1)) / mc.sum((0, 1)).clamp(min=1)
+            plain_f = (e * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
+            per_field = torch.where(pred["gate_mask"], gated_f, plain_f)
         else:
             per_field = (e * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
         for j, fname in enumerate(REG_FIELDS):
@@ -140,7 +142,7 @@ def run_window(model, fz, batch, stats, kind, burn, dev, loss=True, shuffle_acti
     for t in range(K):
         with amp:
             pred, h = model.step(feats[t], act[:, t], h)
-        pred = {k: v.float() for k, v in pred.items()}
+        pred = {k: (v.float() if v.is_floating_point() else v) for k, v in pred.items()}
         h = h.float()
         if t >= burn:
             if loss:
