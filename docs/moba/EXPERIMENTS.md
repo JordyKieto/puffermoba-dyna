@@ -215,6 +215,42 @@ than persistence. Still action-driven.
   flattened to −0.019 per 1k iterations. That motivates E3 (a bigger model),
   plus the batch/bf16 sweep for throughput.
 
+### Is action conditioning solved? Not yet: movement yes, abilities and combat no
+
+The per-field shuffled-action control is what decides it. If the model used
+an action head, feeding it another window's actions would make the field it
+drives worse.
+
+Held-out, one step, E2 (model / persistence / model with shuffled actions):
+
+| field | model | persistence | shuffled | reading |
+|---|---|---|---|---|
+| hero x / y | **0.32 / 0.31** | 0.56 / 0.54 | 0.67 / 0.66 | conditioned on the move heads |
+| hero attack timer | **0.13** | 0.63 | 0.21 | partly conditioned (target mode) |
+| hero Q cooldown | 0.216 | **0.156** | 0.196 | Q ignored: worse than persistence, no better than shuffled |
+| hero E cooldown | 0.472 | 0.580 | 0.485 | E ignored |
+| hero W cooldown | 0.545 | 0.704 | 0.758 | weakly conditioned |
+| hero health | 5.63 | 6.44 | **5.54** | combat not conditioned on actions |
+
+Many of these effects are deterministic in the simulator:
+- casting sets a fixed cooldown, and otherwise it counts down by 1;
+- movement is the action vector applied to the position.
+
+A solved model would be near-exact on them. The model has learned where
+heroes go, not what their abilities and attacks do. A rollout that looks
+right in the viewer (heroes walking the right way) can still be wrong
+exactly where the fights happen.
+
+**Criteria for "action conditioning solved":**
+1. **Deterministic action effects are near-exact:** cooldowns and mana
+   correct on >99% of casts; hero position error well under 0.1 cell.
+2. **Every action head passes the shuffled-action control,** not only
+   movement.
+3. **Counterfactual accuracy.** Restore one state in the simulator
+   (`moba_restore`), apply two different action sets, and check the model
+   predicts both outcomes. It is the direct test of action conditioning,
+   and the exact simulator makes it free to generate.
+
 ---
 
 ## Proposed next: bigger model (E3) and a throughput sweep (not started)
