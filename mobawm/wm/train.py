@@ -404,6 +404,7 @@ def main():
     ap.add_argument("--heads", type=int, default=4)
     ap.add_argument("--eval-batches", type=int, default=8)
     ap.add_argument("--val-every", type=int, default=200)
+    ap.add_argument("--ckpt-every", type=int, default=0, help="also keep model_<it>.pt every N iterations")
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--rollouts", type=int, default=16)
     ap.add_argument("--log-every", type=int, default=25)
@@ -536,6 +537,8 @@ def main():
         if it % args.val_every == 0:
             run_val(it)
             torch.save(model.state_dict(), out / "model.pt")
+        if args.ckpt_every and it % args.ckpt_every == 0:
+            torch.save(model.state_dict(), out / f"model_{it:06d}.pt")
     run_val(it)
     torch.save(model.state_dict(), out / "model.pt")
 
