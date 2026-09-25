@@ -44,14 +44,27 @@ def featurize_window(fz, ent, tick, cidx):
 
 
 KIND_NAMES = ("hero", "creep", "neutral", "tower")
+# Delta fields grouped by what they mean in the game. Losses and the skill
+# metrics are reported per effect, so "does it understand abilities" is a
+# curve, not a question for the end-of-run report.
+EFFECTS = {
+    "movement": ("x", "y", "waypoint"),
+    "abilities": ("q_timer", "w_timer", "e_timer", "mana"),
+    "attack": ("basic_attack_timer",),
+    "health": ("health",),
+    "status": ("stun_timer", "move_timer", "move_modifier"),
+    "xp": ("xp",),
+}
+EFFECT_OF = {f: e for e, fs in EFFECTS.items() for f in fs}
 
 
 def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     """Total loss and its parts, per entity kind and per head.
 
-    parts["<kind>/reg"]    Huber on scaled deltas, each (kind, field) averaged separately then summed
-    parts["<kind>/alive"]  BCE on "alive flips this tick" (creep, neutral, tower)
-    parts["<kind>/is_hit"] BCE on next is_hit
+    parts["<kind>/<effect>"]  Huber on scaled deltas of that effect's fields (EFFECTS),
+                              each (kind, field) averaged separately then summed
+    parts["<kind>/deaths"]    BCE on "alive flips this tick" (creep, neutral, tower)
+    parts["<kind>/got_hit"]   BCE on next is_hit
     parts["creep/lane"], parts["creep/team"]  CE on next value
     """
     dev = e0.device
@@ -74,12 +87,16 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
         sel = kind == k
         m, e = mask[:, sel], err[:, sel]
         cnt = m.sum((0, 1))
-        parts[f"{name}/reg"] = ((e * m).sum((0, 1)) / cnt.clamp(min=1))[cnt > 0].sum()
+        per_field = (e * m).sum((0, 1)) / cnt.clamp(min=1)
+        for j, fname in enumerate(REG_FIELDS):
+            if stats.reg_mask[k, j]:
+                key = f"{name}/{EFFECT_OF[fname]}"
+                parts[key] = parts.get(key, 0.0) + per_field[j]
         if can_flip[k]:
-            parts[f"{name}/alive"] = alive_bce[:, sel].mean()
+            parts[f"{name}/deaths"] = alive_bce[:, sel].mean()
         a1 = alive1[:, sel]
         if a1.any():
-            parts[f"{name}/is_hit"] = hit_bce[:, sel][a1].mean()
+            parts[f"{name}/got_hit"] = hit_bce[:, sel][a1].mean()
     c = slice(10, 110)
     ca = alive1[:, c]
     if ca.any():
@@ -134,6 +151,68 @@ def validate(model, fz, store, stats, kind, dev, args, seed=123):
     model.train()
     n = args.val_batches
     return tot / n, summarize_parts({k: v / n for k, v in agg.items()})
+
+
+@torch.no_grad()
+def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
+    """The two questions that tell whether an effect is understood, per effect,
+    on the same fixed held-out windows as validate():
+
+      beats_copy_pct   = 100 * (1 - model error / persistence error)
+                         > 0: better than copying the last frame
+      uses_actions_pct = 100 * (error with shuffled actions / model error - 1)
+                         > 0: wrong actions make it worse, so it uses them
+
+    Errors are on RMS-scaled deltas (unitless), summed over the effect's
+    fields; only entities alive at t and t+1, excluding wave respawns. Deaths:
+    recall and false positives of alive flips."""
+    names = KIND_NAMES
+    err = {}          # (kind, effect) -> [model, persist, shuffled]
+    deaths = [0, 0, 0]  # tp, fn, fp
+    model.eval()
+    for shuffle in (False, True):
+        gen = torch.Generator(device=dev); gen.manual_seed(seed)
+        for _ in range(args.val_batches):
+            batch = store.sample(args.batch, args.window, gen)
+            _, _, preds, ent = run_window(model, fz, batch, stats, kind, args.burn, dev, loss=False,
+                                          shuffle_actions=shuffle)
+            scale = stats.reg_scale.to(dev)[kind]
+            for t, p in preds:
+                e0, e1 = ent[:, t], ent[:, t + 1]
+                both = (e0[..., F["alive"]] > 0) & (e1[..., F["alive"]] > 0)
+                wc, _, wn = wave_respawns(batch[2][:, t], batch[3][:, t])
+                both[:, 10:110] &= ~wc
+                both[:, 110:182] &= ~wn.unsqueeze(-1)
+                true_d = (e1[..., REG_IDX] - e0[..., REG_IDX]) / scale
+                ae = (p["reg"] - true_d).abs()
+                pe = true_d.abs()
+                for k, kn in enumerate(names):
+                    m = both[:, kind == k]
+                    for j, fname in enumerate(REG_FIELDS):
+                        if not stats.reg_mask[k, j]:
+                            continue
+                        a = err.setdefault((kn, EFFECT_OF[fname]), [0.0, 0.0, 0.0])
+                        if shuffle:
+                            a[2] += ae[:, kind == k, j][m].sum().item()
+                        else:
+                            a[0] += ae[:, kind == k, j][m].sum().item()
+                            a[1] += pe[:, kind == k, j][m].sum().item()
+                if not shuffle:
+                    can = stats.alive_mask.to(dev)[kind].expand_as(both)
+                    flip = ((e0[..., F["alive"]] > 0) != (e1[..., F["alive"]] > 0)) & can
+                    pf = (torch.sigmoid(p["alive_flip"]) > 0.5) & can
+                    deaths[0] += int((flip & pf).sum()); deaths[1] += int((flip & ~pf).sum())
+                    deaths[2] += int((~flip & pf).sum())
+    model.train()
+    out = {}
+    for (kn, ef), (m, pz, sh) in err.items():
+        if pz <= 0:
+            continue
+        out[f"{kn}/{ef}/beats_copy_pct"] = 100 * (1 - m / pz)
+        out[f"{kn}/{ef}/uses_actions_pct"] = 100 * (sh / max(m, 1e-9) - 1)
+    out["deaths/recall_pct"] = 100 * deaths[0] / max(deaths[0] + deaths[1], 1)
+    out["deaths/false_pos_per_true"] = deaths[2] / max(deaths[0] + deaths[1], 1)
+    return out
 
 
 @torch.no_grad()
@@ -227,6 +306,39 @@ METRICS = {"hero_pos_L1": _hero_pos, "hero_hp": _hero_hp, "creep_pos_L1": _creep
            "creep_alive_acc": _creep_alive, "tower_hp": _tower_hp}
 
 
+def log_report(run, report):
+    """End-of-run evaluation as wandb tables and summary numbers."""
+    import wandb
+    he, sh = report["onestep_heldout"], report["onestep_heldout_shuffled_actions"]
+    rows = []
+    for f, v in he.items():
+        if f == "alive_flip" or v["n_changed"] < 20:
+            continue
+        kn, fname = f.split(".", 1)
+        rows.append([kn, fname, EFFECT_OF.get(fname, "?"), v["model_mae"], v["persist_mae"], sh[f]["model_mae"],
+                     100 * (1 - v["model_mae"] / max(v["persist_mae"], 1e-9)),
+                     100 * (sh[f]["model_mae"] / max(v["model_mae"], 1e-9) - 1),
+                     v["changed_model_mae"], v["changed_persist_mae"], v["n_changed"]])
+    run.log({"final/onestep_heldout": wandb.Table(
+        columns=["unit", "field", "effect", "model_err", "copy_err", "wrong_actions_err", "beats_copy_pct",
+                 "uses_actions_pct", "changed_model_err", "changed_copy_err", "n_changed"], data=rows)})
+    for split in ("rollout_heldout", "rollout_train"):
+        rrows = [[int(h), name, m[0], m[1]] for h, ms in report[split].items() for name, m in ms.items()]
+        run.log({f"final/{split}": wandb.Table(columns=["horizon", "metric", "model", "copy"], data=rrows)})
+    run.summary.update({"final/loss_last_100": report["loss_last_100"],
+                        "final/slope_per_1k_it": report["log_loss_slope_per_1k_it_last_quarter"],
+                        "final/deaths_recall": he["alive_flip"]["recall"]})
+
+
+def backfill(run_dir: Path, wandb_id: str):
+    """Attach an older run's report.json to its wandb run (tables + summary)."""
+    import wandb
+    report = json.loads((run_dir / "report.json").read_text())
+    run = wandb.init(project="moba-wm", id=wandb_id, resume="must")
+    log_report(run, report)
+    run.finish()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="data/moba/mix100/dense")
@@ -247,9 +359,13 @@ def main():
     ap.add_argument("--log-every", type=int, default=25)
     ap.add_argument("--out", default="runs/token_wm/smoke")
     ap.add_argument("--wandb", action="store_true")
+    ap.add_argument("--backfill", help="run dir: attach its report.json to --wandb-id and exit")
+    ap.add_argument("--wandb-id")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else
                     "mps" if torch.backends.mps.is_available() else "cpu")
     args = ap.parse_args()
+    if args.backfill:
+        return backfill(Path(args.backfill), args.wandb_id)
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     dev = torch.device(args.device)
     torch.manual_seed(0)
@@ -296,9 +412,15 @@ def main():
 
     def run_val(it):
         vl, vp = validate(model, fz, he_store, stats, kind, dev, args)
-        emit(dict(it=it, **{"val/loss": vl}, **{f"val/{k}": v for k, v in vp.items()}))
+        sk = skill_eval(model, fz, he_store, stats, kind, dev, args)
+        emit(dict(it=it, **{"val/loss": vl}, **{f"val/{k}": v for k, v in vp.items()},
+                  **{f"skill/{k}": v for k, v in sk.items()}))
         kinds = "  ".join(f"{n} {vp[n + '/total']:.3f}" for n in KIND_NAMES)
         print(f"VAL it {it:6d}  loss {vl:.4f}  | {kinds}", flush=True)
+        hero = "  ".join(f"{e} {sk.get(f'hero/{e}/beats_copy_pct', float('nan')):+.0f}%/"
+                         f"{sk.get(f'hero/{e}/uses_actions_pct', float('nan')):+.0f}%"
+                         for e in ("movement", "abilities", "attack", "health"))
+        print(f"    hero beats-copy/uses-actions: {hero}  | deaths recall {sk['deaths/recall_pct']:.0f}%", flush=True)
         return vl
 
     # Step 0: the zero-initialized model predicts "no change", so this is the persistence baseline.
@@ -324,7 +446,7 @@ def main():
         it += 1
         losses.append(loss.item())
         for k, v in parts.items():
-            part_acc[k] = part_acc.get(k, 0.0) + float(v)
+            part_acc[k] = part_acc.get(k, 0.0) + float(v.detach())
         part_n += 1
         if it % args.log_every == 0:
             tp = summarize_parts({k: v / part_n for k, v in part_acc.items()})
@@ -364,7 +486,7 @@ def main():
     )
     (out / "report.json").write_text(json.dumps(report, indent=1, default=str))
     if run:
-        run.summary.update({"loss_last_100": report["loss_last_100"], "slope": slope})
+        log_report(run, report)
         run.finish()
     print(f"wrote {out / 'report.json'}", flush=True)
 

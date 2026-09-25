@@ -27,6 +27,24 @@ Runs that were stopped or invalidated stay in the log with the reason.
   - Runs from E2 on save `stats.pt`, so the viewer uses the exact training
     statistics. For E1 it refits them locally and prints a warning.
 
+**What wandb shows** (runs after E2; E2 was back-filled with its final tables):
+
+- **`val/<unit>/<effect>` and `train/<unit>/<effect>`: loss per effect.**
+  Units: hero / creep / neutral / tower. Effects: movement, abilities
+  (Q/W/E cooldowns + mana), attack, health, status (stun/slow), xp, deaths,
+  got_hit, creep lane/team.
+- **`skill/<unit>/<effect>/beats_copy_pct`, every validation:** how much
+  better than copying the last frame. 0 = no better; positive is good.
+- **`skill/<unit>/<effect>/uses_actions_pct`, every validation:** how much
+  worse the prediction gets with another window's actions. 0 = the model
+  ignores the actions for that effect.
+- **`skill/deaths/recall_pct`, `skill/deaths/false_pos_per_true`:** deaths
+  caught, and false alarms per real death.
+- **`final/onestep_heldout` table:** every field, with model error, copy
+  error, wrong-actions error and both percentages.
+- **`final/rollout_heldout` / `final/rollout_train` tables:** open-loop
+  error at 1, 4, 16 and 64 ticks, model vs copy.
+
 **How to read the numbers.**
 
 - **The step-0 validation loss is the persistence baseline.** The output
