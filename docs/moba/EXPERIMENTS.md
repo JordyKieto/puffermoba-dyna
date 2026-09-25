@@ -10,25 +10,30 @@ the abilities.
 The question behind each row: **does the model understand what each action
 does?** Two measurements per effect, on held-out games, one step ahead:
 
-- **Beats copying?** How much lower the model's error is than just copying
-  the last frame. wandb `skill/hero/<effect>/beats_copy_pct`.
-- **Uses the buttons?** How much worse the model gets when fed another
-  window's actions. wandb `skill/hero/<effect>/uses_actions_pct`. 0 means it
-  ignores the buttons.
+- **Better than copying?** How much lower the model's error is than just
+  copying the last frame. wandb `skill/hero/<effect>/better_than_copy_pct`.
+- **Depends on the actions?** Give the model the same state twice: once with
+  the actions the heroes really took, once with actions from another moment
+  of another game. If the prediction is driven by the actions, its error goes
+  up a lot with the wrong ones: Q cast → cooldown reset, no Q → no reset. If
+  the error stays the same, the model ignores the actions for that effect and
+  predicts from the state alone. Reported as **"+X% error with wrong
+  actions"**; 0 means the actions are ignored. wandb
+  `skill/hero/<effect>/action_dependence_pct`.
 
-A row is **green** when **beats copying ≥ 80% AND uses the buttons ≥ +50%**.
-Most of these effects are deterministic in the simulator: casting sets a
-fixed cooldown, a move applies a fixed step. So near-exact is achievable,
-and 80% is a floor, not a stretch goal.
+A row is **green** when it is **≥ 80% better than copying AND has ≥ +50%
+error with wrong actions**. Most of these effects are deterministic in the
+simulator: casting sets a fixed cooldown, a move applies a fixed step. So
+near-exact is achievable, and 80% is a floor, not a stretch goal.
 
-| effect | beats copying? | uses the buttons? | status | best run |
+| effect | better than copying? | depends on the actions? (error with wrong actions) | status | best run |
 |---|---|---|---|---|
-| walking (hero position) | +43% | +110% ✅ | 🟡 uses the buttons, not accurate enough | E2 |
+| walking (hero position) | +43% | +110% ✅ | 🟡 driven by the actions, not accurate enough | E2 |
 | basic attacks | +79% | +59% ✅ | 🟡 almost green | E2 |
-| Q ability | **−38%** ❌ worse than copying | **−9%** ❌ ignores Q | 🔴 doesn't understand Q | E2 |
-| E ability | +19% | **+3%** ❌ ignores E | 🔴 predicts E cooldowns, not from the E button | E2 |
+| Q ability | **−38%** ❌ worse than copying | **−9%** ❌ ignores the Q action | 🔴 doesn't understand Q | E2 |
+| E ability | +19% | **+3%** ❌ ignores the E action | 🔴 predicts E cooldowns, not from the E action | E2 |
 | W ability | +23% | **+39%** | 🔴 weak | E2 |
-| damage / health | +13% | **−2%** ❌ wrong buttons do as well | 🔴 doesn't link fights to actions | E2 |
+| damage / health | +13% | **−2%** ❌ wrong actions do as well | 🔴 doesn't link fights to actions | E2 |
 
 - **Update this table after every run** and record which run holds each row's
   best. The numbers come from the run's `final/onestep_heldout` table (field
@@ -74,15 +79,16 @@ Runs that were stopped or invalidated stay in the log with the reason.
   Units: hero / creep / neutral / tower. Effects: movement, abilities
   (Q/W/E cooldowns + mana), attack, health, status (stun/slow), xp, deaths,
   got_hit, creep lane/team.
-- **`skill/<unit>/<effect>/beats_copy_pct`, every validation:** how much
-  better than copying the last frame. 0 = no better; positive is good.
-- **`skill/<unit>/<effect>/uses_actions_pct`, every validation:** how much
-  worse the prediction gets with another window's actions. 0 = the model
-  ignores the actions for that effect.
+- **`skill/<unit>/<effect>/better_than_copy_pct`, every validation:** how
+  much better than copying the last frame. 0 = no better; positive is good.
+- **`skill/<unit>/<effect>/action_dependence_pct`, every validation:** how
+  much the prediction depends on the actions actually taken, as the extra
+  error when they are swapped for another moment's actions. 0 = ignored.
 - **`skill/deaths/recall_pct`, `skill/deaths/false_pos_per_true`:** deaths
   caught, and false alarms per real death.
 - **`final/onestep_heldout` table:** every field, with model error, copy
-  error, wrong-actions error and both percentages.
+  error, error with wrong actions, `better_than_copy_pct` and
+  `action_dependence_pct`.
 - **`final/rollout_heldout` / `final/rollout_train` tables:** open-loop
   error at 1, 4, 16 and 64 ticks, model vs copy.
 

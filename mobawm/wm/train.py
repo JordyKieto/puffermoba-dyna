@@ -158,10 +158,11 @@ def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
     """The two questions that tell whether an effect is understood, per effect,
     on the same fixed held-out windows as validate():
 
-      beats_copy_pct   = 100 * (1 - model error / persistence error)
-                         > 0: better than copying the last frame
-      uses_actions_pct = 100 * (error with shuffled actions / model error - 1)
-                         > 0: wrong actions make it worse, so it uses them
+      better_than_copy_pct  = 100 * (1 - model error / persistence error)
+                              > 0: better than copying the last frame
+      action_dependence_pct = 100 * (error with wrong actions / error with real actions - 1)
+                              how much the prediction depends on the actions actually taken:
+                              the real actions are swapped for another window's; 0 = ignores them
 
     Errors are on RMS-scaled deltas (unitless), summed over the effect's
     fields; only entities alive at t and t+1, excluding wave respawns. Deaths:
@@ -208,8 +209,8 @@ def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
     for (kn, ef), (m, pz, sh) in err.items():
         if pz <= 0:
             continue
-        out[f"{kn}/{ef}/beats_copy_pct"] = 100 * (1 - m / pz)
-        out[f"{kn}/{ef}/uses_actions_pct"] = 100 * (sh / max(m, 1e-9) - 1)
+        out[f"{kn}/{ef}/better_than_copy_pct"] = 100 * (1 - m / pz)
+        out[f"{kn}/{ef}/action_dependence_pct"] = 100 * (sh / max(m, 1e-9) - 1)
     out["deaths/recall_pct"] = 100 * deaths[0] / max(deaths[0] + deaths[1], 1)
     out["deaths/false_pos_per_true"] = deaths[2] / max(deaths[0] + deaths[1], 1)
     return out
@@ -320,8 +321,8 @@ def log_report(run, report):
                      100 * (sh[f]["model_mae"] / max(v["model_mae"], 1e-9) - 1),
                      v["changed_model_mae"], v["changed_persist_mae"], v["n_changed"]])
     run.log({"final/onestep_heldout": wandb.Table(
-        columns=["unit", "field", "effect", "model_err", "copy_err", "wrong_actions_err", "beats_copy_pct",
-                 "uses_actions_pct", "changed_model_err", "changed_copy_err", "n_changed"], data=rows)})
+        columns=["unit", "field", "effect", "model_err", "copy_err", "wrong_actions_err", "better_than_copy_pct",
+                 "action_dependence_pct", "changed_model_err", "changed_copy_err", "n_changed"], data=rows)})
     for split in ("rollout_heldout", "rollout_train"):
         rrows = [[int(h), name, m[0], m[1]] for h, ms in report[split].items() for name, m in ms.items()]
         run.log({f"final/{split}": wandb.Table(columns=["horizon", "metric", "model", "copy"], data=rrows)})
@@ -417,10 +418,10 @@ def main():
                   **{f"skill/{k}": v for k, v in sk.items()}))
         kinds = "  ".join(f"{n} {vp[n + '/total']:.3f}" for n in KIND_NAMES)
         print(f"VAL it {it:6d}  loss {vl:.4f}  | {kinds}", flush=True)
-        hero = "  ".join(f"{e} {sk.get(f'hero/{e}/beats_copy_pct', float('nan')):+.0f}%/"
-                         f"{sk.get(f'hero/{e}/uses_actions_pct', float('nan')):+.0f}%"
+        hero = "  ".join(f"{e} {sk.get(f'hero/{e}/better_than_copy_pct', float('nan')):+.0f}%/"
+                         f"{sk.get(f'hero/{e}/action_dependence_pct', float('nan')):+.0f}%"
                          for e in ("movement", "abilities", "attack", "health"))
-        print(f"    hero beats-copy/uses-actions: {hero}  | deaths recall {sk['deaths/recall_pct']:.0f}%", flush=True)
+        print(f"    hero better-than-copy / action-dependence: {hero}  | deaths recall {sk['deaths/recall_pct']:.0f}%", flush=True)
         return vl
 
     # Step 0: the zero-initialized model predicts "no change", so this is the persistence baseline.
