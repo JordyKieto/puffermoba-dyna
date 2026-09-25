@@ -472,6 +472,19 @@ Change gate on every delta field **except movement** (x, y, waypoint). Gate
 yes/no loss ×0.2. Gated fields' value loss averaged over all supervised
 entries (scaled by change rate). Actions added to the hero token.
 
+Where it stands, after 162 updates (5-minute test; hero better than copying /
+error with wrong actions, %):
+
+| effect | **baseline** | no gate | gate on all fields |
+|---|---|---|---|
+| walking | +15 / +43 | **+26 / +67** | +16 / +40 |
+| attack | **+21 / +17** | +20 / +6 | +22 / +17 |
+| Q | 0 / 0 | −27 / +4 | 0 / 0 |
+| W | **+31 / +26** | +11 / +17 | +29 / +28 |
+| E | **+28 / +19** | +3 / +12 | +28 / +14 |
+| mana | **+21 / +13** | +9 / +8 | +19 / +8 |
+| health | −24 / +9 | −19 / 0 | −23 / +8 |
+
 - **Full training:** `python -m mobawm.wm.train --baseline ...`
   (sets `--gate --gate-fields <all but movement> --gate-loss-weight 0.2
   --gate-value-norm all`)
