@@ -77,6 +77,13 @@ the current game tick, and the game's final tick.
   - The left panel shows real casts. The right panel shows casts the model
     predicts, meaning its predicted cooldown reset.
   - "casts so far: truth N model M" counts them up to the current tick.
+- **Deaths:** a flashing red/white X labelled DEATH where a hero or tower
+  died, for 12 ticks. "deaths so far: truth N model M" counts them.
+  - Heroes never have `alive` = 0. The game respawns a hero in the same tick
+    it reaches 0 health (`spawn_player` inside the damage code in `moba.h`).
+  - So a hero death is detected as a jump of more than 12 cells with health
+    reset to full. The assassin's blink also jumps, but keeps its health.
+  - A tower death is `alive` going 1 → 0.
 - **Key presses:** small coloured Q/W/E letters under a hero show the keys
   it pressed that tick. They are the same on both panels. A press without a
   ring means the ability didn't fire, usually because it was still on
@@ -110,7 +117,8 @@ With any of these flags the window doesn't open. They can be combined.
 |---|---|
 | `--entity I` | every field of entity `I` (0–9 heroes, 10–109 creeps, 110–181 neutrals, 182–205 towers) at `--frame`: real, model, difference. The keys it pressed that step. Its position error. The same data as the hover tooltip. |
 | `--casts` | every Q/W/E cast in the window: step, tick, hero, ability, and whether it happened in the real game, the model, or both |
-| `--json` | the two above as JSON |
+| `--deaths` | every hero and tower death: step, tick, who, and whether it happened in the real game, the model, or both |
+| `--json` | the three above as JSON |
 | `--screenshot out.png` | the window at `--frame` as a PNG |
 | `--mouse X Y` | with `--screenshot`: the mouse at window pixel (X, Y), so the tooltip shows |
 
@@ -140,6 +148,7 @@ rp = Replay("runs/token_wm/e4_baseline_v2_1h", "data/moba/mix1k/dense/games.0000
 rp.entity(1, 41)       # {"name", "tick", "fields": {field: (real, model, diff)}, "pos_err", "pressed"}
 rp.entity_table(1, 41) # the same as text
 rp.cast_events()       # [{"step", "tick", "hero", "ability", "real", "model"}, ...]
+rp.death_events()      # [{"step", "tick", "entity", "name", "real", "model"}, ...]
 rp.divergence(64)      # {metric: (model, persistence)}, the HUD table
 rp.entity_at(0, 67.9, 60.8, 41)   # entity nearest map cell (x, y) at step 41; panel 0 real, 1 model
 rp.load(3)             # another game in the same file, same model
@@ -148,6 +157,7 @@ rp.load(3)             # another game in the same file, same model
 rp.truth, rp.pred      # (horizon+1, 206, 26) states; fields by name via moba_viz.F["mana"]
 rp.acts                # (horizon+1, 10, 6) the action each hero took from step k
 rp.cast_truth, rp.cast_pred   # (horizon+1, 10, 3) bool: hero cast Q/W/E at step k
+rp.death_truth, rp.death_pred # (horizon+1, 206) bool: entity died at step k (heroes, towers)
 
 Viewer(rp, headless=True).screenshot("frame.png", frame=41, mouse=(354, 331))
 ```
@@ -157,6 +167,17 @@ detector counts a cooldown rise of more than 5 ticks as a cast. Real resets
 are 15 or more; the model's predicted timers wobble by a few ticks. The tank's
 Q has no cooldown, so it is detected by its mana cost. A hero that died that
 tick is ignored.
+
+### Rewinding and the model's memory
+
+The model is rolled out **once**, forward, when a game loads. Its per-entity
+GRU memory is carried from step to step during that pass. Every predicted
+state is stored.
+
+Stepping back, rewinding and scrubbing only show stored frames. Nothing is
+recomputed, and the GRU memory isn't kept or touched. Step k always shows
+the same prediction, however you got there. Switching game re-runs the
+rollout.
 
 ## Getting a checkpoint and game files
 

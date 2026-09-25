@@ -70,6 +70,7 @@ HP_BG, HP_FG = (120, 20, 20), (40, 220, 60)
 SLOT = {"Q": (255, 220, 0), "W": (0, 255, 150), "E": (255, 60, 255)}   # ability flash colours
 CAST_JUMP = 5                        # min cooldown increase that counts as a cast
 FLASH = 3                            # frames a cast ring stays visible
+DEATH_FLASH = 12                     # frames a death marker flashes
 
 
 # --- model + stats ---------------------------------------------------------
@@ -169,6 +170,25 @@ def casts(frames):
     return out
 
 
+def deaths(frames):
+    """(N, 206) bool: entity i died between frame k-1 and k. Heroes and towers only.
+
+    A hero at 0 health respawns in the same tick (moba.h: spawn_player right in
+    the damage code), so a hero death is a jump of more than 12 cells with health
+    reset to full (the assassin's blink jumps but keeps its health). A tower
+    death is alive going 1 -> 0."""
+    out = np.zeros(frames.shape[:2], bool)
+    if len(frames) < 2:
+        return out
+    a, b = frames[:-1], frames[1:]
+    jump = (np.abs(b[:, :10, F["x"]] - a[:, :10, F["x"]]) + np.abs(b[:, :10, F["y"]] - a[:, :10, F["y"]])) > 12
+    reset = (b[:, :10, F["health"]] >= b[:, :10, F["max_health"]] - 0.5) & \
+            (a[:, :10, F["health"]] < a[:, :10, F["max_health"]] - 0.5)
+    out[1:, :10] = jump & reset
+    out[1:, 182:] = (a[:, 182:, F["alive"]] > 0) & (b[:, 182:, F["alive"]] <= 0)
+    return out
+
+
 # --- drawing ----------------------------------------------------------------
 
 def map_surface(pg, walls):
@@ -237,6 +257,23 @@ def draw_casts(pg, surf, frames, cast, k, fonts):
                 surf.blit(lab, lab.get_rect(center=(x + 14, y - 14)))
 
 
+def draw_deaths(pg, surf, frames, died, k, fonts):
+    """A flashing red/white X where the entity died (its last position), for DEATH_FLASH frames."""
+    for age in range(DEATH_FLASH):
+        kk = k - age
+        if kk < 1:
+            break
+        for i in np.nonzero(died[kk])[0]:
+            x, y = int(frames[kk - 1][i, F["x"]] * CELL), int(frames[kk - 1][i, F["y"]] * CELL)
+            c = (255, 40, 40) if (k // 2) % 2 == 0 else (255, 255, 255)   # flash every 2 frames
+            r = 16 - age // 2
+            pg.draw.circle(surf, c, (x, y), r, 3)
+            pg.draw.line(surf, c, (x - r + 4, y - r + 4), (x + r - 4, y + r - 4), 4)
+            pg.draw.line(surf, c, (x - r + 4, y + r - 4), (x + r - 4, y - r + 4), 4)
+            lab = fonts["cast"].render("DEATH", True, c)
+            surf.blit(lab, lab.get_rect(center=(x, y - r - 8)))
+
+
 def draw_presses(pg, surf, e, act, fonts):
     """Which ability keys each hero pressed this tick (same on both panels)."""
     if act is None:
@@ -290,13 +327,14 @@ class Replay:
         rp = Replay("runs/token_wm/e4_baseline_v2_1h", "data/moba/mix1k/dense/games.0000900.mbs")
         rp.entity(1, 41)          # every field of hero 1 at step 41: real, model, diff
         rp.cast_events()          # every Q/W/E cast, real and/or predicted
+        rp.death_events()         # every hero / tower death, real and/or predicted
         rp.divergence(64)         # the HUD's divergence table at step 64
         rp.load(3)                # another game in the same file, same model
 
     Step k is frame k of the window: step 0 is the real state at record `start`,
     and step k is the model's k-th open-loop prediction, next to the real record start+k.
     Arrays: truth, pred (Hz+1, 206, 26); acts (Hz+1, 10, 6), the action taken from step k;
-    cast_truth, cast_pred (Hz+1, 10, 3) bool.
+    cast_truth, cast_pred (Hz+1, 10, 3) bool; death_truth, death_pred (Hz+1, 206) bool.
     """
 
     def __init__(self, run, dense, game=0, start=500, horizon=300, burn=8, device="cpu"):
@@ -331,6 +369,7 @@ class Replay:
         self.last_tick = int(recs["state"]["tick"][-1])
         self.acts = recs["actions"][sl]
         self.cast_truth, self.cast_pred = casts(self.truth), casts(self.pred)
+        self.death_truth, self.death_pred = deaths(self.truth), deaths(self.pred)
         self.m_model = metrics(self.pred, self.truth)
         self.m_persist = metrics(np.broadcast_to(self.truth[:1], self.truth.shape), self.truth)
         return self
@@ -364,6 +403,15 @@ class Replay:
         for k, i, j in zip(*np.nonzero(self.cast_truth | self.cast_pred)):
             out.append(dict(step=int(k), tick=int(self.ticks[k]), hero=int(i), ability="QWE"[j],
                             real=bool(self.cast_truth[k, i, j]), model=bool(self.cast_pred[k, i, j])))
+        return out
+
+    def death_events(self):
+        """[{step, tick, entity, name, real, model}] for every hero or tower death in either panel."""
+        out = []
+        for k, i in zip(*np.nonzero(self.death_truth | self.death_pred)):
+            out.append(dict(step=int(k), tick=int(self.ticks[k]), entity=int(i),
+                            name=entity_name(self.truth[k - 1], i),
+                            real=bool(self.death_truth[k, i]), model=bool(self.death_pred[k, i])))
         return out
 
     def entity_table(self, i, k):
@@ -458,6 +506,7 @@ class Viewer:
             panel = self.base.copy()
             draw_entities(pg, panel, frame, self.fonts)
             draw_casts(pg, panel, frames, cast, k, self.fonts)
+            draw_deaths(pg, panel, frames, (rp.death_truth, rp.death_pred)[p], k, self.fonts)
             draw_presses(pg, panel, frame, rp.acts[k] if k < Hz else None, self.fonts)
             if p == 1 and st["ghost"]:
                 draw_ghost(pg, panel, rp.pred[k], rp.truth[k])
@@ -484,7 +533,9 @@ class Viewer:
             text(f"{mm:8.2f}", (PAD + 250, y), color=(120, 230, 120) if better else (240, 130, 110))
             text(f"{mp:8.2f}", (PAD + 380, y))
         n_t, n_p = int(rp.cast_truth[: k + 1].sum()), int(rp.cast_pred[: k + 1].sum())
-        text(f"casts so far: truth {n_t}   model {n_p}", (PAD + 620, hud_y + 36))
+        d_t, d_p = int(rp.death_truth[: k + 1].sum()), int(rp.death_pred[: k + 1].sum())
+        text(f"casts so far: truth {n_t}   model {n_p}      deaths so far: truth {d_t}   model {d_p}",
+             (PAD + 620, hud_y + 36))
         lx = PAD + 620
         for key, c in SLOT.items():
             pg.draw.circle(self.screen, c, (lx + 6, hud_y + 66), 6, 2)
@@ -610,7 +661,8 @@ def main():
                     help="with --screenshot: pretend the mouse is at this window pixel (shows the tooltip)")
     ap.add_argument("--entity", type=int, help="headless: print entity ENTITY at --frame, real vs model")
     ap.add_argument("--casts", action="store_true", help="headless: print every Q/W/E cast, real vs model")
-    ap.add_argument("--json", action="store_true", help="with --entity / --casts: print JSON instead of text")
+    ap.add_argument("--deaths", action="store_true", help="headless: print every hero / tower death, real vs model")
+    ap.add_argument("--json", action="store_true", help="with --entity / --casts / --deaths: print JSON instead of text")
     args = ap.parse_args()
 
     rp = Replay(args.run, args.dense, args.game, args.start, args.horizon, args.burn, args.device)
@@ -631,10 +683,20 @@ def main():
             for e in ev:
                 who = "both" if e["real"] and e["model"] else "real only" if e["real"] else "model only"
                 print(f"  step {e['step']:4d}  tick {e['tick']:5d}  hero {e['hero']}  {e['ability']}  {who}")
+    if args.deaths:
+        ev = rp.death_events()
+        if args.json:
+            print(json.dumps(ev))
+        else:
+            print(f"{len(ev)} deaths: real {int(rp.death_truth.sum())}, model {int(rp.death_pred.sum())}, "
+                  f"both {sum(e['real'] and e['model'] for e in ev)}")
+            for e in ev:
+                who = "both" if e["real"] and e["model"] else "real only" if e["real"] else "model only"
+                print(f"  step {e['step']:4d}  tick {e['tick']:5d}  {e['name']}  {who}")
     if args.screenshot:
         v = Viewer(rp, headless=True, ghost=args.ghost, frame=k)
         print(f"wrote {v.screenshot(args.screenshot, mouse=tuple(args.mouse) if args.mouse else None)} (frame {k})")
-    if args.entity is None and not args.casts and not args.screenshot:
+    if args.entity is None and not args.casts and not args.deaths and not args.screenshot:
         Viewer(rp, ghost=args.ghost, frame=k).loop()
 
 
