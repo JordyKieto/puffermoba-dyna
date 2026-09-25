@@ -64,7 +64,14 @@ HERO_ROWS = {"walking": ("x", "y"), "attack": ("basic_attack_timer",), "q": ("q_
              "status": ("stun_timer", "move_timer", "move_modifier"), "xp": ("xp",)}
 HERO_ROW_OF = {f: r for r, fs in HERO_ROWS.items() for f in fs}
 # Semantic loss: per-effect weights (--effect-weights). 1.0 = plain sum.
+# The adopted baseline gates every delta field except movement (EXPERIMENTS.md).
+BASELINE_GATE_FIELDS = ("q_timer", "w_timer", "e_timer", "mana", "health", "basic_attack_timer",
+                        "stun_timer", "move_timer", "move_modifier", "xp")
 EFFECT_WEIGHT = {}
+GATE_LOSS_WEIGHT = 1.0   # weight on the change gate's yes/no (BCE) loss
+# gated fields' value loss averaged over "changed" entries only, or over "all"
+# supervised entries (= scaled by the field's change rate, as without the gate)
+GATE_VALUE_NORM = "changed"
 BF16 = False
 
 
@@ -106,8 +113,9 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
         m, e = mask[:, sel], err[:, sel]
         if gated:
             mc = m & changed[:, sel]
-            gated_f = (gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1) \
-                + (e * mc).sum((0, 1)) / mc.sum((0, 1)).clamp(min=1)
+            value_den = (mc if GATE_VALUE_NORM == "changed" else m).sum((0, 1)).clamp(min=1)
+            gated_f = GATE_LOSS_WEIGHT * (gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1) \
+                + (e * mc).sum((0, 1)) / value_den
             plain_f = (e * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1)
             per_field = torch.where(pred["gate_mask"], gated_f, plain_f)
         else:
@@ -390,6 +398,12 @@ def main():
     ap.add_argument("--log-every", type=int, default=25)
     ap.add_argument("--out", default="runs/token_wm/smoke")
     ap.add_argument("--gate", action="store_true", help="copy by default: per-field change gate")
+    ap.add_argument("--gate-fields", default="", help="comma list of gated fields (empty = all)")
+    ap.add_argument("--gate-loss-weight", type=float, default=1.0, help="weight on the gate's yes/no loss")
+    ap.add_argument("--gate-value-norm", default="changed", choices=("changed", "all"))
+    ap.add_argument("--baseline", action="store_true",
+                    help="the adopted baseline (EXPERIMENTS.md): gate on all fields but movement, "
+                         "yes/no loss x0.2, value loss averaged over all entries")
     ap.add_argument("--effect-weights", default="", help="semantic loss, e.g. abilities=3,health=3,deaths=3")
     ap.add_argument("--event-frac", type=float, default=0.0,
                     help="fraction of each batch drawn from windows with a cast, damage or death")
@@ -426,13 +440,20 @@ def main():
           flush=True)
     fz = Featurizer(dev)
     kind = torch.from_numpy(KIND).to(dev)
-    global BF16
+    global BF16, GATE_LOSS_WEIGHT, GATE_VALUE_NORM
+    if args.baseline:
+        args.gate, args.gate_fields = True, ",".join(BASELINE_GATE_FIELDS)
+        args.gate_loss_weight, args.gate_value_norm = 0.2, "all"
     BF16 = args.bf16
+    GATE_LOSS_WEIGHT, GATE_VALUE_NORM = args.gate_loss_weight, args.gate_value_norm
     EFFECT_WEIGHT.update({k: float(v) for k, v in (kv.split("=") for kv in args.effect_weights.split(",") if kv)})
-    model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate).to(dev)
+    gate_fields = [f for f in args.gate_fields.split(",") if f] or None
+    model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate,
+                    gate_fields=gate_fields).to(dev)
     model.set_change_prior(stats.change_rate)
     # Everything needed to load and roll out this model elsewhere (e.g. the viewer).
-    torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate),
+    torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate,
+                                                   gate_fields=gate_fields),
                     train_games=args.train_games, held_games=args.held_games), out / "stats.pt")
     n_params = sum(p.numel() for p in model.parameters())
     print(f"model: {n_params / 1e6:.2f}M params", flush=True)

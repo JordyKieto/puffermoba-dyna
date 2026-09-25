@@ -8,6 +8,9 @@ Arms (each its own model and optimizer, same init seed):
   events   + effect weights + event-oversampled batches       framing 1 alone
   both     gate + effect weights + event batches              framings 1 + 3
   gate_sparse  change gate on everything except movement (x, y, waypoint)
+  gate_sparse_w02  gate_sparse with the gate's yes/no loss weighted x0.2
+  gate_sparse_w02_all  + gated value loss averaged over all entries (scaled by change rate)
+  baseline     = gate_sparse_w02_all, the adopted baseline
 
 Every round draws one uniform batch and one event batch; arms without event
 sampling train on the uniform batch, arms with it on the event batch, so
@@ -36,6 +39,9 @@ ARMS = {
     "base": dict(gate=False, weights={}, events=False),
     "gate_sparse": dict(gate=True, gate_fields=SPARSE, weights={}, events=False),
     "gate": dict(gate=True, weights={}, events=False),
+    "gate_sparse_w02": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, weights={}, events=False),
+    "gate_sparse_w02_all": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False),
+    "baseline": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False),
     "events": dict(gate=False, weights=dict(abilities=3, health=3, deaths=3, attack=2), events=True),
     "both": dict(gate=True, weights=dict(abilities=3, health=3, deaths=3, attack=2), events=True),
 }
@@ -97,6 +103,8 @@ def main():
         line = []
         for name, a in arms.items():
             T.EFFECT_WEIGHT.clear(); T.EFFECT_WEIGHT.update(a["cfg"]["weights"])
+            T.GATE_LOSS_WEIGHT = a["cfg"].get("gate_w", 1.0)
+            T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
             sk = T.skill_eval(a["model"], fz, he, stats, kind, dev, val_args)
             a["hist"].append(dict(round=rnd, **sk))
             if a["run"]:
@@ -118,6 +126,8 @@ def main():
         rnd += 1
         for name, a in arms.items():
             T.EFFECT_WEIGHT.clear(); T.EFFECT_WEIGHT.update(a["cfg"]["weights"])
+            T.GATE_LOSS_WEIGHT = a["cfg"].get("gate_w", 1.0)
+            T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
             lr = args.lr * min(1.0, rnd / 50)
             for g in a["opt"].param_groups:
                 g["lr"] = lr

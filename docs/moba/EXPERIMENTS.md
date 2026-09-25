@@ -420,8 +420,72 @@ creep position 11.3 / 38.2 (E2 13.3), creep alive 0.86 / 0.75.
     arriving directly in the hero's token, and 162 updates isn't enough to
     learn that.
   - The diff is kept outside git: `runs/experiments/action_tokens.diff`.
-- **Decision:** baseline for further experiments = the change gate on all
-  fields, actions added to the hero token.
+- **Decision at that point:** the change gate on all fields, actions added to
+  the hero token. Superseded below.
+
+### Round 2: geometry, navgrid, and fixing walking under the gate
+
+Same setup; wandb groups `ablate6`–`ablate10`.
+
+| test | arm | walking | attack | Q | W | E | mana | health |
+|---|---|---|---|---|---|---|---|---|
+| reference | gate, all fields | +16 / +40 | +22 / +17 | 0 / 0 | +29 / +28 | +28 / +14 | +19 / +8 | −23 / +8 |
+| geometry | + walking-distance code, 9×9 occupancy patch, 64 region tokens | +14 / +40 | +24 / +14 | 0 / 0 | +30 / +29 | +29 / +13 | +19 / +8 | −24 / +6 |
+| navgrid | + 32×32 cell tokens, predicting next-tick contents; anchor ±5 | +14 / +35 | +29 / +12 | 0 / 0 | +33 / +26 | +29 / +12 | +21 / +8 | −31 / +7 |
+| | anchor ±2 | +13 / +33 | +28 / +13 | +1 / +1 | +32 / +21 | +28 / +10 | +18 / +5 | −25 / +6 |
+| loss balance | rare-fields gate, yes/no loss ×0.2 | +6 / +24 | +26 / +16 | 0 / 0 | +28 / +33 | +26 / +12 | +19 / +11 | −19 / **+20** |
+| | **+ value loss scaled by change rate = BASELINE** | +15 / **+43** | +21 / +17 | 0 / 0 | **+31** / +26 | +28 / **+19** | **+21 / +13** | −24 / +9 |
+
+**Geometry bundle: neutral.** Every row is within a couple of points, at 13%
+more time per update.
+- Inputs: walking distance to 42 landmarks, occupancy patch, region tokens.
+- Not kept; the diff is in `runs/experiments/geometry_bundle.diff`.
+
+**Navgrid: neutral on the scoreboard, 2× slower per update.**
+- What it is: the map as 32×32 cell tokens, each holding the unit types
+  present plus its wall fraction, beside the unit tokens, with units↔cells
+  cross-attention; each cell predicts its next-tick contents.
+- Its own prediction barely learned: 0% of changed cells right with the ±5
+  "same as now" anchor, 5% with ±2.
+- Not kept; the diff is in `runs/experiments/navgrid_and_baseline.diff`.
+- Untested: whether a grid built from the baseline's predicted positions
+  already beats 5%.
+
+**Walking under the gate: it was loss balance, in two parts.**
+1. The gate's yes/no losses crowd out movement. Down-weighting them ×0.2
+   took walking from −4 to +6.
+2. A gated field's value loss, averaged only over ticks where it changed, is
+   much larger than the same field without a gate, averaged over all ticks
+   (mostly zeros). Averaging it over all ticks, i.e. scaling it by the field's
+   change rate, took walking to +15, on par with gating everything, while
+   keeping the best ability numbers yet.
+
+**What was given up:** health's dependence on the actions. The change-only
+value loss had given health +20% error with wrong actions, the best of any
+arm; the scaled version gives +9%.
+
+Walking is still below the ungated model (+26 / +67).
+
+## ✅ Current baseline (adopted 2026-09-25)
+
+Change gate on every delta field **except movement** (x, y, waypoint). Gate
+yes/no loss ×0.2. Gated fields' value loss averaged over all supervised
+entries (scaled by change rate). Actions added to the hero token.
+
+- **Full training:** `python -m mobawm.wm.train --baseline ...`
+  (sets `--gate --gate-fields <all but movement> --gate-loss-weight 0.2
+  --gate-value-norm all`)
+- **5-minute tests:** `python -m mobawm.wm.ablate --arms baseline,<new arm> ...`
+
+**Open problems:**
+- Q is stuck at 0 in every arm.
+- Health is worse than copying.
+- Walking is +15 vs +26 for the ungated model.
+- Deaths are 0% at 162 updates.
+
+**Candidate next steps:**
+- a "can this press fire" input (the validated cast rule), for Q;
+- keeping health's change-only value loss, for health.
 
 ---
 

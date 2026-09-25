@@ -151,6 +151,11 @@ tick" output. It starts at that field's observed change rate. The change is
 only applied where it says yes. `--gate-fields` limits the gate to chosen
 fields.
 
+**The adopted baseline (`--baseline`)** gates every field except movement.
+Its loss is balanced so the gated fields don't crowd out walking: the gate's
+yes/no loss ×0.2, and each gated field's value loss averaged over all
+supervised ticks. See EXPERIMENTS.md.
+
 **Other heads:**
 - **alive flip:** "this unit dies or spawns this tick";
 - **got hit** next tick;
