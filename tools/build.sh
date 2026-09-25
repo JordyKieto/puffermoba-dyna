@@ -43,7 +43,7 @@ if [ ! -d "$PUFFER/$RAYLIB_NAME" ]; then
     echo "Downloading $RAYLIB_NAME..."
     curl -sL "https://github.com/raysan5/raylib/releases/download/5.5/$RAYLIB_NAME.tar.gz" \
         -o "$PUFFER/$RAYLIB_NAME.tar.gz"
-    tar xf "$PUFFER/$RAYLIB_NAME.tar.gz" -C "$PUFFER"
+    tar xf "$PUFFER/$RAYLIB_NAME.tar.gz" -C "$PUFFER" --no-same-owner   # network volumes refuse chown
     rm "$PUFFER/$RAYLIB_NAME.tar.gz"
 fi
 

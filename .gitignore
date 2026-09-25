@@ -33,3 +33,6 @@ secrets.env
 .env
 .env.*
 *.pem
+
+# Local run outputs and pod state
+runs/

@@ -1,0 +1,373 @@
+"""Train and evaluate the token world model.
+
+  python3 -m mobawm.wm.train --data data/moba/mix100/dense --train-games 0-90 \
+      --held-games 91-99 --minutes 20 --out runs/token_wm/<name>
+
+The whole dataset is loaded once into device tensors (mobawm.wm.data.Store)
+and windows are sampled on the device. Splits are by game (seed), never by
+row. Progress is printed every --log-every iterations and appended to
+OUT/log.jsonl (and wandb with --wandb); the final report is OUT/report.json.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as Fn
+
+from .. import shards as S
+from .data import (F, KIND, N_KIND, REG_FIELDS, REG_IDX, Featurizer, Store, apply_prediction,
+                   fit_stats, load_games, wave_respawns)
+from .model import TokenWM
+
+
+
+def parse_games(spec: str) -> set[int]:
+    """'0-25,40,50-60' -> set of game indices."""
+    out = set()
+    for part in spec.split(","):
+        a, _, b = part.partition("-")
+        out.update(range(int(a), int(b or a) + 1))
+    return out
+
+
+def featurize_window(fz, ent, tick, cidx):
+    """(B,K+1,...) raw -> list of K+1 feature dicts."""
+    B, T = ent.shape[:2]
+    f = fz(ent.flatten(0, 1), tick.flatten(), cidx.flatten())
+    return [{k: v.view(B, T, *v.shape[1:])[:, t] for k, v in f.items()} for t in range(T)]
+
+
+KIND_NAMES = ("hero", "creep", "neutral", "tower")
+
+
+def step_loss(pred, e0, e1, stats, kind, tick, cidx):
+    """Total loss and its parts, per entity kind and per head.
+
+    parts["<kind>/reg"]    Huber on scaled deltas, each (kind, field) averaged separately then summed
+    parts["<kind>/alive"]  BCE on "alive flips this tick" (creep, neutral, tower)
+    parts["<kind>/is_hit"] BCE on next is_hit
+    parts["creep/lane"], parts["creep/team"]  CE on next value
+    """
+    dev = e0.device
+    alive0, alive1 = e0[..., F["alive"]] > 0, e1[..., F["alive"]] > 0
+    scale = stats.reg_scale.to(dev)[kind]
+    target = (e1[..., REG_IDX] - e0[..., REG_IDX]) / scale
+    err = Fn.huber_loss(pred["reg"], target, reduction="none", delta=1.0)
+    # units respawned in place by a wave are applied by rule, not regressed (a teleport to spawn)
+    wc, _, wn = wave_respawns(tick, cidx)
+    rule = torch.zeros_like(alive0)
+    rule[:, 10:110] = wc
+    rule[:, 110:182] = wn.unsqueeze(-1)
+    mask = (alive0 & alive1 & ~rule).unsqueeze(-1) & stats.reg_mask.to(dev)[kind]
+    can_flip = stats.alive_mask.to(dev)
+    flip = (alive0 != alive1).float()
+    alive_bce = Fn.binary_cross_entropy_with_logits(pred["alive_flip"], flip, reduction="none")
+    hit_bce = Fn.binary_cross_entropy_with_logits(pred["is_hit"], e1[..., F["is_hit"]], reduction="none")
+    parts = {}
+    for k, name in enumerate(KIND_NAMES):
+        sel = kind == k
+        m, e = mask[:, sel], err[:, sel]
+        cnt = m.sum((0, 1))
+        parts[f"{name}/reg"] = ((e * m).sum((0, 1)) / cnt.clamp(min=1))[cnt > 0].sum()
+        if can_flip[k]:
+            parts[f"{name}/alive"] = alive_bce[:, sel].mean()
+        a1 = alive1[:, sel]
+        if a1.any():
+            parts[f"{name}/is_hit"] = hit_bce[:, sel][a1].mean()
+    c = slice(10, 110)
+    ca = alive1[:, c]
+    if ca.any():
+        parts["creep/lane"] = Fn.cross_entropy(pred["lane"][ca], e1[:, c, F["lane"]][ca].long())
+        parts["creep/team"] = Fn.cross_entropy(pred["team"][ca], e1[:, c, F["team"]][ca].long().clamp(0, 2))
+    return sum(parts.values()), parts
+
+
+def run_window(model, fz, batch, stats, kind, burn, dev, loss=True, shuffle_actions=False):
+    ent, act, tick, cidx = batch
+    if shuffle_actions:
+        act = act[torch.randperm(act.shape[0], device=dev)]
+    feats = featurize_window(fz, ent, tick, cidx)
+    B, K = act.shape[:2]
+    h = torch.zeros(B, S.N_ENTITIES, model.d, device=dev)
+    total, parts, preds = 0.0, {}, []
+    for t in range(K):
+        pred, h = model.step(feats[t], act[:, t], h)
+        if t >= burn:
+            if loss:
+                l, p = step_loss(pred, ent[:, t], ent[:, t + 1], stats, kind, tick[:, t], cidx[:, t])
+                total = total + l
+                for k, v in p.items():
+                    parts[k] = parts.get(k, 0.0) + v
+            preds.append((t, pred))
+    n = K - burn
+    if loss:
+        return total / n, {k: v / n for k, v in parts.items()}, preds, ent
+    return None, None, preds, ent
+
+
+def summarize_parts(parts):
+    """Per-kind totals plus every head, as floats."""
+    out = {k: float(v) for k, v in parts.items()}
+    for name in KIND_NAMES:
+        out[f"{name}/total"] = sum(v for k, v in out.items() if k.startswith(name + "/") and k != f"{name}/total")
+    return out
+
+
+@torch.no_grad()
+def validate(model, fz, store, stats, kind, dev, args, seed=123):
+    """Loss on the SAME held-out windows every time (fixed seed), averaged over batches."""
+    gen = torch.Generator(device=dev); gen.manual_seed(seed)
+    model.eval()
+    tot, agg = 0.0, {}
+    for _ in range(args.val_batches):
+        batch = store.sample(args.batch, args.window, gen)
+        l, parts, _, _ = run_window(model, fz, batch, stats, kind, args.burn, dev)
+        tot += float(l)
+        for k, v in parts.items():
+            agg[k] = agg.get(k, 0.0) + float(v)
+    model.train()
+    n = args.val_batches
+    return tot / n, summarize_parts({k: v / n for k, v in agg.items()})
+
+
+@torch.no_grad()
+def eval_onestep(model, fz, store, stats, kind, dev, gen, n_batches=8, B=16, K=16, burn=4, shuffle=False):
+    """Natural-unit MAE of predicted deltas vs persistence (delta 0), per (kind, field)."""
+    names = ["hero", "creep", "neutral", "tower"]
+    acc = {}
+    flips = {"tp": 0, "fn": 0, "fp": 0}
+    for _ in range(n_batches):
+        batch = store.sample(B, K, gen)
+        _, _, preds, ent = run_window(model, fz, batch, stats, kind, burn, dev, loss=False, shuffle_actions=shuffle)
+        scale = stats.reg_scale.to(dev)[kind]
+        rmask = stats.reg_mask.to(dev)[kind]
+        for t, p in preds:
+            e0, e1 = ent[:, t], ent[:, t + 1]
+            both = (e0[..., F["alive"]] > 0) & (e1[..., F["alive"]] > 0)
+            wc, _, wn = wave_respawns(batch[2][:, t], batch[3][:, t])
+            both[:, 10:110] &= ~wc
+            both[:, 110:182] &= ~wn.unsqueeze(-1)
+            true_d = e1[..., REG_IDX] - e0[..., REG_IDX]
+            pred_d = p["reg"] * scale
+            for k in range(N_KIND):
+                for j, fname in enumerate(REG_FIELDS):
+                    if not stats.reg_mask[k, j]:
+                        continue
+                    m = both[:, kind == k]
+                    td, pd = true_d[:, kind == k, j][m], pred_d[:, kind == k, j][m]
+                    ch = td != 0
+                    a = acc.setdefault((names[k], fname), [0.0, 0.0, 0, 0.0, 0.0, 0])
+                    a[0] += (pd - td).abs().sum().item(); a[1] += td.abs().sum().item(); a[2] += len(td)
+                    a[3] += (pd - td)[ch].abs().sum().item(); a[4] += td[ch].abs().sum().item(); a[5] += int(ch.sum())
+            can = stats.alive_mask.to(dev)[kind].expand_as(both)
+            flip = ((e0[..., F["alive"]] > 0) != (e1[..., F["alive"]] > 0)) & can
+            pf = (torch.sigmoid(p["alive_flip"]) > 0.5) & can
+            flips["tp"] += int((flip & pf).sum()); flips["fn"] += int((flip & ~pf).sum())
+            flips["fp"] += int((~flip & pf).sum())
+    out = {}
+    for (kn, fn), a in sorted(acc.items()):
+        out[f"{kn}.{fn}"] = dict(model_mae=a[0] / max(a[2], 1), persist_mae=a[1] / max(a[2], 1),
+                                 changed_model_mae=a[3] / max(a[5], 1), changed_persist_mae=a[4] / max(a[5], 1),
+                                 n=a[2], n_changed=a[5])
+    out["alive_flip"] = dict(recall=flips["tp"] / max(flips["tp"] + flips["fn"], 1), **flips)
+    return out
+
+
+@torch.no_grad()
+def eval_rollout(model, fz, store, stats, kind, dev, gen, n=16, burn=8, H=64, marks=(1, 4, 16, 64)):
+    """Open loop: burn-in on real states, then feed predictions back for H steps."""
+    B = n
+    ent, act, tick, cidx = store.sample(B, burn + H, gen)
+    h = torch.zeros(B, S.N_ENTITIES, model.d, device=dev)
+    for t in range(burn):
+        f = fz(ent[:, t], tick[:, t], cidx[:, t])
+        _, h = model.step(f, act[:, t], h)
+    cur, ct, cc = ent[:, burn].clone(), tick[:, burn].clone(), cidx[:, burn].clone()
+    start = cur.clone()
+    res = {}
+    for k in range(1, H + 1):
+        f = fz(cur, ct, cc)
+        pred, h = model.step(f, act[:, burn + k - 1], h)
+        cur, ct, cc = apply_prediction(cur, ct, cc, pred, stats, fz)
+        if k in marks:
+            truth = ent[:, burn + k]
+            res[k] = {name: (metric(cur, truth), metric(start, truth)) for name, metric in METRICS.items()}
+    return res
+
+
+def _hero_pos(s, t):
+    return ((s[:, :10, F["x"]] - t[:, :10, F["x"]]).abs() + (s[:, :10, F["y"]] - t[:, :10, F["y"]]).abs()).mean().item()
+
+
+def _hero_hp(s, t):
+    return (s[:, :10, F["health"]] - t[:, :10, F["health"]]).abs().mean().item()
+
+
+def _creep_pos(s, t):
+    m = (s[:, 10:110, F["alive"]] > 0) & (t[:, 10:110, F["alive"]] > 0)
+    d = (s[:, 10:110, F["x"]] - t[:, 10:110, F["x"]]).abs() + (s[:, 10:110, F["y"]] - t[:, 10:110, F["y"]]).abs()
+    return d[m].mean().item() if m.any() else float("nan")
+
+
+def _creep_alive(s, t):
+    return ((s[:, 10:110, F["alive"]] > 0) == (t[:, 10:110, F["alive"]] > 0)).float().mean().item()
+
+
+def _tower_hp(s, t):
+    return (s[:, 182:, F["health"]] - t[:, 182:, F["health"]]).abs().mean().item()
+
+
+METRICS = {"hero_pos_L1": _hero_pos, "hero_hp": _hero_hp, "creep_pos_L1": _creep_pos,
+           "creep_alive_acc": _creep_alive, "tower_hp": _tower_hp}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data", default="data/moba/mix100/dense")
+    ap.add_argument("--train-games", default="0-25")
+    ap.add_argument("--held-games", default="91-99")
+    ap.add_argument("--minutes", type=float, default=6.0)
+    ap.add_argument("--batch", type=int, default=16)
+    ap.add_argument("--window", type=int, default=16)
+    ap.add_argument("--burn", type=int, default=4)
+    ap.add_argument("--lr", type=float, default=3e-4)
+    ap.add_argument("--d", type=int, default=128)
+    ap.add_argument("--layers", type=int, default=2)
+    ap.add_argument("--heads", type=int, default=4)
+    ap.add_argument("--eval-batches", type=int, default=8)
+    ap.add_argument("--val-every", type=int, default=200)
+    ap.add_argument("--val-batches", type=int, default=4)
+    ap.add_argument("--rollouts", type=int, default=16)
+    ap.add_argument("--log-every", type=int, default=25)
+    ap.add_argument("--out", default="runs/token_wm/smoke")
+    ap.add_argument("--wandb", action="store_true")
+    ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else
+                    "mps" if torch.backends.mps.is_available() else "cpu")
+    args = ap.parse_args()
+    out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
+    dev = torch.device(args.device)
+    torch.manual_seed(0)
+    if dev.type == "cuda":
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+    gen = torch.Generator(device=dev); gen.manual_seed(0)
+    egen = torch.Generator(device=dev); egen.manual_seed(1)
+
+    files = sorted(Path(args.data).glob("games.*.mbs"))
+    tr_idx, he_idx = parse_games(args.train_games), parse_games(args.held_games)
+    assert not tr_idx & he_idx, "train and held-out games overlap"
+    t_load = time.time()
+    print(f"loading from {args.data} ({len(files)} files) ...", flush=True)
+    quiet = lambda *a: None
+    train = load_games(files, tr_idx, log=quiet)
+    held = load_games(files, he_idx, log=quiet)
+    t_s = time.time()
+    tr_store, he_store = Store(train, dev), Store(held, dev)
+    del train, held
+    t_f = time.time()
+    stats = fit_stats(tr_store)
+    print(f"store {t_f - t_s:.1f}s, fit_stats {time.time() - t_f:.1f}s", flush=True)
+    print(f"train {len(tr_store.spans)} games / {tr_store.n_steps} steps ({tr_store.nbytes / 1e9:.2f} GB on {dev}); "
+          f"held-out {len(he_store.spans)} games / {he_store.n_steps} steps; loaded in {time.time() - t_load:.0f}s",
+          flush=True)
+    fz = Featurizer(dev)
+    kind = torch.from_numpy(KIND).to(dev)
+    model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers).to(dev)
+    n_params = sum(p.numel() for p in model.parameters())
+    print(f"model: {n_params / 1e6:.2f}M params", flush=True)
+    opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
+    run = None
+    if args.wandb:
+        import wandb
+        run = wandb.init(project="moba-wm", name=out.name, config=vars(args) | dict(params=n_params,
+                         train_steps=tr_store.n_steps, held_steps=he_store.n_steps))
+
+    logf = open(out / "log.jsonl", "w")
+
+    def emit(rec):
+        logf.write(json.dumps(rec) + "\n"); logf.flush()
+        if run:
+            run.log({k: v for k, v in rec.items() if k != "it"}, step=rec["it"])
+
+    def run_val(it):
+        vl, vp = validate(model, fz, he_store, stats, kind, dev, args)
+        emit(dict(it=it, **{"val/loss": vl}, **{f"val/{k}": v for k, v in vp.items()}))
+        kinds = "  ".join(f"{n} {vp[n + '/total']:.3f}" for n in KIND_NAMES)
+        print(f"VAL it {it:6d}  loss {vl:.4f}  | {kinds}", flush=True)
+        return vl
+
+    # Step 0: the zero-initialized model predicts "no change", so this is the persistence baseline.
+    base = run_val(0)
+    if run:
+        run.summary["val/persistence_loss"] = base
+    t0 = time.time()
+    it, losses, nan_count = 0, [], 0
+    part_acc, part_n = {}, 0
+    while time.time() - t0 < args.minutes * 60:
+        lr = args.lr * min(1.0, (it + 1) / 100)
+        for g in opt.param_groups:
+            g["lr"] = lr
+        batch = tr_store.sample(args.batch, args.window, gen)
+        loss, parts, _, _ = run_window(model, fz, batch, stats, kind, args.burn, dev)
+        opt.zero_grad()
+        loss.backward()
+        gn = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0).item()
+        if not math.isfinite(loss.item()) or not math.isfinite(gn):
+            nan_count += 1
+            continue
+        opt.step()
+        it += 1
+        losses.append(loss.item())
+        for k, v in parts.items():
+            part_acc[k] = part_acc.get(k, 0.0) + float(v)
+        part_n += 1
+        if it % args.log_every == 0:
+            tp = summarize_parts({k: v / part_n for k, v in part_acc.items()})
+            part_acc, part_n = {}, 0
+            rec = dict(it=it, **{"train/loss": float(np.mean(losses[-args.log_every:]))},
+                       **{f"train/{k}": v for k, v in tp.items()}, grad_norm=gn,
+                       elapsed_s=round(time.time() - t0, 1), nan=nan_count,
+                       it_per_s=round(it / (time.time() - t0), 2))
+            emit(rec)
+            kinds = "  ".join(f"{n} {tp[n + '/total']:.3f}" for n in KIND_NAMES)
+            print(f"it {it:6d}  loss {rec['train/loss']:.4f}  | {kinds}  | grad {gn:.2f}  "
+                  f"{rec['it_per_s']} it/s  {rec['elapsed_s']:.0f}s", flush=True)
+        if it % args.val_every == 0:
+            run_val(it)
+    run_val(it)
+    torch.save(model.state_dict(), out / "model.pt")
+
+    # loss slope over the last quarter (per 1000 iterations, in log-loss)
+    n = len(losses)
+    q = np.array(losses[3 * n // 4:])
+    slope = float(np.polyfit(np.arange(len(q)), np.log(q), 1)[0] * 1000) if len(q) > 10 else float("nan")
+
+    print("evaluating ...", flush=True)
+    model.eval()
+    ev = dict(n_batches=args.eval_batches)
+    report = dict(
+        args=vars(args), params=n_params, iterations=it, nan_skipped=nan_count,
+        train_steps=tr_store.n_steps, held_steps=he_store.n_steps,
+        loss_first_100=float(np.mean(losses[:100])), loss_last_100=float(np.mean(losses[-100:])),
+        log_loss_slope_per_1k_it_last_quarter=slope,
+        onestep_train=eval_onestep(model, fz, tr_store, stats, kind, dev, egen, **ev),
+        onestep_heldout=eval_onestep(model, fz, he_store, stats, kind, dev, egen, **ev),
+        onestep_heldout_shuffled_actions=eval_onestep(model, fz, he_store, stats, kind, dev, egen, shuffle=True, **ev),
+        rollout_train=eval_rollout(model, fz, tr_store, stats, kind, dev, egen, n=args.rollouts),
+        rollout_heldout=eval_rollout(model, fz, he_store, stats, kind, dev, egen, n=args.rollouts),
+    )
+    (out / "report.json").write_text(json.dumps(report, indent=1, default=str))
+    if run:
+        run.summary.update({"loss_last_100": report["loss_last_100"], "slope": slope})
+        run.finish()
+    print(f"wrote {out / 'report.json'}", flush=True)
+
+
+if __name__ == "__main__":
+    main()
