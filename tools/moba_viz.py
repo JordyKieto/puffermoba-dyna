@@ -385,7 +385,7 @@ class Replay:
                     fields={n: (float(t[i, F[n]]), float(m[i, F[n]]), float(m[i, F[n]] - t[i, F[n]]))
                             for n in F if n not in HIDDEN},
                     pos_err=float(abs(m[i, F["x"]] - t[i, F["x"]]) + abs(m[i, F["y"]] - t[i, F["y"]])),
-                    pressed="".join(key for j, key in enumerate("QWE") if k < self.Hz and self.acts[k, i, 3 + j]))
+                    pressed="".join(key for j, key in enumerate("QWE") if i < 10 and k < self.Hz and self.acts[k, i, 3 + j]))
 
     def entity_at(self, panel, x, y, k, radius=2.0):
         """The living entity nearest map cell (x, y) at step k on panel 0 (real) or 1 (model), or None."""
