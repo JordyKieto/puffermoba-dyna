@@ -277,10 +277,22 @@ class Stats:
     creep_const: dict           # field -> value for alive creeps (constants set by spawn_creep)
     creep_spawn: np.ndarray     # (6 lanes, 2) mean (x, y) of a freshly spawned creep
     neutral_spawn: np.ndarray   # (72, 2) mean (x, y) of a freshly spawned neutral
+    regen_rule: bool = False    # hero +2/tick health & mana regen applied by rule, not predicted
+
+
+def regen_part(ent):
+    """(..., 206, n_reg) the change the game's regeneration makes this tick, in
+    REG_FIELDS columns: heroes below their maximum regain +2 health and +2 mana
+    every tick (step_players), capped at the maximum. Zero elsewhere."""
+    out = torch.zeros(*ent.shape[:-1], len(REG_FIELDS), dtype=ent.dtype, device=ent.device)
+    h = ent[..., :10, :]
+    out[..., :10, REG_FIELDS.index("health")] = (h[..., F["max_health"]] - h[..., F["health"]]).clamp(0, 2)
+    out[..., :10, REG_FIELDS.index("mana")] = (h[..., F["max_mana"]] - h[..., F["mana"]]).clamp(0, 2)
+    return out
 
 
 @torch.no_grad()
-def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
+def fit_stats(store: "Store", chunk: int = 16384, regen_rule: bool = False) -> Stats:
     """Fit loss scales, supervision masks and rollout lookups on the training
     Store, on its device, vectorized in chunks of consecutive (s_t, s_{t+1})
     pairs. Wave respawns are excluded from delta statistics (they are rules)."""
@@ -309,6 +321,8 @@ def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
         rule[:, 10:110] = wc
         rule[:, 110:182] = wn.unsqueeze(-1)
         d = (e1[..., reg_idx] - e0[..., reg_idx]).double()                 # (T, 206, nreg)
+        if regen_rule:
+            d = d - regen_part(e0).double()
         valid = ((a0 & a1 & ~rule).unsqueeze(-1) & (d != 0)).double()
         sumsq += torch.einsum("tej,ek->kj", d * d * valid, onehot)
         cnt += torch.einsum("tej,ek->kj", valid, onehot)
@@ -334,7 +348,7 @@ def fit_stats(store: "Store", chunk: int = 16384) -> Stats:
     rate = (cnt / total.clamp(min=1).unsqueeze(-1)).float()
     return Stats(scale.float().cpu(), mask.cpu(), rate.cpu(), (flips > 0).cpu(), hero.cpu(), creep_const,
                  (c_sum / c_n.clamp(min=1).unsqueeze(-1)).float().cpu().numpy(),
-                 (n_sum / n_n.clamp(min=1).unsqueeze(-1)).float().cpu().numpy())
+                 (n_sum / n_n.clamp(min=1).unsqueeze(-1)).float().cpu().numpy(), regen_rule)
 
 
 # ---------------------------------------------------------------------------
@@ -382,9 +396,32 @@ class Featurizer:
             *[(tick % 5 == k).float() for k in range(5)],
             cidx.float() / 100, t / 5000,
         ], -1)
+        # For action tokens: what a hero's ability press can actually do this tick.
+        # Targets are enemies in the 11x11 box around the hero (int cells, as upstream
+        # scan_aoe); target mode 2 keeps only heroes and towers.
+        ix, iy = f("x").long(), f("y").long()
+        hx, hy = ix[..., :10], iy[..., :10]
+        inbox = ((ix.unsqueeze(-2) - hx.unsqueeze(-1)).abs() <= 5) & \
+                ((iy.unsqueeze(-2) - hy.unsqueeze(-1)).abs() <= 5)            # (..., 10, 206)
+        enemy = (team.unsqueeze(-2) != team[..., :10].unsqueeze(-1)) & (f("alive") > 0).unsqueeze(-2)
+        heroes_towers = (self.kind == 0) | (self.kind == 3)
+        tgt_any = (inbox & enemy).any(-1)
+        tgt_ht = (inbox & enemy & heroes_towers).any(-1)
+        # area abilities need an enemy within their own radius (a box, as scan_aoe)
+        dxy = torch.maximum((ix.unsqueeze(-2) - hx.unsqueeze(-1)).abs(), (iy.unsqueeze(-2) - hy.unsqueeze(-1)).abs())
+        near = torch.stack([((dxy <= r) & enemy).any(-1) for r in (2, 3, 4)], -1)   # (..., 10, 3)
+        # the automatic target is the nearest enemy in the box (L1); assassin Q needs it to be a creep/neutral
+        l1 = (f("x").unsqueeze(-2) - f("x")[..., :10].unsqueeze(-1)).abs() + \
+             (f("y").unsqueeze(-2) - f("y")[..., :10].unsqueeze(-1)).abs()
+        l1 = torch.where(inbox & enemy, l1, torch.full_like(l1, 1e9))
+        nearest_kind = self.kind[l1.argmin(-1)]
+        tgt_minion = (nearest_kind == 1) | (nearest_kind == 2)
+        hero_raw = torch.stack([g("mana"), g("max_mana"), g("q_timer"), g("w_timer"), g("e_timer"),
+                                g("stun_timer")], -1)
         return dict(shared=shared, pos=pos, hero=hero, creep=creep, tower=tower,
                     team=team, lane=lane, patch=patch, glob=glob, alive=f("alive") > 0,
-                    xy=torch.stack([f("x"), f("y")], -1))
+                    xy=torch.stack([f("x"), f("y")], -1), hero_raw=hero_raw,
+                    tgt_any=tgt_any, tgt_ht=tgt_ht, near=near, tgt_minion=tgt_minion)
 
 
 # ---------------------------------------------------------------------------
@@ -429,6 +466,8 @@ def apply_prediction(ent, tick, cidx, pred, stats: Stats, featurizer: Featurizer
     scale = stats.reg_scale.to(dev)[kind]                       # (206, n_reg)
     mask = stats.reg_mask.to(dev)[kind]
     delta = pred["reg"] * scale * mask
+    if stats.regen_rule:
+        delta = delta + regen_part(ent)
     for j, name in enumerate(REG_FIELDS):
         v = ent[..., F[name]] + delta[..., j]
         if name in INT_FIELDS:

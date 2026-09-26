@@ -4,7 +4,7 @@
 at the fast big-batch recipe, and what does its rollout look like next to the
 real game?
 
-- **Status:** running (started 2026-09-25 22:49 UTC = 15:49 PDT, ends ~16:55 PDT, pod `ibkmxiyh4t8vmj`).
+- **Status:** done. 3,877 updates in 60 min; final checkpoint `model.pt` (23:52 UTC). The end-of-run report was cut off when the session was stopped to start E5, so there is no `report.json`.
 - **wandb:** https://wandb.ai/drift-ai-models/moba-wm/runs/kxe2bh1k
 
 ## Setup
@@ -28,7 +28,20 @@ real game?
 
 ## Results
 
-Pending.
+- **Final teacher-forced validation loss:** 1.108 at update 3,877.
+  - Per kind: hero 0.660, creep 0.428, neutral 0.011, tower 0.009.
+- **Open loop, one viewer rollout** (held-out game 900, from tick 500). Hero
+  position error in cells:
+
+  | ticks ahead | update 500 | update 3,000 | copying the start state |
+  |---|---|---|---|
+  | 16 | 2.24 | 6.03 | 10.95 |
+  | 64 | 16.47 | 24.55 | 40.59 |
+  | 300 | 54.20 | 44.07 | 45.44 |
+
+  More teacher-forced training made the mid-horizon rollout *worse* on this
+  game. It is only one rollout; the E4 control in
+  [E5](E5-rollout-training.md) measures it properly.
 
 ## Watch it
 

@@ -80,6 +80,59 @@ class ActionEmbed(nn.Module):
         return sum(h(a[..., i]) for i, h in enumerate(self.heads))
 
 
+# The 15 abilities (hero class x slot), from docs/moba/GAME_MECHANICS.md.
+# Columns: mana cost, cooldown, radius, needs target, damage, heal, stun, slow,
+# moves self, moves target, self buff, area, creep/neutral targets only.
+ABILITY_DESC = torch.tensor([
+    [100, 15, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],   # support Q: hook
+    [100, 50, 5, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],   # support W: area heal
+    [75, 60, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0],    # support E: stun
+    [100, 40, 3, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1],   # assassin Q: clear (creeps/neutrals)
+    [150, 60, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],   # assassin W: blink strike
+    [100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],  # assassin E: speed boost
+    [200, 70, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],   # burst Q: nuke
+    [100, 40, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0],   # burst W: blast
+    [75, 50, 2, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],    # burst E: area stun
+    [5, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0],      # tank Q: burn (no cooldown)
+    [100, 70, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],   # tank W: self heal
+    [50, 40, 4, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0],    # tank E: engage
+    [25, 40, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0],    # carry Q: knockback + slow
+    [150, 40, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0],   # carry W: crippling shot
+    [100, 40, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0],   # carry E: blast
+], dtype=torch.float32) / torch.tensor([200, 100, 5] + [1] * 10, dtype=torch.float32)
+
+
+def cast_context(f, a, desc):
+    """Per hero and ability (B,10,3), upstream step_players' own cast rule, as far
+    as the state can say: this tick's regen and cooldown tick happen first, a
+    stunned hero does nothing, and at most one of Q > W > E fires. Not
+    captured: 'the hit lands' and class-specific conditions (e.g. assassin Q
+    needs a creep/neutral target), and targets moving earlier in the tick."""
+    raw = f["hero_raw"]                                           # mana, max_mana, q, w, e, stun
+    mana = torch.minimum(raw[..., 0] + 2, raw[..., 1]).unsqueeze(-1)
+    cd = raw[..., 2:5]
+    free = (raw[..., 5] <= 1).unsqueeze(-1).float()               # stun expires this tick
+    cost, needs = desc[..., 0] * 200, desc[..., 3] > 0
+    pressed = a[..., 3:6].float()
+    ready = (cd <= 1).float()
+    mana_ok = (mana >= cost).float()
+    tgt = torch.where(a[..., 2:3] == 2, f["tgt_ht"].unsqueeze(-1), f["tgt_any"].unsqueeze(-1)).float()
+    target = tgt.expand_as(cd)
+    able = free * pressed * ready * mana_ok * torch.where(needs, target, torch.ones_like(target))
+    # area damage/stun abilities need an enemy within their radius (2, 3 or 4 cells)
+    radius = (desc[..., 2] * 5).round()
+    area_hit = (desc[..., 11] > 0) & ((desc[..., 4] > 0) | (desc[..., 6] > 0))
+    near = f["near"].float()                                      # (B,10,3): within 2, 3, 4
+    in_r = torch.where(radius <= 2, near[..., 0:1], torch.where(radius <= 3, near[..., 1:2], near[..., 2:3]))
+    able = able * torch.where(area_hit, in_r, torch.ones_like(in_r))
+    # creep/neutral-only abilities (assassin Q) need the automatic target to be one
+    able = able * torch.where(desc[..., 12] > 0, f["tgt_minion"].unsqueeze(-1).float(), torch.ones_like(able))
+    q, w, e = able.unbind(-1)
+    fires = torch.stack([q, w * (1 - q), e * (1 - q) * (1 - w)], -1)    # priority Q > W > E
+    return dict(pressed=pressed, ready=ready, cd=cd, mana_ok=mana_ok, mana=mana.expand_as(cd),
+                target=target, fires=fires)
+
+
 class Block(nn.Module):
     """Pre-LN attention + MLP with a learned per-head distance and team bias."""
 
@@ -106,9 +159,15 @@ class Block(nn.Module):
 
 
 class TokenWM(nn.Module):
-    def __init__(self, d=128, n_heads=4, n_layers=2, gate=False, gate_fields=None):
+    def __init__(self, d=128, n_heads=4, n_layers=2, gate=False, gate_fields=None, cast_features=False):
         super().__init__()
         self.d = d
+        # cast_features: per hero and Q/W/E, whether the pressed ability can fire
+        # this tick under the game's own cast rule (cast_context), added to the hero token
+        self.cast_features = cast_features
+        if cast_features:
+            self.cast_in = mlp(21, d, d)
+            self.register_buffer("cast_desc", ABILITY_DESC[(torch.arange(10) % 5).unsqueeze(-1) * 3 + torch.arange(3)])
         # gate=True: copy by default. Per delta field, a "does this field change
         # this tick" logit; the value head is only used where it says yes.
         # gate_fields limits it to those fields (None = all); the others are
@@ -163,6 +222,11 @@ class TokenWM(nn.Module):
         x = self.tok(f)
         a = torch.zeros_like(x)
         a[:, :10] = self.act(actions)
+        if self.cast_features:
+            c = cast_context(f, actions, self.cast_desc)
+            ctx = torch.stack([c["pressed"], c["ready"], c["cd"] / 100, c["mana_ok"], c["mana"] / 1000,
+                               c["target"], c["fires"]], -1)                        # (B,10,3,7)
+            a[:, :10] = a[:, :10] + self.cast_in(ctx.flatten(-2))
         x = x + a
         x[:, :N_ENT] = x[:, :N_ENT] + self.mem_in(h)
         parts = self.bias_parts(f)

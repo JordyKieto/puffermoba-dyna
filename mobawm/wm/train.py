@@ -22,8 +22,8 @@ import torch
 import torch.nn.functional as Fn
 
 from .. import shards as S
-from .data import (F, KIND, N_KIND, REG_FIELDS, REG_IDX, Featurizer, Store, apply_prediction,
-                   fit_stats, load_store, wave_respawns)
+from .data import (F, KIND, N_KIND, REG_FIELDS, REG_IDX, Featurizer, Stats, Store, apply_prediction,
+                   fit_stats, load_store, regen_part, wave_respawns)
 from .model import TokenWM
 
 
@@ -71,13 +71,21 @@ EFFECT_WEIGHT = {}
 GATE_LOSS_WEIGHT = 1.0   # weight on the change gate's yes/no (BCE) loss
 WALK_ONLY = False        # diagnostic: train on hero x/y changes only
 HERO_WALK_WEIGHT = 1.0   # weight on the hero x/y loss terms (walking)
+HERO_HEALTH_WEIGHT = 1.0 # weight on the hero health loss term
+ONLY_HERO_FIELDS = ()    # diagnostic: train on these hero fields' loss terms only (e.g. ("health",))
 # gated fields' value loss averaged over "changed" entries only, or over "all"
 # supervised entries (= scaled by the field's change rate, as without the gate)
 GATE_VALUE_NORM = "changed"
 BF16 = False
 
 
-def step_loss(pred, e0, e1, stats, kind, tick, cidx):
+def _wmean(x, m, w):
+    """Mean of x over mask m (both (B, ...)), each batch row weighted by w (B,) or unweighted."""
+    mf = m.float() if w is None else m.float() * w.view(-1, *([1] * (m.dim() - 1)))
+    return (x * mf).sum() / mf.sum().clamp(min=1e-6)
+
+
+def step_loss(pred, e0, e1, stats, kind, tick, cidx, w=None):
     """Total loss and its parts, per entity kind and per head.
 
     parts["<kind>/<effect>"]  Huber on scaled deltas of that effect's fields (EFFECTS),
@@ -85,11 +93,17 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     parts["<kind>/deaths"]    BCE on "alive flips this tick" (creep, neutral, tower)
     parts["<kind>/got_hit"]   BCE on next is_hit
     parts["creep/lane"], parts["creep/team"]  CE on next value
+    w: optional (B,) per-sample weights (normalized to mean 1 here); None = plain means
     """
+    sw = None if w is None else w / w.mean().clamp(min=1e-12)   # per-sample weights, mean 1
+    wv = 1.0 if sw is None else sw.view(-1, 1, 1)
     dev = e0.device
     alive0, alive1 = e0[..., F["alive"]] > 0, e1[..., F["alive"]] > 0
     scale = stats.reg_scale.to(dev)[kind]
-    target = (e1[..., REG_IDX] - e0[..., REG_IDX]) / scale
+    delta = e1[..., REG_IDX] - e0[..., REG_IDX]
+    if stats.regen_rule:
+        delta = delta - regen_part(e0)            # the model predicts what regen doesn't explain
+    target = delta / scale
     gated = "change" in pred
     if gated:
         # copy by default: BCE on "did this field change" everywhere it is
@@ -120,9 +134,9 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
     parts = {}
     for k, name in enumerate(KIND_NAMES):
         sel = kind == k
-        m, e = mask[:, sel], err[:, sel]
+        m, e = mask[:, sel].float() * wv, err[:, sel]         # weighted mask (== bool mask when w is None)
         if gated:
-            mc = m & changed[:, sel]
+            mc = (mask[:, sel] & changed[:, sel]).float() * wv
             value_den = (mc if GATE_VALUE_NORM == "changed" else m).sum((0, 1)).clamp(min=1)
             gated_f = GATE_LOSS_WEIGHT * (gate_err[:, sel] * m).sum((0, 1)) / m.sum((0, 1)).clamp(min=1) \
                 + (e * mc).sum((0, 1)) / value_den
@@ -134,18 +148,27 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx):
             if stats.reg_mask[k, j]:
                 eff = EFFECT_OF[fname]
                 key = f"{name}/{eff}"
-                w = EFFECT_WEIGHT.get(eff, 1.0) * (HERO_WALK_WEIGHT if k == 0 and fname in ("x", "y") else 1.0)
+                w = EFFECT_WEIGHT.get(eff, 1.0) * (HERO_WALK_WEIGHT if k == 0 and fname in ("x", "y") else 1.0) \
+                    * (HERO_HEALTH_WEIGHT if k == 0 and fname == "health" else 1.0)
                 parts[key] = parts.get(key, 0.0) + w * per_field[j]
+                if k == 0 and fname in ONLY_HERO_FIELDS:
+                    parts[f"only/hero/{fname}"] = per_field[j]
         if can_flip[k]:
-            parts[f"{name}/deaths"] = EFFECT_WEIGHT.get("deaths", 1.0) * alive_bce[:, sel].mean()
+            parts[f"{name}/deaths"] = EFFECT_WEIGHT.get("deaths", 1.0) * \
+                _wmean(alive_bce[:, sel], torch.ones_like(alive_bce[:, sel], dtype=torch.bool), sw)
         a1 = alive1[:, sel]
         if a1.any():
-            parts[f"{name}/got_hit"] = hit_bce[:, sel][a1].mean()
+            parts[f"{name}/got_hit"] = _wmean(hit_bce[:, sel], a1, sw)
     c = slice(10, 110)
     ca = alive1[:, c]
     if ca.any():
-        parts["creep/lane"] = Fn.cross_entropy(pred["lane"][ca], e1[:, c, F["lane"]][ca].long())
-        parts["creep/team"] = Fn.cross_entropy(pred["team"][ca], e1[:, c, F["team"]][ca].long().clamp(0, 2))
+        lane = Fn.cross_entropy(pred["lane"].transpose(1, 2), e1[:, c, F["lane"]].long(), reduction="none")
+        team = Fn.cross_entropy(pred["team"].transpose(1, 2), e1[:, c, F["team"]].long().clamp(0, 2), reduction="none")
+        parts["creep/lane"] = _wmean(lane, ca, sw)
+        parts["creep/team"] = _wmean(team, ca, sw)
+    if ONLY_HERO_FIELDS:
+        only = {k: v for k, v in parts.items() if k.startswith("only/")}
+        return sum(only.values()), only
     return sum(parts.values()), parts
 
 
@@ -233,7 +256,8 @@ def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
                 both[:, 10:110] &= ~wc
                 both[:, 110:182] &= ~wn.unsqueeze(-1)
                 true_d = (e1[..., REG_IDX] - e0[..., REG_IDX]) / scale
-                ae = (p["reg"] - true_d).abs()
+                pred_d = p["reg"] + (regen_part(e0) / scale if stats.regen_rule else 0)
+                ae = (pred_d - true_d).abs()
                 pe = true_d.abs()
                 for k, kn in enumerate(names):
                     m = both[:, kind == k]
@@ -265,6 +289,78 @@ def skill_eval(model, fz, store, stats, kind, dev, args, seed=123):
     return out
 
 
+EVENT_ROWS = ("attack", "q", "w", "e", "mana", "health", "death")
+
+
+@torch.no_grad()
+def event_eval(model, fz, store, stats, kind, dev, args, seed=123):
+    """The scoreboard (docs/moba/EXPERIMENTS.md): per hero and tick, did an
+    event happen, and did the model predict it. Held-out, one step ahead.
+
+    Events (true side from the real next state; predicted side from the model's
+    predicted change, in game units):
+      attack / q / w / e : that cooldown resets, i.e. jumps up    (predicted: change > +0.5)
+      mana               : mana spent, drop > 3 beyond the +2 regen (costs are >= 5)
+      health             : damage taken, drop > 3 beyond regen (hits are >= 22), not a death
+      death              : the hero teleports > 12 cells (respawn at base)
+    For each row: caught % (of real events), false alarms per real event, and
+    caught % when the actions are swapped for another window's (if it stays
+    equal to caught %, the model is not using the actions for that event).
+    Walking: position error vs copying, on non-death ticks.
+    The tank's Q has no cooldown, so it never appears as a Q event."""
+    cols = {r: REG_FIELDS.index(c) for r, c in (("attack", "basic_attack_timer"), ("q", "q_timer"),
+                                                 ("w", "w_timer"), ("e", "e_timer"))}
+    ix, iy, ih, im = (REG_FIELDS.index(c) for c in ("x", "y", "health", "mana"))
+    tally = {r: [0, 0, 0, 0] for r in EVENT_ROWS}      # real, caught, false alarms, caught with wrong actions
+    walk = [0.0, 0.0, 0.0]                              # model err, copy err, model err with wrong actions
+    model.eval()
+    for shuffle in (False, True):
+        gen = torch.Generator(device=dev); gen.manual_seed(seed)
+        for _ in range(args.val_batches):
+            batch = store.sample(args.batch, args.window, gen)
+            _, _, preds, ent = run_window(model, fz, batch, stats, kind, args.burn, dev, loss=False,
+                                          shuffle_actions=shuffle)
+            scale = stats.reg_scale.to(dev)[kind]
+            for t, p in preds:
+                e0, e1 = ent[:, t, :10], ent[:, t + 1, :10]
+                true_d = (e1[..., REG_IDX] - e0[..., REG_IDX])
+                regen = regen_part(ent[:, t])[:, :10]
+                pred_d = p["reg"][:, :10] * scale[:10] + (regen if stats.regen_rule else 0)
+                jump = (true_d[..., ix].abs() + true_d[..., iy].abs())
+                died = jump > 12
+                pjump = (pred_d[..., ix].abs() + pred_d[..., iy].abs())
+                real, pred = {}, {}
+                for r, c in cols.items():
+                    real[r], pred[r] = (true_d[..., c] > 0) & ~died, (pred_d[..., c] > 0.5) & ~died
+                real["mana"] = ((true_d[..., im] - regen[..., im]) < -3) & ~died
+                pred["mana"] = ((pred_d[..., im] - regen[..., im]) < -3) & ~died
+                real["health"] = ((true_d[..., ih] - regen[..., ih]) < -3) & ~died
+                pred["health"] = ((pred_d[..., ih] - regen[..., ih]) < -3) & ~died
+                real["death"], pred["death"] = died, pjump > 12
+                for r in EVENT_ROWS:
+                    tl = tally[r]
+                    if shuffle:
+                        tl[3] += int((real[r] & pred[r]).sum())
+                    else:
+                        tl[0] += int(real[r].sum()); tl[1] += int((real[r] & pred[r]).sum())
+                        tl[2] += int((~real[r] & pred[r]).sum())
+                ok = ~died
+                err = (pred_d[..., ix] - true_d[..., ix]).abs() + (pred_d[..., iy] - true_d[..., iy]).abs()
+                if shuffle:
+                    walk[2] += err[ok].sum().item()
+                else:
+                    walk[0] += err[ok].sum().item(); walk[1] += jump[ok].sum().item()
+    model.train()
+    out = {"walking/better_than_copy_pct": 100 * (1 - walk[0] / max(walk[1], 1e-9)),
+           "walking/wrong_actions_extra_error_pct": 100 * (walk[2] / max(walk[0], 1e-9) - 1)}
+    for r, (n, c, fa, cw) in tally.items():
+        out[f"{r}/real_events"] = n
+        out[f"{r}/caught_pct"] = 100 * c / max(n, 1)
+        out[f"{r}/false_alarms_per_real"] = fa / max(n, 1)
+        out[f"{r}/caught_wrong_actions_pct"] = 100 * cw / max(n, 1)
+    return out
+
+
 @torch.no_grad()
 def eval_onestep(model, fz, store, stats, kind, dev, gen, n_batches=8, B=16, K=16, burn=4, shuffle=False):
     """Natural-unit MAE of predicted deltas vs persistence (delta 0), per (kind, field)."""
@@ -283,7 +379,7 @@ def eval_onestep(model, fz, store, stats, kind, dev, gen, n_batches=8, B=16, K=1
             both[:, 10:110] &= ~wc
             both[:, 110:182] &= ~wn.unsqueeze(-1)
             true_d = e1[..., REG_IDX] - e0[..., REG_IDX]
-            pred_d = p["reg"] * scale
+            pred_d = p["reg"] * scale + (regen_part(e0) if stats.regen_rule else 0)
             for k in range(N_KIND):
                 for j, fname in enumerate(REG_FIELDS):
                     if not stats.reg_mask[k, j]:
@@ -305,6 +401,136 @@ def eval_onestep(model, fz, store, stats, kind, dev, gen, n_batches=8, B=16, K=1
                                  changed_model_mae=a[3] / max(a[5], 1), changed_persist_mae=a[4] / max(a[5], 1),
                                  n=a[2], n_changed=a[5])
     out["alive_flip"] = dict(recall=flips["tp"] / max(flips["tp"] + flips["fn"], 1), **flips)
+    return out
+
+
+class Lanes:
+    """Autoregressive training: B lanes, each walking forward through one real game
+    with its recorded actions, the model fed its OWN predictions.
+
+    Each lane runs open loop for a span drawn from a Gaussian in log2(ticks) (median
+    2**span_mu, clipped to 1..`max_span`),
+    then snaps back to the real state (keeping its GRU memory) and draws a new span;
+    at the end of a game it jumps to a random row of a random game with a fresh
+    memory. So one batch mixes 1-step (teacher forcing) up to whole-game rollouts.
+    The loss at every step is the real next state against the lane's current input
+    state, so the model learns to steer its own drift back to the truth.
+    """
+
+    def __init__(self, store, B, d, gen, max_span, span_mu=6.0, span_sigma=3.0, halflife=0.0, floor=0.0):
+        self.st, self.B, self.gen, self.max_span = store, B, gen, max_span
+        self.span_mu, self.span_sigma = span_mu, span_sigma
+        self.halflife, self.floor = halflife, floor
+        self.age = torch.zeros(B, dtype=torch.long, device=store.device)   # steps since the last real state
+        dev = store.device
+        self.row_end = torch.empty(len(store.ent), dtype=torch.long, device=dev)
+        for off, n in store.spans:
+            self.row_end[off:off + n + 1] = off + n            # terminal row of each game
+        self.row = torch.zeros(B, dtype=torch.long, device=dev)
+        self.left = torch.zeros(B, dtype=torch.long, device=dev)
+        self.h = torch.zeros(B, S.N_ENTITIES, d, device=dev)
+        self.cur = self.ct = self.cc = None
+        self.new_game(torch.ones(B, dtype=torch.bool, device=dev))
+
+    def span(self, n):
+        """Open-loop span lengths: Gaussian in log2(ticks), mean span_mu, std span_sigma, clipped to 1..max_span."""
+        z = torch.randn(n, device=self.st.device, generator=self.gen)
+        return torch.exp2(self.span_mu + self.span_sigma * z).round().long().clamp(1, self.max_span)
+
+    def sync(self, m):
+        """Lanes in mask m take the real state of their current row."""
+        r = self.row[m]
+        if self.cur is None:
+            self.cur, self.ct, self.cc = self.st.ent[self.row].clone(), self.st.tick[self.row].clone(), \
+                self.st.cidx[self.row].clone()
+        self.cur[m], self.ct[m], self.cc[m] = self.st.ent[r], self.st.tick[r], self.st.cidx[r]
+        self.left[m] = self.span(int(m.sum()))
+        self.age[m] = 0
+
+    def new_game(self, m):
+        st = self.st.starts(1)
+        self.row[m] = st[torch.randint(len(st), (int(m.sum()),), device=self.st.device, generator=self.gen)]
+        self.h[m] = 0
+        self.sync(m)
+
+    def chunk(self, model, fz, stats, kind, C):
+        """C autoregressive steps; returns the mean loss (grad through the GRU over the chunk) and parts."""
+        total, parts = 0.0, {}
+        amp = torch.autocast("cuda", dtype=torch.bfloat16) if (BF16 and self.st.device.type == "cuda") else nullcontext()
+        h = self.h
+        for _ in range(C):
+            act = self.st.act[self.row].long()
+            with amp:
+                pred, h = model.step(fz(self.cur, self.ct, self.cc), act, h)
+            pred = {k: (v.float() if v.is_floating_point() else v) for k, v in pred.items()}
+            h = h.float()
+            w = None
+            if self.halflife > 0:   # step decay: h1 after a real state weighs most, then halves every `halflife`
+                w = torch.exp2(-self.age.float() / self.halflife).clamp(min=self.floor)
+            l, p = step_loss(pred, self.cur, self.st.ent[self.row + 1], stats, kind, self.ct, self.cc, w=w)
+            total = total + l
+            for k, v in p.items():
+                parts[k] = parts.get(k, 0.0) + v
+            with torch.no_grad():
+                self.cur, self.ct, self.cc = apply_prediction(self.cur, self.ct, self.cc,
+                                                              {k: v.detach() for k, v in pred.items()}, stats, fz)
+                self.row += 1
+                self.left -= 1
+                self.age += 1
+                done = self.row >= self.row_end[self.row]          # reached the terminal state
+                resync = (self.left <= 0) & ~done
+                if resync.any():
+                    self.sync(resync)
+                if done.any():                                  # next game: fresh memory
+                    h = torch.where(done[:, None, None], torch.zeros_like(h), h)
+                    st = self.st.starts(1)
+                    self.row[done] = st[torch.randint(len(st), (int(done.sum()),), device=self.st.device,
+                                                      generator=self.gen)]
+                    self.sync(done)
+        self.h = h.detach()
+        return total / C, {k: v / C for k, v in parts.items()}
+
+
+HORIZONS = (1, 4, 16, 64, 256, 1024, 4096)
+
+
+@torch.no_grad()
+def eval_horizons(model, fz, store, stats, kind, dev, horizons=HORIZONS, n=32, burn=8, seed=7):
+    """THE key metric: held-out transition loss at open-loop horizon h.
+
+    From the same n windows every time (seed), warm the memory on `burn` real
+    states, then run open loop. At step h the model predicts state h from its own
+    state h-1; loss@h is the training loss (step_loss) of that prediction against
+    the real state h. loss@1 is the ordinary one-step (teacher-forced) loss.
+    Horizons up to 1024 share one set of windows; longer ones need windows from
+    games long enough (4096 + burn ticks), a second, smaller-choice set.
+    Also hero_pos_L1@h: mean |dx|+|dy| (cells) of the 10 heroes at step h.
+    """
+    was = model.training
+    model.eval()
+    out = {}
+    for hs in ([h for h in horizons if h <= 1024], [h for h in horizons if h > 1024]):
+        if not hs or max(n for _, n in store.spans) < burn + max(hs):   # no game long enough
+            continue
+        H = max(hs)
+        g = torch.Generator(device=dev); g.manual_seed(seed)
+        ent, act, tick, cidx = store.sample(n, burn + H, g)
+        h = torch.zeros(n, S.N_ENTITIES, model.d, device=dev)
+        for t in range(burn):
+            _, h = model.step(fz(ent[:, t], tick[:, t], cidx[:, t]), act[:, t], h)
+        cur, ct, cc = ent[:, burn].clone(), tick[:, burn].clone(), cidx[:, burn].clone()
+        for k in range(1, H + 1):
+            pred, h = model.step(fz(cur, ct, cc), act[:, burn + k - 1], h)
+            if k in hs:
+                l, parts = step_loss(pred, cur, ent[:, burn + k], stats, kind, ct, cc)
+                sp = summarize_parts({a: float(b) for a, b in parts.items()})
+                out[f"loss@{k}"] = float(l)
+                out[f"hero_loss@{k}"] = sp["hero/total"]
+            cur, ct, cc = apply_prediction(cur, ct, cc, pred, stats, fz)
+            if k in hs:
+                out[f"hero_pos_L1@{k}"] = _hero_pos(cur, ent[:, burn + k])
+                out[f"windows@{k}"] = n
+    model.train(was)
     return out
 
 
@@ -394,7 +620,8 @@ def main():
     ap.add_argument("--data", default="data/moba/mix100/dense")
     ap.add_argument("--train-games", default="0-25")
     ap.add_argument("--held-games", default="91-99")
-    ap.add_argument("--minutes", type=float, default=6.0)
+    ap.add_argument("--minutes", type=float, default=6.0, help="time budget (0 = none; stop on --max-updates)")
+    ap.add_argument("--max-updates", type=int, default=0, help="stop after this many updates (0 = none)")
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--window", type=int, default=16)
     ap.add_argument("--burn", type=int, default=4)
@@ -421,6 +648,18 @@ def main():
     ap.add_argument("--event-frac", type=float, default=0.0,
                     help="fraction of each batch drawn from windows with a cast, damage or death")
     ap.add_argument("--bf16", action="store_true")
+    ap.add_argument("--init", help="run dir (or .pt) to continue from; its stats.pt is reused")
+    ap.add_argument("--rollout", action="store_true",
+                    help="autoregressive training: lanes fed their own predictions (see Lanes)")
+    ap.add_argument("--max-span", type=int, default=4096, help="--rollout: longest open-loop span (4096 = whole game)")
+    ap.add_argument("--chunk", type=int, default=16, help="--rollout: steps per update (gradient through the GRU)")
+    ap.add_argument("--span-mu", type=float, default=6.0, help="--rollout: mean log2 open-loop span (6 = 64 ticks)")
+    ap.add_argument("--span-sigma", type=float, default=3.0, help="--rollout: std of log2 span")
+    ap.add_argument("--decay-halflife", type=float, default=64.0,
+                    help="--rollout: loss weight halves every N open-loop steps since the last real state (0 = off)")
+    ap.add_argument("--decay-floor", type=float, default=0.02, help="--rollout: minimum step weight")
+    ap.add_argument("--ol-every", type=int, default=0,
+                    help="held-out loss-by-horizon eval (h1..h4096) every N its; 0 = with --val-every")
     ap.add_argument("--wandb", action="store_true")
     ap.add_argument("--backfill", help="run dir: attach its report.json to --wandb-id and exit")
     ap.add_argument("--wandb-id")
@@ -446,7 +685,12 @@ def main():
     tr_store = load_store(files, tr_idx, dev)
     he_store = load_store(files, he_idx, dev)
     t_f = time.time()
-    stats = fit_stats(tr_store)
+    init = Path(args.init) if args.init else None
+    if init and (init if init.is_dir() else init.parent).joinpath("stats.pt").exists():
+        sd = torch.load((init if init.is_dir() else init.parent) / "stats.pt", map_location="cpu", weights_only=False)
+        stats = Stats(**sd["stats"])            # same scales the checkpoint was trained with
+    else:
+        stats = fit_stats(tr_store)
     print(f"decompress + store {t_f - t_load:.1f}s, fit_stats {time.time() - t_f:.1f}s", flush=True)
     print(f"train {len(tr_store.spans)} games / {tr_store.n_steps} steps ({tr_store.nbytes / 1e9:.2f} GB on {dev}); "
           f"held-out {len(he_store.spans)} games / {he_store.n_steps} steps; loaded in {time.time() - t_load:.0f}s",
@@ -465,6 +709,9 @@ def main():
     model = TokenWM(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate,
                     gate_fields=gate_fields).to(dev)
     model.set_change_prior(stats.change_rate)
+    if init:
+        model.load_state_dict(torch.load(init / "model.pt" if init.is_dir() else init, map_location=dev))
+        print(f"continuing from {init}", flush=True)
     # Everything needed to load and roll out this model elsewhere (e.g. the viewer).
     torch.save(dict(stats=vars(stats), config=dict(d=args.d, n_heads=args.heads, n_layers=args.layers, gate=args.gate,
                                                    gate_fields=gate_fields),
@@ -485,7 +732,21 @@ def main():
         if run:
             run.log({k: v for k, v in rec.items() if k != "it"}, step=rec["it"])
 
+    steps_per_it = args.batch * (args.chunk if args.rollout else args.window - args.burn)   # supervised transitions
+
+    def open_loop(it):
+        """Held-out transition loss at open-loop horizons (eval_horizons): the key metric."""
+        r = eval_horizons(model, fz, he_store, stats, kind, dev)
+        emit(dict(it=it, epoch=round(it * steps_per_it / tr_store.n_steps, 3),
+                  **{f"horizon/{k}": v for k, v in r.items() if not k.startswith("windows")}))
+        hs = [int(k.split("@")[1]) for k in r if k.startswith("loss@")]
+        print("    HELD-OUT loss by horizon:  " + "  ".join(f"h{h} {r[f'loss@{h}']:.3f}" for h in hs), flush=True)
+        print("         hero pos L1 (cells):  " + "  ".join(f"h{h} {r[f'hero_pos_L1@{h}']:.1f}" for h in hs),
+              flush=True)
+
     def run_val(it):
+        if not args.ol_every:
+            open_loop(it)
         vl, vp = validate(model, fz, he_store, stats, kind, dev, args)
         sk = skill_eval(model, fz, he_store, stats, kind, dev, args)
         emit(dict(it=it, **{"val/loss": vl}, **{f"val/{k}": v for k, v in vp.items()},
@@ -498,19 +759,26 @@ def main():
         print(f"    hero better-than-copy / action-dependence: {hero}  | deaths recall {sk['deaths/recall_pct']:.0f}%", flush=True)
         return vl
 
-    # Step 0: the zero-initialized model predicts "no change", so this is the persistence baseline.
+    lanes = Lanes(tr_store, args.batch, args.d, gen, args.max_span, args.span_mu, args.span_sigma,
+                  args.decay_halflife, args.decay_floor) if args.rollout else None
+    # Step 0: the zero-initialized model predicts "no change", so this is the persistence baseline
+    # (or, with --init, the starting checkpoint).
     base = run_val(0)
     if run:
         run.summary["val/persistence_loss"] = base
     t0 = time.time()
     it, losses, nan_count = 0, [], 0
     part_acc, part_n = {}, 0
-    while time.time() - t0 < args.minutes * 60:
+    while (not args.minutes or time.time() - t0 < args.minutes * 60) and \
+            (not args.max_updates or it < args.max_updates):
         lr = args.lr * min(1.0, (it + 1) / 100)
         for g in opt.param_groups:
             g["lr"] = lr
-        batch = tr_store.sample(args.batch, args.window, gen, event_frac=args.event_frac, burn=args.burn)
-        loss, parts, _, _ = run_window(model, fz, batch, stats, kind, args.burn, dev)
+        if lanes:
+            loss, parts = lanes.chunk(model, fz, stats, kind, args.chunk)
+        else:
+            batch = tr_store.sample(args.batch, args.window, gen, event_frac=args.event_frac, burn=args.burn)
+            loss, parts, _, _ = run_window(model, fz, batch, stats, kind, args.burn, dev)
         opt.zero_grad()
         loss.backward()
         gn = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0).item()
@@ -537,6 +805,8 @@ def main():
         if it % args.val_every == 0:
             run_val(it)
             torch.save(model.state_dict(), out / "model.pt")
+        if args.ol_every and it % args.ol_every == 0:
+            open_loop(it)
         if args.ckpt_every and it % args.ckpt_every == 0:
             torch.save(model.state_dict(), out / f"model_{it:06d}.pt")
     run_val(it)
