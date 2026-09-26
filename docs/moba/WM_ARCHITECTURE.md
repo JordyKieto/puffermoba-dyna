@@ -10,6 +10,74 @@ heroes' actions and each unit's memory, let tokens attend to each other, then
 predict what changes by tick t+1. Size: d = 128, 2 layers, 4 heads, about
 0.66M parameters.
 
+## Rules vs learned: what the model does NOT predict
+
+**Read this before trusting any rollout or viewer result.** Since the first
+world-model commit (`26a972d`, 2026-09-25), the dream's state update
+(`apply_prediction` in `mobawm/wm/data.py`) has filled in parts of the next
+state by **hand-coded game rules**, not by the model. This was never raised
+as a decision; it was only listed in this file. Status: **not signed off.**
+The options (audit with per-rule switches / remove and retrain / keep
+specific ones) are pending Jordy's decision. Documented 2026-09-26.
+
+### Rules in the world model's state update
+
+| # | what | how (rule) | applies to | effect on results |
+|---|---|---|---|---|
+| R1 | **Creep wave spawns** | Every 150 ticks, 30 creep slots `(creep_idx + 5·lane + i) % 100` are respawned: alive, lane and team set, placed at the lane's spawn point, full health. This happens whether or not the old creep there was alive. | creeps | Spawn timing, placement and count are exact by construction. "Creep alive agreement" and creep counts in the viewer are propped up by this. |
+| R2 | **Neutral camp respawns** | Every 600 ticks, all 72 neutrals are set alive at their camp positions with full health. | neutrals | Exact by construction. |
+| R3 | **Creep constants** | Every live creep is stamped each tick with entity type 1, attack cooldown 5, XP value 60, damage 22, max health 450. Its grid id is set to 3 + team. | creeps | These fields are never predicted. |
+| R4 | **Level from XP** | When a hero's predicted XP rises, its level is recomputed with upstream's XP table (`level_from_xp`). | heroes | Level-ups are exact given the predicted XP. |
+| R5 | **Hero stats from level** | Max health, max mana and damage are looked up from a table of (hero slot, level) fitted on training data. | heroes | Never predicted. |
+| R6 | **Counters** | tick + 1 each step. `creep_idx` advances by 30 (mod 100) on wave ticks. | global | The wave schedule (R1, R2) is driven by these. |
+| R7 | **Clamps** | Cooldowns, stun, move timer, waypoint, move modifier and mana ≥ 0. Mana ≤ max mana. Health ≥ 0 and ≤ max health. XP never decreases. x, y within [0, 127.99]. Integer fields rounded. | all | Rules out impossible values. Can hide errors that would otherwise be visible. |
+| R8 | **Dead units zeroed** | When a unit's alive flag goes to 0, its x, y and health are set to 0. | creeps, neutrals, towers | Cosmetic, and it simplifies later steps. |
+| R9 | **No targets** | Every unit's `target_pid` is set to −1 each step. The model never predicts targets. | all | The dream has no "who is attacking whom". |
+| R10 | **Static field mask** | A field that never changes for a unit type in training data is never predicted, and is copied unchanged (`reg_mask`). Examples: tower position; everyone's team, entity type and grid id; creep lane (except R1). | per type | Those fields can't drift. |
+
+These are not rules (they are optional and off in E4, E5 and E6b):
+- `regen_rule` (health and mana regeneration by rule): off.
+- The cast-input features: off.
+
+Training excludes the rule-handled units from the loss: units respawned by R1
+and R2 get no regression loss that step. The model is therefore never taught
+to predict a spawn.
+
+### What is still learned
+
+| unit type | fields the model predicts (change per tick) | also learned |
+|---|---|---|
+| **heroes** | x, y, health, mana, XP, Q/W/E cooldowns, basic-attack timer, stun, move timer, move modifier | Death and respawn: heroes never have `alive` = 0, so a death is a learned jump to base with health reset. Also `is_hit` (got hit next tick). |
+| **creeps** | x, y, health, waypoint, basic-attack timer, stun, move timer, move modifier | Death (alive flip), `is_hit`, lane and team (classified; overridden on wave slots by R1). |
+| **neutrals** | x, y, health, basic-attack timer, stun, move timer, move modifier | Death (alive flip), `is_hit`. |
+| **towers** | health, basic-attack timer, stun, move timer, move modifier | Destruction (alive flip), `is_hit`. |
+
+So everything **dynamic** is learned:
+- walking and movement, with all 10 heroes' actions as input;
+- creeps marching lanes and stopping to fight;
+- damage, healing and regeneration;
+- mana spent and regenerated;
+- cooldowns starting and counting down;
+- stuns and slows;
+- XP gains;
+- deaths of every unit type, and hero respawn jumps;
+- tower damage and destruction.
+
+What is **not** learned: when and where units spawn, creep stats, a hero's
+level and level-derived stats, targets, and the counters.
+
+### Rules in the dream PPO harness (not the world model)
+
+`mobawm/rl/dream_ppo.py` adds rules on top of the dream, for RL only:
+
+| what | rule |
+|---|---|
+| reward: death | −0.164 when a hero jumps > 12 cells with health reset to full |
+| reward: XP | +0.0067 per XP gained |
+| reward: tower | +0.642 when a tower falls, to the nearest enemy hero within 6 cells (the dream has no kill credit) |
+| observations | Rebuilt from dreamed entities: walls plus each unit's grid id at its cell. Checked byte-exact on real states. |
+| state guard | Non-finite values fall back to the previous state. Team, lane, entity type and grid id are clamped to their valid ranges. Repairs are counted and logged: 0 in sweep 1. |
+
 ## At a glance
 
 | question | answer |
@@ -166,12 +234,9 @@ EXPERIMENTS.md.
 - **got hit** next tick;
 - **creep lane and team.**
 
-**Filled in by game rule, not predicted:**
-- level from XP;
-- a hero's max health, mana and damage from class and level;
-- creep constants;
-- wave respawns (which slots, which lane, where);
-- the tick and creep-slot counters.
+**Filled in by game rule, not predicted:** see
+[Rules vs learned](#rules-vs-learned-what-the-model-does-not-predict) above,
+rules R1–R10.
 
 Everything is predicted by one shared head on top of each unit's GRU state;
 there are no separate per-class decoders.
