@@ -24,6 +24,44 @@ Run everything from the repo with the project venv (it has boto3 and requests):
 `runs/token_wm/NAME/launch.sh` on the pod, and starts it in tmux session
 `NAME`. Output goes to `runs/token_wm/NAME/{train.log,log.jsonl,report.json,model.pt}`.
 
+## Pod startup: seconds to a minute, not 20 minutes
+
+The standard, as of 2026-09-27:
+
+- **The repo, data and runs live on the pod's local container disk** (`/root/puffertank`),
+  not on `/workspace`. `/workspace` is network storage.
+- **Data comes from S3 via `s5cmd`,** with **temporary read-only credentials** issued on
+  the Mac (STS federation token, 1 hour).
+  - Each credential can only list and read the requested prefix.
+  - IAM: user `datasets`, inline policy `pod-temporary-credentials` (allows
+    `sts:GetFederationToken` on `federated-user/pod-*`).
+  - Long-term AWS keys never leave the Mac.
+  - `tools/pod.py data --corpus mix1k [--games 0-19,900-999]` copies only the files
+    holding those games, skips files already present at the right size (`cp -s`), and
+    verifies every size against S3.
+- **The loader uses the container's real CPU quota** (`mobawm.wm.data.usable_cpus`, cgroup
+  v1/v2), not the host's core count.
+
+Measured on an H100 NVL pod (15.3 CPUs quota, 144 host cores):
+
+| step | before | now |
+|---|---|---|
+| code push | 78 s (to `/workspace`) | 29 s first time, **3 s** incremental |
+| all of mix1k (200 files, 15.3 GB) | 20+ min (curl → `/workspace` at ~5 MB/s, one hung) | **~60 s** (s5cmd → local disk; the pod's ~2 Gb/s link is the limit) |
+| re-running `data` when present | full re-download | **4 s** (verify only) |
+| decode 900 games → GPU (51.5 GB) | 134 s (144 workers on 15 CPUs) | **55 s** (15 workers) |
+| 20 games → GPU (dream PPO, evaluation) | — | **2.1 s** |
+| setup + launch of a run on a pod with data | — | **25 s** |
+
+Other throughput measured on the same pod: `/workspace` reads at ~255 MB/s and the
+container disk at ~4.7 GB/s. A single aws-cli stream from S3 manages ~44 MB/s. That is
+why a persistent network volume was **not** adopted: it would still read at ~255 MB/s,
+and it ties pods to one datacenter.
+
+**The remaining floor:** a run that needs all 900 training games in VRAM costs about
+60 s of S3 transfer plus 55 s of zlib decode. The next step, if needed, is a faster codec
+for the dense files (zstd or lz4 decodes several times faster than zlib).
+
 ## Checkpoints are uploaded to S3 automatically
 
 Every run launched with `tools/pod.py train NAME` uploads its files to

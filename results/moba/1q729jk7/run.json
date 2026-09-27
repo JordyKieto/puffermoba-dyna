@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/1q729jk7",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/1q729jk7",
+  "name": "p3/selfplay_rerun",
+  "group": "P3-vs-net-ab",
+  "tags": [
+    "dream-ppo",
+    "negative-result",
+    "opponent-self",
+    "p3",
+    "real-game-evaluated"
+  ],
+  "notes": "E7-P3: 4.5 min, H100 NVL, self-play rerun (9.74M steps). Real game: 0 wins, below random vs net. docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T22:31:03Z",
+  "heartbeat_at": "2026-09-27T22:35:36Z",
+  "exported_rows": 119,
+  "max_step": 119
+}

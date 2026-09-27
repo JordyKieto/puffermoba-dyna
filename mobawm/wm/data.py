@@ -128,6 +128,27 @@ def _load_one(job):
     return n
 
 
+def usable_cpus() -> int:
+    """CPUs this process may actually use: the container's cgroup quota (v2 cpu.max or v1
+    cfs quota/period) if there is one, else the core count. A RunPod container reports the
+    host's 128-144 cores but may be limited to ~14-16: starting a process per host core
+    oversubscribes it (measured 2026-09-27: full mix1k decode 134 s with 144 workers vs 55 s
+    with 15)."""
+    import os
+    for q_path, p_path in (("/sys/fs/cgroup/cpu.max", None),
+                           ("/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "/sys/fs/cgroup/cpu/cpu.cfs_period_us")):
+        try:
+            if p_path is None:
+                q, period = Path(q_path).read_text().split()
+            else:
+                q, period = Path(q_path).read_text().strip(), Path(p_path).read_text().strip()
+            if q not in ("max", "-1"):
+                return max(1, int(int(q) / int(period)))
+        except (OSError, ValueError):
+            pass
+    return os.cpu_count() or 2
+
+
 def load_store(dense_files, game_indices, device, workers=None) -> "Store":
     """Decompress the selected games with one process per core straight into
     shared memory, then copy to the device in chunks. No per-game Python
@@ -151,7 +172,7 @@ def load_store(dense_files, game_indices, device, workers=None) -> "Store":
     try:
         arrays = {k: np.ndarray(shapes[k], dtype=dtypes[k], buffer=shms[k].buf) for k in shapes}
         arrays["act"][:] = 0
-        workers = workers or min(len(jobs), os.cpu_count() or 1, 160)
+        workers = workers or min(len(jobs), usable_cpus())
         ctx = get_context("fork") if os.name == "posix" and os.uname().sysname == "Linux" else get_context("spawn")
         with ProcessPoolExecutor(workers, mp_context=ctx, initializer=_attach,
                                  initargs=(names, shapes, dtypes)) as ex:
@@ -259,7 +280,9 @@ class Store:
             es = self.event_starts(K, burn)
             i = torch.cat([i, es[torch.randint(len(es), (n_ev,), device=self.device, generator=gen)]])
         idx = i[:, None] + torch.arange(K + 1, device=self.device)
-        return self.ent[idx], self.act[idx[:, :K]].long(), self.tick[idx], self.cidx[idx]
+        out = self.ent[idx], self.act[idx[:, :K]].long(), self.tick[idx], self.cidx[idx]
+        dev = getattr(self, "out_dev", None)            # store in CPU RAM, consumer on the GPU (--store-cpu)
+        return tuple(t.to(dev) for t in out) if dev is not None else out
 
 
 # ---------------------------------------------------------------------------

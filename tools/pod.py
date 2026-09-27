@@ -17,7 +17,8 @@ Design, from zelda-RL's measured RunPod runbook (docs/moba/RUNPOD.md):
   - Only the tiny game logs are the source of truth in S3; the full-state
     files are regenerated on the pod (bit-exact, replay-verified) and pushed
     back to S3 through presigned PUTs so later pods can pull them directly.
-  - Everything that must survive a pod restart lives under /workspace.
+  - Nothing on the pod must survive it: checkpoints/logs go to S3 as they are written,
+    data is pulled from S3 in about a minute (s5cmd + scoped read-only credentials).
   - Secrets reach the pod only as a mode-600 file, never on a command line.
 """
 from __future__ import annotations
@@ -47,7 +48,11 @@ IMAGE = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"   # CUDA torc
 TEMPLATE = "puffertank-moba-wm"
 # Whole dataset in VRAM, with room to grow the corpus ~25x (fp32) before it no longer fits.
 GPUS = ["NVIDIA H200", "NVIDIA H100 NVL"]
-R_REPO = "/workspace/puffertank"
+# The repo, data and runs live on the pod's LOCAL container disk: measured 2026-09-27,
+# /workspace (network storage) wrote at ~5 MB/s and read at ~255 MB/s, the container disk
+# reads at ~4.7 GB/s. Nothing there needs to survive the pod: checkpoints and logs are
+# uploaded to S3 as they are written (mobawm/s3persist.py), data comes from S3 (cmd_data).
+R_REPO = "/root/puffertank"
 SSH_KEY = Path.home() / ".ssh" / "id_ed25519"
 S3_PREFIX = "moba"
 
@@ -198,7 +203,8 @@ def rsync_from(src, dest):
 
 
 CODE_EXCLUDES = [".git", ".venv", "data", "runs", "build", "checkpoints", "wandb", "logs", "out", "replays",
-                 "__pycache__", "*.pt", "raylib-5.5_macos", "/third_party/pufferlib/resources/*"]
+                 "__pycache__", "*.pt", "raylib-5.5_macos", "/third_party/pufferlib/resources/*",
+                 "media", "results", "artifacts", "samples"]
 CODE_INCLUDES = ["/third_party/pufferlib/resources/moba/***"]   # weights for `collect`; the rest is render art
 
 
@@ -282,31 +288,72 @@ def cmd_data(a):
         f"+ pushed to S3):\n{out.strip()}")
 
 
-def data_from_s3(a, c, bucket, key):
-    """Pull a corpus that exists only in S3 (logs + dense) onto the pod via presigned GETs."""
-    objs = [o["Key"] for p in c.get_paginator("list_objects_v2").paginate(
-        Bucket=bucket, Prefix=f"{S3_PREFIX}/{a.corpus}/") for o in p.get("Contents", [])]
-    objs = [k for k in objs if k.endswith((".mbl", ".mbs"))]
-    if not objs:
-        raise SystemExit(f"no local logs and nothing in s3://{bucket}/{S3_PREFIX}/{a.corpus}/")
-    rdir = f"{R_REPO}/data/moba/{a.corpus}"
-    lines = [f"set -e; mkdir -p {rdir}/logs {rdir}/dense"]
-    for i, k in enumerate(sorted(objs)):
-        rel = k.split(f"{a.corpus}/", 1)[1]
-        g = c.generate_presigned_url("get_object", Params={"Bucket": bucket, "Key": k}, ExpiresIn=6 * 3600)
-        lines.append(f"curl -sf -o {rdir}/{rel} {shlex.quote(g)} &")
-        if i % 32 == 31:
-            lines.append("wait")
-    lines += ["wait", f"du -sh {rdir}/logs {rdir}/dense; ls {rdir}/logs | wc -l; ls {rdir}/dense | wc -l"]
-    script = REPO / "runs" / "pod" / "data.sh"
-    script.parent.mkdir(parents=True, exist_ok=True)
-    script.write_text("\n".join(lines) + "\n")
-    script.chmod(0o600)
-    rsync_to([script], "/workspace/data.sh")
-    script.unlink()
+def s3_read_credentials(prefix: str, seconds: int = 3600) -> dict:
+    """Temporary AWS credentials (STS federation token) that can only LIST and READ
+    s3://<bucket>/<prefix>*, expiring after `seconds`. The standard way a pod reads S3:
+    the long-term keys never leave the Mac (IAM: user datasets, inline policy
+    pod-temporary-credentials allows sts:GetFederationToken on federated-user/pod-*)."""
+    import boto3
+    _, bucket = s3()
+    policy = {"Version": "2012-10-17", "Statement": [
+        {"Effect": "Allow", "Action": "s3:GetObject", "Resource": f"arn:aws:s3:::{bucket}/{prefix}*"},
+        {"Effect": "Allow", "Action": "s3:ListBucket", "Resource": f"arn:aws:s3:::{bucket}",
+         "Condition": {"StringLike": {"s3:prefix": [f"{prefix}*", prefix.rstrip("/")]}}}]}
+    cr = boto3.client("sts").get_federation_token(Name="pod-read", Policy=json.dumps(policy),
+                                                  DurationSeconds=seconds)["Credentials"]
+    return dict(AWS_ACCESS_KEY_ID=cr["AccessKeyId"], AWS_SECRET_ACCESS_KEY=cr["SecretAccessKey"],
+                AWS_SESSION_TOKEN=cr["SessionToken"], AWS_DEFAULT_REGION=secrets.get("AWS_DEFAULT_REGION") or "us-east-1")
+
+
+def s3_sync_to_pod(prefix: str, dest: str, games=None):
+    """Copy s3://<bucket>/<prefix> to <dest> ON the pod with s5cmd (parallel), using
+    temporary read-only credentials for that prefix, then verify every size against S3.
+    games: optional set of game indices -> only the corpus files that hold them (file
+    games.<first>.mbs/.mbl holds games first .. next file's first - 1).
+    Measured 2026-09-27 (H100 NVL pod): all of mix1k, 15.3 GB, in ~60 s (the pod's ~2 Gb/s
+    link is the limit); 20 games in ~2 s."""
+    c, bucket = s3()
+    objs = [o for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix)
+            for o in p.get("Contents", []) if not o["Key"].endswith(".tmp")]
+    if games is not None:
+        firsts = sorted({int(o["Key"].rsplit(".", 2)[-2]) for o in objs if o["Key"].endswith(".mbs")})
+        keep = {f for f, nxt in zip(firsts, firsts[1:] + [10 ** 9]) if any(f <= g < nxt for g in games)}
+        objs = [o for o in objs if not o["Key"].endswith((".mbs", ".mbl")) or int(o["Key"].rsplit(".", 2)[-2]) in keep]
+    env = s3_read_credentials(prefix)
+    f = REPO / "runs" / "pod" / ".s3_read.env"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text("".join(f"export {k}='{v}'\n" for k, v in env.items()))
+    f.chmod(0o600)
+    cmds = REPO / "runs" / "pod" / "s5cmd.txt"
+    cmds.write_text("".join(f"cp -s s3://{bucket}/{o['Key']} {dest}/{o['Key'][len(prefix):]}\n" for o in objs))
+    rsync_to([f, cmds], "/root/")
+    f.unlink()
+    cmds.unlink()
     t0 = time.time()
-    out = run("bash /workspace/data.sh && rm /workspace/data.sh", capture=True)
-    log(f"{len(objs)} files from S3 on pod in {time.time() - t0:.0f}s:\n{out.strip()}")
+    try:
+        run("chmod 600 /root/.s3_read.env; command -v s5cmd >/dev/null || (cd /tmp && curl -sL "
+            "https://github.com/peak/s5cmd/releases/download/v2.2.2/s5cmd_2.2.2_Linux-64bit.tar.gz | tar xz s5cmd "
+            f"&& mv s5cmd /usr/local/bin/); mkdir -p {dest}; . /root/.s3_read.env && "
+            "s5cmd --numworkers 128 run /root/s5cmd.txt > /dev/null")
+    finally:
+        run("rm -f /root/.s3_read.env /root/s5cmd.txt", check=False)
+    want = {o["Key"][len(prefix):]: o["Size"] for o in objs}
+    have = dict(l.split(" ", 1)[::-1] for l in run(f"cd {dest} && find . -type f -printf '%s %P\\n'",
+                                                    capture=True).splitlines() if l.strip())
+    bad = [k for k, n in want.items() if int(have.get(k, -1)) != n]
+    if bad:
+        raise SystemExit(f"s3 copy incomplete: {len(bad)} files differ from S3, e.g. {bad[:3]}")
+    log(f"copied and verified {len(want)} files ({sum(want.values()) / 1e9:.1f} GB) s3://{bucket}/{prefix} -> {dest} "
+        f"in {time.time() - t0:.0f}s")
+
+
+def data_from_s3(a, c, bucket, key):
+    """A corpus that exists in S3 (logs + dense): `aws s3 sync` onto the pod (s3_sync_to_pod)."""
+    games = None
+    if getattr(a, "games", None):
+        from mobawm.wm.train import parse_games
+        games = parse_games(a.games)
+    s3_sync_to_pod(f"{S3_PREFIX}/{a.corpus}/", f"{R_REPO}/data/moba/{a.corpus}", games)
 
 
 def cmd_push(a):
@@ -454,6 +501,7 @@ def main():
     p = sub.add_parser("kill"); p.add_argument("--confirm", action="store_true")
     sub.add_parser("bootstrap")
     p = sub.add_parser("data"); p.add_argument("--corpus", default="mix100")
+    p.add_argument("--games", help="only the files holding these games, e.g. 0-19,900-999 (default: all)")
     p = sub.add_parser("push"); p.add_argument("--corpus", required=True)
     p = sub.add_parser("train"); p.add_argument("name"); p.add_argument("train_args", nargs=argparse.REMAINDER)
     p = sub.add_parser("status"); p.add_argument("name", nargs="?"); p.add_argument("--lines", type=int, default=15)

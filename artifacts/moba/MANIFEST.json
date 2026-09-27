@@ -178,6 +178,39 @@
    "s3_byte_identical": true
   },
   {
+   "name": "rl/P3_vs_net",
+   "path": "runs/dream_ppo/p3/vs_net/policy.pt",
+   "present": true,
+   "wandb_run": "iluni10r",
+   "description": "E7-P3 dream PPO trained AGAINST the shipped net (4.5 min, 1.10M steps); real game: 0 wins, below random.",
+   "bytes": 4028546,
+   "md5": "a4566ca5e6b71d43754fe919cfc0b5f3",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/p3/vs_net/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P3_selfplay_rerun",
+   "path": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+   "present": true,
+   "wandb_run": "1q729jk7",
+   "description": "E7-P3 self-play rerun of the P1 best config (4.5 min, 9.74M steps); real game: 0 wins, below random vs net.",
+   "bytes": 4028610,
+   "md5": "8c2887538c66650a84924bae4985bdd3",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260927_1539",
+   "path": "runs/code_snapshots/code_snapshot_20260927_1539.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E7-P3 (dream PPO vs shipped net: ma_pool/ma_pools in moba_arena.c, dream_ppo --opponent net) and the world-model planner (plan_mpc.py), 2026-09-27.",
+   "bytes": 89479,
+   "md5": "e93e33b938856aacb7a3a180abbcb001",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260927_1539.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260927_1323",
    "path": "runs/code_snapshots/code_snapshot_20260927_1323.tar.gz",
    "present": true,

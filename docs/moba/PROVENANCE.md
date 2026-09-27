@@ -160,6 +160,7 @@ The raw logs are also in `results/moba/dream/`.
 | P1-mac | same night | LR × minibatch sweep, 6 configs in parallel on the Mac GPU | `is9phlur jd4ghbkn za7afmv0 8z73kb8d f5m7o9fk s978nel3` | **inconclusive**: 2–4 updates each |
 | P1-h200 | same night, E5 pod | the same sweep, 6 in parallel, 4.5 min, about 2.4M agent steps / 30 updates each | `cfuvqm95 k8m39dqw 3xhtvpo3 v22f5ut6 m4zqm6gl xegabn7s` | every config's **dream** reward rises 2–3×; best slope lr 3e-4, 2 minibatches; single seed |
 | **P2** | after P1 | the best P1 policy (`v22f5ut6`) in the **real C game**, 120 games | `81jwi4lw` (+ `dream/arena_real_game_lr3e-4_mb2.jsonl`) | **negative:** 0 wins; lower return than an untrained policy |
+| **P3** | 2026-09-27 | self-play rerun vs **shipped-net opponent** inside the dream, 4.5 min each in parallel, H100 NVL pod `k9rbiphntinbl2` | `1q729jk7`, `iluni10r` (+ `dream/arena_real_game_p3_*.jsonl`) | **negative:** 0 wins; both below random vs net; more dream reward → worse real play |
 
 Policy checkpoints (md5 in MANIFEST, byte-identical in `s3://puffertank/moba/runs/dream_ppo/`):
 - P0: `runs/dream_ppo/e5_selfplay_5min/policy.pt` `9af7af55dec6`;

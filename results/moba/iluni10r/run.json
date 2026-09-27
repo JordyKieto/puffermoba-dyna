@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/iluni10r",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/iluni10r",
+  "name": "p3/vs_net",
+  "group": "P3-vs-net-ab",
+  "tags": [
+    "dream-ppo",
+    "negative-result",
+    "opponent-net",
+    "p3",
+    "real-game-evaluated"
+  ],
+  "notes": "E7-P3: 4.5 min, H100 NVL, shipped-net opponent (1.10M steps). Real game: 0 wins, below random vs net. docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T22:31:03Z",
+  "heartbeat_at": "2026-09-27T22:35:36Z",
+  "exported_rows": 27,
+  "max_step": 27
+}

@@ -233,6 +233,42 @@
   "dir": "results/moba/81jwi4lw/"
  },
  {
+  "project": "moba-dream-rl",
+  "run_id": "1q729jk7",
+  "name": "p3/selfplay_rerun",
+  "group": "P3-vs-net-ab",
+  "tags": [
+   "dream-ppo",
+   "negative-result",
+   "opponent-self",
+   "p3",
+   "real-game-evaluated"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T22:31:03Z",
+  "history_rows": 119,
+  "max_step": 119,
+  "dir": "results/moba/1q729jk7/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "iluni10r",
+  "name": "p3/vs_net",
+  "group": "P3-vs-net-ab",
+  "tags": [
+   "dream-ppo",
+   "negative-result",
+   "opponent-net",
+   "p3",
+   "real-game-evaluated"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T22:31:03Z",
+  "history_rows": 27,
+  "max_step": 27,
+  "dir": "results/moba/iluni10r/"
+ },
+ {
   "project": "moba-wm",
   "run_id": "vuzjgdh8",
   "name": "smoke",

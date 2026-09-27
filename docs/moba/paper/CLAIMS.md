@@ -63,8 +63,10 @@ Any claim about "the model predicts X" is about the learned part only.
 | R1 | PPO with one policy shared by all 10 heroes raises its reward **inside the dream** 2–3× in 2.4M agent steps | M (single seed per config) | Runs `cfuvqm95 k8m39dqw 3xhtvpo3 v22f5ut6 m4zqm6gl xegabn7s`; Dream `sweep1_gpu_*.log.jsonl`; Tab `dream_ppo_sweep.md` |
 | R2 | That dream-trained policy wins **0** real games (against the shipped net or the scripted bots) and earns less real return than an untrained policy | M | Runs `81jwi4lw`; Dream `arena_real_game_lr3e-4_mb2.jsonl` (120 games, the same seeds for every team); Tab `arena_real_game.md` |
 | R3 | The one behaviour that did transfer: fewer deaths (0.19–0.37 per hero per game vs random's 0.54–1.02) | M | same arena file |
-| R4 | The failure is the policy exploiting world-model errors | **U** | Hypothesis. Dream XP 3× up while real XP falls is consistent with it; the diagnosis (replay real actions through the WM) was not run |
-| R5 | Dream-trained policies can play the real game | **Not claimed** | R2 |
+| R4 | The failure is the policy exploiting world-model errors | **U → strengthened (I)** | Dream XP rises 3–5× while real levels fall to ~0 as optimisation grows (R7), and the opponent choice does not matter (R6). The direct diagnosis (replay real actions through the WM) is still not run |
+| R5 | Dream-trained policies can play the real game | **Not claimed** | R2, R6 |
+| R6 | Training against the shipped net in the dream (instead of self-play) does not fix transfer: 0 real wins, and below the untrained policy against the net | M (single seed; compute not matched: 1.10M vs 9.74M agent steps) | Runs `iluni10r`, `1q729jk7`; Dream `arena_real_game_p3_*.jsonl` |
+| R7 | More dream optimisation makes real play worse: a rerun with ~4× the steps and 2× the dream reward scores lower in the real game than P2 | M (single seed) | Runs `1q729jk7` vs `v22f5ut6`; Dream `arena_real_game_p3_selfplay_rerun.jsonl` vs `arena_real_game_lr3e-4_mb2.jsonl` |
 
 ## Method claims that need a control before use
 

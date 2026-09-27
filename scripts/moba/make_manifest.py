@@ -36,6 +36,13 @@ ARTIFACTS = [
      "best dream-PPO sweep policy (reward slope); evaluated in the real game: 0 wins, below random (P2)."),
 ] + [(f"rl/P1_h200_{c}", f"runs/dream_ppo/sweep1_gpu/{c}/policy.pt", None, f"dream-PPO sweep config {c}, final policy.")
      for c in ("lr3e-4_mb10", "lr1e-3_mb10", "lr3e-3_mb10", "lr1e-3_mb2", "lr3e-3_mb2")]
+ARTIFACTS += [("rl/P3_vs_net", "runs/dream_ppo/p3/vs_net/policy.pt", "iluni10r",
+               "E7-P3 dream PPO trained AGAINST the shipped net (4.5 min, 1.10M steps); real game: 0 wins, below random."),
+              ("rl/P3_selfplay_rerun", "runs/dream_ppo/p3/selfplay_rerun/policy.pt", "1q729jk7",
+               "E7-P3 self-play rerun of the P1 best config (4.5 min, 9.74M steps); real game: 0 wins, below random vs net.")]
+ARTIFACTS += [("code/code_snapshot_20260927_1539", "runs/code_snapshots/code_snapshot_20260927_1539.tar.gz", None,
+               "Snapshot of the uncommitted code behind E7-P3 (dream PPO vs shipped net: ma_pool/ma_pools in "
+               "moba_arena.c, dream_ppo --opponent net) and the world-model planner (plan_mpc.py), 2026-09-27.")]
 ARTIFACTS += [("code/code_snapshot_20260927_1323", "runs/code_snapshots/code_snapshot_20260927_1323.tar.gz", None,
                "Snapshot of every uncommitted source file behind E5-continuation/E6/E6b/dream-PPO/arena/S3-persistence "
                "(git HEAD dad8c7e + the tracked diff + untracked files), taken 2026-09-27 because that code is "

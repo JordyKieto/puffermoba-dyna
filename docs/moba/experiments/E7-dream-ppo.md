@@ -102,6 +102,65 @@ Generated: `results/moba/tables/arena_real_game.md`. Figure:
 3. **The harness is sound:** the shipped net scores sensibly (50% in the mirror
    match), so the negative result is about the policy, not the arena.
 
+## P3 — training against the shipped net instead of self-play (2026-09-27): still negative
+
+**Question:** does a policy trained against the shipped PufferNet inside the dream
+transfer better than self-play?
+
+**Setup:**
+- **Arms:** two, in parallel on one H100 NVL, 4.5 min each, the P1 best recipe (lr 3e-4,
+  2 minibatches, 64 games × 128 ticks, E5 @20,500 dream, games 0–19, seed 0).
+  - **self-play rerun:** as in P1/P2.
+  - **vs net:** our policy plays one randomly drawn side per game. The **shipped
+    PufferNet** plays the other side inside the dream, via `ma_pool_*` in
+    `moba/moba_arena.c`. Its logits were checked **bit-identical** to the collector's
+    `net_act` over 50 real ticks (max difference 0). Only our 5 heroes are trained and
+    scored.
+- **W&B:** `moba-dream-rl`, group `P3-vs-net-ab`: `1q729jk7` (self-play), `iluni10r`
+  (vs net), both logged live. Exported to `results/moba/<id>/`.
+- **Checkpoints:** uploaded to S3 automatically as they were written.
+
+**Compute was not matched.** The shipped net runs in C on the CPU (single-threaded, 640
+heroes per tick), and only 5 of 10 heroes train per game. So in the same 4.5 min:
+
+| arm | agent steps |
+|---|---|
+| vs net | 1.10M |
+| self-play rerun | 9.74M |
+| P1 original | 2.46M |
+
+**Real game, same seeds and harness as P2.** Rows `results/moba/dream/arena_real_game_p3_*.jsonl`. The random and
+shipped-net rows reproduce P2 exactly, so the harness is deterministic.
+
+| our team | vs | win % | return/hero | deaths/hero | level |
+|---|---|---|---|---|---|
+| P3 vs-net PPO | net | 0 | 0.02 | 0.01 | 0.08 |
+| P3 vs-net PPO | script | 0 | 0.86 | 0.35 | 0.78 |
+| P3 self-play rerun | net | 0 | 0.01 | 0.00 | 0.02 |
+| P3 self-play rerun | script | 0 | 3.75 | 0.47 | 2.35 |
+| P2 self-play (reference) | net | 0 | 1.20 | 0.19 | 1.26 |
+| untrained | net | 0 | 1.82 | 0.54 | 1.54 |
+| untrained | script | 0 | 6.38 | 1.02 | 3.61 |
+
+**Dream reward at the end:** self-play 23.98 per 1k hero-steps, vs net 22.05 (dream XP
+~3,300–3,600 per 1k).
+
+**Conclusions:**
+1. **The opponent is not the problem.** Training against the shipped net transfers no
+   better than self-play. Both are below the untrained policy against the net.
+2. **More dream optimisation makes the real game worse.** The self-play rerun had 4×
+   P1's steps and twice its dream reward, yet scores lower against the net in the real
+   game (0.01 vs 1.20) and barely levels (0.02).
+3. **The strongest evidence yet for model exploitation (claim R4):** the policies
+   collect XP in the dream while doing almost nothing in the real game (near-zero
+   deaths, near-zero levels). The fix belongs on the world-model side: train it on the
+   policy's own real games (the Dyna loop) before more dream RL.
+
+**Kept:**
+- `runs/dream_ppo/p3/{vs_net,selfplay_rerun}/policy.pt` (md5 `a4566ca5e6b7` /
+  `8c2887538c66`, byte-identical in `s3://puffertank/moba/runs/dream_ppo/p3/`);
+- logs in `results/moba/dream/p3_*.log.jsonl`.
+
 ## What this does not show
 
 - **It does not show that dream training cannot work.** It is one world model, one
