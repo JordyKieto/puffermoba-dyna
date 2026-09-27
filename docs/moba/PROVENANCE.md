@@ -181,6 +181,17 @@ These are observations, not rates.
 | Heroes far more stable than pre-rollout training: no flying off the map, broad movement right, no visible degeneration over time. Creeps and neutrals move very naturally (A+ trajectories, not the real positions). Abilities predicted more often. Failures: tower damaged in one panel but not the other | E5 @500 | [E5 record](experiments/E5-rollout-training.md) |
 | E5 vs E6b side by side; tower health tracks better in E6b | E5 @18,000–20,500, E6b @1,000–3,500 | session record |
 
+**Viewer recordings** (local, gitignored, not in S3). The set is
+`media/moba/20260927_1332/` (manifest md5 `a94e4787688e95187f64ec47415d46f2`):
+- **Models:** E4 ~3,000, E5 @3,500, E5 @20,500 and E6b @3,500, each checkpoint
+  identified by md5 against `artifacts/moba/MANIFEST.json`.
+- **Data:** held-out game 900 from tick 500, 1,000 ticks.
+- **Contents:** 12 videos (rollout, ghost, hover tour) and 52 PNGs.
+- **Per file:** the metrics at the steps shown, a finding and its claim ids. The
+  Figure 1 candidate is `E4_teacherforced_u3000_ghost_step0300.png`.
+- **Rebuild the metadata** without re-recording:
+  `tools/moba_viz_capture.py --backfill <dir>`.
+
 ## 6. Open items: the U list
 
 | item | why it is not M | track |
