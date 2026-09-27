@@ -50,7 +50,7 @@ The tracks are provenanced separately. A claim about one is not evidence about t
 | Counterfactual fork generator | `moba/moba_fork.c`, `mobawm/wm/cf.py`. Byte-exact against the corpus. [COUNTERFACTUALS.md](COUNTERFACTUALS.md) | M |
 | Dream PPO | `mobawm/rl/dream_ppo.py` | M |
 | Real-game arena | `moba/moba_arena.c`, `mobawm/rl/arena.py`. It reuses the collector's `net_act` / `scripted_action` unchanged | M |
-| Replay viewer | `tools/moba_viz.py`. [VIEWER.md](VIEWER.md) | M |
+| Replay viewer, the microscope | `tools/moba_viz.py`: the real game next to the model on the same actions, with hover stats, cast/death flashes and a headless `Replay` API. [VIEWER.md](VIEWER.md). Recordings: `tools/moba_viz_capture.py` → `media/moba/<timestamp>/` (videos + PNGs, local only, md5s in its MANIFEST.json) | M |
 
 ### Code commit status (read this before re-running anything)
 

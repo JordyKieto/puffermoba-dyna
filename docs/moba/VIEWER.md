@@ -179,6 +179,32 @@ recomputed, and the GRU memory isn't kept or touched. Step k always shows
 the same prediction, however you got there. Switching game re-runs the
 rollout.
 
+## Recording videos and snapshots
+
+`tools/moba_viz_capture.py` drives the viewer headless and records it. The viewer is
+the microscope of this work, so every model worth discussing gets recorded:
+
+```sh
+.venv/bin/python tools/moba_viz_capture.py \
+    --model E5_rollout_u20500=runs/token_wm/e5_rollout \
+    --model E6b_counterfactual_u3500=runs/token_wm/e6b_cf_effect --horizon 1000
+```
+
+Per model:
+
+| file | what |
+|---|---|
+| `<label>_rollout.mp4` | the whole window played through (1 frame = 1 tick, 30 fps) |
+| `<label>_rollout_ghost.mp4` | the same with the ghost overlay |
+| `<label>_hover_tour.mp4` | paused at steps 64, 300 and the end. A drawn cursor glides over heroes, the weakest tower and a creep on both panels, dwelling so each stats tooltip can be read |
+| `<label>_step*.png` | key frames (steps 0, 16, 64, 300, end) |
+| `<label>_tooltip_*.png` | tooltips on a hero, a tower and a creep, real and model panels |
+| `<label>_ghost_*.png`, `_first_real_cast.png`, `_first_real_death.png` | the ghost overlay, and the first real cast and death flashes |
+
+Output goes to `media/moba/<timestamp>/`, which is **gitignored**: local media, not
+source. A `MANIFEST.json` there lists every file with its md5, the checkpoint, game,
+start tick and what it shows.
+
 ## Getting a checkpoint and game files
 
 **Checkpoints are written on the RunPod pod.** Pull the latest one:

@@ -36,3 +36,6 @@ secrets.env
 
 # Local run outputs and pod state
 runs/
+
+# Viewer captures (videos, screenshots): local only, see tools/moba_viz_capture.py
+media/
