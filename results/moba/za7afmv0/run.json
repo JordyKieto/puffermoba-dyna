@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/za7afmv0",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/za7afmv0",
+  "name": "P1-sweep-mac/lr3e-3_mb10",
+  "group": "P1-sweep-mac",
+  "tags": [
+    "dream-ppo",
+    "inconclusive",
+    "mps",
+    "sweep"
+  ],
+  "notes": "Backfilled from runs/dream_ppo/sweep1/lr3e-3_mb10/log.jsonl (the run logged locally only). docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:44Z",
+  "heartbeat_at": "2026-09-27T20:16:45Z",
+  "exported_rows": 5,
+  "max_step": 5
+}

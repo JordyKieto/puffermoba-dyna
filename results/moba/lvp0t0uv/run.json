@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/lvp0t0uv",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/lvp0t0uv",
+  "name": "ablate8/gate_navgrid",
+  "group": "ablate8",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate8/gate_navgrid. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T19:01:57Z",
+  "heartbeat_at": "2026-09-25T19:07:12Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

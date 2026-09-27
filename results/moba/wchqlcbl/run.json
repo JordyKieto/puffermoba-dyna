@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/wchqlcbl",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/wchqlcbl",
+  "name": "ablate13/baseline",
+  "group": "ablate13",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate13/baseline. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T21:55:33Z",
+  "heartbeat_at": "2026-09-25T21:59:34Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

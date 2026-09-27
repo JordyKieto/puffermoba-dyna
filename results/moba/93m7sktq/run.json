@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/93m7sktq",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/93m7sktq",
+  "name": "e5_rollout",
+  "group": "E5-rollout",
+  "tags": [
+    "baseline-v2",
+    "main",
+    "rollout",
+    "wm"
+  ],
+  "notes": "E5 autoregressive rollout training from E4 final, updates 0-20,750. Final checkpoint (20,500) kept; numbered checkpoints lost with the pod. docs/moba/experiments/E5-rollout-training.md",
+  "state": "crashed",
+  "created_at": "2026-09-25T23:59:56Z",
+  "heartbeat_at": "2026-09-26T05:58:41Z",
+  "exported_rows": 416,
+  "max_step": 20750
+}

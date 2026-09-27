@@ -1,0 +1,16 @@
+{
+ "runs/dream_ppo/e5_selfplay_5min": "x18k5q1z",
+ "runs/dream_ppo/sweep1/lr3e-4_mb10": "is9phlur",
+ "runs/dream_ppo/sweep1/lr1e-3_mb10": "jd4ghbkn",
+ "runs/dream_ppo/sweep1/lr3e-3_mb10": "za7afmv0",
+ "runs/dream_ppo/sweep1/lr3e-4_mb2": "8z73kb8d",
+ "runs/dream_ppo/sweep1/lr1e-3_mb2": "f5m7o9fk",
+ "runs/dream_ppo/sweep1/lr3e-3_mb2": "s978nel3",
+ "runs/dream_ppo/sweep1_gpu/lr3e-4_mb10": "cfuvqm95",
+ "runs/dream_ppo/sweep1_gpu/lr1e-3_mb10": "k8m39dqw",
+ "runs/dream_ppo/sweep1_gpu/lr3e-3_mb10": "3xhtvpo3",
+ "runs/dream_ppo/sweep1_gpu/lr3e-4_mb2": "v22f5ut6",
+ "runs/dream_ppo/sweep1_gpu/lr1e-3_mb2": "m4zqm6gl",
+ "runs/dream_ppo/sweep1_gpu/lr3e-3_mb2": "xegabn7s",
+ "arena": "81jwi4lw"
+}

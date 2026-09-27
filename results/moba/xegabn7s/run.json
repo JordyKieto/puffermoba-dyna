@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/xegabn7s",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/xegabn7s",
+  "name": "P1-sweep-h200/lr3e-3_mb2",
+  "group": "P1-sweep-h200",
+  "tags": [
+    "dream-ppo",
+    "h200",
+    "sweep"
+  ],
+  "notes": "Backfilled from runs/dream_ppo/sweep1_gpu/lr3e-3_mb2/log.jsonl (the run logged locally only). docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T20:17:03Z",
+  "heartbeat_at": "2026-09-27T20:17:04Z",
+  "exported_rows": 31,
+  "max_step": 31
+}

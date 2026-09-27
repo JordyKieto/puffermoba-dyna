@@ -1,45 +1,59 @@
-# MOBA world model: experiments index
+# MOBA: experiments index
 
-## Headline (2026-09-25)
+The research question: **can we learn a world well enough to teach an agent in it?**
+This follows `carla-imitation-learning` (learning to act) and `neural-simulators`
+(learning to simulate).
 
-- **⚠ The world model is not fully learned.** Spawns, creep constants, hero
-  level and level-derived stats, counters, targets and clamps are filled in by
-  **hand-coded rules** (R1–R10), and every rollout and viewer result depends
-  on them. Everything dynamic (movement, damage, cooldowns, deaths, towers) is
-  learned. Full table:
+Evidence standard: [../EVIDENCE_RULES.md](../EVIDENCE_RULES.md). Claims with evidence
+classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from:
+[../PROVENANCE.md](../PROVENANCE.md). Doc map: [../MAP.md](../MAP.md).
+
+## Headline (2026-09-27)
+
+- **⚠ The world model is not fully learned.** Spawns, creep constants, hero level
+  and level-derived stats, counters, targets and clamps are **hand-coded rules**
+  (R1–R10), and every rollout, viewer result and dream depends on them. Everything
+  dynamic (movement, damage, cooldowns, deaths, towers) is learned.
   [WM_ARCHITECTURE.md § Rules vs learned](../WM_ARCHITECTURE.md#rules-vs-learned-what-the-model-does-not-predict).
   Not signed off; decision pending.
+- **World model, best so far:**
+  - **Long horizons:** E5 (autoregressive rollout training), @20,500. Held-out loss is
+    5–12× lower than teacher-forced from h64 to h4k, and heroes are ~5.5 cells off
+    after 1,024 ticks (W3, W5).
+  - **One step:** E6b (real-sim counterfactual siblings + effect losses). h1 is about
+    2× better than E5, and it predicts 81–90% of an ability press's effect on
+    training forks (W8, W10).
+  - **Open problems:** jitter (31% extra direction reversals, speed 1.3× real; W7),
+    tower health (W14), and the rules (R1–R10).
+- **Dream RL: first attempt negative.** PPO in E5's dream more than doubles dream
+  reward, but wins 0 of 120 real games and earns less than an untrained policy (R2).
+  See [E7](E7-dream-ppo.md).
+- **Checkpoints lost on 2026-09-27** (the pods were deleted externally): E4 final, E5
+  numbered, and all of E5-continued. Their metrics survive; see
+  [PROVENANCE §3.3](../PROVENANCE.md). Every run now uploads checkpoints to S3 as it
+  trains.
+- **Nothing is running.** No pods.
 
-- **Current baseline: v2.** A change gate on every field except movement,
-  balanced gate losses, and the hero walking loss weighted ×10. Defined in
-  [../EXPERIMENTS.md § Current baseline](../EXPERIMENTS.md).
-- **Promising: [E5 — rollout training](E5-rollout-training.md)**, still
-  running (6M updates). The model is trained on its own predictions, over
-  spans from 1 tick to a whole game, continuing from E4. After 500 updates:
-  - Held-out loss at 64–4,096 ticks is 2–6× lower.
-  - Heroes stay within about 13 cells of the real ones over 4,096 ticks,
-    against 123 before.
-  - In the viewer the rollouts stay stable, with no degeneration over time.
-  - The cost is one-step precision: h1 loss 0.78 → 4.4, and heroes jitter at
-    2× the real speed.
-- **Also running: [E6b — counterfactual siblings + effect losses](E6-counterfactual-siblings.md).**
-  The real sim forks every recorded state into edited-action branches, giving
-  about 100× the corpus in counterfactual content
-  ([how](../COUNTERFACTUALS.md)).
-- **How to judge a model:** watch it next to the real game in the
-  [replay viewer](../VIEWER.md), fed the same actions.
-- **Open problem being reframed:** the old per-ability "better than copying"
-  numbers mostly measured cooldown countdowns. Effects are now judged per
-  state variable, starting with hero position.
+## Experiments
 
-## Runs
+| id | what | status | W&B group → `results/moba/` | record |
+|---|---|---|---|---|
+| E1 | first TokenWM smoke runs (mix100) | done | `E1-smoke`: `vuzjgdh8`, `ox4cx47i` | [../EXPERIMENTS.md](../EXPERIMENTS.md) (legacy) |
+| E2 | first full mix1k run | done | `E2-mix1k`: `asdg1vl1` | legacy |
+| E3 | change gate + event sampling | done | `E3-gate-events`: `65j98z3b`, `s3ilbx02` | legacy |
+| ablations 1–17 | 5-minute A/B rounds (gate, action tokens, geometry, navgrid, walking ×10, health, regen, cast input) | done | `ablate1` … `ablate17` (36 runs) | legacy |
+| E4 | baseline v2, full mix1k, 1 h, teacher-forced | done; final checkpoint lost | `E4-baseline-v2`: `kxe2bh1k` | [E4-baseline-v2-1h.md](E4-baseline-v2-1h.md) |
+| E5 | autoregressive rollout training from E4, 20,750 updates; then continued 1,700 more from 20,500 | stopped (pod deleted); @20,500 kept, continuation lost | `E5-rollout`: `93m7sktq` (main), `soeosr9h` (continued), `zll4trqi`, `hm9mnnoy` | [E5-rollout-training.md](E5-rollout-training.md) |
+| E6 / E6b | E5 @3,500 + real-sim counterfactual siblings; E6b adds the effect losses | stopped; E6b checkpoints kept | `E6-counterfactual`: `uo6sal6q`, `d9xnnj0a` | [E6-counterfactual-siblings.md](E6-counterfactual-siblings.md) |
+| **E7** | PPO in E5's dream (P0 first run, P1 LR × minibatch sweep, P2 real-game evaluation) | **concluded: negative** | `moba-dream-rl`: `P0-first-5min`, `P1-sweep-mac`, `P1-sweep-h200`, `P2-arena-real` | [E7-dream-ppo.md](E7-dream-ppo.md) |
 
-| id | what | status | record |
-|---|---|---|---|
-| E4 | baseline v2, full mix1k, 1 h, batch 768 bf16, checkpoints every 500 | done | [E4-baseline-v2-1h.md](E4-baseline-v2-1h.md) |
-| E5 | autoregressive (rollout) training, continuing from E4, 6M updates | running | [E5-rollout-training.md](E5-rollout-training.md) |
-| E6 / E6b | E5 + counterfactual siblings from the real sim (32k per update), from E5 @3,500; E6b adds the effect auxiliary losses | E6b running | [E6-counterfactual-siblings.md](E6-counterfactual-siblings.md) |
-| E0–E3c, 5-minute ablations | earlier runs and ablations | done | legacy log: [../EXPERIMENTS.md](../EXPERIMENTS.md) |
+The pre-E4 work stays in the single legacy log, [../EXPERIMENTS.md](../EXPERIMENTS.md),
+which is not extended. Every run since E4 has one file here.
 
-The earlier work is still in the single legacy log. New runs get one file
-each here.
+## Proposed next
+
+- **Rubric loss A/B** (circle hinge + trajectory penalties) from E5 @20,500, targeting
+  jitter: [../WM_FEEDBACK_RL.md](../WM_FEEDBACK_RL.md). The code is ready;
+  `--rubric-circle` and `--rubric-traj` are uncommitted.
+- **Diagnose E7's transfer failure:** replay real actions through the WM.
+- **A decision on rules R1–R10:** audit / remove / keep.

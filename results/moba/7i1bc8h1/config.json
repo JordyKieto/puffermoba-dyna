@@ -1,0 +1,22 @@
+{
+  "arm": "events",
+  "arms": "base,gate,events,both",
+  "batch": 256,
+  "bf16": true,
+  "burn": 4,
+  "clip": 1,
+  "data": "data/moba/mix1k/dense",
+  "eval_every": 25,
+  "event_frac": 0.5,
+  "events": "True",
+  "gate": "False",
+  "held_games": "900-929",
+  "lr": 0.0006,
+  "minutes": 5,
+  "name": "ablate1",
+  "train_games": "0-299",
+  "val_batches": 2,
+  "wandb": true,
+  "weights": "{'abilities': 3, 'health': 3, 'deaths': 3, 'attack': 2}",
+  "window": 16
+}

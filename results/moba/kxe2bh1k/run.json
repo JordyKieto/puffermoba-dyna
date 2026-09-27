@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/kxe2bh1k",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/kxe2bh1k",
+  "name": "e4_baseline_v2_1h",
+  "group": "E4-baseline-v2",
+  "tags": [
+    "baseline-v2",
+    "final-ckpt-lost",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "baseline v2, 1 h, H200. Final report never written (session stopped for E5); final checkpoint lost with the pod; a ~update-3000 copy survives. docs/moba/experiments/E4-baseline-v2-1h.md",
+  "state": "finished",
+  "created_at": "2026-09-25T22:52:02Z",
+  "heartbeat_at": "2026-09-25T23:52:23Z",
+  "exported_rows": 81,
+  "max_step": 3879
+}

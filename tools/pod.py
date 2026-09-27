@@ -23,6 +23,7 @@ Design, from zelda-RL's measured RunPod runbook (docs/moba/RUNPOD.md):
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import shlex
 import subprocess
@@ -36,7 +37,10 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 from racewm import secrets  # noqa: E402
 
-STATE = REPO / "runs" / "pod" / "state.json"
+# POD=<name> selects a second (third, ...) pod with its own state file; unset = the
+# original pod, runs/pod/state.json, exactly as before.
+POD_NAME = os.environ.get("POD", "")
+STATE = REPO / "runs" / "pod" / (f"state_{POD_NAME}.json" if POD_NAME else "state.json")
 REST = "https://rest.runpod.io/v1"
 GQL = "https://api.runpod.io/graphql"
 IMAGE = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"   # CUDA torch preinstalled
@@ -228,6 +232,8 @@ def cmd_data(a):
     lp = REPO / "data" / "moba" / a.corpus / "logs"
     key = lambda kind, name: f"{S3_PREFIX}/{a.corpus}/{kind}/{name}"
     logs = sorted(lp.glob("games.*.mbl"))
+    if not logs:                                    # corpus generated on a pod: it lives only in S3
+        return data_from_s3(a, c, bucket, key)
     for f in logs:                                  # tiny (KB); skip if already present with same size
         try:
             if c.head_object(Bucket=bucket, Key=key("logs", f.name))["ContentLength"] == f.stat().st_size:
@@ -276,6 +282,33 @@ def cmd_data(a):
         f"+ pushed to S3):\n{out.strip()}")
 
 
+def data_from_s3(a, c, bucket, key):
+    """Pull a corpus that exists only in S3 (logs + dense) onto the pod via presigned GETs."""
+    objs = [o["Key"] for p in c.get_paginator("list_objects_v2").paginate(
+        Bucket=bucket, Prefix=f"{S3_PREFIX}/{a.corpus}/") for o in p.get("Contents", [])]
+    objs = [k for k in objs if k.endswith((".mbl", ".mbs"))]
+    if not objs:
+        raise SystemExit(f"no local logs and nothing in s3://{bucket}/{S3_PREFIX}/{a.corpus}/")
+    rdir = f"{R_REPO}/data/moba/{a.corpus}"
+    lines = [f"set -e; mkdir -p {rdir}/logs {rdir}/dense"]
+    for i, k in enumerate(sorted(objs)):
+        rel = k.split(f"{a.corpus}/", 1)[1]
+        g = c.generate_presigned_url("get_object", Params={"Bucket": bucket, "Key": k}, ExpiresIn=6 * 3600)
+        lines.append(f"curl -sf -o {rdir}/{rel} {shlex.quote(g)} &")
+        if i % 32 == 31:
+            lines.append("wait")
+    lines += ["wait", f"du -sh {rdir}/logs {rdir}/dense; ls {rdir}/logs | wc -l; ls {rdir}/dense | wc -l"]
+    script = REPO / "runs" / "pod" / "data.sh"
+    script.parent.mkdir(parents=True, exist_ok=True)
+    script.write_text("\n".join(lines) + "\n")
+    script.chmod(0o600)
+    rsync_to([script], "/workspace/data.sh")
+    script.unlink()
+    t0 = time.time()
+    out = run("bash /workspace/data.sh && rm /workspace/data.sh", capture=True)
+    log(f"{len(objs)} files from S3 on pod in {time.time() - t0:.0f}s:\n{out.strip()}")
+
+
 def cmd_push(a):
     """A corpus generated ON the pod -> S3 (logs and dense), via presigned PUTs,
     then verified: every object's size in S3 must equal the file on the pod."""
@@ -312,6 +345,20 @@ def cmd_push(a):
 
 # --- training -----------------------------------------------------------------
 
+def s3_upload_policy(run: str, days: float = 7.0) -> dict:
+    """A presigned S3 POST policy that lets a pod upload anything under
+    moba/runs/<run>/ (and nothing else) for `days`, without holding credentials."""
+    c, bucket = s3()
+    prefix = f"{S3_PREFIX}/runs/{run}/"
+    secs = int(days * 86400)
+    post = c.generate_presigned_post(bucket, prefix + "${filename}",
+                                     Conditions=[["starts-with", "$key", prefix],
+                                                 ["content-length-range", 0, 20 * 1024 ** 3]],
+                                     ExpiresIn=secs)
+    fields = {k: v for k, v in post["fields"].items() if k != "key"}
+    return dict(url=post["url"], fields=fields, prefix=prefix, bucket=bucket, expires=time.time() + secs - 60)
+
+
 def cmd_train(a):
     push_code()
     wandb_key = secrets.get("WANDB_API_KEY")
@@ -322,6 +369,16 @@ def cmd_train(a):
         rsync_to([sec], f"{R_REPO}/.pod_secrets")
         sec.unlink()
     out = f"runs/token_wm/{a.name}"
+    # automatic off-pod persistence: the trainer uploads every checkpoint/log to S3 (mobawm/s3persist.py)
+    pol = REPO / "runs" / "pod" / ".s3_policy.json"
+    pol.write_text(json.dumps(s3_upload_policy(a.name)))
+    pol.chmod(0o600)
+    run(f"mkdir -p {R_REPO}/{out}")
+    rsync_to([pol], f"{R_REPO}/{out}/.s3_policy.json")
+    pol.unlink()
+    run(f"chmod 600 {R_REPO}/{out}/.s3_policy.json")
+    log(f"S3 persistence: every checkpoint/log -> s3://{secrets.get('S3_BUCKET')}/{S3_PREFIX}/runs/{a.name}/ "
+        f"(upload policy valid 7 days)")
     args = " ".join(shlex.quote(x) for x in a.train_args)
     launch = (f"cd {R_REPO} && mkdir -p {out} && [ -f .pod_secrets ] && . ./.pod_secrets; "
               f"python -u -m mobawm.wm.train --out {out} {args} 2>&1 | tee {out}/train.log")
@@ -348,6 +405,42 @@ def cmd_sync(a):
     log(f"synced -> {dest}")
 
 
+def cmd_s3renew(a):
+    """Push a fresh 7-day upload policy to a running run (the uploader re-reads it per file)."""
+    pol = REPO / "runs" / "pod" / ".s3_policy.json"
+    pol.write_text(json.dumps(s3_upload_policy(a.name)))
+    pol.chmod(0o600)
+    rsync_to([pol], f"{R_REPO}/runs/token_wm/{a.name}/.s3_policy.json")
+    pol.unlink()
+    log(f"renewed S3 upload policy for {a.name} (7 days)")
+
+
+def cmd_s3ls(a):
+    """What a run has persisted to S3 (key, size, time)."""
+    c, bucket = s3()
+    prefix = f"{S3_PREFIX}/runs/{a.name}/"
+    rows = [o for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix)
+            for o in p.get("Contents", [])]
+    for o in sorted(rows, key=lambda o: o["Key"]):
+        print(f"{o['LastModified']:%Y-%m-%d %H:%M}  {o['Size'] / 1e6:9.2f} MB  {o['Key']}")
+    print(f"{len(rows)} objects under s3://{bucket}/{prefix}")
+
+
+def cmd_s3pull(a):
+    """Download a run's persisted files from S3 to runs/token_wm/<name>/."""
+    c, bucket = s3()
+    prefix = f"{S3_PREFIX}/runs/{a.name}/"
+    dest = REPO / "runs" / "token_wm" / a.name
+    n = 0
+    for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix):
+        for o in p.get("Contents", []):
+            f = dest / o["Key"][len(prefix):]
+            f.parent.mkdir(parents=True, exist_ok=True)
+            c.download_file(bucket, o["Key"], str(f))
+            n += 1
+    log(f"{n} files -> {dest}")
+
+
 def cmd_ssh(a):
     print(run(" ".join(a.command), capture=True, check=False))
 
@@ -366,6 +459,9 @@ def main():
     p = sub.add_parser("status"); p.add_argument("name", nargs="?"); p.add_argument("--lines", type=int, default=15)
     sub.add_parser("sync")
     p = sub.add_parser("ssh"); p.add_argument("command", nargs=argparse.REMAINDER)
+    p = sub.add_parser("s3ls"); p.add_argument("name")
+    p = sub.add_parser("s3renew"); p.add_argument("name")
+    p = sub.add_parser("s3pull"); p.add_argument("name")
     a = ap.parse_args()
     if a.cmd == "train" and a.train_args and a.train_args[0] == "--":
         a.train_args = a.train_args[1:]

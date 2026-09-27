@@ -1,0 +1,15 @@
+{
+  "games_per_cell": 10,
+  "max_ticks": 6000,
+  "opponents": [
+    "net",
+    "script"
+  ],
+  "policy": "runs/dream_ppo/sweep1_gpu/lr3e-4_mb2/policy.pt",
+  "seeds": "50000000+",
+  "teams": [
+    "ppo",
+    "random",
+    "net"
+  ]
+}

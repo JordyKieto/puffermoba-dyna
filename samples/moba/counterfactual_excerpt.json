@@ -1,0 +1,78 @@
+{
+ "source": "moba/moba_fork.c via mobawm/wm/cf.py: mix100 log game 0 (a TRAINING game), fork at record 388, K=7, edit_seed=1, check=1 (sibling 0 through the fork path reproduced the real step byte-for-byte)",
+ "arrays": {
+  "ent_in": "(206, 26) the real state S_t",
+  "ent_next": "(8, 206, 26) next state per sibling; sibling 0 = the recorded actions (the real game)",
+  "actions": "(8, 10, 6) action heads per sibling",
+  "codes": "(8, 10) packed action codes",
+  "edit_hero": "(8,) hero whose action was edited (-1 for sibling 0)",
+  "edit_head": "(8,) edited head 0..5 (-1 for sibling 0)"
+ },
+ "siblings_whose_next_state_differs_from_real": [
+  false,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false
+ ],
+ "entity_fields": [
+  "alive",
+  "x",
+  "y",
+  "health",
+  "max_health",
+  "mana",
+  "max_mana",
+  "damage",
+  "level",
+  "xp",
+  "move_modifier",
+  "stun_timer",
+  "move_timer",
+  "q_timer",
+  "w_timer",
+  "e_timer",
+  "basic_attack_timer",
+  "is_hit",
+  "waypoint",
+  "target_pid",
+  "team",
+  "grid_id",
+  "lane",
+  "entity_type",
+  "basic_attack_cd",
+  "xp_on_kill"
+ ],
+ "entity_slots": {
+  "heroes": [
+   0,
+   9
+  ],
+  "creeps": [
+   10,
+   109
+  ],
+  "neutrals": [
+   110,
+   181
+  ],
+  "towers": [
+   182,
+   203
+  ],
+  "ancients": [
+   204,
+   205
+  ]
+ },
+ "action_heads": [
+  "move_y (0..6, 3 = still)",
+  "move_x (0..6, 3 = still)",
+  "target mode (0..2)",
+  "Q (0/1)",
+  "W (0/1)",
+  "E (0/1)"
+ ]
+}

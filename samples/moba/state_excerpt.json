@@ -1,0 +1,68 @@
+{
+ "source": "data/moba/mix1k/dense/games.0000900.mbs, game 0 (global game 900, held out from every mix1k run), records 500..515; regenerate: .venv/bin/python scripts/moba/make_samples.py",
+ "arrays": {
+  "entity": "(16, 206, 26) float32: [tick, entity slot, field]",
+  "actions": "(16, 10, 6) uint8: [tick, hero, head] -- the action taken FROM that tick",
+  "tick": "(16,) game tick",
+  "creep_idx": "(16,) next creep slot a wave reuses"
+ },
+ "entity_fields": [
+  "alive",
+  "x",
+  "y",
+  "health",
+  "max_health",
+  "mana",
+  "max_mana",
+  "damage",
+  "level",
+  "xp",
+  "move_modifier",
+  "stun_timer",
+  "move_timer",
+  "q_timer",
+  "w_timer",
+  "e_timer",
+  "basic_attack_timer",
+  "is_hit",
+  "waypoint",
+  "target_pid",
+  "team",
+  "grid_id",
+  "lane",
+  "entity_type",
+  "basic_attack_cd",
+  "xp_on_kill"
+ ],
+ "entity_slots": {
+  "heroes": [
+   0,
+   9
+  ],
+  "creeps": [
+   10,
+   109
+  ],
+  "neutrals": [
+   110,
+   181
+  ],
+  "towers": [
+   182,
+   203
+  ],
+  "ancients": [
+   204,
+   205
+  ]
+ },
+ "action_heads": [
+  "move_y (0..6, 3 = still)",
+  "move_x (0..6, 3 = still)",
+  "target mode (0..2)",
+  "Q (0/1)",
+  "W (0/1)",
+  "E (0/1)"
+ ],
+ "hero_classes_by_slot": "slot % 5: 0 support, 1 assassin, 2 burst, 3 tank, 4 carry; slots 0-4 radiant, 5-9 dire"
+}

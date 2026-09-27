@@ -1,0 +1,1133 @@
+[
+ {
+  "project": "moba-dream-rl",
+  "run_id": "x18k5q1z",
+  "name": "P0-first-5min/e5_selfplay_5min",
+  "group": "P0-first-5min",
+  "tags": [
+   "5min",
+   "dream-ppo",
+   "mps",
+   "self-play"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:34Z",
+  "history_rows": 31,
+  "max_step": 31,
+  "dir": "results/moba/x18k5q1z/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "is9phlur",
+  "name": "P1-sweep-mac/lr3e-4_mb10",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:39Z",
+  "history_rows": 2,
+  "max_step": 2,
+  "dir": "results/moba/is9phlur/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "jd4ghbkn",
+  "name": "P1-sweep-mac/lr1e-3_mb10",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:41Z",
+  "history_rows": 4,
+  "max_step": 4,
+  "dir": "results/moba/jd4ghbkn/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "za7afmv0",
+  "name": "P1-sweep-mac/lr3e-3_mb10",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:44Z",
+  "history_rows": 5,
+  "max_step": 5,
+  "dir": "results/moba/za7afmv0/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "8z73kb8d",
+  "name": "P1-sweep-mac/lr3e-4_mb2",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:46Z",
+  "history_rows": 6,
+  "max_step": 6,
+  "dir": "results/moba/8z73kb8d/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "f5m7o9fk",
+  "name": "P1-sweep-mac/lr1e-3_mb2",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:48Z",
+  "history_rows": 4,
+  "max_step": 4,
+  "dir": "results/moba/f5m7o9fk/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "s978nel3",
+  "name": "P1-sweep-mac/lr3e-3_mb2",
+  "group": "P1-sweep-mac",
+  "tags": [
+   "dream-ppo",
+   "inconclusive",
+   "mps",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:50Z",
+  "history_rows": 6,
+  "max_step": 6,
+  "dir": "results/moba/s978nel3/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "cfuvqm95",
+  "name": "P1-sweep-h200/lr3e-4_mb10",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:52Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/cfuvqm95/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "k8m39dqw",
+  "name": "P1-sweep-h200/lr1e-3_mb10",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:54Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/k8m39dqw/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "3xhtvpo3",
+  "name": "P1-sweep-h200/lr3e-3_mb10",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:56Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/3xhtvpo3/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "v22f5ut6",
+  "name": "P1-sweep-h200/lr3e-4_mb2",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "arena-evaluated",
+   "best-sweep",
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:58Z",
+  "history_rows": 30,
+  "max_step": 30,
+  "dir": "results/moba/v22f5ut6/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "m4zqm6gl",
+  "name": "P1-sweep-h200/lr1e-3_mb2",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:17:01Z",
+  "history_rows": 30,
+  "max_step": 30,
+  "dir": "results/moba/m4zqm6gl/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "xegabn7s",
+  "name": "P1-sweep-h200/lr3e-3_mb2",
+  "group": "P1-sweep-h200",
+  "tags": [
+   "dream-ppo",
+   "h200",
+   "sweep"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:17:03Z",
+  "history_rows": 31,
+  "max_step": 31,
+  "dir": "results/moba/xegabn7s/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "81jwi4lw",
+  "name": "P2-arena-real/lr3e-4_mb2",
+  "group": "P2-arena-real",
+  "tags": [
+   "arena",
+   "negative-result",
+   "real-game"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-27T20:17:05Z",
+  "history_rows": 1,
+  "max_step": 0,
+  "dir": "results/moba/81jwi4lw/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "vuzjgdh8",
+  "name": "smoke",
+  "group": "E1-smoke",
+  "tags": [
+   "crashed",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-25T15:14:24Z",
+  "history_rows": 33,
+  "max_step": 1650,
+  "dir": "results/moba/vuzjgdh8/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "ox4cx47i",
+  "name": "smoke2",
+  "group": "E1-smoke",
+  "tags": [
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T15:31:09Z",
+  "history_rows": 49,
+  "max_step": 2357,
+  "dir": "results/moba/ox4cx47i/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "asdg1vl1",
+  "name": "e2_mix1k",
+  "group": "E2-mix1k",
+  "tags": [
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T15:51:03Z",
+  "history_rows": 93,
+  "max_step": 8826,
+  "dir": "results/moba/asdg1vl1/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "65j98z3b",
+  "name": "e3b_gate_events",
+  "group": "E3-gate-events",
+  "tags": [
+   "finished",
+   "gate",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T16:55:14Z",
+  "history_rows": 50,
+  "max_step": 925,
+  "dir": "results/moba/65j98z3b/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "s3ilbx02",
+  "name": "e3c_gate_events_30m",
+  "group": "E3-gate-events",
+  "tags": [
+   "crashed",
+   "gate",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-25T17:16:57Z",
+  "history_rows": 19,
+  "max_step": 360,
+  "dir": "results/moba/s3ilbx02/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "keml5co6",
+  "name": "ablate1/base",
+  "group": "ablate1",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:27:08Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/keml5co6/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "w81ztqe1",
+  "name": "ablate1/gate",
+  "group": "ablate1",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:27:10Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/w81ztqe1/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "7i1bc8h1",
+  "name": "ablate1/events",
+  "group": "ablate1",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:27:11Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/7i1bc8h1/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "g2s0fw5b",
+  "name": "ablate1/both",
+  "group": "ablate1",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:27:13Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/g2s0fw5b/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "hzfww4fq",
+  "name": "ablate2/gate",
+  "group": "ablate2",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:39:20Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/hzfww4fq/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "xf86jh71",
+  "name": "ablate2/gate_sparse",
+  "group": "ablate2",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:39:22Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/xf86jh71/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "n72c9arl",
+  "name": "ablate3/base",
+  "group": "ablate3",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:47:11Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/n72c9arl/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "f27oe7ua",
+  "name": "ablate3/gate_sparse",
+  "group": "ablate3",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T17:47:13Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/f27oe7ua/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "h05zmfas",
+  "name": "ablate4/gate",
+  "group": "ablate4",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:07:36Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/h05zmfas/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "tfqf37c4",
+  "name": "ablate4/gate_acttok",
+  "group": "ablate4",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:07:38Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/tfqf37c4/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "9w006g5i",
+  "name": "ablate5/gate",
+  "group": "ablate5",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:14:45Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/9w006g5i/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "vhmcuwt8",
+  "name": "ablate5/gate_acttok",
+  "group": "ablate5",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:14:47Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/vhmcuwt8/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "5w3hyjuf",
+  "name": "ablate6/gate",
+  "group": "ablate6",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:24:57Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/5w3hyjuf/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "5iseh7pd",
+  "name": "ablate6/gate_geo",
+  "group": "ablate6",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:24:59Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/5iseh7pd/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "dozqrddd",
+  "name": "ablate7/gate",
+  "group": "ablate7",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:48:05Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/dozqrddd/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "a0vpqhan",
+  "name": "ablate7/gate_navgrid",
+  "group": "ablate7",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T18:48:07Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/a0vpqhan/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "reyutank",
+  "name": "ablate8/gate",
+  "group": "ablate8",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T19:01:54Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/reyutank/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "lvp0t0uv",
+  "name": "ablate8/gate_navgrid",
+  "group": "ablate8",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T19:01:57Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/lvp0t0uv/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "zocfv63h",
+  "name": "ablate9/gate",
+  "group": "ablate9",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:17:53Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/zocfv63h/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "pcrr6ueq",
+  "name": "ablate9/gate_sparse_w02",
+  "group": "ablate9",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:17:55Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/pcrr6ueq/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "c2323b2c",
+  "name": "ablate10/gate",
+  "group": "ablate10",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:23:18Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/c2323b2c/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "df2xa33n",
+  "name": "ablate10/gate_sparse_w02_all",
+  "group": "ablate10",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:23:20Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/df2xa33n/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "z4zubgyi",
+  "name": "ablate11/baseline",
+  "group": "ablate11",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:39:12Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/z4zubgyi/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "d9wt9o3m",
+  "name": "ablate11/walk_only",
+  "group": "ablate11",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:39:14Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/d9wt9o3m/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "nftcgz9b",
+  "name": "ablate11/hero_mlp",
+  "group": "ablate11",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:39:15Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/nftcgz9b/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "xuyg2lxm",
+  "name": "ablate12/baseline",
+  "group": "ablate12",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:44:48Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/xuyg2lxm/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "m8pdx9e0",
+  "name": "ablate12/walk_x5",
+  "group": "ablate12",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:44:49Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/m8pdx9e0/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "bm7n9zbs",
+  "name": "ablate12/walk_x10",
+  "group": "ablate12",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:44:51Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/bm7n9zbs/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "wchqlcbl",
+  "name": "ablate13/baseline",
+  "group": "ablate13",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:55:33Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/wchqlcbl/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "j28yhg5m",
+  "name": "ablate13/health_x5",
+  "group": "ablate13",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:55:36Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/j28yhg5m/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "5zo09bip",
+  "name": "ablate13/health_x10",
+  "group": "ablate13",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T21:55:38Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/5zo09bip/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "bue3josf",
+  "name": "ablate14/baseline",
+  "group": "ablate14",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:02:53Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/bue3josf/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "j2mh1iq9",
+  "name": "ablate14/health_only",
+  "group": "ablate14",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:02:55Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/j2mh1iq9/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "cea4gvtn",
+  "name": "ablate14/health_only_ungated",
+  "group": "ablate14",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:02:56Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/cea4gvtn/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "vrlp1k5s",
+  "name": "ablate15/baseline",
+  "group": "ablate15",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:10:16Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/vrlp1k5s/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "2l6l82m6",
+  "name": "ablate15/baseline_regen",
+  "group": "ablate15",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:10:18Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/2l6l82m6/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "onfo6b16",
+  "name": "ablate16/baseline",
+  "group": "ablate16",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:16:24Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/onfo6b16/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "op29gl9b",
+  "name": "ablate16/baseline_regen",
+  "group": "ablate16",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:16:26Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/op29gl9b/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "nbx52pdu",
+  "name": "ablate16/regen_ungated_hm",
+  "group": "ablate16",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:16:27Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/nbx52pdu/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "rc52mkmp",
+  "name": "ablate17/baseline_regen",
+  "group": "ablate17",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:24:47Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/rc52mkmp/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "ewjtpj1d",
+  "name": "ablate17/regen_cast",
+  "group": "ablate17",
+  "tags": [
+   "ablation-5min",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:24:48Z",
+  "history_rows": 34,
+  "max_step": 162,
+  "dir": "results/moba/ewjtpj1d/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "kxe2bh1k",
+  "name": "e4_baseline_v2_1h",
+  "group": "E4-baseline-v2",
+  "tags": [
+   "baseline-v2",
+   "final-ckpt-lost",
+   "finished",
+   "teacher-forced",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-25T22:52:02Z",
+  "history_rows": 81,
+  "max_step": 3879,
+  "dir": "results/moba/kxe2bh1k/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "zll4trqi",
+  "name": "e5_rollout",
+  "group": "E5-rollout",
+  "tags": [
+   "aborted",
+   "rollout",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-25T23:56:12Z",
+  "history_rows": 0,
+  "max_step": 0,
+  "dir": "results/moba/zll4trqi/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "93m7sktq",
+  "name": "e5_rollout",
+  "group": "E5-rollout",
+  "tags": [
+   "baseline-v2",
+   "main",
+   "rollout",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-25T23:59:56Z",
+  "history_rows": 416,
+  "max_step": 20750,
+  "dir": "results/moba/93m7sktq/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "uo6sal6q",
+  "name": "e6_cf",
+  "group": "E6-counterfactual",
+  "tags": [
+   "counterfactual",
+   "replaced",
+   "rollout",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-26T01:16:26Z",
+  "history_rows": 4,
+  "max_step": 75,
+  "dir": "results/moba/uo6sal6q/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "d9xnnj0a",
+  "name": "e6b_cf_effect",
+  "group": "E6-counterfactual",
+  "tags": [
+   "counterfactual",
+   "effect-loss",
+   "main",
+   "rollout",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-26T01:28:03Z",
+  "history_rows": 143,
+  "max_step": 3550,
+  "dir": "results/moba/d9xnnj0a/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "hm9mnnoy",
+  "name": "e5_rollout_cont",
+  "group": "E5-rollout",
+  "tags": [
+   "oom",
+   "rollout",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-27T03:20:49Z",
+  "history_rows": 1,
+  "max_step": 0,
+  "dir": "results/moba/hm9mnnoy/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "soeosr9h",
+  "name": "e5_rollout_cont",
+  "group": "E5-rollout",
+  "tags": [
+   "ckpts-lost",
+   "rollout",
+   "store-cpu",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-27T04:53:07Z",
+  "history_rows": 35,
+  "max_step": 1700,
+  "dir": "results/moba/soeosr9h/"
+ }
+]

@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/op29gl9b",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/op29gl9b",
+  "name": "ablate16/baseline_regen",
+  "group": "ablate16",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate16/baseline_regen. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T22:16:26Z",
+  "heartbeat_at": "2026-09-25T22:20:14Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

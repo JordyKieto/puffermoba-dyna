@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/x18k5q1z",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/x18k5q1z",
+  "name": "P0-first-5min/e5_selfplay_5min",
+  "group": "P0-first-5min",
+  "tags": [
+    "5min",
+    "dream-ppo",
+    "mps",
+    "self-play"
+  ],
+  "notes": "Backfilled from runs/dream_ppo/e5_selfplay_5min/log.jsonl (the run logged locally only). docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T20:16:34Z",
+  "heartbeat_at": "2026-09-27T20:16:35Z",
+  "exported_rows": 31,
+  "max_step": 31
+}

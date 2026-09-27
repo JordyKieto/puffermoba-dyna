@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/vhmcuwt8",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/vhmcuwt8",
+  "name": "ablate5/gate_acttok",
+  "group": "ablate5",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate5/gate_acttok. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T18:14:47Z",
+  "heartbeat_at": "2026-09-25T18:17:37Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

@@ -24,6 +24,42 @@ Run everything from the repo with the project venv (it has boto3 and requests):
 `runs/token_wm/NAME/launch.sh` on the pod, and starts it in tmux session
 `NAME`. Output goes to `runs/token_wm/NAME/{train.log,log.jsonl,report.json,model.pt}`.
 
+## Checkpoints are uploaded to S3 automatically
+
+Every run launched with `tools/pod.py train NAME` uploads its files to
+`s3://puffertank/moba/runs/NAME/` **as they are written**:
+- `stats.pt` at the start;
+- `model.pt`, `log.jsonl` and `train.log` at every validation;
+- every numbered `model_<update>.pt`;
+- the final `report.json`.
+
+Nothing depends on the pod still existing afterwards.
+
+- **No AWS credentials on the pod.** At launch the Mac signs one S3 POST
+  policy that only allows uploads under `moba/runs/NAME/`, valid 7 days, and
+  copies it to the pod as `runs/token_wm/NAME/.s3_policy.json` (mode 600).
+  `mobawm/s3persist.py` uploads with it.
+- **Verified.** Each upload's S3 ETag (the object's MD5) must equal the local
+  file's MD5. The train log shows `S3 ok <key>` or `S3 FAILED <key>` for every
+  file.
+- **Runs longer than 7 days:** run `tools/pod.py s3renew NAME` to push a fresh
+  policy. The uploader re-reads it for every file, so no restart is needed.
+
+| command | does |
+|---|---|
+| `tools/pod.py s3ls NAME` | list what a run has persisted (key, size, time) |
+| `tools/pod.py s3pull NAME` | download it to `runs/token_wm/NAME/` |
+| `tools/pod.py s3renew NAME` | new 7-day upload policy for a running run |
+
+**Tested 2026-09-27:** uploads without credentials, MD5 verified, and an
+upload outside the run's prefix was refused (403).
+
+**Why:** on 2026-09-27 the pods were deleted externally, and the checkpoints
+that existed only on pod disks were lost. That included E5's numbered
+checkpoints, E4's final checkpoint and the whole E5 continuation. The runs
+that survived (on the Mac) were backed up to `moba/runs/`: `e4_baseline_v2_1h`,
+`e5_rollout`, `e5_rollout_at3500`, `e6b_cf_effect`.
+
 ## Why this shape
 
 - **Pod size.** The full-state entity tensor is 206 × 26 fp32 = 21 KB per

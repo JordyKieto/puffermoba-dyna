@@ -1,0 +1,22 @@
+{
+  "batch": 64,
+  "burn": 4,
+  "d": 128,
+  "data": "data/moba/mix100/dense",
+  "device": "cuda",
+  "eval_batches": 8,
+  "heads": 4,
+  "held_games": "91-99",
+  "held_steps": 21744,
+  "layers": 2,
+  "log_every": 50,
+  "lr": 0.0003,
+  "minutes": 10,
+  "out": "runs/token_wm/smoke",
+  "params": 656952,
+  "rollouts": 16,
+  "train_games": "0-90",
+  "train_steps": 234305,
+  "wandb": true,
+  "window": 16
+}

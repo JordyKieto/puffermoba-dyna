@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/zll4trqi",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/zll4trqi",
+  "name": "e5_rollout",
+  "group": "E5-rollout",
+  "tags": [
+    "aborted",
+    "rollout",
+    "wm"
+  ],
+  "notes": "E5 first launch (30-min budget), aborted before training. docs/moba/experiments/E5-rollout-training.md",
+  "state": "crashed",
+  "created_at": "2026-09-25T23:56:12Z",
+  "heartbeat_at": "2026-09-25T23:56:13Z",
+  "exported_rows": 0,
+  "max_step": 0
+}

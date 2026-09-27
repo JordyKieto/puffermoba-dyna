@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/reyutank",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/reyutank",
+  "name": "ablate8/gate",
+  "group": "ablate8",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate8/gate. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T19:01:54Z",
+  "heartbeat_at": "2026-09-25T19:07:11Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

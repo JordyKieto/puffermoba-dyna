@@ -1,0 +1,192 @@
+{
+ "note": "Checkpoints are NOT committed (gitignored). This manifest identifies them by md5 so a file found later can be matched to a run. Durable copies: the s3 key per entry (ETag == md5 checked). Provenance: docs/moba/PROVENANCE.md.",
+ "artifacts": [
+  {
+   "name": "wm/E4_baseline_v2_u3000",
+   "path": "runs/token_wm/e4_baseline_v2_1h/model.pt",
+   "present": true,
+   "wandb_run": "kxe2bh1k",
+   "description": "E4 teacher-forced baseline v2, pulled mid-run (~update 3,000 of 3,877). The final checkpoint was lost with the pod.",
+   "bytes": 2673474,
+   "md5": "b66fae7234b93935092bebd694f42235",
+   "s3": "s3://puffertank/moba/runs/e4_baseline_v2_1h/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E4_stats",
+   "path": "runs/token_wm/e4_baseline_v2_1h/stats.pt",
+   "present": true,
+   "wandb_run": "kxe2bh1k",
+   "description": "E4 stats + model config (shared by E5/E6).",
+   "bytes": 7994,
+   "md5": "7c1a1c5b9942a675848eec5a1a2b6a77",
+   "s3": "s3://puffertank/moba/runs/e4_baseline_v2_1h/stats.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E5_rollout_u3500",
+   "path": "runs/token_wm/e5_rollout_at3500/model.pt",
+   "present": true,
+   "wandb_run": "93m7sktq",
+   "description": "E5 at update 3,500: the starting point of E6/E6b.",
+   "bytes": 2673474,
+   "md5": "a4992005f6d50a52ff62cfa543bdf94c",
+   "s3": "s3://puffertank/moba/runs/e5_rollout_at3500/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E5_rollout_u20500",
+   "path": "runs/token_wm/e5_rollout/model.pt",
+   "present": true,
+   "wandb_run": "93m7sktq",
+   "description": "E5 final kept checkpoint, update 20,500 (the best surviving world model for long horizons).",
+   "bytes": 2673474,
+   "md5": "a61d64aed9c2715ffbf73962aed58ad1",
+   "s3": "s3://puffertank/moba/runs/e5_rollout/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E5_stats",
+   "path": "runs/token_wm/e5_rollout/stats.pt",
+   "present": true,
+   "wandb_run": "93m7sktq",
+   "description": "E5 stats + config.",
+   "bytes": 7994,
+   "md5": "7c1a1c5b9942a675848eec5a1a2b6a77",
+   "s3": "s3://puffertank/moba/runs/e5_rollout/stats.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E6b_u1000",
+   "path": "runs/token_wm/e6b_cf_effect/model_001000.pt",
+   "present": true,
+   "wandb_run": "d9xnnj0a",
+   "description": "E6b counterfactual + effect losses, update 1,000.",
+   "bytes": 2679074,
+   "md5": "56e8acb31a0e3fed2f4d2e834ab525bb",
+   "s3": "s3://puffertank/moba/runs/e6b_cf_effect/model_001000.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E6b_u2000",
+   "path": "runs/token_wm/e6b_cf_effect/model_002000.pt",
+   "present": true,
+   "wandb_run": "d9xnnj0a",
+   "description": "E6b, update 2,000.",
+   "bytes": 2679074,
+   "md5": "8cfd5945017c9ab1281cb1da8417e7d7",
+   "s3": "s3://puffertank/moba/runs/e6b_cf_effect/model_002000.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E6b_u3000",
+   "path": "runs/token_wm/e6b_cf_effect/model_003000.pt",
+   "present": true,
+   "wandb_run": "d9xnnj0a",
+   "description": "E6b, update 3,000.",
+   "bytes": 2679074,
+   "md5": "8880a501c96c9dbca9748bfac89f252e",
+   "s3": "s3://puffertank/moba/runs/e6b_cf_effect/model_003000.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/E6b_u3500",
+   "path": "runs/token_wm/e6b_cf_effect/model.pt",
+   "present": true,
+   "wandb_run": "d9xnnj0a",
+   "description": "E6b final kept checkpoint, update 3,500.",
+   "bytes": 2673474,
+   "md5": "98e71c23a57ec6da1dbca0d42b5eb83e",
+   "s3": "s3://puffertank/moba/runs/e6b_cf_effect/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P0_first_5min",
+   "path": "runs/dream_ppo/e5_selfplay_5min/policy.pt",
+   "present": true,
+   "wandb_run": "x18k5q1z",
+   "description": "first dream self-play policy, 5 min on the Mac.",
+   "bytes": 4028557,
+   "md5": "9af7af55dec6311b97808601dfbbd0eb",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/e5_selfplay_5min/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr3e-4_mb2",
+   "path": "runs/dream_ppo/sweep1_gpu/lr3e-4_mb2/policy.pt",
+   "present": true,
+   "wandb_run": "v22f5ut6",
+   "description": "best dream-PPO sweep policy (reward slope); evaluated in the real game: 0 wins, below random (P2).",
+   "bytes": 4028482,
+   "md5": "6c4aeb7e8d3241a0e9eb13911aff8697",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr3e-4_mb2/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr3e-4_mb10",
+   "path": "runs/dream_ppo/sweep1_gpu/lr3e-4_mb10/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "dream-PPO sweep config lr3e-4_mb10, final policy.",
+   "bytes": 4028482,
+   "md5": "9c45e7ed25242695fb1b8edc112bba66",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr3e-4_mb10/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr1e-3_mb10",
+   "path": "runs/dream_ppo/sweep1_gpu/lr1e-3_mb10/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "dream-PPO sweep config lr1e-3_mb10, final policy.",
+   "bytes": 4028482,
+   "md5": "7316f91e0bfde786716eb6fdf9f309e7",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr1e-3_mb10/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr3e-3_mb10",
+   "path": "runs/dream_ppo/sweep1_gpu/lr3e-3_mb10/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "dream-PPO sweep config lr3e-3_mb10, final policy.",
+   "bytes": 4028482,
+   "md5": "f4c2e4acb9e3ed28ef8de88a4e0a0f9f",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr3e-3_mb10/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr1e-3_mb2",
+   "path": "runs/dream_ppo/sweep1_gpu/lr1e-3_mb2/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "dream-PPO sweep config lr1e-3_mb2, final policy.",
+   "bytes": 4028482,
+   "md5": "d3448c6762ba742560d62b724afa0462",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr1e-3_mb2/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P1_h200_lr3e-3_mb2",
+   "path": "runs/dream_ppo/sweep1_gpu/lr3e-3_mb2/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "dream-PPO sweep config lr3e-3_mb2, final policy.",
+   "bytes": 4028482,
+   "md5": "b65dc1d767e9f3185fcfdb9855285849",
+   "s3": "s3://puffertank/moba/runs/dream_ppo/sweep1_gpu/lr3e-3_mb2/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260927_1323",
+   "path": "runs/code_snapshots/code_snapshot_20260927_1323.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of every uncommitted source file behind E5-continuation/E6/E6b/dream-PPO/arena/S3-persistence (git HEAD dad8c7e + the tracked diff + untracked files), taken 2026-09-27 because that code is deliberately not committed yet (docs/moba/EVIDENCE_RULES.md).",
+   "bytes": 82650,
+   "md5": "6975755a1b7ed7a47cf209fd5167202c",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260927_1323.tar.gz",
+   "s3_byte_identical": true
+  }
+ ]
+}

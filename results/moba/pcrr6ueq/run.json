@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/pcrr6ueq",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/pcrr6ueq",
+  "name": "ablate9/gate_sparse_w02",
+  "group": "ablate9",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate9/gate_sparse_w02. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T21:17:55Z",
+  "heartbeat_at": "2026-09-25T21:20:19Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/81jwi4lw",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/81jwi4lw",
+  "name": "P2-arena-real/lr3e-4_mb2",
+  "group": "P2-arena-real",
+  "tags": [
+    "arena",
+    "negative-result",
+    "real-game"
+  ],
+  "notes": "Dream-trained policy in the real C game: 0 wins, below the untrained policy. docs/moba/experiments/E7-dream-ppo.md",
+  "state": "finished",
+  "created_at": "2026-09-27T20:17:05Z",
+  "heartbeat_at": "2026-09-27T20:17:09Z",
+  "exported_rows": 1,
+  "max_step": 0
+}

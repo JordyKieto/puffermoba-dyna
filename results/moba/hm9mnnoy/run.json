@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/hm9mnnoy",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/hm9mnnoy",
+  "name": "e5_rollout_cont",
+  "group": "E5-rollout",
+  "tags": [
+    "oom",
+    "rollout",
+    "wm"
+  ],
+  "notes": "E5 continuation on H100 NVL; OOM before training (fixed by --store-cpu). docs/moba/experiments/E5-rollout-training.md",
+  "state": "failed",
+  "created_at": "2026-09-27T03:20:49Z",
+  "heartbeat_at": "2026-09-27T03:21:20Z",
+  "exported_rows": 1,
+  "max_step": 0
+}

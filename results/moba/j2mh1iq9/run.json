@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/j2mh1iq9",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/j2mh1iq9",
+  "name": "ablate14/health_only",
+  "group": "ablate14",
+  "tags": [
+    "ablation-5min",
+    "finished",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "5-minute A/B ablation ablate14/health_only. docs/moba/EXPERIMENTS.md (legacy log), ablation rounds",
+  "state": "finished",
+  "created_at": "2026-09-25T22:02:55Z",
+  "heartbeat_at": "2026-09-25T22:06:22Z",
+  "exported_rows": 34,
+  "max_step": 162
+}

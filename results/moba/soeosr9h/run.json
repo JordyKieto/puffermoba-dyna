@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/soeosr9h",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/soeosr9h",
+  "name": "e5_rollout_cont",
+  "group": "E5-rollout",
+  "tags": [
+    "ckpts-lost",
+    "rollout",
+    "store-cpu",
+    "wm"
+  ],
+  "notes": "E5 continuation from 20,500 (steps restart at 0 = E5 20,500+), H100 NVL, --store-cpu. Pod deleted externally at ~1,700: ALL checkpoints lost; metrics survive here only. docs/moba/experiments/E5-rollout-training.md",
+  "state": "crashed",
+  "created_at": "2026-09-27T04:53:07Z",
+  "heartbeat_at": "2026-09-27T05:49:07Z",
+  "exported_rows": 35,
+  "max_step": 1700
+}

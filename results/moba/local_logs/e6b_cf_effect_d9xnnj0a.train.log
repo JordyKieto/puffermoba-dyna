@@ -1,0 +1,363 @@
+loading from data/moba/mix1k/dense (100 files) ...
+decompress + store 120.7s, fit_stats 0.0s
+train 900 games / 2395549 steps (51.52 GB on cuda); held-out 100 games / 267768 steps; loaded in 121s
+/workspace/puffertank/mobawm/wm/train.py:901: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(init / "model.pt" if init.is_dir() else init, map_location=dev))
+continuing from runs/token_wm/e5_rollout_at3500
+model: 0.66M params
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run d9xnnj0a
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /workspace/puffertank/wandb/run-20260926_012803-d9xnnj0a
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run e6b_cf_effect
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-wm
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-wm/runs/d9xnnj0a
+CFStream: 11 workers x 3 slabs x 539 fork points x 8 siblings (5.0 GB shared)
+    HELD-OUT loss by horizon:  h1 2.192  h4 5.134  h16 10.782  h64 27.467  h256 40.999  h1024 63.962  h4096 58.591
+         hero pos L1 (cells):  h1 1.7  h4 2.8  h16 4.2  h64 8.6  h256 8.8  h1024 9.4  h4096 9.0
+VAL it      0  loss 2.9809  | hero 1.784  creep 1.025  neutral 0.117  tower 0.055
+    hero better-than-copy / action-dependence: walking -82%/+85%  attack +15%/+36%  q -36%/+230%  w -65%/+313%  e -98%/+232%  mana -45%/+284%  health -74%/+58%  | deaths recall 33%
+it     25  loss 23.4901  | hero 10.311  creep 6.784  neutral 0.634  tower 0.292  | grad 4.38  0.23 it/s  110s  | cf loss 5.469  7741 cf samples/s  wait 0%
+    cf sibling loss 2.456  effect 2.874  noeffect 0.0002  affected 0.693 (F1 30%)  | effect explained: move_y +17%  move_x +11%  attack +1%  q +1%  w +0%  e +0%
+it     50  loss 21.6223  | hero 8.659  creep 6.998  neutral 0.697  tower 0.300  | grad 6.64  0.23 it/s  221s  | cf loss 4.968  7723 cf samples/s  wait 0%
+    cf sibling loss 2.186  effect 2.645  noeffect 0.0002  affected 0.684 (F1 35%)  | effect explained: move_y +31%  move_x +30%  attack +6%  q +6%  w +8%  e +7%
+it     75  loss 21.3955  | hero 8.950  creep 7.000  neutral 0.684  tower 0.309  | grad 5.65  0.23 it/s  330s  | cf loss 4.453  7743 cf samples/s  wait 0%
+    cf sibling loss 2.128  effect 2.200  noeffect 0.0017  affected 0.622 (F1 39%)  | effect explained: move_y +35%  move_x +32%  attack +16%  q +30%  w +46%  e +33%
+it    100  loss 20.5301  | hero 8.894  creep 6.621  neutral 0.656  tower 0.316  | grad 17.58  0.23 it/s  440s  | cf loss 4.043  7758 cf samples/s  wait 0%
+    cf sibling loss 2.006  effect 1.922  noeffect 0.0022  affected 0.574 (F1 40%)  | effect explained: move_y +41%  move_x +38%  attack +25%  q +40%  w +57%  e +47%
+it    125  loss 21.0622  | hero 9.029  creep 7.138  neutral 0.705  tower 0.331  | grad 12.96  0.23 it/s  550s  | cf loss 3.859  7774 cf samples/s  wait 0%
+    cf sibling loss 1.980  effect 1.771  noeffect 0.0021  affected 0.538 (F1 39%)  | effect explained: move_y +43%  move_x +41%  attack +34%  q +45%  w +62%  e +60%
+it    150  loss 20.5226  | hero 8.845  creep 6.957  neutral 0.697  tower 0.324  | grad 18.40  0.23 it/s  659s  | cf loss 3.700  7784 cf samples/s  wait 0%
+    cf sibling loss 1.920  effect 1.679  noeffect 0.0020  affected 0.503 (F1 37%)  | effect explained: move_y +45%  move_x +43%  attack +37%  q +47%  w +64%  e +65%
+it    175  loss 19.8442  | hero 8.406  creep 6.879  neutral 0.693  tower 0.305  | grad 11.95  0.23 it/s  770s  | cf loss 3.561  7783 cf samples/s  wait 0%
+    cf sibling loss 1.911  effect 1.556  noeffect 0.0020  affected 0.468 (F1 35%)  | effect explained: move_y +47%  move_x +44%  attack +42%  q +49%  w +66%  e +69%
+it    200  loss 20.0588  | hero 8.411  creep 7.047  neutral 0.712  tower 0.323  | grad 12.42  0.23 it/s  880s  | cf loss 3.566  7781 cf samples/s  wait 0%
+    cf sibling loss 1.864  effect 1.612  noeffect 0.0020  affected 0.446 (F1 34%)  | effect explained: move_y +48%  move_x +46%  attack +44%  q +51%  w +66%  e +71%
+it    225  loss 21.0098  | hero 8.842  creep 7.563  neutral 0.719  tower 0.329  | grad 13.24  0.23 it/s  989s  | cf loss 3.556  7783 cf samples/s  wait 0%
+    cf sibling loss 1.865  effect 1.607  noeffect 0.0022  affected 0.417 (F1 35%)  | effect explained: move_y +51%  move_x +47%  attack +47%  q +53%  w +67%  e +76%
+it    250  loss 21.1253  | hero 9.009  creep 7.610  neutral 0.686  tower 0.340  | grad 14.05  0.23 it/s  1099s  | cf loss 3.480  7785 cf samples/s  wait 0%
+    cf sibling loss 1.866  effect 1.532  noeffect 0.0022  affected 0.409 (F1 37%)  | effect explained: move_y +49%  move_x +47%  attack +49%  q +53%  w +67%  e +77%
+    HELD-OUT loss by horizon:  h1 1.151  h4 3.624  h16 9.565  h64 23.526  h256 36.766  h1024 53.894  h4096 91.921
+         hero pos L1 (cells):  h1 0.8  h4 1.9  h16 3.5  h64 7.1  h256 7.5  h1024 7.4  h4096 10.6
+VAL it    250  loss 1.8888  | hero 1.179  creep 0.653  neutral 0.028  tower 0.029
+    hero better-than-copy / action-dependence: walking +2%/+82%  attack +41%/+63%  q -174%/+676%  w -50%/+1007%  e -137%/+535%  mana -33%/+572%  health -69%/+37%  | deaths recall 16%
+it    275  loss 20.2608  | hero 8.927  creep 7.034  neutral 0.675  tower 0.330  | grad 12.50  0.22 it/s  1240s  | cf loss 3.296  7583 cf samples/s  wait 0%
+    cf sibling loss 1.855  effect 1.363  noeffect 0.0023  affected 0.385 (F1 39%)  | effect explained: move_y +50%  move_x +48%  attack +50%  q +55%  w +70%  e +79%
+it    300  loss 20.0272  | hero 8.813  creep 7.018  neutral 0.698  tower 0.310  | grad 16.94  0.22 it/s  1350s  | cf loss 3.189  7598 cf samples/s  wait 0%
+    cf sibling loss 1.822  effect 1.296  noeffect 0.0025  affected 0.358 (F1 40%)  | effect explained: move_y +51%  move_x +47%  attack +52%  q +58%  w +71%  e +80%
+it    325  loss 20.3968  | hero 8.904  creep 7.152  neutral 0.709  tower 0.318  | grad 9.10  0.22 it/s  1460s  | cf loss 3.314  7611 cf samples/s  wait 0%
+    cf sibling loss 1.818  effect 1.426  noeffect 0.0027  affected 0.345 (F1 41%)  | effect explained: move_y +51%  move_x +49%  attack +51%  q +58%  w +72%  e +81%
+it    350  loss 20.3597  | hero 8.847  creep 7.150  neutral 0.733  tower 0.309  | grad 11.75  0.22 it/s  1569s  | cf loss 3.321  7624 cf samples/s  wait 0%
+    cf sibling loss 1.868  effect 1.386  noeffect 0.0036  affected 0.330 (F1 42%)  | effect explained: move_y +51%  move_x +48%  attack +50%  q +59%  w +70%  e +77%
+it    375  loss 20.9730  | hero 9.326  creep 7.641  neutral 0.733  tower 0.330  | grad 11.59  0.22 it/s  1678s  | cf loss 2.943  7635 cf samples/s  wait 0%
+    cf sibling loss 1.861  effect 1.020  noeffect 0.0041  affected 0.309 (F1 45%)  | effect explained: move_y +51%  move_x +46%  attack +52%  q +62%  w +74%  e +79%
+it    400  loss 20.1235  | hero 9.230  creep 7.087  neutral 0.692  tower 0.333  | grad 14.41  0.22 it/s  1788s  | cf loss 2.781  7645 cf samples/s  wait 0%
+    cf sibling loss 1.808  effect 0.917  noeffect 0.0042  affected 0.275 (F1 45%)  | effect explained: move_y +51%  move_x +48%  attack +53%  q +65%  w +77%  e +83%
+it    425  loss 19.8757  | hero 8.956  creep 7.137  neutral 0.688  tower 0.325  | grad 14.30  0.22 it/s  1898s  | cf loss 2.769  7650 cf samples/s  wait 0%
+    cf sibling loss 1.815  effect 0.902  noeffect 0.0040  affected 0.259 (F1 46%)  | effect explained: move_y +53%  move_x +48%  attack +54%  q +65%  w +75%  e +80%
+it    450  loss 19.5607  | hero 8.813  creep 7.000  neutral 0.705  tower 0.317  | grad 16.58  0.22 it/s  2008s  | cf loss 2.725  7658 cf samples/s  wait 0%
+    cf sibling loss 1.784  effect 0.893  noeffect 0.0040  affected 0.238 (F1 47%)  | effect explained: move_y +52%  move_x +49%  attack +54%  q +67%  w +76%  e +80%
+it    475  loss 19.5645  | hero 8.920  creep 6.983  neutral 0.691  tower 0.347  | grad 24.31  0.22 it/s  2117s  | cf loss 2.622  7665 cf samples/s  wait 0%
+    cf sibling loss 1.745  effect 0.832  noeffect 0.0041  affected 0.221 (F1 47%)  | effect explained: move_y +53%  move_x +48%  attack +54%  q +68%  w +78%  e +82%
+it    500  loss 20.3390  | hero 9.446  creep 7.107  neutral 0.678  tower 0.368  | grad 18.80  0.22 it/s  2227s  | cf loss 2.740  7672 cf samples/s  wait 0%
+    cf sibling loss 1.748  effect 0.950  noeffect 0.0037  affected 0.210 (F1 48%)  | effect explained: move_y +53%  move_x +49%  attack +53%  q +68%  w +77%  e +82%
+    HELD-OUT loss by horizon:  h1 1.105  h4 3.519  h16 9.356  h64 24.029  h256 32.709  h1024 48.891  h4096 89.962
+         hero pos L1 (cells):  h1 0.8  h4 1.8  h16 3.6  h64 7.7  h256 8.1  h1024 7.1  h4096 13.8
+VAL it    500  loss 1.6644  | hero 1.039  creep 0.577  neutral 0.027  tower 0.022
+    hero better-than-copy / action-dependence: walking +8%/+79%  attack +46%/+64%  q -130%/+613%  w -35%/+1028%  e -106%/+487%  mana -20%/+606%  health -39%/+57%  | deaths recall 14%
+it    525  loss 19.7205  | hero 8.965  creep 7.068  neutral 0.706  tower 0.327  | grad 17.35  0.22 it/s  2369s  | cf loss 2.655  7576 cf samples/s  wait 0%
+    cf sibling loss 1.719  effect 0.897  noeffect 0.0040  affected 0.193 (F1 48%)  | effect explained: move_y +54%  move_x +49%  attack +55%  q +70%  w +79%  e +83%
+it    550  loss 18.9453  | hero 8.459  creep 6.855  neutral 0.659  tower 0.311  | grad 13.32  0.22 it/s  2479s  | cf loss 2.662  7585 cf samples/s  wait 0%
+    cf sibling loss 1.728  effect 0.896  noeffect 0.0040  affected 0.182 (F1 49%)  | effect explained: move_y +54%  move_x +51%  attack +53%  q +70%  w +80%  e +84%
+it    575  loss 19.6504  | hero 8.980  creep 7.128  neutral 0.681  tower 0.323  | grad 11.78  0.22 it/s  2590s  | cf loss 2.539  7592 cf samples/s  wait 0%
+    cf sibling loss 1.673  effect 0.831  noeffect 0.0034  affected 0.174 (F1 50%)  | effect explained: move_y +55%  move_x +50%  attack +55%  q +70%  w +78%  e +82%
+it    600  loss 19.8566  | hero 9.178  creep 7.086  neutral 0.706  tower 0.350  | grad 14.61  0.22 it/s  2699s  | cf loss 2.536  7599 cf samples/s  wait 0%
+    cf sibling loss 1.684  effect 0.819  noeffect 0.0036  affected 0.163 (F1 50%)  | effect explained: move_y +53%  move_x +49%  attack +57%  q +70%  w +78%  e +81%
+it    625  loss 19.3693  | hero 8.934  creep 6.913  neutral 0.668  tower 0.329  | grad 24.00  0.22 it/s  2809s  | cf loss 2.525  7606 cf samples/s  wait 0%
+    cf sibling loss 1.683  effect 0.810  noeffect 0.0036  affected 0.155 (F1 48%)  | effect explained: move_y +54%  move_x +51%  attack +59%  q +70%  w +79%  e +83%
+it    650  loss 19.8930  | hero 9.008  creep 7.294  neutral 0.666  tower 0.332  | grad 11.60  0.22 it/s  2919s  | cf loss 2.593  7613 cf samples/s  wait 0%
+    cf sibling loss 1.707  effect 0.855  noeffect 0.0036  affected 0.150 (F1 49%)  | effect explained: move_y +53%  move_x +50%  attack +56%  q +71%  w +78%  e +82%
+it    675  loss 20.6478  | hero 9.309  creep 7.621  neutral 0.712  tower 0.349  | grad 10.42  0.22 it/s  3029s  | cf loss 2.657  7620 cf samples/s  wait 0%
+    cf sibling loss 1.747  effect 0.880  noeffect 0.0037  affected 0.144 (F1 48%)  | effect explained: move_y +54%  move_x +50%  attack +56%  q +70%  w +79%  e +83%
+it    700  loss 20.0738  | hero 9.570  creep 6.842  neutral 0.729  tower 0.337  | grad 14.31  0.22 it/s  3138s  | cf loss 2.595  7626 cf samples/s  wait 0%
+    cf sibling loss 1.733  effect 0.834  noeffect 0.0037  affected 0.139 (F1 48%)  | effect explained: move_y +53%  move_x +48%  attack +56%  q +70%  w +80%  e +84%
+it    725  loss 20.7647  | hero 9.354  creep 7.776  neutral 0.684  tower 0.330  | grad 9.43  0.22 it/s  3247s  | cf loss 2.620  7632 cf samples/s  wait 0%
+    cf sibling loss 1.708  effect 0.884  noeffect 0.0036  affected 0.131 (F1 49%)  | effect explained: move_y +54%  move_x +51%  attack +53%  q +71%  w +81%  e +85%
+it    750  loss 19.1643  | hero 8.609  creep 7.001  neutral 0.667  tower 0.333  | grad 12.60  0.22 it/s  3357s  | cf loss 2.554  7638 cf samples/s  wait 0%
+    cf sibling loss 1.698  effect 0.830  noeffect 0.0034  affected 0.129 (F1 49%)  | effect explained: move_y +53%  move_x +50%  attack +57%  q +71%  w +79%  e +83%
+    HELD-OUT loss by horizon:  h1 1.113  h4 3.823  h16 9.390  h64 24.383  h256 43.079  h1024 78.537  h4096 88.358
+         hero pos L1 (cells):  h1 1.0  h4 2.2  h16 4.1  h64 7.5  h256 8.2  h1024 12.0  h4096 9.2
+VAL it    750  loss 1.6262  | hero 1.033  creep 0.554  neutral 0.020  tower 0.019
+    hero better-than-copy / action-dependence: walking -11%/+52%  attack +52%/+71%  q -80%/+655%  w -35%/+1024%  e -96%/+472%  mana -30%/+555%  health -33%/+50%  | deaths recall 27%
+it    775  loss 20.0828  | hero 9.182  creep 7.357  neutral 0.674  tower 0.333  | grad 24.59  0.22 it/s  3497s  | cf loss 2.535  7576 cf samples/s  wait 0%
+    cf sibling loss 1.641  effect 0.870  noeffect 0.0032  affected 0.120 (F1 49%)  | effect explained: move_y +53%  move_x +51%  attack +57%  q +73%  w +80%  e +84%
+it    800  loss 20.0475  | hero 9.159  creep 7.422  neutral 0.660  tower 0.334  | grad 11.90  0.22 it/s  3607s  | cf loss 2.472  7584 cf samples/s  wait 0%
+    cf sibling loss 1.658  effect 0.790  noeffect 0.0033  affected 0.117 (F1 50%)  | effect explained: move_y +53%  move_x +50%  attack +59%  q +72%  w +79%  e +84%
+it    825  loss 18.6851  | hero 8.576  creep 6.733  neutral 0.640  tower 0.298  | grad 15.74  0.22 it/s  3717s  | cf loss 2.437  7590 cf samples/s  wait 0%
+    cf sibling loss 1.604  effect 0.810  noeffect 0.0033  affected 0.114 (F1 49%)  | effect explained: move_y +55%  move_x +52%  attack +59%  q +72%  w +79%  e +83%
+it    850  loss 19.8955  | hero 9.236  creep 7.130  neutral 0.698  tower 0.343  | grad 14.19  0.22 it/s  3826s  | cf loss 2.488  7595 cf samples/s  wait 0%
+    cf sibling loss 1.689  effect 0.776  noeffect 0.0033  affected 0.112 (F1 49%)  | effect explained: move_y +55%  move_x +51%  attack +61%  q +72%  w +80%  e +85%
+it    875  loss 20.1161  | hero 9.558  creep 6.940  neutral 0.702  tower 0.338  | grad 13.21  0.22 it/s  3936s  | cf loss 2.578  7601 cf samples/s  wait 0%
+    cf sibling loss 1.694  effect 0.861  noeffect 0.0032  affected 0.110 (F1 49%)  | effect explained: move_y +53%  move_x +51%  attack +57%  q +71%  w +80%  e +84%
+it    900  loss 19.4974  | hero 9.129  creep 6.973  neutral 0.686  tower 0.347  | grad 13.59  0.22 it/s  4047s  | cf loss 2.362  7606 cf samples/s  wait 0%
+    cf sibling loss 1.633  effect 0.708  noeffect 0.0033  affected 0.105 (F1 50%)  | effect explained: move_y +54%  move_x +50%  attack +61%  q +73%  w +82%  e +85%
+it    925  loss 18.8958  | hero 8.638  creep 6.894  neutral 0.663  tower 0.337  | grad 7.04  0.22 it/s  4156s  | cf loss 2.365  7611 cf samples/s  wait 0%
+    cf sibling loss 1.610  effect 0.733  noeffect 0.0031  affected 0.103 (F1 49%)  | effect explained: move_y +55%  move_x +52%  attack +61%  q +73%  w +81%  e +85%
+it    950  loss 19.2140  | hero 8.855  creep 6.903  neutral 0.702  tower 0.307  | grad 15.79  0.22 it/s  4266s  | cf loss 2.448  7615 cf samples/s  wait 0%
+    cf sibling loss 1.638  effect 0.788  noeffect 0.0031  affected 0.102 (F1 50%)  | effect explained: move_y +55%  move_x +51%  attack +59%  q +72%  w +81%  e +85%
+it    975  loss 19.6740  | hero 9.261  creep 6.878  neutral 0.715  tower 0.340  | grad 17.76  0.22 it/s  4375s  | cf loss 2.480  7620 cf samples/s  wait 0%
+    cf sibling loss 1.678  effect 0.781  noeffect 0.0032  affected 0.104 (F1 48%)  | effect explained: move_y +56%  move_x +50%  attack +58%  q +72%  w +80%  e +83%
+it   1000  loss 19.7956  | hero 9.085  creep 7.306  neutral 0.708  tower 0.349  | grad 7.19  0.22 it/s  4486s  | cf loss 2.348  7625 cf samples/s  wait 0%
+    cf sibling loss 1.607  effect 0.721  noeffect 0.0031  affected 0.098 (F1 49%)  | effect explained: move_y +55%  move_x +51%  attack +59%  q +72%  w +83%  e +87%
+    HELD-OUT loss by horizon:  h1 1.003  h4 2.927  h16 8.516  h64 21.122  h256 31.373  h1024 45.085  h4096 90.194
+         hero pos L1 (cells):  h1 0.7  h4 1.5  h16 3.5  h64 6.9  h256 8.0  h1024 8.8  h4096 17.2
+VAL it   1000  loss 1.4824  | hero 0.911  creep 0.535  neutral 0.018  tower 0.018
+    hero better-than-copy / action-dependence: walking +24%/+103%  attack +53%/+64%  q -78%/+566%  w -74%/+766%  e -82%/+447%  mana -19%/+613%  health -32%/+58%  | deaths recall 14%
+it   1025  loss 19.0043  | hero 8.732  creep 6.900  neutral 0.686  tower 0.333  | grad 10.18  0.22 it/s  4627s  | cf loss 2.354  7576 cf samples/s  wait 0%
+    cf sibling loss 1.637  effect 0.698  noeffect 0.0031  affected 0.095 (F1 50%)  | effect explained: move_y +55%  move_x +52%  attack +62%  q +74%  w +82%  e +86%
+it   1050  loss 19.1704  | hero 8.850  creep 6.948  neutral 0.675  tower 0.339  | grad 9.43  0.22 it/s  4736s  | cf loss 2.358  7580 cf samples/s  wait 0%
+    cf sibling loss 1.558  effect 0.781  noeffect 0.0029  affected 0.094 (F1 51%)  | effect explained: move_y +56%  move_x +53%  attack +59%  q +73%  w +81%  e +84%
+it   1075  loss 20.3777  | hero 9.240  creep 7.801  neutral 0.648  tower 0.360  | grad 20.36  0.22 it/s  4846s  | cf loss 2.329  7585 cf samples/s  wait 0%
+    cf sibling loss 1.603  effect 0.708  noeffect 0.0030  affected 0.091 (F1 51%)  | effect explained: move_y +55%  move_x +51%  attack +60%  q +74%  w +82%  e +85%
+it   1100  loss 19.6179  | hero 8.875  creep 7.425  neutral 0.655  tower 0.328  | grad 21.05  0.22 it/s  4955s  | cf loss 2.336  7590 cf samples/s  wait 0%
+    cf sibling loss 1.574  effect 0.743  noeffect 0.0028  affected 0.088 (F1 52%)  | effect explained: move_y +56%  move_x +52%  attack +63%  q +74%  w +81%  e +85%
+it   1125  loss 19.8533  | hero 9.275  creep 7.241  neutral 0.715  tower 0.321  | grad 18.90  0.22 it/s  5064s  | cf loss 2.300  7594 cf samples/s  wait 0%
+    cf sibling loss 1.580  effect 0.702  noeffect 0.0028  affected 0.086 (F1 53%)  | effect explained: move_y +55%  move_x +52%  attack +62%  q +75%  w +84%  e +87%
+it   1150  loss 22.6862  | hero 11.387  creep 7.241  neutral 1.205  tower 0.358  | grad 22.73  0.22 it/s  5175s  | cf loss 2.494  7597 cf samples/s  wait 0%
+    cf sibling loss 1.703  effect 0.774  noeffect 0.0029  affected 0.089 (F1 50%)  | effect explained: move_y +51%  move_x +49%  attack +58%  q +74%  w +81%  e +84%
+it   1175  loss 20.4950  | hero 9.532  creep 7.467  neutral 0.808  tower 0.347  | grad 12.44  0.22 it/s  5286s  | cf loss 2.340  7599 cf samples/s  wait 0%
+    cf sibling loss 1.607  effect 0.714  noeffect 0.0031  affected 0.088 (F1 49%)  | effect explained: move_y +55%  move_x +50%  attack +62%  q +75%  w +82%  e +86%
+it   1200  loss 19.2656  | hero 9.008  creep 6.988  neutral 0.680  tower 0.335  | grad 10.30  0.22 it/s  5398s  | cf loss 2.255  7601 cf samples/s  wait 0%
+    cf sibling loss 1.554  effect 0.684  noeffect 0.0029  affected 0.083 (F1 51%)  | effect explained: move_y +56%  move_x +53%  attack +62%  q +75%  w +82%  e +86%
+it   1225  loss 18.4461  | hero 8.433  creep 6.705  neutral 0.664  tower 0.321  | grad 20.70  0.22 it/s  5509s  | cf loss 2.322  7603 cf samples/s  wait 0%
+    cf sibling loss 1.600  effect 0.705  noeffect 0.0029  affected 0.082 (F1 50%)  | effect explained: move_y +57%  move_x +53%  attack +62%  q +74%  w +82%  e +85%
+it   1250  loss 18.9844  | hero 8.847  creep 6.923  neutral 0.646  tower 0.330  | grad 20.77  0.22 it/s  5621s  | cf loss 2.239  7605 cf samples/s  wait 0%
+    cf sibling loss 1.512  effect 0.710  noeffect 0.0026  affected 0.081 (F1 52%)  | effect explained: move_y +58%  move_x +53%  attack +66%  q +75%  w +82%  e +85%
+    HELD-OUT loss by horizon:  h1 0.989  h4 4.065  h16 9.405  h64 22.863  h256 31.967  h1024 42.625  h4096 67.881
+         hero pos L1 (cells):  h1 0.7  h4 2.6  h16 4.3  h64 7.9  h256 8.4  h1024 8.7  h4096 15.5
+VAL it   1250  loss 1.3977  | hero 0.854  creep 0.512  neutral 0.016  tower 0.016
+    hero better-than-copy / action-dependence: walking +21%/+83%  attack +53%/+62%  q -31%/+634%  w -68%/+729%  e -103%/+383%  mana -22%/+593%  health -21%/+56%  | deaths recall 22%
+it   1275  loss 18.1991  | hero 8.374  creep 6.588  neutral 0.643  tower 0.300  | grad 18.13  0.22 it/s  5763s  | cf loss 2.294  7565 cf samples/s  wait 0%
+    cf sibling loss 1.538  effect 0.739  noeffect 0.0027  affected 0.079 (F1 52%)  | effect explained: move_y +57%  move_x +53%  attack +61%  q +75%  w +83%  e +87%
+it   1300  loss 17.9327  | hero 8.045  creep 6.684  neutral 0.648  tower 0.307  | grad 16.05  0.22 it/s  5874s  | cf loss 2.249  7570 cf samples/s  wait 0%
+    cf sibling loss 1.521  effect 0.712  noeffect 0.0028  affected 0.079 (F1 51%)  | effect explained: move_y +57%  move_x +52%  attack +62%  q +76%  w +84%  e +87%
+it   1325  loss 18.2116  | hero 8.382  creep 6.620  neutral 0.645  tower 0.334  | grad 21.65  0.22 it/s  5984s  | cf loss 2.231  7573 cf samples/s  wait 0%
+    cf sibling loss 1.540  effect 0.675  noeffect 0.0027  affected 0.080 (F1 51%)  | effect explained: move_y +56%  move_x +54%  attack +63%  q +74%  w +83%  e +87%
+it   1350  loss 19.6162  | hero 9.269  creep 6.941  neutral 0.647  tower 0.350  | grad 23.44  0.22 it/s  6094s  | cf loss 2.410  7577 cf samples/s  wait 0%
+    cf sibling loss 1.649  effect 0.744  noeffect 0.0033  affected 0.081 (F1 51%)  | effect explained: move_y +57%  move_x +53%  attack +62%  q +74%  w +82%  e +86%
+it   1375  loss 19.6277  | hero 9.323  creep 7.061  neutral 0.655  tower 0.332  | grad 10.05  0.22 it/s  6203s  | cf loss 2.257  7580 cf samples/s  wait 0%
+    cf sibling loss 1.553  effect 0.688  noeffect 0.0027  affected 0.077 (F1 52%)  | effect explained: move_y +57%  move_x +54%  attack +63%  q +76%  w +84%  e +87%
+it   1400  loss 18.5958  | hero 8.644  creep 6.747  neutral 0.629  tower 0.334  | grad 11.85  0.22 it/s  6314s  | cf loss 2.242  7583 cf samples/s  wait 0%
+    cf sibling loss 1.522  effect 0.703  noeffect 0.0026  affected 0.078 (F1 51%)  | effect explained: move_y +57%  move_x +54%  attack +63%  q +75%  w +83%  e +86%
+it   1425  loss 19.8143  | hero 9.693  creep 6.959  neutral 0.670  tower 0.332  | grad 16.61  0.22 it/s  6425s  | cf loss 2.160  7586 cf samples/s  wait 0%
+    cf sibling loss 1.535  effect 0.610  noeffect 0.0028  affected 0.074 (F1 52%)  | effect explained: move_y +57%  move_x +54%  attack +65%  q +76%  w +85%  e +88%
+it   1450  loss 19.0961  | hero 8.906  creep 7.019  neutral 0.637  tower 0.324  | grad 19.32  0.22 it/s  6535s  | cf loss 2.210  7589 cf samples/s  wait 0%
+    cf sibling loss 1.507  effect 0.687  noeffect 0.0025  affected 0.076 (F1 51%)  | effect explained: move_y +58%  move_x +54%  attack +65%  q +75%  w +82%  e +85%
+it   1475  loss 19.2534  | hero 8.975  creep 7.047  neutral 0.668  tower 0.314  | grad 15.80  0.22 it/s  6646s  | cf loss 2.250  7592 cf samples/s  wait 0%
+    cf sibling loss 1.538  effect 0.697  noeffect 0.0026  affected 0.074 (F1 52%)  | effect explained: move_y +58%  move_x +55%  attack +65%  q +75%  w +83%  e +87%
+it   1500  loss 19.1727  | hero 9.149  creep 6.825  neutral 0.671  tower 0.300  | grad 17.43  0.22 it/s  6756s  | cf loss 2.227  7596 cf samples/s  wait 0%
+    cf sibling loss 1.501  effect 0.711  noeffect 0.0027  affected 0.074 (F1 52%)  | effect explained: move_y +57%  move_x +53%  attack +65%  q +76%  w +82%  e +87%
+    HELD-OUT loss by horizon:  h1 0.962  h4 3.202  h16 9.458  h64 21.620  h256 39.271  h1024 65.731  h4096 106.002
+         hero pos L1 (cells):  h1 0.6  h4 1.8  h16 4.0  h64 7.0  h256 8.2  h1024 8.7  h4096 20.1
+VAL it   1500  loss 1.4748  | hero 0.914  creep 0.529  neutral 0.016  tower 0.016
+    hero better-than-copy / action-dependence: walking +21%/+96%  attack +54%/+59%  q -90%/+409%  w -42%/+819%  e -45%/+524%  mana -12%/+677%  health -31%/+64%  | deaths recall 34%
+it   1525  loss 18.8698  | hero 8.824  creep 6.853  neutral 0.682  tower 0.305  | grad 12.11  0.22 it/s  6897s  | cf loss 2.206  7564 cf samples/s  wait 0%
+    cf sibling loss 1.550  effect 0.640  noeffect 0.0027  affected 0.073 (F1 51%)  | effect explained: move_y +56%  move_x +54%  attack +64%  q +76%  w +85%  e +89%
+it   1550  loss 19.2939  | hero 8.867  creep 7.118  neutral 0.754  tower 0.326  | grad 11.00  0.22 it/s  7007s  | cf loss 2.229  7567 cf samples/s  wait 0%
+    cf sibling loss 1.542  effect 0.672  noeffect 0.0026  affected 0.072 (F1 52%)  | effect explained: move_y +57%  move_x +53%  attack +64%  q +76%  w +85%  e +88%
+it   1575  loss 19.0410  | hero 8.981  creep 6.797  neutral 0.694  tower 0.340  | grad 14.49  0.22 it/s  7118s  | cf loss 2.229  7570 cf samples/s  wait 0%
+    cf sibling loss 1.566  effect 0.648  noeffect 0.0029  affected 0.073 (F1 51%)  | effect explained: move_y +56%  move_x +53%  attack +64%  q +76%  w +84%  e +87%
+it   1600  loss 19.7140  | hero 9.434  creep 7.099  neutral 0.687  tower 0.342  | grad 8.55  0.22 it/s  7227s  | cf loss 2.152  7574 cf samples/s  wait 0%
+    cf sibling loss 1.500  effect 0.638  noeffect 0.0028  affected 0.073 (F1 53%)  | effect explained: move_y +57%  move_x +54%  attack +66%  q +76%  w +84%  e +88%
+it   1625  loss 20.0253  | hero 9.566  creep 7.217  neutral 0.654  tower 0.322  | grad 24.73  0.22 it/s  7336s  | cf loss 2.265  7577 cf samples/s  wait 0%
+    cf sibling loss 1.545  effect 0.705  noeffect 0.0026  affected 0.071 (F1 52%)  | effect explained: move_y +56%  move_x +54%  attack +64%  q +76%  w +84%  e +87%
+it   1650  loss 19.0125  | hero 8.779  creep 7.081  neutral 0.636  tower 0.301  | grad 14.76  0.22 it/s  7446s  | cf loss 2.216  7580 cf samples/s  wait 0%
+    cf sibling loss 1.536  effect 0.665  noeffect 0.0027  affected 0.069 (F1 53%)  | effect explained: move_y +59%  move_x +54%  attack +66%  q +78%  w +85%  e +88%
+it   1675  loss 19.1766  | hero 8.471  creep 7.509  neutral 0.645  tower 0.314  | grad 11.82  0.22 it/s  7555s  | cf loss 2.238  7583 cf samples/s  wait 0%
+    cf sibling loss 1.535  effect 0.688  noeffect 0.0027  affected 0.071 (F1 52%)  | effect explained: move_y +57%  move_x +52%  attack +66%  q +76%  w +83%  e +88%
+it   1700  loss 18.7291  | hero 8.629  creep 6.866  neutral 0.665  tower 0.318  | grad 15.49  0.22 it/s  7664s  | cf loss 2.252  7587 cf samples/s  wait 0%
+    cf sibling loss 1.580  effect 0.656  noeffect 0.0028  affected 0.074 (F1 51%)  | effect explained: move_y +57%  move_x +54%  attack +64%  q +77%  w +83%  e +87%
+it   1725  loss 18.1825  | hero 8.457  creep 6.550  neutral 0.639  tower 0.307  | grad 21.55  0.22 it/s  7773s  | cf loss 2.230  7590 cf samples/s  wait 0%
+    cf sibling loss 1.549  effect 0.666  noeffect 0.0025  affected 0.070 (F1 53%)  | effect explained: move_y +57%  move_x +56%  attack +65%  q +77%  w +83%  e +87%
+it   1750  loss 18.8687  | hero 8.531  creep 7.095  neutral 0.703  tower 0.305  | grad 20.19  0.22 it/s  7883s  | cf loss 2.235  7593 cf samples/s  wait 0%
+    cf sibling loss 1.581  effect 0.639  noeffect 0.0026  affected 0.069 (F1 52%)  | effect explained: move_y +58%  move_x +54%  attack +65%  q +76%  w +83%  e +87%
+    HELD-OUT loss by horizon:  h1 0.987  h4 4.048  h16 10.706  h64 31.439  h256 43.228  h1024 61.430  h4096 88.546
+         hero pos L1 (cells):  h1 0.7  h4 2.3  h16 4.3  h64 10.0  h256 9.6  h1024 10.7  h4096 15.4
+VAL it   1750  loss 1.4314  | hero 0.884  creep 0.516  neutral 0.016  tower 0.016
+    hero better-than-copy / action-dependence: walking +25%/+110%  attack +62%/+88%  q -129%/+395%  w -20%/+931%  e -40%/+513%  mana -13%/+655%  health -36%/+67%  | deaths recall 36%
+it   1775  loss 20.2160  | hero 9.493  creep 7.479  neutral 0.713  tower 0.309  | grad 14.01  0.22 it/s  8023s  | cf loss 2.222  7566 cf samples/s  wait 0%
+    cf sibling loss 1.550  effect 0.658  noeffect 0.0027  affected 0.069 (F1 53%)  | effect explained: move_y +58%  move_x +52%  attack +65%  q +76%  w +85%  e +88%
+it   1800  loss 19.9277  | hero 9.262  creep 7.377  neutral 0.785  tower 0.305  | grad 12.45  0.22 it/s  8133s  | cf loss 2.198  7568 cf samples/s  wait 0%
+    cf sibling loss 1.524  effect 0.660  noeffect 0.0024  affected 0.069 (F1 53%)  | effect explained: move_y +55%  move_x +52%  attack +66%  q +77%  w +84%  e +88%
+it   1825  loss 19.0010  | hero 9.051  creep 6.778  neutral 0.721  tower 0.327  | grad 15.68  0.22 it/s  8242s  | cf loss 2.125  7571 cf samples/s  wait 0%
+    cf sibling loss 1.492  effect 0.618  noeffect 0.0026  affected 0.068 (F1 53%)  | effect explained: move_y +56%  move_x +53%  attack +67%  q +77%  w +84%  e +89%
+it   1850  loss 18.6482  | hero 8.709  creep 6.705  neutral 0.691  tower 0.330  | grad 11.28  0.22 it/s  8353s  | cf loss 2.214  7574 cf samples/s  wait 0%
+    cf sibling loss 1.533  effect 0.666  noeffect 0.0029  affected 0.068 (F1 52%)  | effect explained: move_y +57%  move_x +54%  attack +66%  q +77%  w +85%  e +89%
+it   1875  loss 17.5695  | hero 7.995  creep 6.505  neutral 0.623  tower 0.282  | grad 9.40  0.22 it/s  8463s  | cf loss 2.166  7577 cf samples/s  wait 0%
+    cf sibling loss 1.521  effect 0.630  noeffect 0.0027  affected 0.067 (F1 53%)  | effect explained: move_y +57%  move_x +55%  attack +66%  q +77%  w +86%  e +90%
+it   1900  loss 18.2503  | hero 8.380  creep 6.752  neutral 0.620  tower 0.286  | grad 13.94  0.22 it/s  8572s  | cf loss 2.211  7579 cf samples/s  wait 0%
+    cf sibling loss 1.511  effect 0.686  noeffect 0.0024  affected 0.069 (F1 52%)  | effect explained: move_y +57%  move_x +54%  attack +65%  q +76%  w +82%  e +87%
+it   1925  loss 17.7131  | hero 8.340  creep 6.281  neutral 0.598  tower 0.287  | grad 11.44  0.22 it/s  8683s  | cf loss 2.206  7582 cf samples/s  wait 0%
+    cf sibling loss 1.524  effect 0.668  noeffect 0.0026  affected 0.067 (F1 53%)  | effect explained: move_y +58%  move_x +54%  attack +66%  q +77%  w +83%  e +88%
+it   1950  loss 18.8430  | hero 8.807  creep 6.871  neutral 0.612  tower 0.317  | grad 18.14  0.22 it/s  8793s  | cf loss 2.236  7585 cf samples/s  wait 0%
+    cf sibling loss 1.542  effect 0.680  noeffect 0.0025  affected 0.068 (F1 51%)  | effect explained: move_y +57%  move_x +53%  attack +66%  q +76%  w +83%  e +87%
+it   1975  loss 18.6483  | hero 8.903  creep 6.704  neutral 0.633  tower 0.305  | grad 11.50  0.22 it/s  8903s  | cf loss 2.104  7587 cf samples/s  wait 0%
+    cf sibling loss 1.461  effect 0.630  noeffect 0.0026  affected 0.066 (F1 53%)  | effect explained: move_y +57%  move_x +55%  attack +68%  q +78%  w +84%  e +88%
+it   2000  loss 17.9455  | hero 8.424  creep 6.466  neutral 0.632  tower 0.324  | grad 12.83  0.22 it/s  9013s  | cf loss 2.100  7589 cf samples/s  wait 0%
+    cf sibling loss 1.445  effect 0.641  noeffect 0.0024  affected 0.065 (F1 53%)  | effect explained: move_y +59%  move_x +55%  attack +69%  q +77%  w +84%  e +88%
+    HELD-OUT loss by horizon:  h1 0.953  h4 2.966  h16 8.397  h64 23.113  h256 39.657  h1024 61.121  h4096 105.784
+         hero pos L1 (cells):  h1 0.6  h4 1.5  h16 3.5  h64 7.8  h256 7.6  h1024 9.2  h4096 22.1
+VAL it   2000  loss 1.3783  | hero 0.849  creep 0.499  neutral 0.015  tower 0.016
+    hero better-than-copy / action-dependence: walking +35%/+129%  attack +61%/+74%  q -19%/+672%  w -28%/+856%  e -44%/+490%  mana -53%/+485%  health -37%/+68%  | deaths recall 15%
+it   2025  loss 18.1833  | hero 8.568  creep 6.558  neutral 0.631  tower 0.322  | grad 16.72  0.22 it/s  9154s  | cf loss 2.104  7566 cf samples/s  wait 0%
+    cf sibling loss 1.447  effect 0.643  noeffect 0.0025  affected 0.064 (F1 54%)  | effect explained: move_y +59%  move_x +57%  attack +66%  q +78%  w +86%  e +89%
+it   2050  loss 17.8201  | hero 8.246  creep 6.417  neutral 0.658  tower 0.311  | grad 13.80  0.22 it/s  9266s  | cf loss 2.187  7567 cf samples/s  wait 0%
+    cf sibling loss 1.457  effect 0.716  noeffect 0.0024  affected 0.065 (F1 53%)  | effect explained: move_y +59%  move_x +55%  attack +67%  q +77%  w +83%  e +87%
+it   2075  loss 18.3863  | hero 8.314  creep 6.926  neutral 0.698  tower 0.282  | grad 10.38  0.22 it/s  9376s  | cf loss 2.167  7570 cf samples/s  wait 0%
+    cf sibling loss 1.524  effect 0.629  noeffect 0.0027  affected 0.064 (F1 53%)  | effect explained: move_y +59%  move_x +56%  attack +67%  q +78%  w +86%  e +90%
+it   2100  loss 18.1869  | hero 8.696  creep 6.385  neutral 0.654  tower 0.307  | grad 16.87  0.22 it/s  9487s  | cf loss 2.145  7572 cf samples/s  wait 0%
+    cf sibling loss 1.470  effect 0.662  noeffect 0.0025  affected 0.065 (F1 53%)  | effect explained: move_y +59%  move_x +54%  attack +68%  q +77%  w +83%  e +87%
+it   2125  loss 18.2776  | hero 8.722  creep 6.561  neutral 0.651  tower 0.302  | grad 7.87  0.22 it/s  9597s  | cf loss 2.041  7574 cf samples/s  wait 0%
+    cf sibling loss 1.462  effect 0.565  noeffect 0.0024  affected 0.063 (F1 55%)  | effect explained: move_y +60%  move_x +55%  attack +68%  q +78%  w +86%  e +90%
+it   2150  loss 18.2365  | hero 8.588  creep 6.658  neutral 0.626  tower 0.288  | grad 16.69  0.22 it/s  9708s  | cf loss 2.077  7576 cf samples/s  wait 0%
+    cf sibling loss 1.436  effect 0.627  noeffect 0.0024  affected 0.064 (F1 54%)  | effect explained: move_y +59%  move_x +57%  attack +70%  q +78%  w +84%  e +88%
+it   2175  loss 19.1532  | hero 8.925  creep 7.177  neutral 0.646  tower 0.315  | grad 11.99  0.22 it/s  9818s  | cf loss 2.090  7578 cf samples/s  wait 0%
+    cf sibling loss 1.461  effect 0.616  noeffect 0.0024  affected 0.064 (F1 55%)  | effect explained: move_y +60%  move_x +56%  attack +68%  q +78%  w +85%  e +89%
+it   2200  loss 18.6767  | hero 8.488  creep 7.141  neutral 0.683  tower 0.301  | grad 11.68  0.22 it/s  9928s  | cf loss 2.064  7580 cf samples/s  wait 0%
+    cf sibling loss 1.449  effect 0.602  noeffect 0.0025  affected 0.064 (F1 53%)  | effect explained: move_y +60%  move_x +56%  attack +70%  q +78%  w +85%  e +88%
+it   2225  loss 18.7733  | hero 8.712  creep 6.993  neutral 0.683  tower 0.301  | grad 7.06  0.22 it/s  10039s  | cf loss 2.084  7582 cf samples/s  wait 0%
+    cf sibling loss 1.466  effect 0.604  noeffect 0.0024  affected 0.064 (F1 54%)  | effect explained: move_y +58%  move_x +55%  attack +68%  q +79%  w +85%  e +88%
+it   2250  loss 18.1595  | hero 8.528  creep 6.552  neutral 0.659  tower 0.305  | grad 22.78  0.22 it/s  10149s  | cf loss 2.115  7584 cf samples/s  wait 0%
+    cf sibling loss 1.479  effect 0.623  noeffect 0.0023  affected 0.064 (F1 54%)  | effect explained: move_y +57%  move_x +56%  attack +67%  q +78%  w +84%  e +88%
+    HELD-OUT loss by horizon:  h1 1.013  h4 4.123  h16 9.443  h64 26.850  h256 58.908  h1024 103.131  h4096 110.536
+         hero pos L1 (cells):  h1 1.0  h4 2.5  h16 4.0  h64 7.7  h256 8.0  h1024 10.7  h4096 16.2
+VAL it   2250  loss 1.4838  | hero 0.940  creep 0.505  neutral 0.023  tower 0.016
+    hero better-than-copy / action-dependence: walking -13%/+51%  attack +64%/+84%  q -50%/+417%  w -21%/+877%  e -63%/+470%  mana -30%/+560%  health -30%/+69%  | deaths recall 50%
+it   2275  loss 18.9066  | hero 8.508  creep 7.345  neutral 0.654  tower 0.295  | grad 10.52  0.22 it/s  10289s  | cf loss 2.105  7564 cf samples/s  wait 0%
+    cf sibling loss 1.456  effect 0.637  noeffect 0.0024  affected 0.061 (F1 55%)  | effect explained: move_y +58%  move_x +55%  attack +67%  q +79%  w +85%  e +89%
+it   2300  loss 18.1702  | hero 8.534  creep 6.545  neutral 0.663  tower 0.280  | grad 18.31  0.22 it/s  10398s  | cf loss 2.148  7566 cf samples/s  wait 0%
+    cf sibling loss 1.471  effect 0.664  noeffect 0.0023  affected 0.062 (F1 54%)  | effect explained: move_y +58%  move_x +55%  attack +68%  q +77%  w +84%  e +88%
+it   2325  loss 18.6024  | hero 8.412  creep 7.119  neutral 0.635  tower 0.308  | grad 13.94  0.22 it/s  10509s  | cf loss 2.129  7568 cf samples/s  wait 0%
+    cf sibling loss 1.488  effect 0.628  noeffect 0.0025  affected 0.063 (F1 53%)  | effect explained: move_y +59%  move_x +55%  attack +66%  q +78%  w +84%  e +88%
+it   2350  loss 17.8823  | hero 8.289  creep 6.572  neutral 0.645  tower 0.303  | grad 10.20  0.22 it/s  10618s  | cf loss 2.073  7570 cf samples/s  wait 0%
+    cf sibling loss 1.455  effect 0.605  noeffect 0.0025  affected 0.062 (F1 54%)  | effect explained: move_y +60%  move_x +55%  attack +68%  q +78%  w +84%  e +88%
+it   2375  loss 17.8511  | hero 8.394  creep 6.570  neutral 0.591  tower 0.275  | grad 10.85  0.22 it/s  10728s  | cf loss 2.021  7572 cf samples/s  wait 0%
+    cf sibling loss 1.408  effect 0.600  noeffect 0.0023  affected 0.062 (F1 55%)  | effect explained: move_y +60%  move_x +55%  attack +70%  q +78%  w +85%  e +88%
+it   2400  loss 18.9581  | hero 9.141  creep 6.841  neutral 0.620  tower 0.282  | grad 20.96  0.22 it/s  10837s  | cf loss 2.074  7574 cf samples/s  wait 0%
+    cf sibling loss 1.452  effect 0.608  noeffect 0.0023  affected 0.061 (F1 53%)  | effect explained: move_y +59%  move_x +55%  attack +67%  q +78%  w +85%  e +89%
+it   2425  loss 18.0840  | hero 8.616  creep 6.493  neutral 0.651  tower 0.302  | grad 16.07  0.22 it/s  10947s  | cf loss 2.021  7576 cf samples/s  wait 0%
+    cf sibling loss 1.436  effect 0.573  noeffect 0.0024  affected 0.059 (F1 54%)  | effect explained: move_y +60%  move_x +56%  attack +69%  q +79%  w +86%  e +89%
+it   2450  loss 18.6773  | hero 8.616  creep 7.094  neutral 0.643  tower 0.292  | grad 17.98  0.22 it/s  11057s  | cf loss 2.032  7578 cf samples/s  wait 0%
+    cf sibling loss 1.415  effect 0.604  noeffect 0.0023  affected 0.061 (F1 54%)  | effect explained: move_y +59%  move_x +55%  attack +69%  q +78%  w +86%  e +89%
+it   2475  loss 18.7594  | hero 8.778  creep 6.898  neutral 0.663  tower 0.326  | grad 12.86  0.22 it/s  11168s  | cf loss 2.095  7580 cf samples/s  wait 0%
+    cf sibling loss 1.443  effect 0.639  noeffect 0.0024  affected 0.061 (F1 54%)  | effect explained: move_y +58%  move_x +56%  attack +68%  q +79%  w +85%  e +88%
+it   2500  loss 18.0488  | hero 8.283  creep 6.682  neutral 0.627  tower 0.291  | grad 9.97  0.22 it/s  11278s  | cf loss 2.165  7582 cf samples/s  wait 0%
+    cf sibling loss 1.503  effect 0.649  noeffect 0.0025  affected 0.062 (F1 54%)  | effect explained: move_y +59%  move_x +55%  attack +68%  q +78%  w +85%  e +89%
+    HELD-OUT loss by horizon:  h1 0.953  h4 3.661  h16 8.025  h64 21.372  h256 30.053  h1024 46.843  h4096 87.452
+         hero pos L1 (cells):  h1 0.6  h4 1.8  h16 3.2  h64 7.2  h256 7.1  h1024 7.3  h4096 15.6
+VAL it   2500  loss 1.3388  | hero 0.812  creep 0.497  neutral 0.016  tower 0.015
+    hero better-than-copy / action-dependence: walking +35%/+131%  attack +65%/+88%  q -22%/+520%  w -12%/+991%  e -27%/+584%  mana -46%/+531%  health -37%/+70%  | deaths recall 33%
+it   2525  loss 17.0810  | hero 7.870  creep 6.354  neutral 0.594  tower 0.282  | grad 13.03  0.22 it/s  11420s  | cf loss 1.981  7562 cf samples/s  wait 0%
+    cf sibling loss 1.418  effect 0.550  noeffect 0.0022  affected 0.060 (F1 56%)  | effect explained: move_y +59%  move_x +55%  attack +70%  q +80%  w +86%  e +90%
+it   2550  loss 17.3617  | hero 7.940  creep 6.541  neutral 0.593  tower 0.295  | grad 17.56  0.22 it/s  11531s  | cf loss 1.994  7564 cf samples/s  wait 0%
+    cf sibling loss 1.392  effect 0.590  noeffect 0.0023  affected 0.059 (F1 55%)  | effect explained: move_y +59%  move_x +56%  attack +70%  q +79%  w +85%  e +89%
+it   2575  loss 18.1361  | hero 8.471  creep 6.680  neutral 0.633  tower 0.295  | grad 14.58  0.22 it/s  11642s  | cf loss 2.057  7565 cf samples/s  wait 0%
+    cf sibling loss 1.447  effect 0.597  noeffect 0.0024  affected 0.059 (F1 55%)  | effect explained: move_y +61%  move_x +55%  attack +71%  q +79%  w +85%  e +88%
+it   2600  loss 18.5962  | hero 8.674  creep 6.857  neutral 0.676  tower 0.297  | grad 11.10  0.22 it/s  11751s  | cf loss 2.092  7567 cf samples/s  wait 0%
+    cf sibling loss 1.477  effect 0.602  noeffect 0.0023  affected 0.061 (F1 54%)  | effect explained: move_y +57%  move_x +54%  attack +69%  q +79%  w +85%  e +89%
+it   2625  loss 18.0978  | hero 8.622  creep 6.571  neutral 0.656  tower 0.296  | grad 17.09  0.22 it/s  11861s  | cf loss 1.954  7569 cf samples/s  wait 0%
+    cf sibling loss 1.389  effect 0.553  noeffect 0.0023  affected 0.059 (F1 55%)  | effect explained: move_y +59%  move_x +55%  attack +71%  q +80%  w +87%  e +90%
+it   2650  loss 18.5725  | hero 8.739  creep 6.776  neutral 0.658  tower 0.309  | grad 15.33  0.22 it/s  11970s  | cf loss 2.090  7571 cf samples/s  wait 0%
+    cf sibling loss 1.450  effect 0.628  noeffect 0.0024  affected 0.059 (F1 55%)  | effect explained: move_y +58%  move_x +55%  attack +69%  q +78%  w +85%  e +89%
+it   2675  loss 18.4640  | hero 8.606  creep 6.750  neutral 0.649  tower 0.324  | grad 12.46  0.22 it/s  12080s  | cf loss 2.135  7572 cf samples/s  wait 0%
+    cf sibling loss 1.463  effect 0.660  noeffect 0.0025  affected 0.061 (F1 54%)  | effect explained: move_y +59%  move_x +56%  attack +68%  q +78%  w +85%  e +88%
+it   2700  loss 18.1803  | hero 8.591  creep 6.641  neutral 0.598  tower 0.294  | grad 14.86  0.22 it/s  12190s  | cf loss 2.057  7574 cf samples/s  wait 0%
+    cf sibling loss 1.428  effect 0.617  noeffect 0.0022  affected 0.058 (F1 55%)  | effect explained: move_y +58%  move_x +55%  attack +70%  q +79%  w +86%  e +89%
+it   2725  loss 18.1587  | hero 8.622  creep 6.541  neutral 0.650  tower 0.305  | grad 22.58  0.22 it/s  12299s  | cf loss 2.042  7576 cf samples/s  wait 0%
+    cf sibling loss 1.443  effect 0.587  noeffect 0.0023  affected 0.060 (F1 55%)  | effect explained: move_y +59%  move_x +55%  attack +71%  q +79%  w +86%  e +88%
+it   2750  loss 17.8933  | hero 8.252  creep 6.579  neutral 0.652  tower 0.279  | grad 17.57  0.22 it/s  12409s  | cf loss 2.132  7578 cf samples/s  wait 0%
+    cf sibling loss 1.476  effect 0.644  noeffect 0.0024  affected 0.059 (F1 54%)  | effect explained: move_y +59%  move_x +55%  attack +69%  q +79%  w +86%  e +90%
+    HELD-OUT loss by horizon:  h1 1.000  h4 3.535  h16 7.758  h64 21.735  h256 31.216  h1024 50.500  h4096 98.099
+         hero pos L1 (cells):  h1 0.9  h4 1.9  h16 3.1  h64 7.3  h256 7.2  h1024 8.4  h4096 18.6
+VAL it   2750  loss 1.3722  | hero 0.836  creep 0.503  neutral 0.020  tower 0.013
+    hero better-than-copy / action-dependence: walking +7%/+68%  attack +63%/+86%  q -79%/+324%  w -0%/+1027%  e -38%/+555%  mana -11%/+639%  health -25%/+74%  | deaths recall 32%
+it   2775  loss 17.6844  | hero 8.319  creep 6.437  neutral 0.641  tower 0.288  | grad 7.71  0.22 it/s  12549s  | cf loss 1.999  7561 cf samples/s  wait 0%
+    cf sibling loss 1.408  effect 0.579  noeffect 0.0023  affected 0.058 (F1 54%)  | effect explained: move_y +58%  move_x +57%  attack +70%  q +80%  w +86%  e +89%
+it   2800  loss 17.4849  | hero 8.001  creep 6.683  neutral 0.601  tower 0.276  | grad 14.57  0.22 it/s  12659s  | cf loss 1.924  7563 cf samples/s  wait 0%
+    cf sibling loss 1.369  effect 0.543  noeffect 0.0022  affected 0.057 (F1 55%)  | effect explained: move_y +59%  move_x +57%  attack +73%  q +80%  w +86%  e +90%
+it   2825  loss 17.4258  | hero 7.968  creep 6.533  neutral 0.615  tower 0.301  | grad 13.66  0.22 it/s  12770s  | cf loss 2.009  7565 cf samples/s  wait 0%
+    cf sibling loss 1.394  effect 0.602  noeffect 0.0024  affected 0.058 (F1 54%)  | effect explained: move_y +61%  move_x +57%  attack +71%  q +80%  w +85%  e +89%
+it   2850  loss 17.6679  | hero 7.915  creep 6.815  neutral 0.593  tower 0.298  | grad 21.54  0.22 it/s  12881s  | cf loss 2.046  7566 cf samples/s  wait 0%
+    cf sibling loss 1.387  effect 0.647  noeffect 0.0023  affected 0.056 (F1 55%)  | effect explained: move_y +59%  move_x +57%  attack +68%  q +80%  w +87%  e +90%
+it   2875  loss 18.4524  | hero 8.615  creep 6.845  neutral 0.629  tower 0.305  | grad 15.05  0.22 it/s  12991s  | cf loss 2.058  7567 cf samples/s  wait 0%
+    cf sibling loss 1.399  effect 0.646  noeffect 0.0021  affected 0.057 (F1 55%)  | effect explained: move_y +59%  move_x +56%  attack +70%  q +80%  w +85%  e +89%
+it   2900  loss 17.6255  | hero 8.197  creep 6.512  neutral 0.593  tower 0.305  | grad 15.79  0.22 it/s  13101s  | cf loss 2.019  7569 cf samples/s  wait 0%
+    cf sibling loss 1.420  effect 0.587  noeffect 0.0025  affected 0.057 (F1 54%)  | effect explained: move_y +59%  move_x +57%  attack +69%  q +80%  w +86%  e +89%
+it   2925  loss 17.7806  | hero 8.180  creep 6.649  neutral 0.603  tower 0.319  | grad 13.12  0.22 it/s  13212s  | cf loss 2.028  7571 cf samples/s  wait 0%
+    cf sibling loss 1.380  effect 0.637  noeffect 0.0022  affected 0.057 (F1 55%)  | effect explained: move_y +60%  move_x +57%  attack +72%  q +79%  w +85%  e +88%
+it   2950  loss 18.0436  | hero 8.276  creep 6.701  neutral 0.605  tower 0.322  | grad 14.42  0.22 it/s  13322s  | cf loss 2.140  7573 cf samples/s  wait 0%
+    cf sibling loss 1.482  effect 0.646  noeffect 0.0026  affected 0.057 (F1 53%)  | effect explained: move_y +58%  move_x +57%  attack +69%  q +79%  w +85%  e +89%
+it   2975  loss 17.4437  | hero 8.244  creep 6.200  neutral 0.599  tower 0.294  | grad 9.71  0.22 it/s  13432s  | cf loss 2.107  7574 cf samples/s  wait 0%
+    cf sibling loss 1.468  effect 0.627  noeffect 0.0024  affected 0.059 (F1 54%)  | effect explained: move_y +58%  move_x +57%  attack +70%  q +79%  w +86%  e +90%
+it   3000  loss 18.4951  | hero 8.558  creep 6.926  neutral 0.611  tower 0.303  | grad 13.20  0.22 it/s  13542s  | cf loss 2.097  7576 cf samples/s  wait 0%
+    cf sibling loss 1.469  effect 0.616  noeffect 0.0026  affected 0.058 (F1 54%)  | effect explained: move_y +58%  move_x +56%  attack +67%  q +79%  w +85%  e +89%
+    HELD-OUT loss by horizon:  h1 0.996  h4 3.717  h16 8.175  h64 23.655  h256 36.196  h1024 57.848  h4096 98.419
+         hero pos L1 (cells):  h1 0.9  h4 1.9  h16 3.2  h64 7.6  h256 6.8  h1024 7.8  h4096 15.7
+VAL it   3000  loss 1.4172  | hero 0.882  creep 0.494  neutral 0.026  tower 0.015
+    hero better-than-copy / action-dependence: walking +7%/+69%  attack +61%/+70%  q -36%/+367%  w -5%/+1019%  e -68%/+471%  mana +0%/+732%  health -24%/+70%  | deaths recall 47%
+it   3025  loss 17.9160  | hero 7.951  creep 7.072  neutral 0.618  tower 0.290  | grad 17.99  0.22 it/s  13683s  | cf loss 1.985  7560 cf samples/s  wait 0%
+    cf sibling loss 1.410  effect 0.563  noeffect 0.0024  affected 0.058 (F1 55%)  | effect explained: move_y +59%  move_x +55%  attack +70%  q +79%  w +86%  e +90%
+it   3050  loss 17.2291  | hero 8.081  creep 6.319  neutral 0.590  tower 0.287  | grad 12.18  0.22 it/s  13792s  | cf loss 1.952  7562 cf samples/s  wait 0%
+    cf sibling loss 1.381  effect 0.559  noeffect 0.0024  affected 0.056 (F1 55%)  | effect explained: move_y +59%  move_x +57%  attack +70%  q +80%  w +86%  e +89%
+it   3075  loss 18.1659  | hero 8.865  creep 6.518  neutral 0.590  tower 0.283  | grad 15.04  0.22 it/s  13903s  | cf loss 1.909  7564 cf samples/s  wait 0%
+    cf sibling loss 1.383  effect 0.515  noeffect 0.0023  affected 0.056 (F1 55%)  | effect explained: move_y +60%  move_x +57%  attack +71%  q +80%  w +88%  e +91%
+it   3100  loss 17.8990  | hero 8.461  creep 6.576  neutral 0.597  tower 0.297  | grad 14.81  0.22 it/s  14014s  | cf loss 1.968  7566 cf samples/s  wait 0%
+    cf sibling loss 1.405  effect 0.552  noeffect 0.0023  affected 0.057 (F1 54%)  | effect explained: move_y +58%  move_x +56%  attack +74%  q +79%  w +86%  e +89%
+it   3125  loss 17.7042  | hero 8.277  creep 6.561  neutral 0.608  tower 0.291  | grad 7.19  0.22 it/s  14123s  | cf loss 1.967  7567 cf samples/s  wait 0%
+    cf sibling loss 1.377  effect 0.578  noeffect 0.0022  affected 0.056 (F1 55%)  | effect explained: move_y +60%  move_x +57%  attack +70%  q +80%  w +86%  e +90%
+it   3150  loss 18.2440  | hero 8.360  creep 6.965  neutral 0.630  tower 0.303  | grad 10.26  0.22 it/s  14232s  | cf loss 1.986  7569 cf samples/s  wait 0%
+    cf sibling loss 1.378  effect 0.596  noeffect 0.0021  affected 0.056 (F1 56%)  | effect explained: move_y +60%  move_x +57%  attack +72%  q +80%  w +86%  e +89%
+it   3175  loss 18.6428  | hero 8.556  creep 7.094  neutral 0.635  tower 0.344  | grad 9.64  0.22 it/s  14342s  | cf loss 2.014  7571 cf samples/s  wait 0%
+    cf sibling loss 1.425  effect 0.578  noeffect 0.0022  affected 0.056 (F1 55%)  | effect explained: move_y +59%  move_x +56%  attack +70%  q +80%  w +87%  e +91%
+it   3200  loss 18.0241  | hero 8.265  creep 6.876  neutral 0.620  tower 0.319  | grad 15.64  0.22 it/s  14452s  | cf loss 1.945  7572 cf samples/s  wait 0%
+    cf sibling loss 1.348  effect 0.586  noeffect 0.0021  affected 0.054 (F1 56%)  | effect explained: move_y +60%  move_x +56%  attack +71%  q +81%  w +88%  e +90%
+it   3225  loss 17.7512  | hero 8.242  creep 6.571  neutral 0.619  tower 0.276  | grad 21.39  0.22 it/s  14561s  | cf loss 2.043  7574 cf samples/s  wait 0%
+    cf sibling loss 1.396  effect 0.635  noeffect 0.0023  affected 0.055 (F1 55%)  | effect explained: move_y +59%  move_x +57%  attack +71%  q +79%  w +84%  e +88%
+it   3250  loss 17.6436  | hero 8.155  creep 6.624  neutral 0.611  tower 0.273  | grad 12.18  0.22 it/s  14672s  | cf loss 1.981  7575 cf samples/s  wait 0%
+    cf sibling loss 1.398  effect 0.572  noeffect 0.0023  affected 0.055 (F1 55%)  | effect explained: move_y +60%  move_x +56%  attack +72%  q +80%  w +86%  e +90%
+    HELD-OUT loss by horizon:  h1 1.022  h4 3.819  h16 8.139  h64 19.851  h256 33.889  h1024 46.198  h4096 96.779
+         hero pos L1 (cells):  h1 1.0  h4 2.1  h16 3.5  h64 6.5  h256 8.2  h1024 8.3  h4096 17.5
+VAL it   3250  loss 1.3803  | hero 0.847  creep 0.499  neutral 0.020  tower 0.014
+    hero better-than-copy / action-dependence: walking -5%/+56%  attack +60%/+74%  q -30%/+400%  w -42%/+764%  e -60%/+417%  mana -23%/+627%  health -44%/+50%  | deaths recall 49%
+it   3275  loss 17.7222  | hero 8.504  creep 6.392  neutral 0.597  tower 0.269  | grad 10.13  0.22 it/s  14814s  | cf loss 1.960  7561 cf samples/s  wait 0%
+    cf sibling loss 1.351  effect 0.598  noeffect 0.0022  affected 0.054 (F1 56%)  | effect explained: move_y +59%  move_x +56%  attack +71%  q +81%  w +86%  e +90%
+it   3300  loss 17.6878  | hero 8.029  creep 6.737  neutral 0.621  tower 0.307  | grad 15.13  0.22 it/s  14923s  | cf loss 1.994  7563 cf samples/s  wait 0%
+    cf sibling loss 1.397  effect 0.586  noeffect 0.0023  affected 0.054 (F1 56%)  | effect explained: move_y +59%  move_x +58%  attack +70%  q +81%  w +86%  e +90%
+it   3325  loss 18.0732  | hero 8.617  creep 6.500  neutral 0.623  tower 0.299  | grad 11.12  0.22 it/s  15033s  | cf loss 2.033  7565 cf samples/s  wait 0%
+    cf sibling loss 1.413  effect 0.608  noeffect 0.0022  affected 0.055 (F1 56%)  | effect explained: move_y +60%  move_x +57%  attack +71%  q +80%  w +85%  e +88%
+it   3350  loss 18.3347  | hero 8.518  creep 6.887  neutral 0.612  tower 0.308  | grad 6.98  0.22 it/s  15144s  | cf loss 2.011  7566 cf samples/s  wait 0%
+    cf sibling loss 1.398  effect 0.602  noeffect 0.0023  affected 0.055 (F1 55%)  | effect explained: move_y +59%  move_x +57%  attack +70%  q +80%  w +86%  e +89%
+it   3375  loss 18.3222  | hero 8.749  creep 6.767  neutral 0.602  tower 0.289  | grad 7.02  0.22 it/s  15254s  | cf loss 1.915  7568 cf samples/s  wait 0%
+    cf sibling loss 1.400  effect 0.504  noeffect 0.0023  affected 0.054 (F1 55%)  | effect explained: move_y +60%  move_x +55%  attack +72%  q +80%  w +87%  e +90%
+it   3400  loss 18.9745  | hero 8.528  creep 7.553  neutral 0.645  tower 0.302  | grad 16.67  0.22 it/s  15364s  | cf loss 1.947  7570 cf samples/s  wait 0%
+    cf sibling loss 1.397  effect 0.538  noeffect 0.0022  affected 0.054 (F1 55%)  | effect explained: move_y +60%  move_x +57%  attack +72%  q +80%  w +86%  e +89%
+it   3425  loss 18.2769  | hero 8.389  creep 7.040  neutral 0.621  tower 0.287  | grad 12.13  0.22 it/s  15473s  | cf loss 1.940  7571 cf samples/s  wait 0%
+    cf sibling loss 1.394  effect 0.535  noeffect 0.0023  affected 0.053 (F1 56%)  | effect explained: move_y +61%  move_x +57%  attack +74%  q +79%  w +86%  e +89%
+it   3450  loss 18.6152  | hero 8.566  creep 7.237  neutral 0.604  tower 0.280  | grad 15.26  0.22 it/s  15583s  | cf loss 1.929  7572 cf samples/s  wait 0%
+    cf sibling loss 1.393  effect 0.524  noeffect 0.0023  affected 0.054 (F1 55%)  | effect explained: move_y +60%  move_x +56%  attack +73%  q +81%  w +86%  e +89%
+it   3475  loss 17.9997  | hero 8.447  creep 6.649  neutral 0.644  tower 0.264  | grad 15.59  0.22 it/s  15693s  | cf loss 1.995  7574 cf samples/s  wait 0%
+    cf sibling loss 1.408  effect 0.577  noeffect 0.0021  affected 0.054 (F1 56%)  | effect explained: move_y +60%  move_x +56%  attack +71%  q +80%  w +86%  e +89%
+it   3500  loss 17.4294  | hero 7.982  creep 6.627  neutral 0.639  tower 0.291  | grad 14.10  0.22 it/s  15805s  | cf loss 1.891  7575 cf samples/s  wait 0%
+    cf sibling loss 1.365  effect 0.515  noeffect 0.0021  affected 0.053 (F1 56%)  | effect explained: move_y +60%  move_x +56%  attack +74%  q +81%  w +87%  e +89%
+    HELD-OUT loss by horizon:  h1 0.901  h4 3.552  h16 8.123  h64 21.254  h256 34.332  h1024 48.942  h4096 59.779
+         hero pos L1 (cells):  h1 0.6  h4 1.9  h16 3.6  h64 7.0  h256 6.6  h1024 6.9  h4096 6.4
+VAL it   3500  loss 1.2730  | hero 0.763  creep 0.480  neutral 0.016  tower 0.014
+    hero better-than-copy / action-dependence: walking +29%/+137%  attack +67%/+99%  q -20%/+427%  w -8%/+973%  e -27%/+576%  mana -4%/+755%  health -20%/+91%  | deaths recall 45%
+it   3525  loss 17.9219  | hero 8.131  creep 7.010  neutral 0.623  tower 0.273  | grad 9.32  0.22 it/s  15946s  | cf loss 1.885  7562 cf samples/s  wait 0%
+    cf sibling loss 1.349  effect 0.524  noeffect 0.0020  affected 0.053 (F1 57%)  | effect explained: move_y +61%  move_x +56%  attack +72%  q +81%  w +87%  e +90%
+it   3550  loss 18.0060  | hero 8.293  creep 6.893  neutral 0.634  tower 0.297  | grad 13.36  0.22 it/s  16056s  | cf loss 1.889  7563 cf samples/s  wait 0%
+    cf sibling loss 1.354  effect 0.524  noeffect 0.0022  affected 0.051 (F1 56%)  | effect explained: move_y +61%  move_x +58%  attack +73%  q +81%  w +87%  e +90%
+it   3575  loss 17.8236  | hero 8.402  creep 6.551  neutral 0.632  tower 0.290  | grad 14.25  0.22 it/s  16166s  | cf loss 1.949  7565 cf samples/s  wait 0%
+    cf sibling loss 1.399  effect 0.538  noeffect 0.0021  affected 0.055 (F1 55%)  | effect explained: move_y +59%  move_x +56%  attack +71%  q +80%  w +87%  e +90%

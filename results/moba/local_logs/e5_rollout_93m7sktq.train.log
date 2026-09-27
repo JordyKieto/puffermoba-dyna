@@ -1,0 +1,600 @@
+loading from data/moba/mix1k/dense (100 files) ...
+decompress + store 139.8s, fit_stats 0.0s
+train 900 games / 2395549 steps (51.52 GB on cuda); held-out 100 games / 267768 steps; loaded in 140s
+/workspace/puffertank/mobawm/wm/train.py:713: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(init / "model.pt" if init.is_dir() else init, map_location=dev))
+continuing from runs/token_wm/e4_baseline_v2_1h
+model: 0.66M params
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 93m7sktq
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /workspace/puffertank/wandb/run-20260925_235955-93m7sktq
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run e5_rollout
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-wm
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-wm/runs/93m7sktq
+    HELD-OUT loss by horizon:  h1 0.784  h4 3.179  h16 15.501  h64 80.446  h256 213.495  h1024 323.444  h4096 428.789
+         hero pos L1 (cells):  h1 0.4  h4 1.1  h16 5.6  h64 25.8  h256 55.6  h1024 91.9  h4096 122.9
+VAL it      0  loss 1.1082  | hero 0.660  creep 0.428  neutral 0.011  tower 0.009
+    hero better-than-copy / action-dependence: walking +50%/+149%  attack +79%/+73%  q +25%/+72%  w +50%/+563%  e +30%/+418%  mana +26%/+429%  health +7%/+17%  | deaths recall 40%
+it     50  loss 117.7253  | hero 56.095  creep 49.620  neutral 10.567  tower 1.444  | grad 61.33  0.6 it/s  84s
+it    100  loss 121.3697  | hero 72.066  creep 34.224  neutral 13.509  tower 1.571  | grad 82.60  0.74 it/s  135s
+it    150  loss 109.4164  | hero 59.040  creep 26.546  neutral 22.383  tower 1.447  | grad 21.79  0.82 it/s  184s
+it    200  loss 73.1668  | hero 42.131  creep 20.393  neutral 9.627  tower 1.016  | grad 37.78  0.86 it/s  232s
+it    250  loss 62.0917  | hero 35.506  creep 15.871  neutral 9.658  tower 1.057  | grad 22.14  0.89 it/s  281s
+it    300  loss 54.4900  | hero 31.868  creep 14.037  neutral 7.655  tower 0.930  | grad 23.61  0.91 it/s  329s
+it    350  loss 41.9187  | hero 25.768  creep 11.367  neutral 3.872  tower 0.912  | grad 17.51  0.93 it/s  376s
+it    400  loss 43.6744  | hero 25.170  creep 12.875  neutral 4.750  tower 0.881  | grad 40.28  0.94 it/s  424s
+it    450  loss 37.7168  | hero 22.185  creep 10.762  neutral 4.013  tower 0.757  | grad 24.23  0.96 it/s  471s
+it    500  loss 36.9312  | hero 21.729  creep 11.640  neutral 2.746  tower 0.816  | grad 18.15  0.96 it/s  518s
+    HELD-OUT loss by horizon:  h1 4.418  h4 8.834  h16 19.672  h64 38.555  h256 50.251  h1024 60.423  h4096 70.919
+         hero pos L1 (cells):  h1 2.0  h4 4.7  h16 7.6  h64 12.7  h256 12.7  h1024 12.9  h4096 14.1
+VAL it    500  loss 5.6748  | hero 3.501  creep 1.727  neutral 0.303  tower 0.144
+    hero better-than-copy / action-dependence: walking -134%/+108%  attack +5%/+20%  q -224%/+51%  w -164%/+161%  e -172%/+153%  mana -85%/+161%  health -145%/+57%  | deaths recall 9%
+it    550  loss 31.9825  | hero 19.719  creep 9.796  neutral 1.722  tower 0.746  | grad 28.51  0.92 it/s  599s
+it    600  loss 34.1641  | hero 20.998  creep 10.099  neutral 2.164  tower 0.903  | grad 19.06  0.93 it/s  647s
+it    650  loss 35.8788  | hero 21.181  creep 11.391  neutral 2.447  tower 0.860  | grad 14.50  0.94 it/s  694s
+it    700  loss 31.8202  | hero 19.108  creep 9.704  neutral 2.178  tower 0.830  | grad 15.75  0.94 it/s  742s
+it    750  loss 29.3717  | hero 17.579  creep 9.623  neutral 1.418  tower 0.752  | grad 16.02  0.95 it/s  790s
+it    800  loss 29.3743  | hero 17.673  creep 9.555  neutral 1.299  tower 0.847  | grad 6.90  0.95 it/s  838s
+it    850  loss 30.5693  | hero 18.124  creep 10.252  neutral 1.421  tower 0.773  | grad 25.71  0.96 it/s  885s
+it    900  loss 28.9852  | hero 16.394  creep 10.674  neutral 1.196  tower 0.720  | grad 10.27  0.96 it/s  934s
+it    950  loss 31.1414  | hero 17.353  creep 11.705  neutral 1.219  tower 0.864  | grad 10.72  0.97 it/s  983s
+it   1000  loss 28.1231  | hero 16.399  creep 9.723  neutral 1.269  tower 0.732  | grad 12.78  0.97 it/s  1032s
+    HELD-OUT loss by horizon:  h1 2.846  h4 6.646  h16 14.799  h64 31.875  h256 41.038  h1024 60.252  h4096 73.918
+         hero pos L1 (cells):  h1 1.8  h4 3.5  h16 5.6  h64 10.5  h256 10.7  h1024 11.0  h4096 12.1
+VAL it   1000  loss 3.7063  | hero 2.189  creep 1.258  neutral 0.185  tower 0.074
+    hero better-than-copy / action-dependence: walking -91%/+110%  attack +19%/+7%  q -60%/+63%  w -106%/+142%  e -94%/+151%  mana -89%/+160%  health -72%/+51%  | deaths recall 26%
+it   1050  loss 27.1584  | hero 16.345  creep 8.974  neutral 1.198  tower 0.641  | grad 9.48  0.94 it/s  1112s
+it   1100  loss 27.9661  | hero 16.556  creep 9.316  neutral 1.317  tower 0.777  | grad 16.24  0.95 it/s  1159s
+it   1150  loss 26.1091  | hero 15.081  creep 9.176  neutral 1.135  tower 0.717  | grad 24.94  0.95 it/s  1206s
+it   1200  loss 27.6846  | hero 16.237  creep 9.397  neutral 1.270  tower 0.780  | grad 9.84  0.96 it/s  1253s
+it   1250  loss 25.4948  | hero 14.312  creep 9.335  neutral 1.096  tower 0.752  | grad 10.63  0.96 it/s  1301s
+it   1300  loss 26.0845  | hero 14.043  creep 10.437  neutral 0.989  tower 0.615  | grad 16.61  0.96 it/s  1348s
+it   1350  loss 23.5018  | hero 13.263  creep 8.640  neutral 1.032  tower 0.567  | grad 18.85  0.97 it/s  1396s
+it   1400  loss 25.4304  | hero 13.970  creep 9.717  neutral 1.136  tower 0.607  | grad 13.35  0.97 it/s  1443s
+it   1450  loss 24.5975  | hero 12.688  creep 10.270  neutral 1.048  tower 0.591  | grad 16.33  0.97 it/s  1491s
+it   1500  loss 24.7156  | hero 14.046  creep 8.959  neutral 1.073  tower 0.637  | grad 20.93  0.98 it/s  1538s
+    HELD-OUT loss by horizon:  h1 2.636  h4 6.672  h16 14.684  h64 34.476  h256 45.525  h1024 66.750  h4096 81.058
+         hero pos L1 (cells):  h1 1.9  h4 3.5  h16 5.8  h64 11.3  h256 11.8  h1024 11.5  h4096 12.6
+VAL it   1500  loss 3.5433  | hero 2.217  creep 1.068  neutral 0.190  tower 0.068
+    hero better-than-copy / action-dependence: walking -107%/+101%  attack +19%/+13%  q -57%/+110%  w -147%/+218%  e -168%/+264%  mana -78%/+241%  health -68%/+66%  | deaths recall 7%
+it   1550  loss 24.1513  | hero 13.499  creep 8.900  neutral 1.048  tower 0.704  | grad 14.68  0.96 it/s  1616s
+it   1600  loss 23.8886  | hero 12.819  creep 9.494  neutral 0.951  tower 0.624  | grad 16.51  0.96 it/s  1666s
+it   1650  loss 23.0060  | hero 12.509  creep 9.038  neutral 0.929  tower 0.530  | grad 14.16  0.96 it/s  1714s
+it   1700  loss 23.1369  | hero 13.078  creep 8.505  neutral 1.037  tower 0.517  | grad 10.50  0.97 it/s  1761s
+it   1750  loss 27.0390  | hero 13.952  creep 11.101  neutral 1.340  tower 0.646  | grad 9.18  0.97 it/s  1808s
+it   1800  loss 22.9374  | hero 12.233  creep 9.156  neutral 1.030  tower 0.518  | grad 10.56  0.97 it/s  1855s
+it   1850  loss 21.3327  | hero 12.021  creep 7.928  neutral 0.907  tower 0.477  | grad 14.48  0.97 it/s  1902s
+it   1900  loss 20.9916  | hero 11.869  creep 7.813  neutral 0.871  tower 0.439  | grad 19.29  0.97 it/s  1951s
+it   1950  loss 22.3050  | hero 12.561  creep 8.060  neutral 1.191  tower 0.493  | grad 23.99  0.98 it/s  1998s
+it   2000  loss 23.8152  | hero 13.198  creep 8.973  neutral 1.092  tower 0.552  | grad 15.01  0.98 it/s  2046s
+    HELD-OUT loss by horizon:  h1 2.226  h4 5.608  h16 12.782  h64 28.329  h256 39.810  h1024 51.729  h4096 107.522
+         hero pos L1 (cells):  h1 1.6  h4 3.1  h16 5.0  h64 9.1  h256 9.8  h1024 9.4  h4096 23.5
+VAL it   2000  loss 3.1021  | hero 1.946  creep 1.027  neutral 0.067  tower 0.063
+    hero better-than-copy / action-dependence: walking -77%/+130%  attack +12%/+22%  q -72%/+39%  w -144%/+282%  e -121%/+302%  mana -62%/+290%  health -88%/+61%  | deaths recall 39%
+it   2050  loss 21.1997  | hero 11.635  creep 8.200  neutral 0.884  tower 0.481  | grad 6.14  0.97 it/s  2124s
+it   2100  loss 21.1332  | hero 11.727  creep 8.132  neutral 0.847  tower 0.427  | grad 19.03  0.97 it/s  2171s
+it   2150  loss 22.0957  | hero 12.443  creep 8.254  neutral 0.919  tower 0.479  | grad 10.72  0.97 it/s  2218s
+it   2200  loss 21.5400  | hero 11.841  creep 8.154  neutral 1.031  tower 0.515  | grad 19.89  0.97 it/s  2266s
+it   2250  loss 19.8208  | hero 10.953  creep 7.642  neutral 0.819  tower 0.407  | grad 16.95  0.97 it/s  2312s
+it   2300  loss 20.0973  | hero 11.167  creep 7.698  neutral 0.854  tower 0.378  | grad 18.44  0.97 it/s  2360s
+it   2350  loss 21.0114  | hero 11.455  creep 8.225  neutral 0.936  tower 0.395  | grad 6.18  0.98 it/s  2407s
+it   2400  loss 21.1537  | hero 11.648  creep 8.136  neutral 0.950  tower 0.420  | grad 13.63  0.98 it/s  2455s
+it   2450  loss 21.2026  | hero 11.528  creep 8.417  neutral 0.844  tower 0.413  | grad 16.24  0.98 it/s  2502s
+it   2500  loss 19.4627  | hero 10.615  creep 7.629  neutral 0.818  tower 0.400  | grad 11.08  0.98 it/s  2550s
+    HELD-OUT loss by horizon:  h1 2.460  h4 6.912  h16 14.314  h64 31.000  h256 50.982  h1024 82.688  h4096 105.078
+         hero pos L1 (cells):  h1 1.9  h4 3.6  h16 5.1  h64 8.3  h256 9.5  h1024 7.6  h4096 8.0
+VAL it   2500  loss 3.3602  | hero 2.069  creep 1.126  neutral 0.105  tower 0.061
+    hero better-than-copy / action-dependence: walking -94%/+186%  attack +13%/+40%  q -63%/+124%  w -90%/+338%  e -113%/+314%  mana -57%/+330%  health -119%/+74%  | deaths recall 59%
+it   2550  loss 19.5231  | hero 10.679  creep 7.673  neutral 0.790  tower 0.382  | grad 7.21  0.97 it/s  2635s
+it   2600  loss 20.7190  | hero 11.385  creep 8.121  neutral 0.826  tower 0.387  | grad 15.49  0.97 it/s  2685s
+it   2650  loss 20.1143  | hero 11.133  creep 7.693  neutral 0.876  tower 0.412  | grad 6.99  0.97 it/s  2732s
+it   2700  loss 21.4604  | hero 11.312  creep 8.824  neutral 0.876  tower 0.449  | grad 16.05  0.97 it/s  2780s
+it   2750  loss 19.7750  | hero 10.877  creep 7.750  neutral 0.778  tower 0.370  | grad 6.70  0.97 it/s  2827s
+it   2800  loss 19.0619  | hero 10.325  creep 7.516  neutral 0.825  tower 0.395  | grad 7.03  0.97 it/s  2875s
+it   2850  loss 20.0690  | hero 10.768  creep 8.162  neutral 0.784  tower 0.355  | grad 11.80  0.97 it/s  2923s
+it   2900  loss 18.9102  | hero 10.332  creep 7.447  neutral 0.772  tower 0.359  | grad 12.76  0.98 it/s  2972s
+it   2950  loss 19.4531  | hero 10.448  creep 7.860  neutral 0.769  tower 0.377  | grad 12.48  0.98 it/s  3021s
+it   3000  loss 19.1791  | hero 10.396  creep 7.681  neutral 0.755  tower 0.347  | grad 4.82  0.98 it/s  3069s
+    HELD-OUT loss by horizon:  h1 2.357  h4 5.429  h16 10.915  h64 24.209  h256 35.219  h1024 52.734  h4096 101.684
+         hero pos L1 (cells):  h1 1.7  h4 2.8  h16 4.2  h64 7.8  h256 9.0  h1024 10.7  h4096 20.3
+VAL it   3000  loss 3.2671  | hero 1.977  creep 1.113  neutral 0.116  tower 0.061
+    hero better-than-copy / action-dependence: walking -82%/+146%  attack +9%/+44%  q -80%/+162%  w -138%/+341%  e -127%/+308%  mana -60%/+366%  health -92%/+85%  | deaths recall 21%
+it   3050  loss 19.3781  | hero 9.967  creep 8.305  neutral 0.764  tower 0.343  | grad 6.68  0.97 it/s  3147s
+it   3100  loss 18.2737  | hero 9.794  creep 7.389  neutral 0.727  tower 0.364  | grad 9.72  0.97 it/s  3194s
+it   3150  loss 18.8234  | hero 9.740  creep 7.930  neutral 0.790  tower 0.363  | grad 10.21  0.97 it/s  3243s
+it   3200  loss 20.8085  | hero 10.561  creep 8.732  neutral 1.062  tower 0.453  | grad 7.12  0.97 it/s  3290s
+it   3250  loss 20.3199  | hero 10.596  creep 8.545  neutral 0.778  tower 0.401  | grad 15.86  0.97 it/s  3337s
+it   3300  loss 19.3813  | hero 10.192  creep 8.039  neutral 0.765  tower 0.385  | grad 13.69  0.97 it/s  3385s
+it   3350  loss 18.2817  | hero 9.920  creep 7.242  neutral 0.774  tower 0.346  | grad 8.06  0.98 it/s  3432s
+it   3400  loss 17.8719  | hero 9.369  creep 7.467  neutral 0.707  tower 0.329  | grad 9.40  0.98 it/s  3480s
+it   3450  loss 19.1871  | hero 10.027  creep 8.077  neutral 0.726  tower 0.357  | grad 11.40  0.98 it/s  3527s
+it   3500  loss 18.8492  | hero 10.202  creep 7.594  neutral 0.733  tower 0.320  | grad 10.30  0.98 it/s  3575s
+    HELD-OUT loss by horizon:  h1 2.192  h4 5.134  h16 10.782  h64 27.467  h256 40.999  h1024 63.962  h4096 58.591
+         hero pos L1 (cells):  h1 1.7  h4 2.8  h16 4.2  h64 8.6  h256 8.8  h1024 9.4  h4096 9.0
+VAL it   3500  loss 2.9809  | hero 1.784  creep 1.025  neutral 0.117  tower 0.055
+    hero better-than-copy / action-dependence: walking -82%/+85%  attack +15%/+37%  q -36%/+224%  w -65%/+320%  e -98%/+235%  mana -45%/+288%  health -74%/+57%  | deaths recall 33%
+it   3550  loss 17.8088  | hero 9.454  creep 7.372  neutral 0.667  tower 0.316  | grad 13.83  0.97 it/s  3655s
+it   3600  loss 17.6674  | hero 9.305  creep 7.367  neutral 0.691  tower 0.304  | grad 14.74  0.97 it/s  3704s
+it   3650  loss 17.3003  | hero 9.071  creep 7.248  neutral 0.684  tower 0.297  | grad 6.99  0.97 it/s  3751s
+it   3700  loss 17.1397  | hero 9.205  creep 6.998  neutral 0.650  tower 0.286  | grad 15.12  0.97 it/s  3799s
+it   3750  loss 17.5667  | hero 9.325  creep 7.233  neutral 0.710  tower 0.299  | grad 8.67  0.97 it/s  3846s
+it   3800  loss 19.2613  | hero 10.001  creep 8.115  neutral 0.809  tower 0.337  | grad 6.87  0.98 it/s  3894s
+it   3850  loss 18.2086  | hero 9.592  creep 7.602  neutral 0.687  tower 0.328  | grad 15.61  0.98 it/s  3941s
+it   3900  loss 17.8317  | hero 9.306  creep 7.502  neutral 0.685  tower 0.339  | grad 10.65  0.98 it/s  3988s
+it   3950  loss 17.5123  | hero 9.141  creep 7.399  neutral 0.666  tower 0.306  | grad 14.25  0.98 it/s  4036s
+it   4000  loss 17.2481  | hero 9.008  creep 7.257  neutral 0.674  tower 0.309  | grad 14.87  0.98 it/s  4083s
+    HELD-OUT loss by horizon:  h1 2.184  h4 5.216  h16 10.624  h64 24.219  h256 43.043  h1024 50.888  h4096 46.009
+         hero pos L1 (cells):  h1 1.6  h4 2.8  h16 4.0  h64 7.2  h256 9.0  h1024 8.1  h4096 6.4
+VAL it   4000  loss 2.9620  | hero 1.747  creep 1.080  neutral 0.081  tower 0.054
+    hero better-than-copy / action-dependence: walking -70%/+135%  attack +15%/+44%  q -58%/+385%  w -72%/+378%  e -89%/+308%  mana -71%/+336%  health -96%/+62%  | deaths recall 33%
+it   4050  loss 19.3995  | hero 9.555  creep 8.733  neutral 0.786  tower 0.325  | grad 9.97  0.97 it/s  4162s
+it   4100  loss 18.8500  | hero 9.599  creep 8.019  neutral 0.871  tower 0.361  | grad 7.78  0.97 it/s  4210s
+it   4150  loss 17.6216  | hero 9.179  creep 7.432  neutral 0.685  tower 0.325  | grad 7.26  0.97 it/s  4257s
+it   4200  loss 16.9764  | hero 9.206  creep 6.830  neutral 0.641  tower 0.299  | grad 23.04  0.98 it/s  4305s
+it   4250  loss 16.9257  | hero 9.287  creep 6.730  neutral 0.624  tower 0.286  | grad 11.66  0.98 it/s  4353s
+it   4300  loss 16.4082  | hero 8.575  creep 6.906  neutral 0.621  tower 0.307  | grad 7.61  0.98 it/s  4402s
+it   4350  loss 17.2102  | hero 9.073  creep 7.150  neutral 0.670  tower 0.317  | grad 10.04  0.98 it/s  4450s
+it   4400  loss 17.1419  | hero 9.107  creep 7.053  neutral 0.674  tower 0.308  | grad 18.13  0.98 it/s  4498s
+it   4450  loss 16.6076  | hero 8.691  creep 6.939  neutral 0.669  tower 0.308  | grad 7.06  0.98 it/s  4545s
+it   4500  loss 16.3494  | hero 8.659  creep 6.763  neutral 0.611  tower 0.317  | grad 10.53  0.98 it/s  4593s
+    HELD-OUT loss by horizon:  h1 1.928  h4 4.729  h16 9.689  h64 21.995  h256 32.844  h1024 35.411  h4096 41.578
+         hero pos L1 (cells):  h1 1.4  h4 2.6  h16 3.8  h64 6.7  h256 8.0  h1024 6.2  h4096 6.0
+VAL it   4500  loss 2.7952  | hero 1.686  creep 0.979  neutral 0.084  tower 0.047
+    hero better-than-copy / action-dependence: walking -55%/+167%  attack +18%/+40%  q -51%/+444%  w -76%/+266%  e -101%/+189%  mana -51%/+293%  health -81%/+62%  | deaths recall 27%
+it   4550  loss 16.0033  | hero 8.609  creep 6.480  neutral 0.626  tower 0.289  | grad 13.91  0.97 it/s  4672s
+it   4600  loss 16.6325  | hero 8.699  creep 6.988  neutral 0.643  tower 0.302  | grad 6.27  0.97 it/s  4720s
+it   4650  loss 16.3757  | hero 8.464  creep 6.939  neutral 0.657  tower 0.315  | grad 10.04  0.98 it/s  4767s
+it   4700  loss 16.1694  | hero 8.481  creep 6.745  neutral 0.645  tower 0.299  | grad 12.26  0.98 it/s  4814s
+it   4750  loss 16.3401  | hero 8.543  creep 6.860  neutral 0.627  tower 0.310  | grad 16.72  0.98 it/s  4861s
+it   4800  loss 16.3801  | hero 8.630  creep 6.798  neutral 0.647  tower 0.305  | grad 7.31  0.98 it/s  4908s
+it   4850  loss 17.0916  | hero 9.154  creep 6.980  neutral 0.655  tower 0.303  | grad 7.25  0.98 it/s  4955s
+it   4900  loss 17.5411  | hero 9.300  creep 7.219  neutral 0.690  tower 0.332  | grad 5.44  0.98 it/s  5002s
+it   4950  loss 17.7380  | hero 9.454  creep 7.261  neutral 0.701  tower 0.322  | grad 10.52  0.98 it/s  5050s
+it   5000  loss 17.9911  | hero 9.553  creep 7.381  neutral 0.744  tower 0.312  | grad 12.23  0.98 it/s  5098s
+    HELD-OUT loss by horizon:  h1 2.462  h4 5.033  h16 10.113  h64 22.152  h256 34.941  h1024 55.824  h4096 85.955
+         hero pos L1 (cells):  h1 2.0  h4 2.7  h16 4.0  h64 6.8  h256 7.7  h1024 9.8  h4096 18.4
+VAL it   5000  loss 3.3174  | hero 1.993  creep 1.144  neutral 0.125  tower 0.055
+    hero better-than-copy / action-dependence: walking -112%/+93%  attack +13%/+42%  q -34%/+621%  w -74%/+367%  e -45%/+382%  mana -49%/+440%  health -96%/+81%  | deaths recall 29%
+it   5050  loss 16.5800  | hero 8.687  creep 6.936  neutral 0.657  tower 0.300  | grad 9.75  0.97 it/s  5181s
+it   5100  loss 15.5192  | hero 8.050  creep 6.620  neutral 0.576  tower 0.273  | grad 6.35  0.98 it/s  5231s
+it   5150  loss 16.5931  | hero 8.873  creep 6.802  neutral 0.631  tower 0.287  | grad 11.23  0.98 it/s  5279s
+it   5200  loss 17.2318  | hero 9.057  creep 7.162  neutral 0.700  tower 0.313  | grad 12.68  0.98 it/s  5326s
+it   5250  loss 16.7084  | hero 8.823  creep 6.973  neutral 0.625  tower 0.287  | grad 8.07  0.98 it/s  5374s
+it   5300  loss 16.0319  | hero 8.607  creep 6.532  neutral 0.609  tower 0.284  | grad 6.96  0.98 it/s  5421s
+it   5350  loss 15.7166  | hero 8.177  creep 6.629  neutral 0.630  tower 0.281  | grad 5.79  0.98 it/s  5468s
+it   5400  loss 16.8455  | hero 9.104  creep 6.830  neutral 0.617  tower 0.294  | grad 6.43  0.98 it/s  5516s
+it   5450  loss 17.0641  | hero 8.993  creep 7.165  neutral 0.620  tower 0.286  | grad 21.18  0.98 it/s  5563s
+it   5500  loss 16.2783  | hero 8.822  creep 6.511  neutral 0.635  tower 0.311  | grad 10.09  0.98 it/s  5610s
+    HELD-OUT loss by horizon:  h1 2.157  h4 5.031  h16 9.371  h64 22.634  h256 34.958  h1024 47.373  h4096 72.722
+         hero pos L1 (cells):  h1 1.6  h4 2.6  h16 3.6  h64 7.1  h256 7.3  h1024 6.4  h4096 12.0
+VAL it   5500  loss 3.0471  | hero 1.772  creep 1.091  neutral 0.123  tower 0.061
+    hero better-than-copy / action-dependence: walking -71%/+122%  attack +14%/+49%  q -82%/+483%  w -43%/+325%  e -54%/+324%  mana -54%/+446%  health -124%/+65%  | deaths recall 53%
+it   5550  loss 16.8187  | hero 8.758  creep 7.131  neutral 0.622  tower 0.307  | grad 12.44  0.98 it/s  5688s
+it   5600  loss 16.6365  | hero 8.983  creep 6.720  neutral 0.634  tower 0.299  | grad 13.86  0.98 it/s  5735s
+it   5650  loss 15.5203  | hero 8.147  creep 6.520  neutral 0.579  tower 0.275  | grad 9.31  0.98 it/s  5782s
+it   5700  loss 15.4889  | hero 7.911  creep 6.718  neutral 0.592  tower 0.269  | grad 11.69  0.98 it/s  5829s
+it   5750  loss 15.8708  | hero 8.240  creep 6.762  neutral 0.592  tower 0.278  | grad 7.81  0.98 it/s  5876s
+it   5800  loss 15.4051  | hero 8.118  creep 6.430  neutral 0.580  tower 0.277  | grad 9.12  0.98 it/s  5923s
+it   5850  loss 17.0825  | hero 8.723  creep 7.414  neutral 0.648  tower 0.298  | grad 4.82  0.98 it/s  5970s
+it   5900  loss 17.3794  | hero 8.614  creep 7.789  neutral 0.672  tower 0.304  | grad 8.62  0.98 it/s  6017s
+it   5950  loss 17.3459  | hero 8.790  creep 7.680  neutral 0.596  tower 0.279  | grad 7.47  0.98 it/s  6064s
+it   6000  loss 16.5822  | hero 8.495  creep 7.214  neutral 0.590  tower 0.284  | grad 7.99  0.98 it/s  6111s
+    HELD-OUT loss by horizon:  h1 2.160  h4 5.225  h16 9.711  h64 21.768  h256 31.185  h1024 45.122  h4096 88.326
+         hero pos L1 (cells):  h1 1.6  h4 2.8  h16 3.7  h64 6.9  h256 7.4  h1024 8.1  h4096 16.0
+VAL it   6000  loss 2.9581  | hero 1.776  creep 1.039  neutral 0.090  tower 0.053
+    hero better-than-copy / action-dependence: walking -71%/+114%  attack +14%/+53%  q -71%/+550%  w -50%/+321%  e -62%/+260%  mana -153%/+273%  health -104%/+81%  | deaths recall 38%
+it   6050  loss 16.1012  | hero 8.345  creep 6.865  neutral 0.602  tower 0.289  | grad 10.81  0.98 it/s  6190s
+it   6100  loss 15.3519  | hero 8.078  creep 6.430  neutral 0.581  tower 0.262  | grad 7.61  0.98 it/s  6237s
+it   6150  loss 15.3889  | hero 8.191  creep 6.349  neutral 0.584  tower 0.266  | grad 12.79  0.98 it/s  6285s
+it   6200  loss 15.7328  | hero 8.269  creep 6.594  neutral 0.600  tower 0.269  | grad 6.28  0.98 it/s  6332s
+it   6250  loss 15.9642  | hero 8.177  creep 6.943  neutral 0.586  tower 0.257  | grad 11.98  0.98 it/s  6379s
+it   6300  loss 15.0455  | hero 7.822  creep 6.418  neutral 0.561  tower 0.245  | grad 7.81  0.98 it/s  6426s
+it   6350  loss 15.9649  | hero 8.302  creep 6.787  neutral 0.583  tower 0.294  | grad 10.38  0.98 it/s  6473s
+it   6400  loss 16.8224  | hero 8.593  creep 7.288  neutral 0.646  tower 0.295  | grad 8.36  0.98 it/s  6520s
+it   6450  loss 16.0799  | hero 8.239  creep 6.967  neutral 0.587  tower 0.286  | grad 5.87  0.98 it/s  6567s
+it   6500  loss 15.8148  | hero 8.144  creep 6.818  neutral 0.589  tower 0.264  | grad 5.63  0.98 it/s  6614s
+    HELD-OUT loss by horizon:  h1 3.159  h4 6.799  h16 9.989  h64 23.098  h256 30.730  h1024 42.960  h4096 98.591
+         hero pos L1 (cells):  h1 2.8  h4 3.8  h16 3.9  h64 7.3  h256 7.2  h1024 8.1  h4096 23.0
+VAL it   6500  loss 4.1234  | hero 2.546  creep 1.253  neutral 0.270  tower 0.054
+    hero better-than-copy / action-dependence: walking -187%/+70%  attack +8%/+43%  q -62%/+551%  w -69%/+289%  e -93%/+263%  mana -67%/+430%  health -127%/+72%  | deaths recall 29%
+it   6550  loss 15.1784  | hero 8.003  creep 6.344  neutral 0.575  tower 0.257  | grad 7.67  0.98 it/s  6693s
+it   6600  loss 14.9565  | hero 7.626  creep 6.494  neutral 0.568  tower 0.268  | grad 6.05  0.98 it/s  6740s
+it   6650  loss 14.6328  | hero 7.433  creep 6.363  neutral 0.572  tower 0.265  | grad 10.10  0.98 it/s  6787s
+it   6700  loss 15.3363  | hero 7.851  creep 6.660  neutral 0.570  tower 0.255  | grad 17.47  0.98 it/s  6834s
+it   6750  loss 14.9376  | hero 7.576  creep 6.530  neutral 0.575  tower 0.258  | grad 6.40  0.98 it/s  6881s
+it   6800  loss 15.0765  | hero 7.864  creep 6.337  neutral 0.618  tower 0.258  | grad 17.07  0.98 it/s  6928s
+it   6850  loss 14.7441  | hero 7.563  creep 6.354  neutral 0.585  tower 0.242  | grad 10.98  0.98 it/s  6975s
+it   6900  loss 15.4030  | hero 8.063  creep 6.504  neutral 0.573  tower 0.263  | grad 5.78  0.98 it/s  7023s
+it   6950  loss 15.1531  | hero 7.917  creep 6.395  neutral 0.571  tower 0.271  | grad 16.22  0.98 it/s  7071s
+it   7000  loss 15.2874  | hero 8.061  creep 6.402  neutral 0.563  tower 0.261  | grad 13.41  0.98 it/s  7118s
+    HELD-OUT loss by horizon:  h1 2.816  h4 6.258  h16 9.977  h64 22.571  h256 37.262  h1024 46.768  h4096 74.676
+         hero pos L1 (cells):  h1 2.4  h4 3.3  h16 3.7  h64 6.7  h256 8.1  h1024 6.7  h4096 11.9
+VAL it   7000  loss 3.7742  | hero 2.343  creep 1.189  neutral 0.183  tower 0.060
+    hero better-than-copy / action-dependence: walking -147%/+71%  attack +9%/+45%  q -63%/+665%  w -63%/+280%  e -95%/+255%  mana -229%/+195%  health -119%/+85%  | deaths recall 41%
+it   7050  loss 15.7938  | hero 8.221  creep 6.662  neutral 0.632  tower 0.278  | grad 7.74  0.98 it/s  7198s
+it   7100  loss 15.1977  | hero 7.889  creep 6.413  neutral 0.624  tower 0.272  | grad 14.54  0.98 it/s  7245s
+it   7150  loss 15.0162  | hero 7.566  creep 6.580  neutral 0.587  tower 0.284  | grad 5.04  0.98 it/s  7294s
+it   7200  loss 15.5342  | hero 8.131  creep 6.565  neutral 0.578  tower 0.260  | grad 13.10  0.98 it/s  7342s
+it   7250  loss 15.3510  | hero 7.935  creep 6.587  neutral 0.569  tower 0.260  | grad 8.70  0.98 it/s  7389s
+it   7300  loss 14.8386  | hero 7.565  creep 6.473  neutral 0.537  tower 0.264  | grad 12.26  0.98 it/s  7438s
+it   7350  loss 14.9009  | hero 7.483  creep 6.619  neutral 0.546  tower 0.253  | grad 13.93  0.98 it/s  7486s
+it   7400  loss 15.1677  | hero 7.739  creep 6.566  neutral 0.611  tower 0.252  | grad 5.74  0.98 it/s  7534s
+it   7450  loss 15.1320  | hero 7.513  creep 6.766  neutral 0.588  tower 0.265  | grad 6.16  0.98 it/s  7581s
+it   7500  loss 15.3008  | hero 7.730  creep 6.755  neutral 0.557  tower 0.259  | grad 8.60  0.98 it/s  7630s
+    HELD-OUT loss by horizon:  h1 2.411  h4 5.858  h16 8.724  h64 21.628  h256 31.731  h1024 54.232  h4096 107.333
+         hero pos L1 (cells):  h1 1.7  h4 3.2  h16 3.5  h64 6.8  h256 7.6  h1024 10.3  h4096 20.6
+VAL it   7500  loss 3.2991  | hero 1.872  creep 1.210  neutral 0.154  tower 0.063
+    hero better-than-copy / action-dependence: walking -88%/+111%  attack +9%/+42%  q -80%/+732%  w -77%/+308%  e -92%/+286%  mana -72%/+461%  health -128%/+99%  | deaths recall 49%
+it   7550  loss 14.8705  | hero 7.665  creep 6.386  neutral 0.570  tower 0.250  | grad 8.40  0.98 it/s  7708s
+it   7600  loss 14.8931  | hero 7.764  creep 6.279  neutral 0.574  tower 0.276  | grad 9.47  0.98 it/s  7757s
+it   7650  loss 15.1981  | hero 7.695  creep 6.665  neutral 0.564  tower 0.274  | grad 15.93  0.98 it/s  7804s
+it   7700  loss 15.2863  | hero 7.919  creep 6.454  neutral 0.610  tower 0.303  | grad 16.99  0.98 it/s  7851s
+it   7750  loss 15.5810  | hero 8.035  creep 6.617  neutral 0.643  tower 0.287  | grad 10.98  0.98 it/s  7899s
+it   7800  loss 14.6437  | hero 7.507  creep 6.304  neutral 0.582  tower 0.251  | grad 8.54  0.98 it/s  7946s
+it   7850  loss 14.0851  | hero 7.026  creep 6.276  neutral 0.554  tower 0.230  | grad 17.77  0.98 it/s  7994s
+it   7900  loss 15.7532  | hero 8.188  creep 6.687  neutral 0.627  tower 0.251  | grad 8.25  0.98 it/s  8041s
+it   7950  loss 15.3802  | hero 7.982  creep 6.546  neutral 0.587  tower 0.265  | grad 9.51  0.98 it/s  8090s
+it   8000  loss 14.6568  | hero 7.554  creep 6.295  neutral 0.571  tower 0.236  | grad 6.37  0.98 it/s  8137s
+    HELD-OUT loss by horizon:  h1 2.812  h4 5.114  h16 8.442  h64 20.401  h256 27.204  h1024 41.293  h4096 75.728
+         hero pos L1 (cells):  h1 2.2  h4 2.9  h16 3.4  h64 6.7  h256 6.6  h1024 5.8  h4096 9.5
+VAL it   8000  loss 3.7728  | hero 2.256  creep 1.257  neutral 0.200  tower 0.060
+    hero better-than-copy / action-dependence: walking -131%/+85%  attack +5%/+40%  q -60%/+537%  w -54%/+227%  e -74%/+250%  mana -81%/+407%  health -134%/+86%  | deaths recall 54%
+it   8050  loss 14.8134  | hero 7.668  creep 6.319  neutral 0.573  tower 0.254  | grad 6.70  0.98 it/s  8218s
+it   8100  loss 14.8227  | hero 7.669  creep 6.299  neutral 0.597  tower 0.258  | grad 7.55  0.98 it/s  8265s
+it   8150  loss 14.4086  | hero 7.573  creep 6.019  neutral 0.569  tower 0.247  | grad 6.04  0.98 it/s  8313s
+it   8200  loss 15.2744  | hero 8.026  creep 6.395  neutral 0.580  tower 0.273  | grad 6.13  0.98 it/s  8360s
+it   8250  loss 14.9661  | hero 7.799  creep 6.342  neutral 0.576  tower 0.249  | grad 3.38  0.98 it/s  8407s
+it   8300  loss 14.4425  | hero 7.480  creep 6.164  neutral 0.549  tower 0.250  | grad 13.05  0.98 it/s  8455s
+it   8350  loss 14.4546  | hero 7.610  creep 6.044  neutral 0.553  tower 0.248  | grad 7.56  0.98 it/s  8502s
+it   8400  loss 14.2810  | hero 7.325  creep 6.141  neutral 0.568  tower 0.247  | grad 4.89  0.98 it/s  8550s
+it   8450  loss 14.5191  | hero 7.318  creep 6.403  neutral 0.538  tower 0.259  | grad 11.96  0.98 it/s  8598s
+it   8500  loss 14.3824  | hero 7.335  creep 6.259  neutral 0.542  tower 0.246  | grad 6.21  0.98 it/s  8646s
+    HELD-OUT loss by horizon:  h1 1.949  h4 4.406  h16 8.068  h64 19.299  h256 27.778  h1024 33.090  h4096 52.005
+         hero pos L1 (cells):  h1 1.4  h4 2.4  h16 3.2  h64 6.3  h256 7.0  h1024 5.5  h4096 7.7
+VAL it   8500  loss 2.8508  | hero 1.671  creep 1.035  neutral 0.094  tower 0.052
+    hero better-than-copy / action-dependence: walking -60%/+132%  attack +15%/+48%  q -56%/+851%  w -18%/+323%  e -43%/+310%  mana -53%/+470%  health -103%/+90%  | deaths recall 19%
+it   8550  loss 15.4526  | hero 7.942  creep 6.612  neutral 0.625  tower 0.273  | grad 9.82  0.98 it/s  8727s
+it   8600  loss 14.6680  | hero 7.484  creep 6.321  neutral 0.590  tower 0.272  | grad 6.11  0.98 it/s  8774s
+it   8650  loss 15.1144  | hero 7.869  creep 6.445  neutral 0.539  tower 0.262  | grad 7.28  0.98 it/s  8821s
+it   8700  loss 14.7985  | hero 7.703  creep 6.270  neutral 0.568  tower 0.258  | grad 4.52  0.98 it/s  8868s
+it   8750  loss 14.1847  | hero 7.314  creep 6.086  neutral 0.548  tower 0.238  | grad 6.98  0.98 it/s  8914s
+it   8800  loss 13.8990  | hero 7.263  creep 5.865  neutral 0.534  tower 0.237  | grad 10.65  0.98 it/s  8961s
+it   8850  loss 14.2674  | hero 7.353  creep 6.140  neutral 0.516  tower 0.258  | grad 10.09  0.98 it/s  9008s
+it   8900  loss 14.1048  | hero 7.167  creep 6.127  neutral 0.558  tower 0.253  | grad 6.87  0.98 it/s  9055s
+it   8950  loss 15.1684  | hero 7.839  creep 6.390  neutral 0.686  tower 0.253  | grad 11.59  0.98 it/s  9102s
+it   9000  loss 13.8292  | hero 7.050  creep 5.984  neutral 0.549  tower 0.246  | grad 7.46  0.98 it/s  9149s
+    HELD-OUT loss by horizon:  h1 2.083  h4 5.383  h16 7.952  h64 19.837  h256 32.914  h1024 45.028  h4096 54.773
+         hero pos L1 (cells):  h1 1.6  h4 2.9  h16 3.1  h64 5.9  h256 7.5  h1024 7.0  h4096 8.4
+VAL it   9000  loss 2.9525  | hero 1.724  creep 1.046  neutral 0.125  tower 0.057
+    hero better-than-copy / action-dependence: walking -74%/+148%  attack +8%/+50%  q -62%/+879%  w -35%/+381%  e -74%/+335%  mana -96%/+432%  health -102%/+105%  | deaths recall 27%
+it   9050  loss 14.8097  | hero 7.546  creep 6.439  neutral 0.568  tower 0.257  | grad 10.10  0.98 it/s  9227s
+it   9100  loss 14.3079  | hero 7.265  creep 6.248  neutral 0.541  tower 0.254  | grad 8.11  0.98 it/s  9274s
+it   9150  loss 14.2497  | hero 7.416  creep 6.049  neutral 0.537  tower 0.248  | grad 9.12  0.98 it/s  9321s
+it   9200  loss 14.8634  | hero 7.781  creep 6.223  neutral 0.604  tower 0.255  | grad 4.91  0.98 it/s  9368s
+it   9250  loss 14.5951  | hero 7.254  creep 6.534  neutral 0.558  tower 0.249  | grad 9.92  0.98 it/s  9415s
+it   9300  loss 13.9576  | hero 7.119  creep 6.087  neutral 0.505  tower 0.247  | grad 7.28  0.98 it/s  9462s
+it   9350  loss 14.2393  | hero 7.402  creep 6.073  neutral 0.518  tower 0.247  | grad 8.63  0.98 it/s  9509s
+it   9400  loss 14.0824  | hero 7.243  creep 6.052  neutral 0.543  tower 0.244  | grad 11.77  0.98 it/s  9556s
+it   9450  loss 13.6396  | hero 6.923  creep 5.943  neutral 0.540  tower 0.234  | grad 8.27  0.98 it/s  9603s
+it   9500  loss 14.3211  | hero 7.305  creep 6.195  neutral 0.568  tower 0.254  | grad 7.35  0.98 it/s  9650s
+    HELD-OUT loss by horizon:  h1 2.437  h4 5.938  h16 8.093  h64 21.634  h256 29.550  h1024 36.958  h4096 52.857
+         hero pos L1 (cells):  h1 1.9  h4 3.3  h16 3.1  h64 6.7  h256 6.5  h1024 5.3  h4096 5.5
+VAL it   9500  loss 3.2925  | hero 1.936  creep 1.150  neutral 0.143  tower 0.063
+    hero better-than-copy / action-dependence: walking -93%/+157%  attack +5%/+64%  q -57%/+1234%  w -86%/+477%  e -76%/+431%  mana -97%/+454%  health -121%/+131%  | deaths recall 48%
+it   9550  loss 14.0109  | hero 7.011  creep 6.220  neutral 0.529  tower 0.250  | grad 6.36  0.98 it/s  9728s
+it   9600  loss 13.8248  | hero 7.070  creep 5.977  neutral 0.535  tower 0.243  | grad 9.34  0.98 it/s  9775s
+it   9650  loss 13.7903  | hero 7.002  creep 5.988  neutral 0.551  tower 0.249  | grad 9.74  0.98 it/s  9822s
+it   9700  loss 14.1591  | hero 7.316  creep 6.014  neutral 0.579  tower 0.250  | grad 12.58  0.98 it/s  9871s
+it   9750  loss 14.5025  | hero 7.462  creep 6.140  neutral 0.642  tower 0.259  | grad 4.10  0.98 it/s  9919s
+it   9800  loss 15.1388  | hero 7.642  creep 6.506  neutral 0.695  tower 0.295  | grad 15.17  0.98 it/s  9969s
+it   9850  loss 13.9617  | hero 7.172  creep 5.968  neutral 0.578  tower 0.244  | grad 9.18  0.98 it/s  10017s
+it   9900  loss 14.2153  | hero 7.197  creep 6.229  neutral 0.549  tower 0.240  | grad 10.12  0.98 it/s  10065s
+it   9950  loss 14.6510  | hero 7.343  creep 6.512  neutral 0.545  tower 0.251  | grad 8.38  0.98 it/s  10112s
+it  10000  loss 15.0527  | hero 7.714  creep 6.576  neutral 0.525  tower 0.237  | grad 9.07  0.98 it/s  10160s
+    HELD-OUT loss by horizon:  h1 2.031  h4 4.347  h16 8.050  h64 19.220  h256 26.800  h1024 35.066  h4096 54.006
+         hero pos L1 (cells):  h1 1.4  h4 2.3  h16 3.1  h64 6.1  h256 6.6  h1024 5.6  h4096 6.6
+VAL it  10000  loss 2.9362  | hero 1.684  creep 1.120  neutral 0.072  tower 0.061
+    hero better-than-copy / action-dependence: walking -52%/+127%  attack +4%/+54%  q -72%/+862%  w -39%/+420%  e -110%/+294%  mana -98%/+414%  health -122%/+93%  | deaths recall 30%
+it  10050  loss 14.3230  | hero 7.351  creep 6.206  neutral 0.525  tower 0.241  | grad 9.86  0.98 it/s  10238s
+it  10100  loss 15.5188  | hero 8.148  creep 6.578  neutral 0.546  tower 0.246  | grad 5.42  0.98 it/s  10285s
+it  10150  loss 14.9171  | hero 7.963  creep 6.092  neutral 0.617  tower 0.245  | grad 12.85  0.98 it/s  10333s
+it  10200  loss 14.7875  | hero 7.738  creep 6.218  neutral 0.579  tower 0.253  | grad 4.79  0.98 it/s  10381s
+it  10250  loss 14.4525  | hero 7.242  creep 6.425  neutral 0.531  tower 0.254  | grad 7.15  0.98 it/s  10429s
+it  10300  loss 13.4244  | hero 6.842  creep 5.844  neutral 0.505  tower 0.233  | grad 9.37  0.98 it/s  10476s
+it  10350  loss 14.3427  | hero 7.459  creep 6.124  neutral 0.526  tower 0.233  | grad 12.97  0.98 it/s  10523s
+it  10400  loss 14.0646  | hero 7.082  creep 6.205  neutral 0.543  tower 0.234  | grad 5.35  0.98 it/s  10570s
+it  10450  loss 14.2267  | hero 7.244  creep 6.189  neutral 0.551  tower 0.243  | grad 6.83  0.98 it/s  10617s
+it  10500  loss 14.3185  | hero 7.347  creep 6.186  neutral 0.550  tower 0.235  | grad 4.47  0.98 it/s  10664s
+    HELD-OUT loss by horizon:  h1 1.944  h4 4.211  h16 8.032  h64 19.584  h256 28.097  h1024 28.763  h4096 39.917
+         hero pos L1 (cells):  h1 1.2  h4 2.3  h16 3.1  h64 6.1  h256 6.5  h1024 4.3  h4096 4.6
+VAL it  10500  loss 2.9164  | hero 1.657  creep 1.117  neutral 0.079  tower 0.063
+    hero better-than-copy / action-dependence: walking -48%/+179%  attack +10%/+52%  q -88%/+774%  w -20%/+398%  e -61%/+323%  mana -97%/+366%  health -119%/+95%  | deaths recall 41%
+it  10550  loss 13.7680  | hero 7.073  creep 5.907  neutral 0.543  tower 0.245  | grad 7.81  0.98 it/s  10743s
+it  10600  loss 14.2955  | hero 7.480  creep 6.050  neutral 0.521  tower 0.244  | grad 10.81  0.98 it/s  10790s
+it  10650  loss 14.1394  | hero 7.342  creep 6.020  neutral 0.531  tower 0.247  | grad 5.23  0.98 it/s  10837s
+it  10700  loss 14.3837  | hero 7.565  creep 6.054  neutral 0.517  tower 0.249  | grad 8.10  0.98 it/s  10884s
+it  10750  loss 14.0427  | hero 7.220  creep 6.063  neutral 0.516  tower 0.243  | grad 7.07  0.98 it/s  10931s
+it  10800  loss 13.7929  | hero 7.050  creep 5.997  neutral 0.507  tower 0.239  | grad 11.78  0.98 it/s  10978s
+it  10850  loss 13.7340  | hero 7.022  creep 5.974  neutral 0.506  tower 0.232  | grad 4.79  0.98 it/s  11025s
+it  10900  loss 14.4506  | hero 7.328  creep 6.368  neutral 0.513  tower 0.241  | grad 9.20  0.98 it/s  11072s
+it  10950  loss 14.3517  | hero 7.379  creep 6.142  neutral 0.587  tower 0.243  | grad 8.07  0.98 it/s  11119s
+it  11000  loss 14.0581  | hero 7.172  creep 6.025  neutral 0.619  tower 0.242  | grad 7.71  0.99 it/s  11166s
+    HELD-OUT loss by horizon:  h1 2.493  h4 6.053  h16 8.320  h64 21.290  h256 29.642  h1024 39.206  h4096 55.389
+         hero pos L1 (cells):  h1 1.9  h4 3.1  h16 3.1  h64 6.5  h256 6.1  h1024 5.7  h4096 6.4
+VAL it  11000  loss 3.5219  | hero 2.076  creep 1.219  neutral 0.168  tower 0.059
+    hero better-than-copy / action-dependence: walking -110%/+129%  attack +12%/+69%  q -90%/+796%  w -39%/+488%  e -100%/+382%  mana -98%/+488%  health -145%/+116%  | deaths recall 59%
+it  11050  loss 13.7546  | hero 7.120  creep 5.883  neutral 0.515  tower 0.236  | grad 8.14  0.98 it/s  11245s
+it  11100  loss 14.3421  | hero 7.528  creep 6.007  neutral 0.561  tower 0.246  | grad 10.19  0.98 it/s  11292s
+it  11150  loss 14.4901  | hero 7.313  creep 6.381  neutral 0.551  tower 0.246  | grad 8.60  0.98 it/s  11340s
+it  11200  loss 14.7334  | hero 7.655  creep 6.107  neutral 0.710  tower 0.262  | grad 12.82  0.98 it/s  11387s
+it  11250  loss 13.9082  | hero 7.107  creep 6.006  neutral 0.555  tower 0.241  | grad 6.93  0.98 it/s  11434s
+it  11300  loss 13.7610  | hero 7.044  creep 5.957  neutral 0.522  tower 0.238  | grad 8.53  0.98 it/s  11481s
+it  11350  loss 13.5859  | hero 6.964  creep 5.866  neutral 0.525  tower 0.230  | grad 6.05  0.98 it/s  11528s
+it  11400  loss 13.8175  | hero 6.970  creep 6.098  neutral 0.516  tower 0.234  | grad 7.89  0.98 it/s  11575s
+it  11450  loss 13.7939  | hero 6.820  creep 6.200  neutral 0.534  tower 0.239  | grad 7.88  0.99 it/s  11622s
+it  11500  loss 13.6740  | hero 6.865  creep 6.081  neutral 0.491  tower 0.236  | grad 8.30  0.99 it/s  11670s
+    HELD-OUT loss by horizon:  h1 1.944  h4 5.831  h16 8.132  h64 18.406  h256 31.793  h1024 45.141  h4096 69.794
+         hero pos L1 (cells):  h1 1.3  h4 2.8  h16 3.1  h64 5.6  h256 8.1  h1024 7.2  h4096 9.3
+VAL it  11500  loss 2.9432  | hero 1.722  creep 1.084  neutral 0.085  tower 0.053
+    hero better-than-copy / action-dependence: walking -53%/+155%  attack +12%/+60%  q -89%/+886%  w -37%/+451%  e -71%/+389%  mana -101%/+424%  health -161%/+69%  | deaths recall 45%
+it  11550  loss 14.1599  | hero 7.196  creep 6.204  neutral 0.523  tower 0.237  | grad 9.23  0.98 it/s  11748s
+it  11600  loss 13.5400  | hero 6.813  creep 5.982  neutral 0.517  tower 0.228  | grad 7.93  0.98 it/s  11796s
+it  11650  loss 13.7825  | hero 6.888  creep 6.157  neutral 0.506  tower 0.232  | grad 10.34  0.98 it/s  11846s
+it  11700  loss 13.8129  | hero 6.993  creep 6.096  neutral 0.495  tower 0.229  | grad 6.53  0.98 it/s  11893s
+it  11750  loss 13.7933  | hero 6.984  creep 6.062  neutral 0.515  tower 0.232  | grad 5.30  0.98 it/s  11941s
+it  11800  loss 13.1568  | hero 6.638  creep 5.786  neutral 0.504  tower 0.229  | grad 10.74  0.98 it/s  11988s
+it  11850  loss 13.3762  | hero 6.629  creep 5.975  neutral 0.528  tower 0.245  | grad 15.87  0.98 it/s  12035s
+it  11900  loss 13.8201  | hero 7.014  creep 6.025  neutral 0.546  tower 0.236  | grad 5.22  0.98 it/s  12082s
+it  11950  loss 13.6168  | hero 6.827  creep 6.062  neutral 0.498  tower 0.230  | grad 6.63  0.99 it/s  12129s
+it  12000  loss 14.4933  | hero 7.416  creep 6.321  neutral 0.512  tower 0.244  | grad 5.70  0.99 it/s  12176s
+    HELD-OUT loss by horizon:  h1 2.767  h4 7.167  h16 9.040  h64 19.736  h256 28.299  h1024 44.090  h4096 97.921
+         hero pos L1 (cells):  h1 1.9  h4 3.3  h16 3.3  h64 6.0  h256 6.7  h1024 7.3  h4096 17.1
+VAL it  12000  loss 3.8547  | hero 2.202  creep 1.334  neutral 0.258  tower 0.061
+    hero better-than-copy / action-dependence: walking -112%/+141%  attack +6%/+66%  q -72%/+886%  w -47%/+421%  e -73%/+482%  mana -145%/+396%  health -165%/+118%  | deaths recall 57%
+it  12050  loss 14.4978  | hero 7.509  creep 6.198  neutral 0.552  tower 0.239  | grad 7.66  0.98 it/s  12255s
+it  12100  loss 13.7097  | hero 6.988  creep 5.966  neutral 0.523  tower 0.233  | grad 6.48  0.98 it/s  12302s
+it  12150  loss 13.9468  | hero 7.106  creep 6.091  neutral 0.517  tower 0.232  | grad 7.15  0.98 it/s  12349s
+it  12200  loss 13.9382  | hero 7.136  creep 6.049  neutral 0.516  tower 0.238  | grad 8.81  0.98 it/s  12396s
+it  12250  loss 13.1717  | hero 6.671  creep 5.778  neutral 0.490  tower 0.233  | grad 3.08  0.98 it/s  12444s
+it  12300  loss 13.9962  | hero 7.015  creep 6.219  neutral 0.524  tower 0.238  | grad 12.07  0.98 it/s  12491s
+it  12350  loss 14.3143  | hero 7.210  creep 6.304  neutral 0.542  tower 0.259  | grad 5.25  0.98 it/s  12538s
+it  12400  loss 14.3138  | hero 6.995  creep 6.554  neutral 0.522  tower 0.243  | grad 7.82  0.99 it/s  12586s
+it  12450  loss 13.7566  | hero 6.878  creep 6.135  neutral 0.499  tower 0.244  | grad 9.21  0.99 it/s  12633s
+it  12500  loss 13.9844  | hero 6.823  creep 6.404  neutral 0.526  tower 0.232  | grad 8.79  0.99 it/s  12680s
+    HELD-OUT loss by horizon:  h1 2.252  h4 5.714  h16 7.999  h64 18.703  h256 28.270  h1024 40.809  h4096 74.511
+         hero pos L1 (cells):  h1 1.6  h4 3.0  h16 3.2  h64 5.9  h256 6.3  h1024 7.1  h4096 13.9
+VAL it  12500  loss 3.2113  | hero 1.810  creep 1.162  neutral 0.183  tower 0.055
+    hero better-than-copy / action-dependence: walking -81%/+129%  attack +9%/+59%  q -60%/+712%  w -15%/+468%  e -33%/+384%  mana -89%/+445%  health -119%/+89%  | deaths recall 28%
+it  12550  loss 13.4893  | hero 6.732  creep 6.016  neutral 0.510  tower 0.232  | grad 9.34  0.98 it/s  12759s
+it  12600  loss 13.0422  | hero 6.384  creep 5.922  neutral 0.508  tower 0.228  | grad 5.82  0.98 it/s  12806s
+it  12650  loss 13.1863  | hero 6.549  creep 5.893  neutral 0.514  tower 0.230  | grad 12.43  0.98 it/s  12854s
+it  12700  loss 13.6914  | hero 6.931  creep 6.002  neutral 0.531  tower 0.227  | grad 6.54  0.98 it/s  12901s
+it  12750  loss 14.2750  | hero 7.164  creep 6.344  neutral 0.529  tower 0.238  | grad 4.57  0.98 it/s  12948s
+it  12800  loss 14.5300  | hero 7.537  creep 6.216  neutral 0.533  tower 0.244  | grad 9.79  0.98 it/s  12996s
+it  12850  loss 13.8750  | hero 7.178  creep 5.952  neutral 0.511  tower 0.234  | grad 11.95  0.99 it/s  13043s
+it  12900  loss 13.1507  | hero 6.678  creep 5.761  neutral 0.480  tower 0.231  | grad 7.42  0.99 it/s  13091s
+it  12950  loss 13.3714  | hero 6.586  creep 6.035  neutral 0.514  tower 0.236  | grad 7.36  0.99 it/s  13139s
+it  13000  loss 13.6419  | hero 6.733  creep 6.142  neutral 0.524  tower 0.243  | grad 8.75  0.99 it/s  13187s
+    HELD-OUT loss by horizon:  h1 2.999  h4 7.503  h16 7.620  h64 19.189  h256 28.736  h1024 38.389  h4096 51.333
+         hero pos L1 (cells):  h1 2.6  h4 4.6  h16 3.0  h64 6.0  h256 6.7  h1024 5.7  h4096 5.0
+VAL it  13000  loss 4.1667  | hero 2.542  creep 1.301  neutral 0.268  tower 0.057
+    hero better-than-copy / action-dependence: walking -167%/+95%  attack +12%/+71%  q -76%/+943%  w -15%/+514%  e -43%/+433%  mana -96%/+485%  health -127%/+116%  | deaths recall 34%
+it  13050  loss 13.8548  | hero 6.874  creep 6.218  neutral 0.524  tower 0.239  | grad 12.03  0.98 it/s  13266s
+it  13100  loss 14.1974  | hero 6.876  creep 6.555  neutral 0.511  tower 0.255  | grad 9.27  0.98 it/s  13314s
+it  13150  loss 13.5561  | hero 6.625  creep 6.195  neutral 0.500  tower 0.237  | grad 3.66  0.98 it/s  13361s
+it  13200  loss 13.2500  | hero 6.514  creep 6.011  neutral 0.498  tower 0.226  | grad 16.71  0.98 it/s  13410s
+it  13250  loss 14.8876  | hero 7.603  creep 6.414  neutral 0.621  tower 0.249  | grad 9.93  0.98 it/s  13457s
+it  13300  loss 13.7691  | hero 6.943  creep 6.042  neutral 0.542  tower 0.242  | grad 11.49  0.98 it/s  13504s
+it  13350  loss 14.0010  | hero 7.192  creep 6.056  neutral 0.517  tower 0.236  | grad 8.09  0.99 it/s  13552s
+it  13400  loss 14.2453  | hero 7.240  creep 6.281  neutral 0.498  tower 0.227  | grad 4.66  0.99 it/s  13599s
+it  13450  loss 14.2455  | hero 7.418  creep 6.043  neutral 0.553  tower 0.232  | grad 6.31  0.99 it/s  13646s
+it  13500  loss 14.0709  | hero 7.238  creep 6.069  neutral 0.532  tower 0.233  | grad 7.89  0.99 it/s  13693s
+    HELD-OUT loss by horizon:  h1 2.488  h4 5.740  h16 7.541  h64 19.509  h256 32.930  h1024 39.494  h4096 63.743
+         hero pos L1 (cells):  h1 1.8  h4 3.0  h16 3.1  h64 6.2  h256 6.7  h1024 4.1  h4096 5.3
+VAL it  13500  loss 3.5819  | hero 2.046  creep 1.258  neutral 0.219  tower 0.060
+    hero better-than-copy / action-dependence: walking -103%/+147%  attack +7%/+70%  q -90%/+787%  w -32%/+464%  e -50%/+497%  mana -73%/+528%  health -132%/+112%  | deaths recall 45%
+it  13550  loss 13.6018  | hero 6.851  creep 5.986  neutral 0.534  tower 0.230  | grad 10.59  0.98 it/s  13771s
+it  13600  loss 13.1295  | hero 6.568  creep 5.833  neutral 0.516  tower 0.213  | grad 8.33  0.98 it/s  13818s
+it  13650  loss 12.8130  | hero 6.373  creep 5.723  neutral 0.494  tower 0.223  | grad 5.65  0.98 it/s  13865s
+it  13700  loss 12.9581  | hero 6.442  creep 5.827  neutral 0.475  tower 0.214  | grad 9.25  0.98 it/s  13912s
+it  13750  loss 12.7695  | hero 6.333  creep 5.740  neutral 0.472  tower 0.224  | grad 13.18  0.99 it/s  13959s
+it  13800  loss 13.5789  | hero 6.770  creep 6.079  neutral 0.516  tower 0.215  | grad 12.31  0.99 it/s  14006s
+it  13850  loss 13.3730  | hero 6.536  creep 6.092  neutral 0.527  tower 0.219  | grad 4.98  0.99 it/s  14053s
+it  13900  loss 13.5573  | hero 6.834  creep 5.991  neutral 0.508  tower 0.224  | grad 6.53  0.99 it/s  14100s
+it  13950  loss 13.6004  | hero 6.817  creep 6.029  neutral 0.520  tower 0.235  | grad 11.87  0.99 it/s  14147s
+it  14000  loss 13.4821  | hero 6.787  creep 5.953  neutral 0.508  tower 0.233  | grad 8.91  0.99 it/s  14194s
+    HELD-OUT loss by horizon:  h1 1.994  h4 4.489  h16 7.955  h64 20.600  h256 30.121  h1024 38.849  h4096 37.721
+         hero pos L1 (cells):  h1 1.8  h4 2.6  h16 3.2  h64 6.5  h256 6.0  h1024 4.8  h4096 4.5
+VAL it  14000  loss 2.8870  | hero 1.814  creep 0.878  neutral 0.151  tower 0.044
+    hero better-than-copy / action-dependence: walking -93%/+113%  attack +10%/+55%  q -37%/+1085%  w -6%/+555%  e -21%/+564%  mana -73%/+517%  health -97%/+96%  | deaths recall 27%
+it  14050  loss 14.1374  | hero 7.310  creep 6.073  neutral 0.528  tower 0.226  | grad 4.35  0.98 it/s  14272s
+it  14100  loss 13.7605  | hero 7.050  creep 5.976  neutral 0.498  tower 0.237  | grad 6.49  0.98 it/s  14320s
+it  14150  loss 14.3730  | hero 7.358  creep 6.270  neutral 0.503  tower 0.241  | grad 4.82  0.98 it/s  14367s
+it  14200  loss 13.9490  | hero 7.181  creep 6.011  neutral 0.523  tower 0.234  | grad 9.98  0.99 it/s  14414s
+it  14250  loss 13.9084  | hero 7.036  creep 6.119  neutral 0.518  tower 0.234  | grad 9.66  0.99 it/s  14461s
+it  14300  loss 13.0227  | hero 6.460  creep 5.836  neutral 0.504  tower 0.222  | grad 9.87  0.99 it/s  14508s
+it  14350  loss 12.8689  | hero 6.283  creep 5.886  neutral 0.483  tower 0.217  | grad 9.65  0.99 it/s  14555s
+it  14400  loss 13.0727  | hero 6.508  creep 5.843  neutral 0.506  tower 0.215  | grad 15.87  0.99 it/s  14602s
+it  14450  loss 13.7944  | hero 6.669  creep 6.353  neutral 0.543  tower 0.229  | grad 9.71  0.99 it/s  14649s
+it  14500  loss 12.7603  | hero 6.259  creep 5.809  neutral 0.475  tower 0.218  | grad 7.30  0.99 it/s  14696s
+    HELD-OUT loss by horizon:  h1 2.332  h4 5.129  h16 7.615  h64 20.949  h256 28.151  h1024 36.683  h4096 41.898
+         hero pos L1 (cells):  h1 1.7  h4 2.9  h16 3.0  h64 6.4  h256 6.4  h1024 5.1  h4096 4.2
+VAL it  14500  loss 3.2104  | hero 1.799  creep 1.202  neutral 0.149  tower 0.060
+    hero better-than-copy / action-dependence: walking -85%/+142%  attack +11%/+55%  q -59%/+988%  w -3%/+578%  e -29%/+551%  mana -62%/+573%  health -117%/+112%  | deaths recall 43%
+it  14550  loss 13.3646  | hero 6.779  creep 5.888  neutral 0.472  tower 0.226  | grad 16.37  0.98 it/s  14774s
+it  14600  loss 13.4557  | hero 6.521  creep 6.230  neutral 0.483  tower 0.221  | grad 9.16  0.99 it/s  14822s
+it  14650  loss 12.8501  | hero 6.314  creep 5.827  neutral 0.496  tower 0.214  | grad 11.93  0.99 it/s  14869s
+it  14700  loss 13.0454  | hero 6.560  creep 5.765  neutral 0.487  tower 0.234  | grad 10.53  0.99 it/s  14916s
+it  14750  loss 14.1456  | hero 7.065  creep 6.304  neutral 0.535  tower 0.241  | grad 15.54  0.99 it/s  14964s
+it  14800  loss 14.3735  | hero 7.502  creep 6.102  neutral 0.529  tower 0.240  | grad 5.41  0.99 it/s  15011s
+it  14850  loss 14.1492  | hero 7.407  creep 5.987  neutral 0.510  tower 0.244  | grad 10.00  0.99 it/s  15058s
+it  14900  loss 13.6186  | hero 7.027  creep 5.841  neutral 0.515  tower 0.235  | grad 10.41  0.99 it/s  15106s
+it  14950  loss 14.0980  | hero 7.222  creep 6.123  neutral 0.517  tower 0.235  | grad 7.91  0.99 it/s  15153s
+it  15000  loss 13.5641  | hero 6.704  creep 6.158  neutral 0.474  tower 0.229  | grad 4.41  0.99 it/s  15200s
+    HELD-OUT loss by horizon:  h1 1.936  h4 4.313  h16 7.960  h64 17.297  h256 31.378  h1024 43.926  h4096 63.594
+         hero pos L1 (cells):  h1 1.4  h4 2.3  h16 2.9  h64 5.1  h256 7.3  h1024 5.7  h4096 8.7
+VAL it  15000  loss 2.7750  | hero 1.598  creep 1.033  neutral 0.095  tower 0.048
+    hero better-than-copy / action-dependence: walking -54%/+138%  attack +12%/+51%  q -29%/+1020%  w -1%/+548%  e -35%/+449%  mana -95%/+491%  health -106%/+100%  | deaths recall 30%
+it  15050  loss 14.4775  | hero 7.231  creep 6.491  neutral 0.516  tower 0.239  | grad 7.94  0.98 it/s  15280s
+it  15100  loss 14.2942  | hero 6.943  creep 6.635  neutral 0.485  tower 0.231  | grad 6.08  0.98 it/s  15333s
+it  15150  loss 13.6264  | hero 6.755  creep 6.145  neutral 0.496  tower 0.231  | grad 8.17  0.98 it/s  15386s
+it  15200  loss 13.7984  | hero 6.912  creep 6.139  neutral 0.504  tower 0.243  | grad 11.51  0.98 it/s  15440s
+it  15250  loss 14.9425  | hero 7.631  creep 6.499  neutral 0.573  tower 0.239  | grad 8.32  0.98 it/s  15494s
+it  15300  loss 13.4991  | hero 6.803  creep 5.934  neutral 0.532  tower 0.230  | grad 8.74  0.98 it/s  15551s
+it  15350  loss 13.4876  | hero 6.847  creep 5.927  neutral 0.488  tower 0.226  | grad 7.81  0.98 it/s  15607s
+it  15400  loss 12.5129  | hero 6.189  creep 5.667  neutral 0.449  tower 0.208  | grad 10.69  0.98 it/s  15661s
+it  15450  loss 13.0484  | hero 6.593  creep 5.740  neutral 0.494  tower 0.222  | grad 8.75  0.98 it/s  15715s
+it  15500  loss 12.7839  | hero 6.392  creep 5.699  neutral 0.476  tower 0.218  | grad 6.82  0.98 it/s  15769s
+    HELD-OUT loss by horizon:  h1 2.597  h4 3.799  h16 7.334  h64 19.124  h256 29.069  h1024 34.233  h4096 36.808
+         hero pos L1 (cells):  h1 2.3  h4 2.4  h16 3.0  h64 6.0  h256 6.5  h1024 4.6  h4096 4.5
+VAL it  15500  loss 3.4285  | hero 2.087  creep 1.085  neutral 0.205  tower 0.052
+    hero better-than-copy / action-dependence: walking -136%/+69%  attack +17%/+54%  q -41%/+907%  w -4%/+448%  e -25%/+407%  mana -59%/+546%  health -104%/+95%  | deaths recall 48%
+it  15550  loss 12.6308  | hero 6.244  creep 5.701  neutral 0.468  tower 0.217  | grad 9.61  0.98 it/s  15870s
+it  15600  loss 13.2137  | hero 6.709  creep 5.796  neutral 0.469  tower 0.239  | grad 8.12  0.98 it/s  15923s
+it  15650  loss 13.0314  | hero 6.692  creep 5.664  neutral 0.458  tower 0.217  | grad 6.73  0.98 it/s  15977s
+it  15700  loss 13.7241  | hero 7.014  creep 5.971  neutral 0.503  tower 0.235  | grad 8.69  0.98 it/s  16031s
+it  15750  loss 14.0136  | hero 7.109  creep 6.154  neutral 0.516  tower 0.234  | grad 4.35  0.98 it/s  16085s
+it  15800  loss 13.3746  | hero 6.656  creep 6.008  neutral 0.484  tower 0.226  | grad 9.99  0.98 it/s  16139s
+it  15850  loss 13.2126  | hero 6.613  creep 5.904  neutral 0.482  tower 0.214  | grad 8.96  0.98 it/s  16192s
+it  15900  loss 13.6822  | hero 6.607  creep 6.330  neutral 0.513  tower 0.232  | grad 13.93  0.98 it/s  16246s
+it  15950  loss 13.2302  | hero 6.536  creep 5.933  neutral 0.523  tower 0.237  | grad 11.49  0.98 it/s  16300s
+it  16000  loss 14.0272  | hero 6.947  creep 6.304  neutral 0.543  tower 0.233  | grad 7.50  0.98 it/s  16354s
+    HELD-OUT loss by horizon:  h1 2.044  h4 4.196  h16 7.350  h64 19.372  h256 28.001  h1024 41.497  h4096 56.477
+         hero pos L1 (cells):  h1 1.8  h4 2.4  h16 3.1  h64 6.3  h256 7.0  h1024 7.5  h4096 10.2
+VAL it  16000  loss 2.9174  | hero 1.740  creep 1.011  neutral 0.115  tower 0.052
+    hero better-than-copy / action-dependence: walking -83%/+93%  attack +17%/+47%  q -35%/+914%  w -2%/+417%  e -17%/+350%  mana -44%/+518%  health -112%/+87%  | deaths recall 41%
+it  16050  loss 13.5920  | hero 7.023  creep 5.871  neutral 0.467  tower 0.231  | grad 6.37  0.98 it/s  16444s
+it  16100  loss 13.4604  | hero 6.992  creep 5.786  neutral 0.458  tower 0.225  | grad 11.88  0.98 it/s  16492s
+it  16150  loss 13.7596  | hero 7.018  creep 6.042  neutral 0.472  tower 0.227  | grad 4.77  0.98 it/s  16540s
+it  16200  loss 13.2992  | hero 6.693  creep 5.873  neutral 0.504  tower 0.229  | grad 6.65  0.98 it/s  16589s
+it  16250  loss 13.2643  | hero 6.458  creep 6.077  neutral 0.493  tower 0.237  | grad 2.94  0.98 it/s  16638s
+it  16300  loss 12.7566  | hero 6.418  creep 5.662  neutral 0.458  tower 0.218  | grad 10.80  0.98 it/s  16686s
+it  16350  loss 12.8582  | hero 6.380  creep 5.792  neutral 0.474  tower 0.212  | grad 10.06  0.98 it/s  16735s
+it  16400  loss 13.0937  | hero 6.602  creep 5.772  neutral 0.493  tower 0.228  | grad 6.40  0.98 it/s  16784s
+it  16450  loss 13.6605  | hero 6.723  creep 6.193  neutral 0.517  tower 0.227  | grad 8.61  0.98 it/s  16833s
+it  16500  loss 13.3460  | hero 6.697  creep 5.887  neutral 0.524  tower 0.239  | grad 6.06  0.98 it/s  16882s
+    HELD-OUT loss by horizon:  h1 2.122  h4 4.856  h16 7.541  h64 19.401  h256 26.461  h1024 31.321  h4096 40.428
+         hero pos L1 (cells):  h1 1.8  h4 2.8  h16 3.1  h64 6.3  h256 6.2  h1024 5.1  h4096 5.0
+VAL it  16500  loss 2.9410  | hero 1.693  creep 1.060  neutral 0.137  tower 0.050
+    hero better-than-copy / action-dependence: walking -82%/+72%  attack +19%/+43%  q -19%/+926%  w +10%/+443%  e -7%/+317%  mana -21%/+603%  health -101%/+83%  | deaths recall 23%
+it  16550  loss 13.0569  | hero 6.540  creep 5.783  neutral 0.498  tower 0.235  | grad 4.06  0.98 it/s  16965s
+it  16600  loss 12.6571  | hero 6.294  creep 5.682  neutral 0.457  tower 0.224  | grad 7.19  0.98 it/s  17013s
+it  16650  loss 12.9604  | hero 6.475  creep 5.796  neutral 0.463  tower 0.226  | grad 5.07  0.98 it/s  17063s
+it  16700  loss 12.8888  | hero 6.312  creep 5.901  neutral 0.449  tower 0.227  | grad 10.32  0.98 it/s  17111s
+it  16750  loss 12.5805  | hero 6.226  creep 5.681  neutral 0.453  tower 0.221  | grad 5.83  0.98 it/s  17159s
+it  16800  loss 13.2660  | hero 6.565  creep 6.004  neutral 0.477  tower 0.220  | grad 7.76  0.98 it/s  17208s
+it  16850  loss 13.0368  | hero 6.518  creep 5.820  neutral 0.470  tower 0.228  | grad 6.44  0.98 it/s  17256s
+it  16900  loss 13.2965  | hero 6.706  creep 5.911  neutral 0.461  tower 0.218  | grad 6.70  0.98 it/s  17304s
+it  16950  loss 13.1019  | hero 6.604  creep 5.794  neutral 0.478  tower 0.226  | grad 12.01  0.98 it/s  17353s
+it  17000  loss 13.2619  | hero 6.638  creep 5.893  neutral 0.510  tower 0.221  | grad 13.74  0.98 it/s  17401s
+    HELD-OUT loss by horizon:  h1 1.848  h4 3.944  h16 7.353  h64 18.197  h256 29.312  h1024 42.139  h4096 55.420
+         hero pos L1 (cells):  h1 1.2  h4 2.0  h16 2.9  h64 5.8  h256 7.2  h1024 7.2  h4096 9.6
+VAL it  17000  loss 2.7197  | hero 1.496  creep 1.093  neutral 0.081  tower 0.050
+    hero better-than-copy / action-dependence: walking -42%/+121%  attack +17%/+42%  q -34%/+777%  w +9%/+413%  e -16%/+311%  mana -48%/+516%  health -113%/+74%  | deaths recall 35%
+it  17050  loss 13.0224  | hero 6.424  creep 5.877  neutral 0.497  tower 0.225  | grad 4.61  0.98 it/s  17485s
+it  17100  loss 12.7064  | hero 6.211  creep 5.814  neutral 0.463  tower 0.218  | grad 8.37  0.98 it/s  17533s
+it  17150  loss 13.0123  | hero 6.421  creep 5.877  neutral 0.492  tower 0.223  | grad 7.81  0.98 it/s  17581s
+it  17200  loss 12.9103  | hero 6.436  creep 5.773  neutral 0.483  tower 0.219  | grad 10.64  0.98 it/s  17629s
+it  17250  loss 12.8385  | hero 6.371  creep 5.771  neutral 0.486  tower 0.210  | grad 8.42  0.98 it/s  17678s
+it  17300  loss 13.0824  | hero 6.536  creep 5.817  neutral 0.504  tower 0.226  | grad 4.68  0.98 it/s  17726s
+it  17350  loss 12.9097  | hero 6.367  creep 5.828  neutral 0.490  tower 0.225  | grad 10.58  0.98 it/s  17774s
+it  17400  loss 12.7453  | hero 6.316  creep 5.747  neutral 0.457  tower 0.224  | grad 4.53  0.98 it/s  17823s
+it  17450  loss 13.1921  | hero 6.392  creep 6.128  neutral 0.449  tower 0.223  | grad 9.31  0.98 it/s  17871s
+it  17500  loss 12.6374  | hero 6.163  creep 5.816  neutral 0.442  tower 0.216  | grad 4.21  0.98 it/s  17920s
+    HELD-OUT loss by horizon:  h1 1.924  h4 4.285  h16 6.915  h64 18.433  h256 30.486  h1024 43.749  h4096 56.680
+         hero pos L1 (cells):  h1 1.3  h4 2.4  h16 2.8  h64 5.9  h256 7.0  h1024 4.3  h4096 5.7
+VAL it  17500  loss 2.7262  | hero 1.561  creep 1.037  neutral 0.074  tower 0.054
+    hero better-than-copy / action-dependence: walking -44%/+167%  attack +23%/+52%  q -30%/+942%  w +17%/+660%  e -4%/+536%  mana -41%/+622%  health -106%/+119%  | deaths recall 34%
+it  17550  loss 13.2414  | hero 6.498  creep 6.028  neutral 0.478  tower 0.238  | grad 8.27  0.97 it/s  18002s
+it  17600  loss 13.4649  | hero 6.498  creep 6.268  neutral 0.467  tower 0.232  | grad 7.67  0.98 it/s  18050s
+it  17650  loss 13.1944  | hero 6.475  creep 6.001  neutral 0.492  tower 0.227  | grad 5.44  0.98 it/s  18099s
+it  17700  loss 13.1743  | hero 6.610  creep 5.851  neutral 0.492  tower 0.222  | grad 8.23  0.98 it/s  18147s
+it  17750  loss 12.7411  | hero 6.232  creep 5.803  neutral 0.486  tower 0.220  | grad 7.52  0.98 it/s  18195s
+it  17800  loss 12.9546  | hero 6.434  creep 5.822  neutral 0.481  tower 0.218  | grad 8.88  0.98 it/s  18243s
+it  17850  loss 13.3836  | hero 6.774  creep 5.893  neutral 0.500  tower 0.216  | grad 7.14  0.98 it/s  18291s
+it  17900  loss 13.2984  | hero 6.612  creep 5.978  neutral 0.487  tower 0.221  | grad 7.86  0.98 it/s  18340s
+it  17950  loss 13.3077  | hero 6.753  creep 5.858  neutral 0.475  tower 0.222  | grad 4.87  0.98 it/s  18388s
+it  18000  loss 12.8622  | hero 6.435  creep 5.780  neutral 0.432  tower 0.214  | grad 9.18  0.98 it/s  18436s
+    HELD-OUT loss by horizon:  h1 1.832  h4 4.995  h16 7.280  h64 18.446  h256 26.037  h1024 43.793  h4096 51.744
+         hero pos L1 (cells):  h1 1.5  h4 2.5  h16 2.9  h64 5.7  h256 5.7  h1024 5.7  h4096 6.5
+VAL it  18000  loss 2.5829  | hero 1.577  creep 0.902  neutral 0.055  tower 0.049
+    hero better-than-copy / action-dependence: walking -64%/+126%  attack +20%/+62%  q -37%/+972%  w +3%/+593%  e -27%/+382%  mana -59%/+577%  health -109%/+115%  | deaths recall 41%
+it  18050  loss 13.7825  | hero 6.895  creep 6.122  neutral 0.521  tower 0.244  | grad 7.40  0.97 it/s  18518s
+it  18100  loss 13.7116  | hero 6.818  creep 6.154  neutral 0.503  tower 0.237  | grad 8.71  0.97 it/s  18566s
+it  18150  loss 13.0046  | hero 6.478  creep 5.816  neutral 0.478  tower 0.232  | grad 6.10  0.98 it/s  18615s
+it  18200  loss 13.4553  | hero 6.707  creep 6.055  neutral 0.474  tower 0.219  | grad 5.26  0.98 it/s  18663s
+it  18250  loss 13.2466  | hero 6.658  creep 5.910  neutral 0.460  tower 0.219  | grad 9.66  0.98 it/s  18711s
+it  18300  loss 12.6529  | hero 6.243  creep 5.744  neutral 0.449  tower 0.217  | grad 7.86  0.98 it/s  18760s
+it  18350  loss 12.6973  | hero 6.178  creep 5.837  neutral 0.457  tower 0.225  | grad 5.25  0.98 it/s  18808s
+it  18400  loss 12.9524  | hero 6.632  creep 5.631  neutral 0.470  tower 0.219  | grad 6.54  0.98 it/s  18856s
+it  18450  loss 13.1352  | hero 6.579  creep 5.844  neutral 0.496  tower 0.216  | grad 8.43  0.98 it/s  18904s
+it  18500  loss 12.9298  | hero 6.481  creep 5.725  neutral 0.497  tower 0.227  | grad 6.61  0.98 it/s  18952s
+    HELD-OUT loss by horizon:  h1 1.886  h4 4.805  h16 7.070  h64 17.721  h256 32.501  h1024 46.980  h4096 62.258
+         hero pos L1 (cells):  h1 1.3  h4 2.5  h16 2.7  h64 5.4  h256 6.3  h1024 4.7  h4096 5.0
+VAL it  18500  loss 2.7544  | hero 1.557  creep 1.071  neutral 0.072  tower 0.054
+    hero better-than-copy / action-dependence: walking -43%/+181%  attack +26%/+52%  q -24%/+1042%  w -5%/+626%  e -9%/+627%  mana -61%/+566%  health -100%/+127%  | deaths recall 41%
+it  18550  loss 12.9863  | hero 6.505  creep 5.799  neutral 0.459  tower 0.223  | grad 12.54  0.97 it/s  19035s
+it  18600  loss 12.7661  | hero 6.460  creep 5.628  neutral 0.459  tower 0.219  | grad 5.84  0.97 it/s  19084s
+it  18650  loss 12.6685  | hero 6.358  creep 5.633  neutral 0.460  tower 0.218  | grad 9.59  0.97 it/s  19132s
+it  18700  loss 12.5100  | hero 6.221  creep 5.589  neutral 0.476  tower 0.224  | grad 5.45  0.97 it/s  19181s
+it  18750  loss 12.5183  | hero 6.170  creep 5.674  neutral 0.463  tower 0.211  | grad 5.84  0.98 it/s  19230s
+it  18800  loss 12.6943  | hero 6.427  creep 5.582  neutral 0.466  tower 0.220  | grad 6.64  0.98 it/s  19278s
+it  18850  loss 12.6618  | hero 6.213  creep 5.689  neutral 0.531  tower 0.228  | grad 6.47  0.98 it/s  19328s
+it  18900  loss 12.7429  | hero 6.155  creep 5.845  neutral 0.520  tower 0.223  | grad 8.86  0.98 it/s  19382s
+it  18950  loss 12.6755  | hero 6.054  creep 5.946  neutral 0.463  tower 0.212  | grad 6.53  0.97 it/s  19436s
+it  19000  loss 12.7979  | hero 6.380  creep 5.732  neutral 0.471  tower 0.216  | grad 6.07  0.97 it/s  19490s
+    HELD-OUT loss by horizon:  h1 1.469  h4 3.736  h16 7.577  h64 18.778  h256 31.651  h1024 44.734  h4096 73.462
+         hero pos L1 (cells):  h1 1.0  h4 1.8  h16 2.8  h64 5.7  h256 6.8  h1024 5.6  h4096 8.9
+VAL it  19000  loss 2.1268  | hero 1.302  creep 0.755  neutral 0.031  tower 0.038
+    hero better-than-copy / action-dependence: walking -21%/+65%  attack +27%/+30%  q -23%/+400%  w +14%/+327%  e -24%/+196%  mana -40%/+463%  health -81%/+43%  | deaths recall 12%
+it  19050  loss 12.6986  | hero 6.344  creep 5.692  neutral 0.442  tower 0.221  | grad 5.84  0.97 it/s  19584s
+it  19100  loss 12.6882  | hero 6.436  creep 5.597  neutral 0.449  tower 0.206  | grad 9.81  0.97 it/s  19633s
+it  19150  loss 12.8765  | hero 6.489  creep 5.704  neutral 0.466  tower 0.218  | grad 7.96  0.97 it/s  19682s
+it  19200  loss 12.6284  | hero 6.272  creep 5.660  neutral 0.476  tower 0.220  | grad 5.77  0.97 it/s  19731s
+it  19250  loss 12.6566  | hero 6.237  creep 5.722  neutral 0.480  tower 0.218  | grad 5.27  0.97 it/s  19781s
+it  19300  loss 12.7626  | hero 6.408  creep 5.664  neutral 0.468  tower 0.222  | grad 12.67  0.97 it/s  19832s
+it  19350  loss 13.1960  | hero 6.557  creep 5.888  neutral 0.527  tower 0.225  | grad 7.22  0.97 it/s  19881s
+it  19400  loss 12.6867  | hero 6.183  creep 5.830  neutral 0.469  tower 0.204  | grad 4.43  0.97 it/s  19931s
+it  19450  loss 12.6318  | hero 6.303  creep 5.637  neutral 0.475  tower 0.217  | grad 7.48  0.97 it/s  19983s
+it  19500  loss 12.8749  | hero 6.336  creep 5.863  neutral 0.466  tower 0.211  | grad 3.54  0.97 it/s  20032s
+    HELD-OUT loss by horizon:  h1 2.020  h4 4.484  h16 7.229  h64 18.044  h256 26.527  h1024 38.985  h4096 50.354
+         hero pos L1 (cells):  h1 1.9  h4 2.7  h16 2.9  h64 5.7  h256 6.8  h1024 6.4  h4096 6.4
+VAL it  19500  loss 2.7884  | hero 1.782  creep 0.869  neutral 0.092  tower 0.046
+    hero better-than-copy / action-dependence: walking -90%/+115%  attack +26%/+51%  q -24%/+749%  w +23%/+582%  e -1%/+457%  mana -43%/+552%  health -90%/+108%  | deaths recall 45%
+it  19550  loss 13.5258  | hero 6.883  creep 5.952  neutral 0.472  tower 0.218  | grad 5.42  0.97 it/s  20119s
+it  19600  loss 14.0516  | hero 7.177  creep 6.137  neutral 0.512  tower 0.226  | grad 8.16  0.97 it/s  20168s
+it  19650  loss 12.8448  | hero 6.434  creep 5.703  neutral 0.493  tower 0.215  | grad 7.16  0.97 it/s  20216s
+it  19700  loss 12.6294  | hero 6.424  creep 5.545  neutral 0.451  tower 0.210  | grad 5.15  0.97 it/s  20268s
+it  19750  loss 12.7685  | hero 6.449  creep 5.619  neutral 0.494  tower 0.207  | grad 5.17  0.97 it/s  20318s
+it  19800  loss 12.6064  | hero 6.234  creep 5.689  neutral 0.471  tower 0.213  | grad 7.35  0.97 it/s  20366s
+it  19850  loss 12.5585  | hero 6.144  creep 5.754  neutral 0.446  tower 0.215  | grad 20.64  0.97 it/s  20418s
+it  19900  loss 12.8117  | hero 6.271  creep 5.749  neutral 0.574  tower 0.217  | grad 3.82  0.97 it/s  20468s
+it  19950  loss 13.2946  | hero 6.396  creep 6.181  neutral 0.494  tower 0.224  | grad 7.90  0.97 it/s  20516s
+it  20000  loss 12.6128  | hero 6.102  creep 5.779  neutral 0.514  tower 0.218  | grad 7.76  0.97 it/s  20566s
+    HELD-OUT loss by horizon:  h1 3.403  h4 11.774  h16 14.742  h64 22.591  h256 33.611  h1024 49.554  h4096 63.273
+         hero pos L1 (cells):  h1 3.1  h4 6.7  h16 6.0  h64 6.8  h256 6.4  h1024 5.2  h4096 5.5
+VAL it  20000  loss 4.1969  | hero 2.669  creep 1.171  neutral 0.306  tower 0.050
+    hero better-than-copy / action-dependence: walking -184%/+65%  attack +23%/+50%  q -32%/+869%  w +16%/+701%  e -8%/+388%  mana -65%/+485%  health -98%/+103%  | deaths recall 52%
+it  20050  loss 12.4074  | hero 5.914  creep 5.823  neutral 0.457  tower 0.213  | grad 11.78  0.97 it/s  20654s
+it  20100  loss 13.1478  | hero 6.474  creep 5.983  neutral 0.471  tower 0.220  | grad 5.85  0.97 it/s  20703s
+it  20150  loss 13.0656  | hero 6.530  creep 5.832  neutral 0.492  tower 0.212  | grad 4.59  0.97 it/s  20754s
+it  20200  loss 12.7695  | hero 6.429  creep 5.668  neutral 0.458  tower 0.214  | grad 7.85  0.97 it/s  20803s
+it  20250  loss 13.1079  | hero 6.611  creep 5.818  neutral 0.461  tower 0.217  | grad 5.00  0.97 it/s  20853s
+it  20300  loss 12.6342  | hero 6.355  creep 5.617  neutral 0.442  tower 0.220  | grad 7.41  0.97 it/s  20905s
+it  20350  loss 12.5064  | hero 6.210  creep 5.622  neutral 0.455  tower 0.220  | grad 4.33  0.97 it/s  20954s
+it  20400  loss 12.9976  | hero 6.516  creep 5.792  neutral 0.480  tower 0.209  | grad 6.65  0.97 it/s  21002s
+it  20450  loss 12.3016  | hero 6.104  creep 5.508  neutral 0.471  tower 0.218  | grad 9.85  0.97 it/s  21054s
+it  20500  loss 12.4926  | hero 6.117  creep 5.694  neutral 0.455  tower 0.227  | grad 6.39  0.97 it/s  21102s
+    HELD-OUT loss by horizon:  h1 1.705  h4 5.135  h16 7.702  h64 18.991  h256 24.643  h1024 34.842  h4096 36.840
+         hero pos L1 (cells):  h1 1.4  h4 2.7  h16 3.1  h64 5.9  h256 6.0  h1024 5.5  h4096 6.1
+VAL it  20500  loss 2.5191  | hero 1.585  creep 0.848  neutral 0.046  tower 0.040
+    hero better-than-copy / action-dependence: walking -65%/+66%  attack +25%/+35%  q -32%/+662%  w +17%/+325%  e -3%/+377%  mana -39%/+591%  health -96%/+87%  | deaths recall 30%
+it  20550  loss 12.8772  | hero 6.465  creep 5.727  neutral 0.461  tower 0.225  | grad 4.36  0.97 it/s  21184s
+it  20600  loss 12.7085  | hero 6.369  creep 5.664  neutral 0.456  tower 0.220  | grad 5.53  0.97 it/s  21234s
+it  20650  loss 12.2542  | hero 6.062  creep 5.517  neutral 0.464  tower 0.212  | grad 7.15  0.97 it/s  21282s
+it  20700  loss 12.4971  | hero 6.176  creep 5.636  neutral 0.469  tower 0.217  | grad 3.69  0.97 it/s  21330s
+it  20750  loss 12.2270  | hero 5.958  creep 5.587  neutral 0.469  tower 0.213  | grad 8.15  0.97 it/s  21378s
+it  20800  loss 12.1446  | hero 5.953  creep 5.528  neutral 0.447  tower 0.218  | grad 7.26  0.97 it/s  21426s

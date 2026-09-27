@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/vuzjgdh8",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/vuzjgdh8",
+  "name": "smoke",
+  "group": "E1-smoke",
+  "tags": [
+    "crashed",
+    "teacher-forced",
+    "wm"
+  ],
+  "notes": "first smoke run; crashed. docs/moba/EXPERIMENTS.md E1",
+  "state": "crashed",
+  "created_at": "2026-09-25T15:14:24Z",
+  "heartbeat_at": "2026-09-25T15:20:55Z",
+  "exported_rows": 33,
+  "max_step": 1650
+}
