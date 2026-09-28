@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/sdmvluu5",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/sdmvluu5",
+  "name": "e17_real_events",
+  "group": "E17-attack-ab",
+  "tags": [
+    "60-updates",
+    "attack-graph",
+    "tower",
+    "wm"
+  ],
+  "notes": "E17: real attack graph + tower-event sampling, 60 updates. docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:28Z",
+  "heartbeat_at": "2026-09-28T23:04:40Z",
+  "exported_rows": 9,
+  "max_step": 62
+}

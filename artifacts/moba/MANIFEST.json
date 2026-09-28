@@ -376,6 +376,50 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/e17_real",
+   "path": "runs/token_wm/e17_real/model.pt",
+   "present": true,
+   "wandb_run": "02klseww",
+   "description": "E17 A/B arm real: E11 @1500 + 60 updates",
+   "bytes": 2679608,
+   "md5": "f0c74028e55be14c48ec06ac4b04c3ef",
+   "s3": "s3://puffertank/moba/runs/e17_real/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e17_real_consist",
+   "path": "runs/token_wm/e17_real_consist/model.pt",
+   "present": true,
+   "wandb_run": "08wrb6xw",
+   "description": "E17 A/B arm real_consist: E11 @1500 + 60 updates",
+   "bytes": 2679608,
+   "md5": "8e58cc87b777055388b975d4551b3bda",
+   "s3": "s3://puffertank/moba/runs/e17_real_consist/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e17_real_events",
+   "path": "runs/token_wm/e17_real_events/model.pt",
+   "present": true,
+   "wandb_run": "sdmvluu5",
+   "description": "E17 A/B arm real_events: E11 @1500 + 60 updates",
+   "bytes": 2679608,
+   "md5": "9f8fb9ce3bcddac698997f3f34edaf49",
+   "s3": "s3://puffertank/moba/runs/e17_real_events/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e17_real_consist_events",
+   "path": "runs/token_wm/e17_real_consist_events/model.pt",
+   "present": true,
+   "wandb_run": "h5jt4gw8",
+   "description": "E17 A/B arm real_consist_events: E11 @1500 + 60 updates",
+   "bytes": 2679608,
+   "md5": "21d5d5c806b04f2c2cf12aa621b63531",
+   "s3": "s3://puffertank/moba/runs/e17_real_consist_events/model.pt",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260928_2300",
    "path": "runs/code_snapshots/code_snapshot_20260928_2300.tar.gz",
    "present": true,

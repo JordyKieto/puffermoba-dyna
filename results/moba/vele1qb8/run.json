@@ -13,10 +13,10 @@
     "tower-events",
     "wm"
   ],
-  "notes": "E16: E12 @4000 + real attack graph + tower consistency + tower-event sampling, full data (expert+random+dyna2). docs/moba/experiments/E15-tower-dynamics.md",
-  "state": "running",
+  "notes": "E16: E12 @4000 + real attack graph + tower consistency + tower-event sampling, full data. Stopped at ~150 updates: recipe not yet validated (E17 then showed the additions don't pay). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "crashed",
   "created_at": "2026-09-28T22:44:50Z",
-  "heartbeat_at": "2026-09-28T22:47:35Z",
-  "exported_rows": 1,
-  "max_step": 0
+  "heartbeat_at": "2026-09-28T22:52:20Z",
+  "exported_rows": 3,
+  "max_step": 100
 }

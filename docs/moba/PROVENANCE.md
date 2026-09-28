@@ -107,7 +107,9 @@ Cite the directory, not the link.
 | E13 | 09-28 01:28 → ~04:45 | dream PPO in E11 @1500: P4, P4b (4.5 min), P5 (100×) | `msjwyq7r`, `ahoexos3`, `gqwfjvhm`, `jfw1p3b5` | 2 × 4.5 min + running | first dream policies above random in the real game; 0 wins | [E13](experiments/E13-dream-ppo-e11.md) |
 | E14 | 09-28 ~05:00 → ~07:00 | dream PPO policy ablations P6–P11 on one H200 (arm C = best) | 18 runs, groups `P6-roleheads` … `P11-reward-sweep` | ~1 h GPU | recurrent PufferLib policy best; over-optimisation hurts; shaping negative | [E14](experiments/E14-dream-ppo-policy.md) |
 | E15 | 09-28 ~21:00 → 22:30 | tower audit, attack-graph analysis, 6-arm tower fix ablation (5 min each, 2 H200 pods) | `jox03h6v 1xflezs2 wt4kffxm zroavbb9 0ab2b4gu eaqg898j` (+ 9 aborted) | ~0.5 h GPU | real attack graph best | [E15](experiments/E15-tower-dynamics.md) |
-| E16 | 09-28 22:43 → running | E12 @4000 + real attack graph + consistency + tower-event sampling, full data | `vele1qb8` (smokes `qsh9x6mg`, `uj692w3j`) | running | — | [E15 § 4](experiments/E15-tower-dynamics.md) |
+| E16 | 09-28 22:43 → 22:51 (stopped, unvalidated) | E12 @4000 + real attack graph + consistency + tower-event sampling, full data | `vele1qb8` (smokes `qsh9x6mg`, `uj692w3j`) | running | — | [E15 § 4](experiments/E15-tower-dynamics.md) |
+| E17 | 09-28 22:50 → 23:10 | update-matched A/B: real attack graph ± consistency ± events (60 updates each) | `02klseww 08wrb6xw sdmvluu5 h5jt4gw8` | ~0.3 h GPU | real attack graph alone best | [E15 § 5](experiments/E15-tower-dynamics.md) |
+| E18 | 09-28 23:16 → running | E12 @4000 + real attack graph, full data | `tz9mc91w` | running | — | [E15 § 6](experiments/E15-tower-dynamics.md) |
 | E5 continued | 09-27 03:20 → ~05:45 | E5 from 20,500, H100 NVL, `--store-cpu` | `hm9mnnoy` (OOM), `soeosr9h` (1,700 updates) | 0.93 h | best one-step E5 so far (h1 1.51 @+1,500); **all its checkpoints lost** | [E5](experiments/E5-rollout-training.md) |
 
 Figures and tables, regenerated with `results/moba/make_figures.py`:

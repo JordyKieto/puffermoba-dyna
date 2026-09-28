@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/h5jt4gw8",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/h5jt4gw8",
+  "name": "e17_real_consist_events",
+  "group": "E17-attack-ab",
+  "tags": [
+    "60-updates",
+    "attack-graph",
+    "tower",
+    "wm"
+  ],
+  "notes": "E17: real attack graph + consistency + event sampling (combined), 60 updates. docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:30Z",
+  "heartbeat_at": "2026-09-28T23:04:55Z",
+  "exported_rows": 9,
+  "max_step": 62
+}

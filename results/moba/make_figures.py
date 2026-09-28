@@ -395,6 +395,13 @@ def main():
         ("tower-event sampling", "tower_audit_e15_events.json"),
         ("tower health x10", "tower_audit_e15_tower10.json")],
         "E15 arms: E11 @1500 fine-tuned 5 minutes each (~60-100 updates, batch 384); held-out games 900-909.")
+    tab_tower_audit("tower_audit_e17.md", [
+        ("E11 @1500 (no fine-tune)", "tower_audit_e15_baseline.json"),
+        ("real attack graph only", "tower_audit_e17_real.json"),
+        ("real + consistency", "tower_audit_e17_real_consist.json"),
+        ("real + event sampling", "tower_audit_e17_real_events.json"),
+        ("real + consistency + events (combined)", "tower_audit_e17_real_consist_events.json")],
+        "E17 update-matched A/B: E11 @1500 fine-tuned exactly 60 updates each (batch 384, same data), held-out games 900-909.")
     tab_arena_sides("arena_e14_tower_shaping.md", [
         ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
         ("P12 tower damage (k2, boost 2)", "arena_real_game_p12_dmg.jsonl", "ppo"),

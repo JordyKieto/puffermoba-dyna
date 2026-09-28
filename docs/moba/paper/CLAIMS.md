@@ -67,6 +67,7 @@ Any claim about "the model predicts X" is about the learned part only.
 | W24 | E11 predicts tower deaths with 35% precision / 70% recall in a 128-tick dream, 13% / 36% at 512 ticks; one step it catches 88% but raises ~2 false alarms per real fall | M (20 held-out games, 177 falls) | Dream `tower_event_audit.json`; Tab `tower_audit_e11.md`; [E15](../experiments/E15-tower-dynamics.md) |
 | W25 | Every combat unit's 'who I attacked' is recorded each tick (`target_pid`) and 86–95% of hits trace to an attacker, but the model gets none of it (not an input; rule R9 blanks it) | M (5 held-out games) | E15 record § 2 |
 | W26 | Feeding the real attack graph as an input (no new heads) raises dream tower-death precision from 32% to 60% at 73% recall after a 5-minute fine-tune; derived targets and a death/health consistency loss reach 54% | M (single seed, 10 games, 75 falls) | Runs `wt4kffxm 1xflezs2 zroavbb9 jox03h6v`; Tab `tower_audit_e15.md` |
+| W27 | Adding a death/health consistency loss or tower-event sampling to the real attack graph does not help: update-matched, real only 58% precision / 65% recall vs combined 52% / 67% (consistency alone costs recall: 49%) | M (single seed, 60 updates, 75 falls) | Runs `02klseww 08wrb6xw sdmvluu5 h5jt4gw8`; Tab `tower_audit_e17.md`; [E15 § 5](../experiments/E15-tower-dynamics.md) |
 
 ## RL track (R)
 

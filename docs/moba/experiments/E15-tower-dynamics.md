@@ -104,7 +104,7 @@ E15 arms: E11 @1500 fine-tuned 5 minutes each (~60-100 updates, batch 384); held
 - **Aborted launches** in the same W&B group (1,000-update runs stopped when the requested scale
   was 5 minutes): `j6c6g2ox skk7a1wh grd66rl7 9ttsnv28 3ifyreey ti1m431j r8r9tnzz b3cl5bq3 6krtubiy`.
 
-## 4. E16: the combined recipe, trained on everything (running)
+## 4. E16: the combined recipe, trained on everything (stopped)
 
 - **Recipe:** real attack graph + consistency loss + tower-event sampling.
 - **Start:** **E12 @4000** (already trained on expert + random + dyna2).
@@ -113,7 +113,60 @@ E15 arms: E11 @1500 fine-tuned 5 minutes each (~60-100 updates, batch 384); held
 - **Validation:** now reports tower-fall precision and recall every 500 updates (`tower/*` in W&B:
   64 fixed held-out windows, open loop 128 and one step).
 - **Runs:** W&B `vele1qb8`; S3 `moba/runs/e16_towers/`.
+- **Stopped at ~150 updates (no checkpoint)** by the author: it trained on a recipe that had
+  not been validated, and it competed for the pod with the A/B that was meant to validate it.
 - **Smoke first** (`uj692w3j`, 3 minutes): tower open-loop precision 41% → 62% at update 50, and
   one-step false predictions per real fall 10.8 → 2.8.
 - **An earlier smoke** (`qsh9x6mg`) ran out of GPU memory: inserting `tower_eval` had moved
   `@torch.no_grad` off `eval_horizons`. Fixed before the launch.
+
+## 5. E17: is the combined recipe worth it, or is the attack graph enough? (update-matched A/B)
+
+- **Setup:** four arms, the E15 setup exactly: E11 @1500, the same data subset, batch 384,
+  **exactly 60 updates each** (update-matched, so shared-pod speed doesn't matter). One H200,
+  run alone after stopping E16.
+- **Test:** the tower audit on held-out games 900–909 (75 falls in 128-tick windows).
+- **Runs:** W&B group `E17-attack-ab`:
+
+| arm | run |
+|---|---|
+| real only | `02klseww` |
+| + consistency | `08wrb6xw` |
+| + event sampling | `sdmvluu5` |
+| combined | `h5jt4gw8` |
+
+E17 update-matched A/B: E11 @1500 fine-tuned exactly 60 updates each (batch 384, same data), held-out games 900-909.
+
+| world model | games | real falls | one step recall | one step precision (exact) | one step precision (incl. early) | false alarms | open-loop real | open-loop predicted | hits | open-loop precision | open-loop recall |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| E11 @1500 (no fine-tune) | 10 | 87 | 87% | 38% | 53% | 94 | 75 | 165 | 53 | 32% | 71% |
+| real attack graph only | 10 | 87 | 15% | 50% | 81% | 5 | 75 | 85 | 49 | 58% | 65% |
+| real + consistency | 10 | 87 | 36% | 63% | 86% | 7 | 75 | 60 | 37 | 62% | 49% |
+| real + event sampling | 10 | 87 | 0% | 0% | 0% | 0 | 75 | 109 | 52 | 48% | 69% |
+| real + consistency + events (combined) | 10 | 87 | 0% | 0% | 0% | 0 | 75 | 96 | 50 | 52% | 67% |
+
+In-training metric (64 fixed windows, 24 real falls), open-loop precision / recall:
+
+| arm | precision / recall |
+|---|---|
+| E11 update 0 | 37% / 62% |
+| real only | 49% / 71% |
+| + consistency | 52% / 46% |
+| + events | 36% / 75% |
+| combined | 41% / 71% |
+
+**Verdict: the real attack graph alone is the recipe.**
+- **It reproduces E15:** 58% / 65% here vs 60% / 73% there, within noise.
+- **Consistency** buys a little precision (62%) at a large recall cost (49%).
+- **Event sampling** gives back precision (48%).
+- **The combined recipe** (52% / 67%) is worse than the attack graph alone on precision.
+- **Caveats:** single seed, 60 updates.
+
+## 6. E18: E12 @4000 + real attack graph only, full data (running)
+
+- **Recipe:** the recipe E17 selected, from E12 @4000 (expert + random + dyna2), all 2,560
+  training games, E5's settings (batch 768, lr 1e-3), open-ended.
+- **Validation:** tower metrics every 500 updates, next to the horizon losses.
+- **Runs:** W&B `tz9mc91w`; S3 `moba/runs/e18_attack/`.
+- **Launched 2026-09-28 23:16 UTC,** 0.6 updates/s.
+- **Update 0 (= E12 @4000):** tower open-loop precision 41%, recall 61%; the number to beat.

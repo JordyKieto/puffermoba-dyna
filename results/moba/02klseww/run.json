@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/02klseww",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/02klseww",
+  "name": "e17_real",
+  "group": "E17-attack-ab",
+  "tags": [
+    "60-updates",
+    "attack-graph",
+    "main",
+    "tower",
+    "wm"
+  ],
+  "notes": "E17: real attack graph only, E11 @1500 + 60 updates. docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:01Z",
+  "heartbeat_at": "2026-09-28T23:04:17Z",
+  "exported_rows": 9,
+  "max_step": 62
+}

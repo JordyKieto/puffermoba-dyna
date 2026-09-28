@@ -1820,10 +1820,98 @@
    "tower-events",
    "wm"
   ],
-  "state": "running",
+  "state": "crashed",
   "created_at": "2026-09-28T22:44:50Z",
-  "history_rows": 1,
-  "max_step": 0,
+  "history_rows": 3,
+  "max_step": 100,
   "dir": "results/moba/vele1qb8/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "02klseww",
+  "name": "e17_real",
+  "group": "E17-attack-ab",
+  "tags": [
+   "60-updates",
+   "attack-graph",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:01Z",
+  "history_rows": 9,
+  "max_step": 62,
+  "dir": "results/moba/02klseww/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "08wrb6xw",
+  "name": "e17_real_consist",
+  "group": "E17-attack-ab",
+  "tags": [
+   "60-updates",
+   "attack-graph",
+   "tower",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:21Z",
+  "history_rows": 9,
+  "max_step": 62,
+  "dir": "results/moba/08wrb6xw/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "sdmvluu5",
+  "name": "e17_real_events",
+  "group": "E17-attack-ab",
+  "tags": [
+   "60-updates",
+   "attack-graph",
+   "tower",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:28Z",
+  "history_rows": 9,
+  "max_step": 62,
+  "dir": "results/moba/sdmvluu5/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "h5jt4gw8",
+  "name": "e17_real_consist_events",
+  "group": "E17-attack-ab",
+  "tags": [
+   "60-updates",
+   "attack-graph",
+   "tower",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T22:52:30Z",
+  "history_rows": 9,
+  "max_step": 62,
+  "dir": "results/moba/h5jt4gw8/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "tz9mc91w",
+  "name": "e18_attack",
+  "group": "E18-attack",
+  "tags": [
+   "attack-graph",
+   "dyna",
+   "main",
+   "rollout",
+   "store-cpu",
+   "wm"
+  ],
+  "state": "running",
+  "created_at": "2026-09-28T23:13:12Z",
+  "history_rows": 4,
+  "max_step": 150,
+  "dir": "results/moba/tz9mc91w/"
  }
 ]

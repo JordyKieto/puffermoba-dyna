@@ -65,7 +65,12 @@ E = {
     "qsh9x6mg": ("E16-towers", ["wm", "smoke", "oom"], "E16 smoke #1: CUDA OOM (eval_horizons lost @torch.no_grad when tower_eval was inserted; fixed). " + REC + "E15-tower-dynamics.md"),
     "uj692w3j": ("E16-towers", ["wm", "smoke"], "E16 smoke #2: combined recipe 3 min, passes; tower OL128 precision 41% -> 62%. " + REC + "E15-tower-dynamics.md"),
     "vele1qb8": ("E16-towers", ["wm", "rollout", "attack-graph", "tower-consist", "tower-events", "dyna", "store-cpu", "main"],
-                 "E16: E12 @4000 + real attack graph + tower consistency + tower-event sampling, full data (expert+random+dyna2). " + REC + "E15-tower-dynamics.md"),
+                 "E16: E12 @4000 + real attack graph + tower consistency + tower-event sampling, full data. Stopped at ~150 updates: recipe not yet validated (E17 then showed the additions don't pay). " + REC + "E15-tower-dynamics.md"),
+    "02klseww": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates", "main"], "E17: real attack graph only, E11 @1500 + 60 updates. " + REC + "E15-tower-dynamics.md"),
+    "08wrb6xw": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + consistency loss, 60 updates. " + REC + "E15-tower-dynamics.md"),
+    "sdmvluu5": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + tower-event sampling, 60 updates. " + REC + "E15-tower-dynamics.md"),
+    "h5jt4gw8": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + consistency + event sampling (combined), 60 updates. " + REC + "E15-tower-dynamics.md"),
+    "tz9mc91w": ("E18-attack", ["wm", "rollout", "attack-graph", "dyna", "store-cpu", "main"], "E18: E12 @4000 + real attack graph only, full data (expert+random+dyna2), open-ended. " + REC + "E15-tower-dynamics.md"),
     "d9xnnj0a": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "effect-loss", "main"],
                  "E6b: E5@3500 + counterfactual siblings + effect aux losses, 3,550 updates. Checkpoints kept. "
                  + REC + "E6-counterfactual-siblings.md"),

@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e17_real_consist",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 386,
+  "hits": 31,
+  "precision": 0.08031088082901554,
+  "recall": 0.3563218390804598
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 49,
+  "alarm_hit": 31,
+  "early": 11,
+  "false": 7,
+  "caught": 31,
+  "precision_exact": 0.6326530612244898,
+  "precision_incl_early": 0.8571428571428571,
+  "recall": 0.3563218390804598
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 60,
+   "hits": 37,
+   "precision": 0.6166666666666667,
+   "recall": 0.49333333333333335,
+   "windows": 203,
+   "mean_abs_lag": 8.756756756756756
+  }
+ }
+}

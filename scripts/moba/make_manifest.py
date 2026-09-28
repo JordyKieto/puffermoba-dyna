@@ -68,6 +68,9 @@ S3KEY = {"rl/P7_C_puffer_ours_1.70M": "moba/runs/keep/p7_armC_puffer_ours_1.70M/
 ARTIFACTS += [(f"wm/e15_{k}", f"runs/token_wm/e15_{k}/model.pt", i, f"E15 arm {k}: E11 @1500 fine-tuned 5 min (tower fix ablation)")
               for k, i in (("control", "jox03h6v"), ("derived", "1xflezs2"), ("real", "wt4kffxm"), ("consist", "zroavbb9"),
                            ("tower10", "0ab2b4gu"), ("events", "eaqg898j"))]
+ARTIFACTS += [(f"wm/e17_{k}", f"runs/token_wm/e17_{k}/model.pt", i, f"E17 A/B arm {k}: E11 @1500 + 60 updates")
+              for k, i in (("real", "02klseww"), ("real_consist", "08wrb6xw"), ("real_events", "sdmvluu5"),
+                           ("real_consist_events", "h5jt4gw8"))]
 ARTIFACTS += [("code/code_snapshot_20260928_2300", "runs/code_snapshots/code_snapshot_20260928_2300.tar.gz", None,
                "Snapshot of the uncommitted code behind E15/E16 and P12/P13: attack graph (data.derived_targets, "
                "attack_inputs, model atk_in), tower consistency/weight/event lanes, tower_eval, tower_event_audit.py, "
