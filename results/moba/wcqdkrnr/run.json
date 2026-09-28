@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/wcqdkrnr",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/wcqdkrnr",
+  "name": "p9/puffer_ours_2x",
+  "group": "P9-puffer-2x",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "puffer-mingru"
+  ],
+  "notes": "P9: arm C recipe at 2x steps (3.42M); first 1.70M identical to C. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T05:42:57Z",
+  "heartbeat_at": "2026-09-28T05:49:21Z",
+  "exported_rows": 56,
+  "max_step": 56
+}

@@ -335,6 +335,238 @@
   "dir": "results/moba/jfw1p3b5/"
  },
  {
+  "project": "moba-dream-rl",
+  "run_id": "zdq4qs2a",
+  "name": "p6/base",
+  "group": "P6-roleheads",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "mlp"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:12:30Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/zdq4qs2a/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "74m80azw",
+  "name": "p6/roleheads",
+  "group": "P6-roleheads",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "mlp",
+   "role-heads"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:12:34Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/74m80azw/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "1zl7yomf",
+  "name": "p7/puffer_tuned",
+  "group": "P7-arch",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-hparams",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:25:14Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/1zl7yomf/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "s2aec2an",
+  "name": "p7/puffer_ours",
+  "group": "P7-arch",
+  "tags": [
+   "best",
+   "dream-ppo",
+   "e11",
+   "main",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:25:20Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/s2aec2an/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "5z05e3kt",
+  "name": "p8/ent0.003",
+  "group": "P8-ent-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:33:49Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/5z05e3kt/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "gqha5cv0",
+  "name": "p8/ent0.03",
+  "group": "P8-ent-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:34:03Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/gqha5cv0/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "znomih0f",
+  "name": "p8/ent0.05",
+  "group": "P8-ent-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:34:08Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/znomih0f/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "ps9yzz2j",
+  "name": "p8/ent0.1",
+  "group": "P8-ent-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:34:11Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/ps9yzz2j/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "wcqdkrnr",
+  "name": "p9/puffer_ours_2x",
+  "group": "P9-puffer-2x",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:42:57Z",
+  "history_rows": 56,
+  "max_step": 56,
+  "dir": "results/moba/wcqdkrnr/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "jjdb2ezj",
+  "name": "p10/puffer_ours_e12",
+  "group": "P10-e12-dream",
+  "tags": [
+   "dream-ppo",
+   "e12",
+   "puffer-mingru"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T05:55:14Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/jjdb2ezj/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "4gytv3k0",
+  "name": "p11/t3team",
+  "group": "P11-reward-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "reward-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:02:13Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/4gytv3k0/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "z04it194",
+  "name": "p11/win10",
+  "group": "P11-reward-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "reward-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:02:36Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/z04it194/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "7il3e2up",
+  "name": "p11/t3team_win10",
+  "group": "P11-reward-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "reward-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:02:43Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/7il3e2up/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "dr5qofw7",
+  "name": "p11/t10team_win30",
+  "group": "P11-reward-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "reward-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:02:46Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/dr5qofw7/"
+ },
+ {
   "project": "moba-wm",
   "run_id": "vuzjgdh8",
   "name": "smoke",

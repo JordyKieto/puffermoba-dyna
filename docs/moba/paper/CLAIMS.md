@@ -81,6 +81,12 @@ Any claim about "the model predicts X" is about the learned part only.
 | R10 | Adding random-play start states roughly doubles it: return 6.40 (57% of the net's 11.21), creep kills 11.0 vs the net's 11.4; 0 wins | M (single seed; 1.70M vs 2.12M steps) | Runs `ahoexos3`; Dream `arena_real_game_p4_mix_e11_mixstarts.jsonl`; same table |
 | R11 | The improvement comes from the random-data world model rather than the curriculum | **U** | World model and curriculum changed together in P4; no ablation run |
 | R12 | 48× more dream training (P5, 81.3M steps) lowers real return from 6.40 to 2.34 vs the shipped net | M (single seed, one checkpoint, 20 games) | Runs `jfw1p3b5`; Dream `arena_real_game_p5_policy_081342665.jsonl`; Tab `arena_e11_ppo_vs_net.md` |
+| R13 | A recurrent PufferLib policy (Encoder + 6-layer MinGRU) trained in the dream beats our feed-forward MLP in the real game: return 9.30 vs 6.40 per hero vs the shipped net (same PPO, 1.70M steps) | M (single seed) | Runs `s2aec2an`, `zdq4qs2a`; Tab `arena_e14_policy_arms.md`; [E14](../experiments/E14-dream-ppo-policy.md) |
+| R14 | As radiant, the best dream policy (arm C) out-earns the shipped net's own radiant play (18.11 ± 0.25 vs 14.31 ± 0.41 per hero; 2× creeps) but wins 0% (the net 100%); as dire it loses 100% (return 0.94 vs the net's 6.61) | M (120 games) | Dream `arena_real_game_p7_armC_120.jsonl`; Tab `arena_e14_armC_120.md` |
+| R15 | More dream optimisation lowers real return in every form tried: 2× steps (9.30 → 3.52), PufferLib's aggressive PPO (3.24), entropy 0.003 (4.12); the dream reward rises in each | M (single seed each; P9 is the same deterministic run as C, extended) | Runs `wcqdkrnr`, `1zl7yomf`, `5z05e3kt`; Tab `arena_e14_policy_arms.md` |
+| R16 | Neither the game nor the dream rewards winning: the ancient is a tower (+0.642 to one hero); victory only triggers the reset | M (code) | `third_party/pufferlib/ocean/moba/moba.h` (tower kill credit, `radiant_victory`/`dire_victory`); `mobawm/rl/dream_ppo.py reward()` |
+| R17 | Dream-only shaping (team tower credit 3–10, win ±10–30) does not produce pushing or wins and lowers radiant return to 3.0–6.7 | M (single seed each, 20 games) | Runs `4gytv3k0 z04it194 7il3e2up dr5qofw7`; Tab `arena_e14_reward_sweep.md` |
+| R18 | Training in the E12 (+dyna2) dream does not beat the E11 dream at this budget (6.21 vs 9.30) | M (single seed) | Runs `jjdb2ezj`; Tab `arena_e14_policy_arms.md` |
 
 ## Method claims that need a control before use
 

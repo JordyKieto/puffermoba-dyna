@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/dr5qofw7",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/dr5qofw7",
+  "name": "p11/t10team_win30",
+  "group": "P11-reward-sweep",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "puffer-mingru",
+    "reward-shaping"
+  ],
+  "notes": "P11: arm C + dream-only reward shaping: tower 10 team + win +-30. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T06:02:46Z",
+  "heartbeat_at": "2026-09-28T06:07:44Z",
+  "exported_rows": 28,
+  "max_step": 28
+}

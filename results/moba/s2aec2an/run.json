@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/s2aec2an",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/s2aec2an",
+  "name": "p7/puffer_ours",
+  "group": "P7-arch",
+  "tags": [
+    "best",
+    "dream-ppo",
+    "e11",
+    "main",
+    "puffer-mingru"
+  ],
+  "notes": "P7 C (BEST): PufferLib MinGRU + our PPO, 1.70M steps. Kept: s3 moba/runs/keep/p7_armC_puffer_ours_1.70M/. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T05:25:20Z",
+  "heartbeat_at": "2026-09-28T05:29:02Z",
+  "exported_rows": 28,
+  "max_step": 28
+}

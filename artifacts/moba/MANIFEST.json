@@ -299,6 +299,28 @@
    "s3_byte_identical": true
   },
   {
+   "name": "rl/P7_C_puffer_ours_1.70M",
+   "path": "runs/dream_ppo/p7/puffer_ours/policy.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "BEST dream policy so far (arm C): PufferLib Encoder + 6-layer MinGRU (recurrent) + our PPO, E11 @1500 dream, mix curriculum, mixed start states, 1.70M steps. Real vs shipped net: return 9.30, creeps 14.5, 0 wins (W&B moba-dream-rl group P7-arch)",
+   "bytes": 1309522,
+   "md5": "3874281e9b403be346226b9386605c11",
+   "s3": "s3://puffertank/moba/runs/keep/p7_armC_puffer_ours_1.70M/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260928_0700",
+   "path": "runs/code_snapshots/code_snapshot_20260928_0700.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E14: dream_ppo --arch puffer (PufferPolicy, recurrent PPO update), --role-heads, --r-tower/--tower-team/--r-win shaping, Adam/clip flags; arena recurrent memory.",
+   "bytes": 124988,
+   "md5": "1975f63caedb46d341b15988865fad8d",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0700.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260928_0215",
    "path": "runs/code_snapshots/code_snapshot_20260928_0215.tar.gz",
    "present": true,

@@ -55,11 +55,19 @@ ARTIFACTS += [("wm/e11_at1500", "runs/token_wm/e11_at1500/model.pt", "mlbh5d3l",
                "P4: dream PPO in E11 @1500, 50% self-play / 50% vs net, expert starts, 4.5 min, 2.12M steps"),
               ("rl/P4b_mix_e11_mixstarts", "runs/dream_ppo/p4/mix_e11_mixstarts/policy.pt", "ahoexos3",
                "P4b: as P4 + expert and random-play start states, 4.5 min, 1.70M steps")]
+ARTIFACTS += [("rl/P7_C_puffer_ours_1.70M", "runs/dream_ppo/p7/puffer_ours/policy.pt", None,
+               "BEST dream policy so far (arm C): PufferLib Encoder + 6-layer MinGRU (recurrent) + our PPO, E11 @1500 "
+               "dream, mix curriculum, mixed start states, 1.70M steps. Real vs shipped net: return 9.30, creeps 14.5, "
+               "0 wins (W&B moba-dream-rl group P7-arch)")]
 # uploads that do not follow the path -> key rule in main()
-S3KEY = {"wm/e11_at1500": "moba/runs/e11_at1500/model.pt",
+S3KEY = {"rl/P7_C_puffer_ours_1.70M": "moba/runs/keep/p7_armC_puffer_ours_1.70M/policy.pt",
+         "wm/e11_at1500": "moba/runs/e11_at1500/model.pt",
          "wm/e11_at2000": "moba/runs/e11_random_resume/model_002000.pt",
          "rl/P4_mix_e11": "moba/runs/p4_mix_e11/policy.pt",
          "rl/P4b_mix_e11_mixstarts": "moba/runs/p4_mix_e11_mixstarts/policy.pt"}
+ARTIFACTS += [("code/code_snapshot_20260928_0700", "runs/code_snapshots/code_snapshot_20260928_0700.tar.gz", None,
+               "Snapshot of the uncommitted code behind E14: dream_ppo --arch puffer (PufferPolicy, recurrent PPO update), "
+               "--role-heads, --r-tower/--tower-team/--r-win shaping, Adam/clip flags; arena recurrent memory.")]
 ARTIFACTS += [("code/code_snapshot_20260928_0215", "runs/code_snapshots/code_snapshot_20260928_0215.tar.gz", None,
                "Snapshot of the uncommitted code behind E11-E13: train.py --held2-games, anonymous-mmap loader "
                "(data.py), dream_ppo --opponent mix, collect_policy_games --matchups/--slice, pod.py CPU pods. "

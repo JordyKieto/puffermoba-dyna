@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/znomih0f",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/znomih0f",
+  "name": "p8/ent0.05",
+  "group": "P8-ent-sweep",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "puffer-mingru"
+  ],
+  "notes": "P8: arm C, ent 0.05. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T05:34:08Z",
+  "heartbeat_at": "2026-09-28T05:39:03Z",
+  "exported_rows": 28,
+  "max_step": 28
+}

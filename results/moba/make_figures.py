@@ -312,6 +312,23 @@ def tab_dvr_e11():
              "reward = death + XP + tower terms per 1k hero-steps of our team.")
 
 
+def tab_arena_sides(out, arms, note):
+    """Real game vs the shipped net, split by side: arms = [(label, file in results/moba/dream, team)]."""
+    import numpy as np
+    rows = []
+    for label, f, team in arms:
+        g0 = [x for x in map(json.loads, open(R / "dream" / f)) if x["team"] == team and x["opp"] == "net"]
+        for side in ("radiant", "dire"):
+            g = [x for x in g0 if x["side"] == side]
+            m = lambda k: np.mean([float(x[k]) for x in g])
+            se = np.std([x["return_ours"] for x in g], ddof=1) / len(g) ** 0.5
+            rows.append([label, side, len(g), f"{100 * m('won'):.0f}", f"{100 * m('lost'):.0f}",
+                         f"{m('return_ours'):.2f} ± {se:.2f}", f"{m('ours_creeps_killed'):.1f}",
+                         f"{m('ours_level'):.2f}", f"{m('ours_towers_killed'):.2f}"])
+    md_table(TAB / out, ["our team (vs shipped net)", "side", "games", "win %", "loss %", "return/hero ± s.e.",
+                         "creeps", "level", "towers"], rows, note)
+
+
 def main():
     FIG.mkdir(exist_ok=True)
     TAB.mkdir(exist_ok=True)
@@ -329,6 +346,33 @@ def main():
                         "32 fixed windows per horizon; x = loss relative to update 0.")
     tab_arena_e11()
     tab_dvr_e11()
+    tab_arena_sides("arena_e14_policy_arms.md", [
+        ("P6 base (MLP, = P4b)", "arena_real_game_p6_base.jsonl", "ppo"),
+        ("P6 MLP + role heads", "arena_real_game_p6_roleheads.jsonl", "ppo"),
+        ("P7 B: PufferLib MinGRU + old-repo PPO", "arena_real_game_p7_puffer_tuned.jsonl", "ppo"),
+        ("P7 C: PufferLib MinGRU + our PPO", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
+        ("P8 C, entropy 0.003", "arena_real_game_p8_ent0.003.jsonl", "ppo"),
+        ("P8 C, entropy 0.03", "arena_real_game_p8_ent0.03.jsonl", "ppo"),
+        ("P8 C, entropy 0.05", "arena_real_game_p8_ent0.05.jsonl", "ppo"),
+        ("P8 C, entropy 0.1", "arena_real_game_p8_ent0.1.jsonl", "ppo"),
+        ("P9 C at 2x steps (3.42M)", "arena_real_game_p9_puffer_ours_2x.jsonl", "ppo"),
+        ("P10 C in the E12 @4000 dream", "arena_real_game_p10_puffer_ours_e12.jsonl", "ppo"),
+        ("random actions", "arena_real_game_p4_mix_e11.jsonl", "random"),
+        ("shipped net (mirror)", "arena_real_game_p4_mix_e11.jsonl", "net")],
+        "E14 arms, 1.70M dream steps each unless stated; 10 games per side, seeds 50000000+ (mobawm/rl/arena.py).")
+    tab_arena_sides("arena_e14_armC_120.md", [
+        ("arm C (P7 C)", "arena_real_game_p7_armC_120.jsonl", "ppo"),
+        ("shipped net (mirror)", "arena_real_game_p7_armC_120.jsonl", "net"),
+        ("random actions", "arena_real_game_p7_armC_120.jsonl", "random")],
+        "Arm C over 120 games: 60 per side, seeds 50000000+.")
+    tab_arena_sides("arena_e14_reward_sweep.md", [
+        ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
+        ("P11 tower 3 to team", "arena_real_game_p11_t3team.jsonl", "ppo"),
+        ("P11 win +-10", "arena_real_game_p11_win10.jsonl", "ppo"),
+        ("P11 tower 3 team + win +-10", "arena_real_game_p11_t3team_win10.jsonl", "ppo"),
+        ("P11 tower 10 team + win +-30", "arena_real_game_p11_t10team_win30.jsonl", "ppo"),
+        ("shipped net (mirror)", "arena_real_game_p4_mix_e11.jsonl", "net")],
+        "P11: arm C + dream-only reward shaping, 1.70M steps each; 10 games per side vs the shipped net.")
     for f in sorted(FIG.iterdir()):
         print(f.relative_to(R.parent.parent))
 

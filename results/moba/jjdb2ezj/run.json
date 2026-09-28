@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/jjdb2ezj",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/jjdb2ezj",
+  "name": "p10/puffer_ours_e12",
+  "group": "P10-e12-dream",
+  "tags": [
+    "dream-ppo",
+    "e12",
+    "puffer-mingru"
+  ],
+  "notes": "P10: arm C recipe in the E12 @4000 dream. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T05:55:14Z",
+  "heartbeat_at": "2026-09-28T06:01:24Z",
+  "exported_rows": 28,
+  "max_step": 28
+}

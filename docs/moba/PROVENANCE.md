@@ -59,6 +59,7 @@ The tracks are provenanced separately. A claim about one is not evidence about t
 | E0–E4 world model, baseline v2, viewer | yes, up to `efe1003` / `ff9b337` / `bfa68da` / `9e5ea3b` | git |
 | E5 rollout training (`--rollout`, `--init`, horizon metric) | yes, `e51dc11` | git |
 | E5-continuation additions (`--store-cpu`, rubric metrics), E6/E6b (`CFBatcher`, effect losses, `cf.py`, `moba_fork.c`), dream PPO, arena, S3 persistence | **no, deliberately.** New architectures stay uncommitted until the author says commit | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260927_1323.tar.gz` (md5 `6975755a1b7e`, [MANIFEST](../../artifacts/moba/MANIFEST.json)): HEAD `dad8c7e` + tracked diff + untracked files |
+| E14: `dream_ppo --arch puffer` (recurrent PufferLib policy), `--role-heads`, reward shaping flags, arena recurrent memory | **no, deliberately** | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0700.tar.gz` (md5 `1975f63caedb`, MANIFEST) |
 | E11–E13: `--held2-games`, anonymous-mmap loader, `dream_ppo --opponent mix`, `collect_policy_games --matchups/--slice`, CPU pods | **no, deliberately** (pod.py: committed) | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0215.tar.gz` (md5 `2b46ba452a3e`, MANIFEST) |
 | E8–E11: collector `random` controller, planner (`plan_mpc.py` realtime/batched), XP clamp flags, `--held2-games`, audit/Dyna/calibration scripts | **no, deliberately** | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0015.tar.gz` (md5 `bdb61cfa11ac`, MANIFEST): HEAD `173cfc1` + tracked diff + files |
 
@@ -103,6 +104,7 @@ Cite the directory, not the link.
 | E11 | 09-28 00:20 → 01:51 | E5 @20,500 resumed on mix1k + mixrand1k, 2,300 updates | `mlbh5d3l` | 1.5 h | random-play hallucination fixed; expert h1/h4096 worse | [E11](experiments/E11-random-data.md) |
 | E12 | 09-28 ~02:00 → ~04:45 | E11 @2000 + dyna2 | `xfldazic` | running | — | [E12](experiments/E12-dyna2.md) |
 | E13 | 09-28 01:28 → ~04:45 | dream PPO in E11 @1500: P4, P4b (4.5 min), P5 (100×) | `msjwyq7r`, `ahoexos3`, `gqwfjvhm`, `jfw1p3b5` | 2 × 4.5 min + running | first dream policies above random in the real game; 0 wins | [E13](experiments/E13-dream-ppo-e11.md) |
+| E14 | 09-28 ~05:00 → ~07:00 | dream PPO policy ablations P6–P11 on one H200 (arm C = best) | 18 runs, groups `P6-roleheads` … `P11-reward-sweep` | ~1 h GPU | recurrent PufferLib policy best; over-optimisation hurts; shaping negative | [E14](experiments/E14-dream-ppo-policy.md) |
 | E5 continued | 09-27 03:20 → ~05:45 | E5 from 20,500, H100 NVL, `--store-cpu` | `hm9mnnoy` (OOM), `soeosr9h` (1,700 updates) | 0.93 h | best one-step E5 so far (h1 1.51 @+1,500); **all its checkpoints lost** | [E5](experiments/E5-rollout-training.md) |
 
 Figures and tables, regenerated with `results/moba/make_figures.py`:

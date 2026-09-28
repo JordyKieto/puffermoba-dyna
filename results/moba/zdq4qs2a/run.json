@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/zdq4qs2a",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/zdq4qs2a",
+  "name": "p6/base",
+  "group": "P6-roleheads",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "mlp"
+  ],
+  "notes": "P6 base: P4b recipe rerun (reproduces P4b exactly). docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T05:12:30Z",
+  "heartbeat_at": "2026-09-28T05:16:18Z",
+  "exported_rows": 28,
+  "max_step": 28
+}
