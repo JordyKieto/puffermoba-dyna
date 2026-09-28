@@ -329,6 +329,24 @@ def tab_arena_sides(out, arms, note):
                          "creeps", "level", "towers"], rows, note)
 
 
+def tab_tower_audit(out, arms, note):
+    """Tower-death prediction (scripts/moba/tower_event_audit.py): precision/recall, one step and open loop 128."""
+    rows = []
+    for label, f in arms:
+        r = json.load(open(R / "dream" / f))
+        a, o = r["teacher_forced_alarms"], r["open_loop"]["128"]
+        rows.append([label, r["games"], a["real"], f"{100 * a['recall']:.0f}%", f"{100 * a['precision_exact']:.0f}%",
+                     f"{100 * a['precision_incl_early']:.0f}%", a["false"], o["real"], o["predicted"], o["hits"],
+                     f"{100 * o['precision']:.0f}%", f"{100 * o['recall']:.0f}%"])
+        if "512" in r["open_loop"]:
+            o5 = r["open_loop"]["512"]
+            rows.append([label + " (open loop 512)", r["games"], "", "", "", "", "", o5["real"], o5["predicted"],
+                         o5["hits"], f"{100 * o5['precision']:.0f}%", f"{100 * o5['recall']:.0f}%"])
+    md_table(TAB / out, ["world model", "games", "real falls", "one step recall", "one step precision (exact)",
+                         "one step precision (incl. early)", "false alarms", "open-loop real", "open-loop predicted",
+                         "hits", "open-loop precision", "open-loop recall"], rows, note)
+
+
 def main():
     FIG.mkdir(exist_ok=True)
     TAB.mkdir(exist_ok=True)
@@ -365,6 +383,30 @@ def main():
         ("shipped net (mirror)", "arena_real_game_p7_armC_120.jsonl", "net"),
         ("random actions", "arena_real_game_p7_armC_120.jsonl", "random")],
         "Arm C over 120 games: 60 per side, seeds 50000000+.")
+    tab_tower_audit("tower_audit_e11.md", [("E11 @1500", "tower_event_audit.json")],
+                    "Held-out games 900-919. Open loop: 128/512-tick windows from real states, real actions; a hit = the "
+                    "same tower falls within +-32 ticks. One step: alarms = runs of consecutive predicted falls.")
+    tab_tower_audit("tower_audit_e15.md", [
+        ("E11 @1500 (no fine-tune)", "tower_audit_e15_baseline.json"),
+        ("control: fine-tune only", "tower_audit_e15_control.json"),
+        ("real attack graph", "tower_audit_e15_real.json"),
+        ("derived attack graph", "tower_audit_e15_derived.json"),
+        ("consistency loss", "tower_audit_e15_consist.json"),
+        ("tower-event sampling", "tower_audit_e15_events.json"),
+        ("tower health x10", "tower_audit_e15_tower10.json")],
+        "E15 arms: E11 @1500 fine-tuned 5 minutes each (~60-100 updates, batch 384); held-out games 900-909.")
+    tab_arena_sides("arena_e14_tower_shaping.md", [
+        ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
+        ("P12 tower damage (k2, boost 2)", "arena_real_game_p12_dmg.jsonl", "ppo"),
+        ("P12 falling-tower bonus 5", "arena_real_game_p12_fall.jsonl", "ppo"),
+        ("P12 damage + fall", "arena_real_game_p12_dmg_fall.jsonl", "ppo"),
+        ("P12 damage + fall, big", "arena_real_game_p12_dmg_fall_big.jsonl", "ppo"),
+        ("P13 fall bonus 15", "arena_real_game_p13_fall15.jsonl", "ppo"),
+        ("P13 fall bonus 30", "arena_real_game_p13_fall30.jsonl", "ppo"),
+        ("P13 fall bonus 60", "arena_real_game_p13_fall60.jsonl", "ppo"),
+        ("P13 fall bonus 120", "arena_real_game_p13_fall120.jsonl", "ppo"),
+        ("shipped net (mirror)", "arena_real_game_p4_mix_e11.jsonl", "net")],
+        "Arm C + dream-only tower shaping, 1.70M steps each, single seed; 10 games per side vs the shipped net.")
     tab_arena_sides("arena_e14_reward_sweep.md", [
         ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
         ("P11 tower 3 to team", "arena_real_game_p11_t3team.jsonl", "ppo"),

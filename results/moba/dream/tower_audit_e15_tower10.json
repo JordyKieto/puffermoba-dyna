@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e15_tower10",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 510,
+  "hits": 34,
+  "precision": 0.06666666666666667,
+  "recall": 0.39080459770114945
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 81,
+  "alarm_hit": 34,
+  "early": 19,
+  "false": 28,
+  "caught": 34,
+  "precision_exact": 0.41975308641975306,
+  "precision_incl_early": 0.654320987654321,
+  "recall": 0.39080459770114945
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 627,
+   "hits": 43,
+   "precision": 0.0685805422647528,
+   "recall": 0.5733333333333334,
+   "windows": 203,
+   "mean_abs_lag": 7.813953488372093
+  }
+ }
+}

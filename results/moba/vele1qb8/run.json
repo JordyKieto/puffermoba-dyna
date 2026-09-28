@@ -1,0 +1,22 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/vele1qb8",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/vele1qb8",
+  "name": "e16_towers",
+  "group": "E16-towers",
+  "tags": [
+    "attack-graph",
+    "dyna",
+    "main",
+    "rollout",
+    "store-cpu",
+    "tower-consist",
+    "tower-events",
+    "wm"
+  ],
+  "notes": "E16: E12 @4000 + real attack graph + tower consistency + tower-event sampling, full data (expert+random+dyna2). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "running",
+  "created_at": "2026-09-28T22:44:50Z",
+  "heartbeat_at": "2026-09-28T22:47:35Z",
+  "exported_rows": 1,
+  "max_step": 0
+}

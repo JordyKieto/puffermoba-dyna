@@ -64,6 +64,9 @@ Any claim about "the model predicts X" is about the learned part only.
 | W21 | On held-out random-play games, E11 cuts open-loop loss 4–8× at h16–h256 and ~3–4× at h1024 vs E5 (from update 500 on) | M (single run, 32 windows per horizon) | Runs `mlbh5d3l`; Tab `e11_horizons.md` |
 | W22 | The price on expert play: E11's one-step (h1) loss is 1.4–2.2× E5's and h4096 1.4–2.5×; 16–1,024 ticks stay within ~0–30% | M (single run) | same |
 | W23 | E11's dream still over-pays a dream-trained policy (open loop 5.64 vs real 1.43 per 1k) and under-pays the shipped net (1.70 vs 3.68), so it ranks them the wrong way round | M (one audit) | Tab `dream_vs_real_e11.md` |
+| W24 | E11 predicts tower deaths with 35% precision / 70% recall in a 128-tick dream, 13% / 36% at 512 ticks; one step it catches 88% but raises ~2 false alarms per real fall | M (20 held-out games, 177 falls) | Dream `tower_event_audit.json`; Tab `tower_audit_e11.md`; [E15](../experiments/E15-tower-dynamics.md) |
+| W25 | Every combat unit's 'who I attacked' is recorded each tick (`target_pid`) and 86–95% of hits trace to an attacker, but the model gets none of it (not an input; rule R9 blanks it) | M (5 held-out games) | E15 record § 2 |
+| W26 | Feeding the real attack graph as an input (no new heads) raises dream tower-death precision from 32% to 60% at 73% recall after a 5-minute fine-tune; derived targets and a death/health consistency loss reach 54% | M (single seed, 10 games, 75 falls) | Runs `wt4kffxm 1xflezs2 zroavbb9 jox03h6v`; Tab `tower_audit_e15.md` |
 
 ## RL track (R)
 
@@ -87,6 +90,8 @@ Any claim about "the model predicts X" is about the learned part only.
 | R16 | Neither the game nor the dream rewards winning: the ancient is a tower (+0.642 to one hero); victory only triggers the reset | M (code) | `third_party/pufferlib/ocean/moba/moba.h` (tower kill credit, `radiant_victory`/`dire_victory`); `mobawm/rl/dream_ppo.py reward()` |
 | R17 | Dream-only shaping (team tower credit 3–10, win ±10–30) does not produce pushing or wins and lowers radiant return to 3.0–6.7 | M (single seed each, 20 games) | Runs `4gytv3k0 z04it194 7il3e2up dr5qofw7`; Tab `arena_e14_reward_sweep.md` |
 | R18 | Training in the E12 (+dyna2) dream does not beat the E11 dream at this budget (6.21 vs 9.30) | M (single seed) | Runs `jjdb2ezj`; Tab `arena_e14_policy_arms.md` |
+| R19 | A falling-tower proximity bonus (5, radius 8) gives the dream policy the most real towers so far (0.56 vs 0.32 per hero as radiant), no wins; bigger bonuses do not help | M (single seed each, 10 games per side) | Runs `r1titdgl`, `6l122crp ojvhv6dm iuwujj5g j75qsm75`; Tab `arena_e14_tower_shaping.md` |
+| R20 | 512-tick dream episodes produce 4.6× less XP and 3.6× fewer tower falls per step than 128-tick ones (E11 @1500) | M (local smoke, 0.23M steps) | E14 record |
 
 ## Method claims that need a control before use
 

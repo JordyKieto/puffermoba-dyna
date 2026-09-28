@@ -1,0 +1,43 @@
+{
+ "wm": "runs/token_wm/e11_at1500",
+ "games": 20,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 177,
+  "predicted": 7566,
+  "hits": 155,
+  "precision": 0.02048638646576791,
+  "recall": 0.8757062146892656
+ },
+ "teacher_forced_alarms": {
+  "real": 177,
+  "alarms": 404,
+  "alarm_hit": 155,
+  "early": 52,
+  "false": 197,
+  "caught": 155,
+  "precision_exact": 0.38366336633663367,
+  "precision_incl_early": 0.5123762376237624,
+  "recall": 0.8757062146892656
+ },
+ "open_loop": {
+  "128": {
+   "real": 153,
+   "predicted": 302,
+   "hits": 107,
+   "precision": 0.3543046357615894,
+   "recall": 0.6993464052287581,
+   "windows": 393,
+   "mean_abs_lag": 9.766355140186915
+  },
+  "512": {
+   "real": 134,
+   "predicted": 368,
+   "hits": 48,
+   "precision": 0.13043478260869565,
+   "recall": 0.3582089552238806,
+   "windows": 91,
+   "mean_abs_lag": 11.375
+  }
+ }
+}

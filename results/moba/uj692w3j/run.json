@@ -1,0 +1,16 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/uj692w3j",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/uj692w3j",
+  "name": "e16_smoke",
+  "group": "E16-towers",
+  "tags": [
+    "smoke",
+    "wm"
+  ],
+  "notes": "E16 smoke #2: combined recipe 3 min, passes; tower OL128 precision 41% -> 62%. docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "failed",
+  "created_at": "2026-09-28T22:38:03Z",
+  "heartbeat_at": "2026-09-28T22:42:26Z",
+  "exported_rows": 10,
+  "max_step": 86
+}

@@ -567,6 +567,142 @@
   "dir": "results/moba/dr5qofw7/"
  },
  {
+  "project": "moba-dream-rl",
+  "run_id": "lz7opfch",
+  "name": "p12/dmg",
+  "group": "P12-tower-shaping",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:25:26Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/lz7opfch/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "r1titdgl",
+  "name": "p12/fall",
+  "group": "P12-tower-shaping",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:25:42Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/r1titdgl/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "jd1xie1g",
+  "name": "p12/dmg_fall",
+  "group": "P12-tower-shaping",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:26:01Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/jd1xie1g/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "n9o3hwu0",
+  "name": "p12/dmg_fall_big",
+  "group": "P12-tower-shaping",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:26:20Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/n9o3hwu0/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "6l122crp",
+  "name": "p13/fall15",
+  "group": "P13-fall-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:37:56Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/6l122crp/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "ojvhv6dm",
+  "name": "p13/fall30",
+  "group": "P13-fall-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:38:13Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/ojvhv6dm/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "iuwujj5g",
+  "name": "p13/fall60",
+  "group": "P13-fall-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:38:30Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/iuwujj5g/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "j75qsm75",
+  "name": "p13/fall120",
+  "group": "P13-fall-sweep",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "puffer-mingru",
+   "tower-shaping"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T06:38:47Z",
+  "history_rows": 29,
+  "max_step": 29,
+  "dir": "results/moba/j75qsm75/"
+ },
+ {
   "project": "moba-wm",
   "run_id": "vuzjgdh8",
   "name": "smoke",
@@ -1535,5 +1671,159 @@
   "history_rows": 87,
   "max_step": 4300,
   "dir": "results/moba/xfldazic/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "jox03h6v",
+  "name": "e15_control",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:08:06Z",
+  "history_rows": 4,
+  "max_step": 72,
+  "dir": "results/moba/jox03h6v/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "1xflezs2",
+  "name": "e15_derived",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:08:30Z",
+  "history_rows": 4,
+  "max_step": 60,
+  "dir": "results/moba/1xflezs2/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "wt4kffxm",
+  "name": "e15_real",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:08:38Z",
+  "history_rows": 4,
+  "max_step": 63,
+  "dir": "results/moba/wt4kffxm/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "zroavbb9",
+  "name": "e15_consist",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:08:43Z",
+  "history_rows": 5,
+  "max_step": 85,
+  "dir": "results/moba/zroavbb9/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "0ab2b4gu",
+  "name": "e15_tower10",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:09:12Z",
+  "history_rows": 5,
+  "max_step": 83,
+  "dir": "results/moba/0ab2b4gu/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "eaqg898j",
+  "name": "e15_events",
+  "group": "E15-tower-dynamics",
+  "tags": [
+   "5min",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:09:48Z",
+  "history_rows": 5,
+  "max_step": 97,
+  "dir": "results/moba/eaqg898j/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "qsh9x6mg",
+  "name": "e16_smoke",
+  "group": "E16-towers",
+  "tags": [
+   "oom",
+   "smoke",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:34:54Z",
+  "history_rows": 0,
+  "max_step": 0,
+  "dir": "results/moba/qsh9x6mg/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "uj692w3j",
+  "name": "e16_smoke",
+  "group": "E16-towers",
+  "tags": [
+   "smoke",
+   "wm"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T22:38:03Z",
+  "history_rows": 10,
+  "max_step": 86,
+  "dir": "results/moba/uj692w3j/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "vele1qb8",
+  "name": "e16_towers",
+  "group": "E16-towers",
+  "tags": [
+   "attack-graph",
+   "dyna",
+   "main",
+   "rollout",
+   "store-cpu",
+   "tower-consist",
+   "tower-events",
+   "wm"
+  ],
+  "state": "running",
+  "created_at": "2026-09-28T22:44:50Z",
+  "history_rows": 1,
+  "max_step": 0,
+  "dir": "results/moba/vele1qb8/"
  }
 ]

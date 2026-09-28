@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/lz7opfch",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/lz7opfch",
+  "name": "p12/dmg",
+  "group": "P12-tower-shaping",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "puffer-mingru",
+    "tower-shaping"
+  ],
+  "notes": "P12 tower damage k2 boost2: arm C + dream-only tower shaping. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T06:25:26Z",
+  "heartbeat_at": "2026-09-28T06:31:20Z",
+  "exported_rows": 29,
+  "max_step": 29
+}

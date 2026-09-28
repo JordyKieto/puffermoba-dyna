@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/eaqg898j",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/eaqg898j",
+  "name": "e15_events",
+  "group": "E15-tower-dynamics",
+  "tags": [
+    "5min",
+    "main",
+    "tower",
+    "wm"
+  ],
+  "notes": "E15 arm: tower-event sampling; E11 @1500 fine-tuned 5 min (~60-100 updates). State failed = the end-of-run report crashed after the model was saved (fixed). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "failed",
+  "created_at": "2026-09-28T22:09:48Z",
+  "heartbeat_at": "2026-09-28T22:17:26Z",
+  "exported_rows": 5,
+  "max_step": 97
+}

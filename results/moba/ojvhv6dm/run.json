@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/ojvhv6dm",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/ojvhv6dm",
+  "name": "p13/fall30",
+  "group": "P13-fall-sweep",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "puffer-mingru",
+    "tower-shaping"
+  ],
+  "notes": "P13 fall bonus 30: arm C + dream-only tower shaping. docs/moba/experiments/E14-dream-ppo-policy.md",
+  "state": "finished",
+  "created_at": "2026-09-28T06:38:13Z",
+  "heartbeat_at": "2026-09-28T06:44:12Z",
+  "exported_rows": 29,
+  "max_step": 29
+}

@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/qsh9x6mg",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/qsh9x6mg",
+  "name": "e16_smoke",
+  "group": "E16-towers",
+  "tags": [
+    "oom",
+    "smoke",
+    "wm"
+  ],
+  "notes": "E16 smoke #1: CUDA OOM (eval_horizons lost @torch.no_grad when tower_eval was inserted; fixed). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "failed",
+  "created_at": "2026-09-28T22:34:54Z",
+  "heartbeat_at": "2026-09-28T22:35:03Z",
+  "exported_rows": 0,
+  "max_step": 0
+}

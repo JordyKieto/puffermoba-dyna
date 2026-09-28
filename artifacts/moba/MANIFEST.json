@@ -310,6 +310,83 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/e15_control",
+   "path": "runs/token_wm/e15_control/model.pt",
+   "present": true,
+   "wandb_run": "jox03h6v",
+   "description": "E15 arm control: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2673474,
+   "md5": "6f18c4d1aa9914668572e983a2175570",
+   "s3": "s3://puffertank/moba/runs/e15_control/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e15_derived",
+   "path": "runs/token_wm/e15_derived/model.pt",
+   "present": true,
+   "wandb_run": "1xflezs2",
+   "description": "E15 arm derived: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2679608,
+   "md5": "8168f4c74bc9ef3360c3afd1b3311f11",
+   "s3": "s3://puffertank/moba/runs/e15_derived/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e15_real",
+   "path": "runs/token_wm/e15_real/model.pt",
+   "present": true,
+   "wandb_run": "wt4kffxm",
+   "description": "E15 arm real: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2679608,
+   "md5": "55feecd1ab751fff2acd0cd795a98e10",
+   "s3": "s3://puffertank/moba/runs/e15_real/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e15_consist",
+   "path": "runs/token_wm/e15_consist/model.pt",
+   "present": true,
+   "wandb_run": "zroavbb9",
+   "description": "E15 arm consist: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2673474,
+   "md5": "c4ee3a92f36a7985b3df42d49248d1c7",
+   "s3": "s3://puffertank/moba/runs/e15_consist/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e15_tower10",
+   "path": "runs/token_wm/e15_tower10/model.pt",
+   "present": true,
+   "wandb_run": "0ab2b4gu",
+   "description": "E15 arm tower10: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2673474,
+   "md5": "78966e1d14b929645d6590ec69aa9fb6",
+   "s3": "s3://puffertank/moba/runs/e15_tower10/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e15_events",
+   "path": "runs/token_wm/e15_events/model.pt",
+   "present": true,
+   "wandb_run": "eaqg898j",
+   "description": "E15 arm events: E11 @1500 fine-tuned 5 min (tower fix ablation)",
+   "bytes": 2673474,
+   "md5": "ed433e48f9c3b46f4970c7fcc196f4a4",
+   "s3": "s3://puffertank/moba/runs/e15_events/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260928_2300",
+   "path": "runs/code_snapshots/code_snapshot_20260928_2300.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E15/E16 and P12/P13: attack graph (data.derived_targets, attack_inputs, model atk_in), tower consistency/weight/event lanes, tower_eval, tower_event_audit.py, dream_ppo tower shaping (tower_push), report generator fix.",
+   "bytes": 157098,
+   "md5": "28e2308ca6e2fc0a9c25e8be30230aa3",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_2300.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260928_0700",
    "path": "runs/code_snapshots/code_snapshot_20260928_0700.tar.gz",
    "present": true,

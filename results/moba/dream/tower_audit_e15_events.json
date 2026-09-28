@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e15_events",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 0,
+  "hits": 0,
+  "precision": NaN,
+  "recall": 0.0
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 0,
+  "alarm_hit": 0,
+  "early": 0,
+  "false": 0,
+  "caught": 0,
+  "precision_exact": 0.0,
+  "precision_incl_early": 0.0,
+  "recall": 0.0
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 118,
+   "hits": 53,
+   "precision": 0.4491525423728814,
+   "recall": 0.7066666666666667,
+   "windows": 203,
+   "mean_abs_lag": 7.886792452830188
+  }
+ }
+}

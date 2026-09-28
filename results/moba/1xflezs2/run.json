@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/1xflezs2",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/1xflezs2",
+  "name": "e15_derived",
+  "group": "E15-tower-dynamics",
+  "tags": [
+    "5min",
+    "main",
+    "tower",
+    "wm"
+  ],
+  "notes": "E15 arm: derived attack graph; E11 @1500 fine-tuned 5 min (~60-100 updates). State failed = the end-of-run report crashed after the model was saved (fixed). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "failed",
+  "created_at": "2026-09-28T22:08:30Z",
+  "heartbeat_at": "2026-09-28T22:16:36Z",
+  "exported_rows": 4,
+  "max_step": 60
+}
