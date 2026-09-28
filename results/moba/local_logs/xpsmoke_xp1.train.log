@@ -1,0 +1,13 @@
+loading from data/moba/xpsmoke (3 files) ...
+decompress + store 7.6s, fit_stats 0.0s
+train 20 games / 52366 steps (1.13 GB on cpu); held-out 6 games / 16829 steps; loaded in 8s
+continuing from runs/token_wm/e5_rollout
+model: 0.66M params
+VAL it      0  loss 2.4698  | hero 1.568  creep 0.817  neutral 0.049  tower 0.036
+    hero better-than-copy / action-dependence: walking -55%/+98%  attack +29%/+39%  q -22%/+411%  w +26%/+338%  e +10%/+387%  mana -34%/+494%  health -100%/+121%  | deaths recall 39%
+it     10  loss 10.9237  | hero 5.530  creep 4.999  neutral 0.251  tower 0.144  | grad 5.44  0.15 it/s  67s
+it     20  loss 13.6800  | hero 6.369  creep 6.596  neutral 0.500  tower 0.215  | grad 2.92  0.14 it/s  142s
+VAL it     26  loss 2.3940  | hero 1.557  creep 0.755  neutral 0.049  tower 0.033
+    hero better-than-copy / action-dependence: walking -53%/+68%  attack +31%/+31%  q -24%/+235%  w +33%/+313%  e +17%/+385%  mana -29%/+498%  health -98%/+100%  | deaths recall 31%
+evaluating ...
+wrote runs/token_wm/xpsmoke_xp1/report.json

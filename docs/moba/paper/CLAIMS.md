@@ -55,6 +55,11 @@ Any claim about "the model predicts X" is about the learned part only.
 | W13 | Rolled-out creep and neutral trajectories look natural, with no visible degeneration over 1,000 ticks | Q + A | Author, viewer, E5 @500 (Prov §5) |
 | W14 | Tower health is a weak spot: towers are damaged in the dream but not in the real game, and vice versa | Q + M (single rollout) | Author (Prov §5); viewer tower error at 1,000 ticks: E5 212, E6b 88, copy 169 (one rollout, **U** as a rate) |
 | W15 | The world model has learned the game | **Not claimed** | Rules R1–R10; jitter (W7); towers (W14); one data mix (net and script players only) |
+| D1 | The E1–E7 world models were trained on expert/scripted play only: mix1k hero-ticks are 64.2% shipped net and 35.8% scripted bots (never cast); no random or ε-greedy actions (ε = 0 in every log header) | M | `results/moba/data/controller_census.json` (from the .mbl headers); Tab `data_controller_census.md` |
+| W16 | For a dream-trained policy's own actions, E5 hallucinates XP: ~17,000 XP per 1k hero-steps teacher-forced vs 0 real; random actions 8,298 vs 15; the shipped net's actions roughly right (741 vs 624) | M (8 games × 900 ticks per team, one seed set) | Dream `dream_vs_real_reward.json`; Tab `xp_audit_e5.md`; [E8](../experiments/E8-xp-hallucination.md) |
+| W17 | A 100× XP loss weight does not fix it: better one-step, worse open loop | M (smoke, ~30 updates, single seed) | Dream `xpsmoke_xp1.json` vs `xpsmoke_xp100.json`; Tab `xp_audit_fixes.md`; E8 |
+| W18 | The one-sided XP clamp (rule R7) hides two-sided XP noise; removing it (eval-only or fine-tuned) makes XP worse | M (smoke, single seed) | Dream `xpclamp_eval_noclamp*.json`, `xpsmoke_noclamp.json`; Tab `xp_audit_fixes.md`; E8 |
+| W19 | Adding 100 real games played by the dream policies (Dyna) cuts XP hallucination on those policies' states 7× teacher-forced and 3× open loop vs the same fine-tune without them | M (smoke, ~125 updates, single seed) | Runs `usrc41qc` (control), `tnnlmx2e` (Dyna); Dyna `dyna1_*_xp_audit.json`; Tab `dyna1_xp_audit.md`; [E9](../experiments/E9-dyna-smoke.md) |
 
 ## RL track (R)
 
@@ -63,10 +68,11 @@ Any claim about "the model predicts X" is about the learned part only.
 | R1 | PPO with one policy shared by all 10 heroes raises its reward **inside the dream** 2–3× in 2.4M agent steps | M (single seed per config) | Runs `cfuvqm95 k8m39dqw 3xhtvpo3 v22f5ut6 m4zqm6gl xegabn7s`; Dream `sweep1_gpu_*.log.jsonl`; Tab `dream_ppo_sweep.md` |
 | R2 | That dream-trained policy wins **0** real games (against the shipped net or the scripted bots) and earns less real return than an untrained policy | M | Runs `81jwi4lw`; Dream `arena_real_game_lr3e-4_mb2.jsonl` (120 games, the same seeds for every team); Tab `arena_real_game.md` |
 | R3 | The one behaviour that did transfer: fewer deaths (0.19–0.37 per hero per game vs random's 0.54–1.02) | M | same arena file |
-| R4 | The failure is the policy exploiting world-model errors | **U → strengthened (I)** | Dream XP rises 3–5× while real levels fall to ~0 as optimisation grows (R7), and the opponent choice does not matter (R6). The direct diagnosis (replay real actions through the WM) is still not run |
+| R4 | The failure is the policy exploiting world-model errors, chiefly hallucinated XP | **M** (was I) | Direct diagnosis run: the policy's real actions replayed through E5 earn ~17k dream XP per 1k hero-steps vs 0 real (W16, E8). Earlier indirect evidence: R6, R7 |
 | R5 | Dream-trained policies can play the real game | **Not claimed** | R2, R6 |
 | R6 | Training against the shipped net in the dream (instead of self-play) does not fix transfer: 0 real wins, and below the untrained policy against the net | M (single seed; compute not matched: 1.10M vs 9.74M agent steps) | Runs `iluni10r`, `1q729jk7`; Dream `arena_real_game_p3_*.jsonl` |
 | R7 | More dream optimisation makes real play worse: a rerun with ~4× the steps and 2× the dream reward scores lower in the real game than P2 | M (single seed) | Runs `1q729jk7` vs `v22f5ut6`; Dream `arena_real_game_p3_selfplay_rerun.jsonl` vs `arena_real_game_lr3e-4_mb2.jsonl` |
+| R8 | A world-model planner (anytime MPC in E5's dream, 60 fps on a laptop CPU per game) wins 0/120 real games vs the shipped net; return 1.84 ≈ random 1.47, net 10.46; it picks the net's own action 2% of the time | M | Planner `realtime_vs_net.jsonl`, `baselines_vs_net.jsonl`, `calibration_mac.json`, `realtime_single_game_timing.jsonl`; Tab `planner_vs_net.md`; [E10](../experiments/E10-wm-planner-60fps.md) |
 
 ## Method claims that need a control before use
 

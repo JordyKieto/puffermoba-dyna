@@ -59,6 +59,7 @@ The tracks are provenanced separately. A claim about one is not evidence about t
 | E0–E4 world model, baseline v2, viewer | yes, up to `efe1003` / `ff9b337` / `bfa68da` / `9e5ea3b` | git |
 | E5 rollout training (`--rollout`, `--init`, horizon metric) | yes, `e51dc11` | git |
 | E5-continuation additions (`--store-cpu`, rubric metrics), E6/E6b (`CFBatcher`, effect losses, `cf.py`, `moba_fork.c`), dream PPO, arena, S3 persistence | **no, deliberately.** New architectures stay uncommitted until the author says commit | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260927_1323.tar.gz` (md5 `6975755a1b7e`, [MANIFEST](../../artifacts/moba/MANIFEST.json)): HEAD `dad8c7e` + tracked diff + untracked files |
+| E8–E11: collector `random` controller, planner (`plan_mpc.py` realtime/batched), XP clamp flags, `--held2-games`, audit/Dyna/calibration scripts | **no, deliberately** | `s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0015.tar.gz` (md5 `bdb61cfa11ac`, MANIFEST): HEAD `173cfc1` + tracked diff + files |
 
 ## 2. Datasets
 
@@ -66,6 +67,10 @@ The tracks are provenanced separately. A claim about one is not evidence about t
 |---|---|---|---|---|
 | `mix1k` | 1,000 games. Radiant/dire controllers cycle net/net, net/script, script/net, by game index. Logs = seed + actions; dense = the full state every tick, regenerated from the logs (hash-verified) | `s3://puffertank/moba/mix1k/{logs,dense}/` | 100 log files (30 MB) + 100 dense files (15 GB) | M |
 | mix1k split | train games 0–899 (**2,395,549** transitions); held-out games 900–999 (**267,768** transitions). Split by game, never by tick | `mobawm/wm/train.py --train-games 0-899 --held-games 900-999` | — | M |
+| mix1k controllers | hero-ticks 64.2% net, 35.8% script; ε = 0 (no random actions) | `results/moba/data/controller_census.json` | — | M |
+| `mixrand1k` | 1,000 games, indices 1000–1999, seeds continue mix1k's; 3,000-tick cap; 2,608,592 ticks. Contiguous matchup blocks: random/net 1000–1159, net/random 1160–1329, random/random 1330–1659, random/script 1660–1829, script/random 1830–1999. Hero-ticks: random 69.0%, net 12.7%, script 18.3%. `random` = uniform per action head (collector controller 3) | `s3://puffertank/moba/mixrand1k/{logs,dense}/` | 100 logs (36 MB) + 100 dense (~14 GB) | M |
+| mixrand1k split (E11) | **held-out random games** (whole files, last of each block): 1140–1159, 1310–1329, 1620–1659, 1810–1829, 1980–1999 (100 games); the rest trains. mix1k 900–999 stays held out | `train.py --held2-games` | — | M |
+| `dyna1` | 100 real games of the two P3 dream-PPO policies vs the shipped net (ids 5000–5099), recorded as standard logs, replay-verified with 0 mismatches | `s3://puffertank/moba/dyna1/`; `results/moba/dyna/dyna1_games.json` | 198,131 ticks | M |
 | `mix100` | games 0–99, identical to mix1k 0–99 (the same seeds). Local only | `data/moba/mix100/` (gitignored) | 2.7 MB logs, 1.4 GB dense | M |
 | Counterfactual stream | not stored. Regenerated from (game, tick, edit seed) by `moba_fork.c`; only training games are forked | — | ~240M distinct single-edit transitions available (estimate, **I**) | M (generator) / I (count) |
 
@@ -89,6 +94,9 @@ Cite the directory, not the link.
 | **E4** | 09-25 22:52 | baseline v2, full mix1k, 1 h, teacher-forced, batch 768, H200 | `kxe2bh1k` | 1.0 h | one-step good; open loop flies apart (hero error 92 cells @1k) | [E4](experiments/E4-baseline-v2-1h.md) |
 | **E5** | 09-25 23:59 → 09-26 ~06:00 | autoregressive rollout training from E4 final, 20,750 updates | `93m7sktq` (main); `zll4trqi` (aborted launch) | 5.97 h | long horizons 5–12× better than E4; one-step ~2× worse; jitter | [E5](experiments/E5-rollout-training.md) |
 | **E6 / E6b** | 09-26 01:16 → ~06:00 | E5 @3,500 + real-sim counterfactual siblings (32k/update); E6b adds effect auxiliary losses | `uo6sal6q` (E6, 75 updates), `d9xnnj0a` (E6b, 3,550) | 0.1 + 4.5 h | E6b: h1 about 2× better than E5 and action effects learned; long horizons stalled at matched wall clock | [E6](experiments/E6-counterfactual-siblings.md) |
+| E8 | 09-27 | dream-vs-real reward audit; XP ×100 and clamp-off smoke tests | xpsmoke runs (local, `results/moba/local_logs/xpsmoke_*`) | ~0.5 h | XP hallucinated off-distribution; neither fix works | [E8](experiments/E8-xp-hallucination.md) |
+| E9 | 09-27 ~23:40 | Dyna smoke: + 100 real P3-policy games, H100 NVL | `usrc41qc`, `tnnlmx2e` | 2 × 10 min | 3–7× less XP hallucination vs control | [E9](experiments/E9-dyna-smoke.md) |
+| E10 | 09-27 | WM planner at 60 fps, 120 games vs net (eval only) | — (`results/moba/planner/`) | — | 0 wins, ≈ random | [E10](experiments/E10-wm-planner-60fps.md) |
 | E5 continued | 09-27 03:20 → ~05:45 | E5 from 20,500, H100 NVL, `--store-cpu` | `hm9mnnoy` (OOM), `soeosr9h` (1,700 updates) | 0.93 h | best one-step E5 so far (h1 1.51 @+1,500); **all its checkpoints lost** | [E5](experiments/E5-rollout-training.md) |
 
 Figures and tables, regenerated with `results/moba/make_figures.py`:

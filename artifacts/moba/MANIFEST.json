@@ -178,6 +178,61 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/xpsmoke_xp1",
+   "path": "runs/token_wm/xpsmoke_xp1/model.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "XP smoke test (local CPU, ~30 updates from E5 @20,500, batch 32): control, XP loss x1",
+   "bytes": 2672587,
+   "md5": "bab3f17529f479312cb59441f592be78",
+   "s3": "s3://puffertank/moba/runs/xpsmoke_xp1/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/xpsmoke_xp100",
+   "path": "runs/token_wm/xpsmoke_xp100/model.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "XP smoke test (local CPU, ~30 updates from E5 @20,500, batch 32): XP loss x100",
+   "bytes": 2672587,
+   "md5": "6f2bc904934c20912cd97e281a389fbe",
+   "s3": "s3://puffertank/moba/runs/xpsmoke_xp100/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/xpsmoke_noclamp",
+   "path": "runs/token_wm/xpsmoke_noclamp/model.pt",
+   "present": true,
+   "wandb_run": null,
+   "description": "XP smoke test (local CPU, ~30 updates from E5 @20,500, batch 32): no XP clamp (rule R7 off)",
+   "bytes": 2672587,
+   "md5": "20a04d9263df9a5ef62c0c3d6513360c",
+   "s3": "s3://puffertank/moba/runs/xpsmoke_noclamp/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/dyna1_control",
+   "path": "runs/token_wm/dyna1_control/model.pt",
+   "present": true,
+   "wandb_run": "usrc41qc",
+   "description": "Dyna smoke control: E5 @20,500 fine-tuned ~125 updates on mix1k only (batch 384, H100 NVL)",
+   "bytes": 2673474,
+   "md5": "4ba96a26b98cecb92bda51f3573728b9",
+   "s3": "s3://puffertank/moba/runs/dyna1_control/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/dyna1_policy_games",
+   "path": "runs/token_wm/dyna1_policy_games/model.pt",
+   "present": true,
+   "wandb_run": "tnnlmx2e",
+   "description": "Dyna smoke: E5 @20,500 fine-tuned ~125 updates on mix1k + 100 real games played by the P3 policies",
+   "bytes": 2673474,
+   "md5": "86ce3345fb8dd263e0ce4d20fb0f14b3",
+   "s3": "s3://puffertank/moba/runs/dyna1_policy_games/model.pt",
+   "s3_byte_identical": true
+  },
+  {
    "name": "rl/P3_vs_net",
    "path": "runs/dream_ppo/p3/vs_net/policy.pt",
    "present": true,
@@ -197,6 +252,17 @@
    "bytes": 4028610,
    "md5": "8c2887538c66650a84924bae4985bdd3",
    "s3": "s3://puffertank/moba/runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260928_0015",
+   "path": "runs/code_snapshots/code_snapshot_20260928_0015.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E8-E11: collector random controller (moba_collect.c, shards.CONTROLLERS), ma_multi_final_hash, plan_mpc realtime/batched planner, XP clamp flags, train.py --held2-games, audit/Dyna/calibration scripts. HEAD 173cfc1 + tracked diff + files.",
+   "bytes": 119513,
+   "md5": "bdb61cfa11ac46f961d825321e068772",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0015.tar.gz",
    "s3_byte_identical": true
   },
   {

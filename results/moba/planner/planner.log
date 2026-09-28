@@ -1,0 +1,15 @@
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+  tick 500: 120/120 games running, 90s
+  tick 1000: 93/120 games running, 161s
+  tick 1500: 60/120 games running, 229s
+  tick 2000: 60/120 games running, 295s
+  tick 2500: 60/120 games running, 357s
+  tick 3000: 60/120 games running, 414s
+  tick 3500: 60/120 games running, 471s
+  tick 4000: 60/120 games running, 527s
+  tick 4500: 60/120 games running, 583s
+  tick 5000: 60/120 games running, 639s
+  tick 5500: 60/120 games running, 695s
+  tick 6000: 60/120 games running, 752s
+120 games in 752s -> /root/puffertank/runs/plan_mpc/realtime_vs_net.jsonl
+ALL DONE

@@ -28,6 +28,12 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
 - **Dream RL: first attempt negative.** PPO in E5's dream more than doubles dream
   reward, but wins 0 of 120 real games and earns less than an untrained policy (R2).
   See [E7](E7-dream-ppo.md).
+- **Why: the dream hallucinates XP off-distribution** (E8). The training data was
+  expert/scripted only (64% net, 36% script, no random actions; D1). For the dream
+  policy's actions E5 pays ~17k XP per 1k hero-steps where the real game pays 0. A
+  60 fps WM planner is fooled the same way: 0/120 wins, ≈ random (E10). The policy's
+  own real games cut the hallucination 3–7× (E9). Now training on 1,000 added
+  random-play games (E11).
 - **Checkpoints lost on 2026-09-27** (the pods were deleted externally): E4 final, E5
   numbered, and all of E5-continued. Their metrics survive; see
   [PROVENANCE §3.3](../PROVENANCE.md). Every run now uploads checkpoints to S3 as it
@@ -45,6 +51,10 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
 | E4 | baseline v2, full mix1k, 1 h, teacher-forced | done; final checkpoint lost | `E4-baseline-v2`: `kxe2bh1k` | [E4-baseline-v2-1h.md](E4-baseline-v2-1h.md) |
 | E5 | autoregressive rollout training from E4, 20,750 updates; then continued 1,700 more from 20,500 | stopped (pod deleted); @20,500 kept, continuation lost | `E5-rollout`: `93m7sktq` (main), `soeosr9h` (continued), `zll4trqi`, `hm9mnnoy` | [E5-rollout-training.md](E5-rollout-training.md) |
 | E6 / E6b | E5 @3,500 + real-sim counterfactual siblings; E6b adds the effect losses | stopped; E6b checkpoints kept | `E6-counterfactual`: `uo6sal6q`, `d9xnnj0a` | [E6-counterfactual-siblings.md](E6-counterfactual-siblings.md) |
+| **E8** | Dream-vs-real reward audit; XP loss ×100; clamp off | **concluded: XP hallucinated off-distribution** | local (`results/moba/local_logs/xpsmoke_*`) | [E8-xp-hallucination.md](E8-xp-hallucination.md) |
+| **E9** | Dyna smoke: + the dream policies' own real games | concluded (smoke): 3–7× less XP hallucination | `E9-dyna-smoke`: `usrc41qc`, `tnnlmx2e` | [E9-dyna-smoke.md](E9-dyna-smoke.md) |
+| **E10** | WM planner at 60 fps vs the shipped net, 120 games | **concluded: negative** (0 wins, ≈ random) | — (eval only) | [E10-wm-planner-60fps.md](E10-wm-planner-60fps.md) |
+| E11 | E5 @20,500 resumed on mix1k + mixrand1k (random play); held-out random games are the main metric | running | `E11-random-data` | (record when first results land) |
 | **E7** | PPO in E5's dream (P0 first run, P1 LR × minibatch sweep, P2 real-game evaluation) | **concluded: negative** | `moba-dream-rl`: `P0-first-5min`, `P1-sweep-mac`, `P1-sweep-h200`, `P2-arena-real` | [E7-dream-ppo.md](E7-dream-ppo.md) |
 
 The pre-E4 work stays in the single legacy log, [../EXPERIMENTS.md](../EXPERIMENTS.md),

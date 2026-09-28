@@ -90,6 +90,23 @@ per hero.
 
 ## Controllers
 
+- **`random`** (controller id 3, added 2026-09-27): every tick each hero samples every
+  action head uniformly (`splitmix64(prng) % MOBA_ACTION_SIZES[k]`) from the game's
+  seeded PRNG stream. It is replayable like the others.
+- **`dream_ppo`** (id 2): a dream-trained policy, recorded by
+  `scripts/moba/collect_policy_games.py` (the Dyna corpus `dyna1`).
+
+**Corpora and their controller mix** (from the log headers;
+`results/moba/tables/data_controller_census.md`):
+
+| corpus | games (indices) | hero-ticks | notes |
+|---|---|---|---|
+| `mix1k` | 1,000 (0–999) | net 64.2%, script 35.8% | ε = 0: **no random actions**. The data behind E1–E10 |
+| `mixrand1k` | 1,000 (1000–1999) | random 69.0%, net 12.7%, script 18.3% | blocks: random/net 1000–1159, net/random 1160–1329, random/random 1330–1659, random/script 1660–1829, script/random 1830–1999; 3,000-tick cap |
+| `dyna1` | 100 (5000–5099) | dream_ppo 50%, net 50% | the two P3 policies vs the net, 0 replay mismatches |
+
+All three are in `s3://puffertank/moba/<corpus>/{logs,dense}/`.
+
 - **`net`** is the upstream pretrained policy (`resources/moba/moba_weights.bin`,
   encoder → 5×MinGRU → decoder). It runs on each hero's own observation and
   samples from its own RNG. It was trained only as Radiant against scripted

@@ -38,6 +38,10 @@ E = {
                  "externally at ~1,700: ALL checkpoints lost; metrics survive here only. " + REC + "E5-rollout-training.md"),
     "uo6sal6q": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "replaced"],
                  "E6 plain counterfactual siblings, 100 updates, replaced by E6b. " + REC + "E6-counterfactual-siblings.md"),
+    "usrc41qc": ("E9-dyna-smoke", ["wm", "rollout", "dyna", "control", "store-cpu"],
+                 "Dyna smoke control: E5 @20,500 + ~125 updates on mix1k only, batch 384, H100 NVL. " + REC + "E9-dyna-smoke.md"),
+    "tnnlmx2e": ("E9-dyna-smoke", ["wm", "rollout", "dyna", "policy-games", "store-cpu"],
+                 "Dyna smoke: E5 @20,500 + ~125 updates on mix1k + 100 real P3-policy games (game ids 5000-5099). " + REC + "E9-dyna-smoke.md"),
     "d9xnnj0a": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "effect-loss", "main"],
                  "E6b: E5@3500 + counterfactual siblings + effect aux losses, 3,550 updates. Checkpoints kept. "
                  + REC + "E6-counterfactual-siblings.md"),

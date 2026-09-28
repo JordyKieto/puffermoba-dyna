@@ -1,0 +1,73 @@
+{
+ "args": {
+  "policy": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "wm": "runs/token_wm/xpsmoke_xp100",
+  "games": 8,
+  "ticks": 900,
+  "horizon": 128,
+  "teams": "ppo,net",
+  "device": "cpu",
+  "out": "results/moba/dream/xpsmoke_xp100.json"
+ },
+ "note": "per 1k hero-steps of OUR team (radiant, heroes 0-4) vs the shipped net; events: deaths, XP points, tower kills",
+ "teams": {
+  "ppo": {
+   "real_per_1k": [
+    -0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "teacher_forced_dream_per_1k": [
+    -0.0,
+    3773.94580078125,
+    0.0,
+    0.0
+   ],
+   "openloop_real_per_1k": [
+    -0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "openloop_dream_per_1k": [
+    0.29296875,
+    8267.44921875,
+    0.0,
+    0.0
+   ],
+   "hero_steps_tf": 36000,
+   "hero_steps_ol": 30720,
+   "episodes": 48
+  },
+  "net": {
+   "real_per_1k": [
+    2.9444456100463867,
+    623.5836791992188,
+    0.0,
+    0.1944444477558136
+   ],
+   "teacher_forced_dream_per_1k": [
+    0.0833333358168602,
+    721.8613891601562,
+    0.0,
+    1.1111109256744385
+   ],
+   "openloop_real_per_1k": [
+    3.0598959922790527,
+    611.8167114257812,
+    0.0,
+    0.1627604216337204
+   ],
+   "openloop_dream_per_1k": [
+    1.3997396230697632,
+    1526.986572265625,
+    0.0,
+    0.1302083432674408
+   ],
+   "hero_steps_tf": 36000,
+   "hero_steps_ol": 30720,
+   "episodes": 48
+  }
+ }
+}

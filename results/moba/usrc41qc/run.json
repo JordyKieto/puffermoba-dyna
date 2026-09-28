@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/usrc41qc",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/usrc41qc",
+  "name": "dyna1_control",
+  "group": "E9-dyna-smoke",
+  "tags": [
+    "control",
+    "dyna",
+    "rollout",
+    "store-cpu",
+    "wm"
+  ],
+  "notes": "Dyna smoke control: E5 @20,500 + ~125 updates on mix1k only, batch 384, H100 NVL. docs/moba/experiments/E9-dyna-smoke.md",
+  "state": "failed",
+  "created_at": "2026-09-27T23:36:44Z",
+  "heartbeat_at": "2026-09-27T23:49:44Z",
+  "exported_rows": 7,
+  "max_step": 146
+}

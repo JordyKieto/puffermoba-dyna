@@ -36,10 +36,21 @@ ARTIFACTS = [
      "best dream-PPO sweep policy (reward slope); evaluated in the real game: 0 wins, below random (P2)."),
 ] + [(f"rl/P1_h200_{c}", f"runs/dream_ppo/sweep1_gpu/{c}/policy.pt", None, f"dream-PPO sweep config {c}, final policy.")
      for c in ("lr3e-4_mb10", "lr1e-3_mb10", "lr3e-3_mb10", "lr1e-3_mb2", "lr3e-3_mb2")]
+ARTIFACTS += [(f"wm/xpsmoke_{a}", f"runs/token_wm/xpsmoke_{a}/model.pt", None,
+                f"XP smoke test (local CPU, ~30 updates from E5 @20,500, batch 32): {d}")
+              for a, d in (("xp1", "control, XP loss x1"), ("xp100", "XP loss x100"), ("noclamp", "no XP clamp (rule R7 off)"))]
+ARTIFACTS += [("wm/dyna1_control", "runs/token_wm/dyna1_control/model.pt", "usrc41qc",
+               "Dyna smoke control: E5 @20,500 fine-tuned ~125 updates on mix1k only (batch 384, H100 NVL)"),
+              ("wm/dyna1_policy_games", "runs/token_wm/dyna1_policy_games/model.pt", "tnnlmx2e",
+               "Dyna smoke: E5 @20,500 fine-tuned ~125 updates on mix1k + 100 real games played by the P3 policies")]
 ARTIFACTS += [("rl/P3_vs_net", "runs/dream_ppo/p3/vs_net/policy.pt", "iluni10r",
                "E7-P3 dream PPO trained AGAINST the shipped net (4.5 min, 1.10M steps); real game: 0 wins, below random."),
               ("rl/P3_selfplay_rerun", "runs/dream_ppo/p3/selfplay_rerun/policy.pt", "1q729jk7",
                "E7-P3 self-play rerun of the P1 best config (4.5 min, 9.74M steps); real game: 0 wins, below random vs net.")]
+ARTIFACTS += [("code/code_snapshot_20260928_0015", "runs/code_snapshots/code_snapshot_20260928_0015.tar.gz", None,
+               "Snapshot of the uncommitted code behind E8-E11: collector random controller (moba_collect.c, "
+               "shards.CONTROLLERS), ma_multi_final_hash, plan_mpc realtime/batched planner, XP clamp flags, "
+               "train.py --held2-games, audit/Dyna/calibration scripts. HEAD 173cfc1 + tracked diff + files.")]
 ARTIFACTS += [("code/code_snapshot_20260927_1539", "runs/code_snapshots/code_snapshot_20260927_1539.tar.gz", None,
                "Snapshot of the uncommitted code behind E7-P3 (dream PPO vs shipped net: ma_pool/ma_pools in "
                "moba_arena.c, dream_ppo --opponent net) and the world-model planner (plan_mpc.py), 2026-09-27.")]

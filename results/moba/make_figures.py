@@ -187,6 +187,76 @@ def fig_arena():
              "10 games per side x 2 sides, seeds 50000000+, max 6,000 ticks; same seeds for every team.")
 
 
+def tab_census():
+    c = json.load(open(R / "data" / "controller_census.json"))
+    rows = []
+    for corpus, d in c.items():
+        for k, v in d["matchups"].items():
+            rows.append([corpus, k, v["games"], v["ticks"]])
+        rows.append([corpus, "hero-tick share", "", ", ".join(f"{k} {v}%" for k, v in d["hero_tick_share_pct"].items())])
+        rows.append([corpus, "epsilon (log headers)", "", str(d["epsilon"])])
+    md_table(TAB / "data_controller_census.md", ["corpus", "matchup (radiant vs dire)", "games", "ticks"], rows,
+             "From the .mbl log headers (results/moba/data/controller_census.json).")
+
+
+def _audit_rows(label, path):
+    a = json.load(open(path))
+    rows = []
+    for team, r in a["teams"].items():
+        for k, lab in (("real_per_1k", "real game"), ("teacher_forced_dream_per_1k", "dream, teacher-forced"),
+                       ("openloop_dream_per_1k", "dream, open loop 128")):
+            d, x, _, tw = r[k]
+            rows.append([label, team, lab, f"{d:.2f}", f"{x:.0f}", f"{tw:.3f}"])
+    return rows
+
+
+def tab_xp():
+    H = ["world model", "our team's actions", "measure", "deaths/1k", "XP/1k", "tower kills/1k"]
+    rows = _audit_rows("E5 @20,500", R / "dream" / "dream_vs_real_reward.json")
+    md_table(TAB / "xp_audit_e5.md", H, rows,
+             "Our team (radiant) vs the shipped net, 8 real games x 900 ticks, seeds 70000000+; identical actions "
+             "fed to the WM. scripts/moba/dream_vs_real_reward.py")
+    rows = []
+    for label, f in (("E5 @20,500, clamp off (eval only)", "xpclamp_eval_noclamp.json"),
+                     ("E5 @20,500, clamp off + signed XP reward", "xpclamp_eval_noclamp_signed.json"),
+                     ("+~30 upd, XP loss x1 (control)", "xpsmoke_xp1.json"),
+                     ("+~30 upd, XP loss x100", "xpsmoke_xp100.json"),
+                     ("+~30 upd, no XP clamp", "xpsmoke_noclamp.json")):
+        rows += [r for r in _audit_rows(label, R / "dream" / f) if r[2] != "real game"]
+    md_table(TAB / "xp_audit_fixes.md", H, rows, "Same audit (real rows as in xp_audit_e5.md). Fine-tunes: local CPU, "
+             "batch 32, ~30 updates, single seed: smoke tests, not results.")
+
+
+def tab_dyna():
+    H = ["world model", "our team's actions", "measure", "deaths/1k", "XP/1k", "tower kills/1k"]
+    rows = []
+    for label, f in (("control: mix1k only", "dyna1_control_xp_audit.json"),
+                     ("Dyna: mix1k + 100 policy games", "dyna1_policy_games_xp_audit.json")):
+        rows += _audit_rows(label, R / "dyna" / f)
+    md_table(TAB / "dyna1_xp_audit.md", H, rows, "Both from E5 @20,500, ~125 updates, batch 384, H100 NVL, single seed; "
+             "audit seeds 70000000+ (the Dyna games used 80000000+).")
+
+
+def tab_planner():
+    P = [json.loads(l) for l in open(R / "planner" / "realtime_vs_net.jsonl")]
+    B = [json.loads(l) for l in open(R / "planner" / "baselines_vs_net.jsonl")]
+    import numpy as np
+    def row(name, g):
+        m = lambda k: np.mean([x[k] for x in g])
+        return [name, len(g), f"{100 * m('won'):.0f}", f"{100 * m('lost'):.0f}",
+                f"{100 * np.mean([x['winner'] == 'none' for x in g]):.0f}", f"{m('return_ours'):.2f}",
+                f"{m('ours_deaths'):.2f}", f"{m('ours_level'):.2f}", f"{m('ours_creeps_killed'):.1f}"]
+    rows = [row("WM planner (60 fps budget)", P)] + [row(f"planner as {s}", [x for x in P if x["side"] == s])
+                                                    for s in ("radiant", "dire")]
+    rows += [row("shipped net (mirror)", [x for x in B if x["team"] == "net"]),
+             row("untrained (random)", [x for x in B if x["team"] == "random"])]
+    ch = np.sum([x["branch_chosen"] for x in P], 0)
+    md_table(TAB / "planner_vs_net.md", ["our team (vs shipped net)", "games", "win %", "loss %", "timeout %",
+                                         "return/hero", "deaths", "level", "creeps"], rows,
+             f"Seeds 50000000-50000059 per side, max 6,000 ticks. Branch chosen (net's action / keep plan / new plan): "
+             f"{ch.tolist()} = net's action {100 * ch[0] / ch.sum():.0f}%.")
+
+
 def main():
     FIG.mkdir(exist_ok=True)
     TAB.mkdir(exist_ok=True)
@@ -194,6 +264,10 @@ def main():
     fig_training()
     fig_dream()
     fig_arena()
+    tab_census()
+    tab_xp()
+    tab_dyna()
+    tab_planner()
     for f in sorted(FIG.iterdir()):
         print(f.relative_to(R.parent.parent))
 
