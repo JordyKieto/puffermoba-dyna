@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/ahoexos3",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/ahoexos3",
+  "name": "p4/mix_e11_mixstarts",
+  "group": "P4-mix-e11",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "mixed-starts",
+    "opponent-mix"
+  ],
+  "notes": "P4b: as P4 + start states from expert AND random-play games, 4.5 min. docs/moba/experiments/E13-dream-ppo-e11.md",
+  "state": "finished",
+  "created_at": "2026-09-28T01:34:46Z",
+  "heartbeat_at": "2026-09-28T01:39:57Z",
+  "exported_rows": 28,
+  "max_step": 28
+}

@@ -1,0 +1,17 @@
+{
+  "entity_project_run": "drift-ai-models/moba-dream-rl/msjwyq7r",
+  "url": "https://wandb.ai/drift-ai-models/moba-dream-rl/runs/msjwyq7r",
+  "name": "p4/mix_e11",
+  "group": "P4-mix-e11",
+  "tags": [
+    "dream-ppo",
+    "e11",
+    "opponent-mix"
+  ],
+  "notes": "P4: dream PPO in E11 @1500, 50% self-play / 50% vs net, expert start states, 4.5 min. docs/moba/experiments/E13-dream-ppo-e11.md",
+  "state": "finished",
+  "created_at": "2026-09-28T01:28:09Z",
+  "heartbeat_at": "2026-09-28T01:32:48Z",
+  "exported_rows": 35,
+  "max_step": 35
+}

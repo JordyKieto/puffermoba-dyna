@@ -1,0 +1,6482 @@
+[
+ {
+  "game_index": 6000,
+  "seed": 81000000,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6001,
+  "seed": 81000001,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6002,
+  "seed": 81000002,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6003,
+  "seed": 81000003,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6004,
+  "seed": 81000004,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6005,
+  "seed": 81000005,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6006,
+  "seed": 81000006,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6007,
+  "seed": 81000007,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6008,
+  "seed": 81000008,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6009,
+  "seed": 81000009,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6010,
+  "seed": 81000010,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6011,
+  "seed": 81000011,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6012,
+  "seed": 81000012,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6013,
+  "seed": 81000013,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6014,
+  "seed": 81000014,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6015,
+  "seed": 81000015,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6016,
+  "seed": 81000016,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6017,
+  "seed": 81000017,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6018,
+  "seed": 81000018,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6019,
+  "seed": 81000019,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6020,
+  "seed": 81000020,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6021,
+  "seed": 81000021,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6022,
+  "seed": 81000022,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6023,
+  "seed": 81000023,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6024,
+  "seed": 81000024,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6025,
+  "seed": 81000025,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6026,
+  "seed": 81000026,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6027,
+  "seed": 81000027,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6028,
+  "seed": 81000028,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6029,
+  "seed": 81000029,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6030,
+  "seed": 81000030,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6031,
+  "seed": 81000031,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6032,
+  "seed": 81000032,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6033,
+  "seed": 81000033,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6034,
+  "seed": 81000034,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6035,
+  "seed": 81000035,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6036,
+  "seed": 81000036,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6037,
+  "seed": 81000037,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6038,
+  "seed": 81000038,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6039,
+  "seed": 81000039,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6040,
+  "seed": 81000040,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6041,
+  "seed": 81000041,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6042,
+  "seed": 81000042,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6043,
+  "seed": 81000043,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6044,
+  "seed": 81000044,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6045,
+  "seed": 81000045,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6046,
+  "seed": 81000046,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6047,
+  "seed": 81000047,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6048,
+  "seed": 81000048,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6049,
+  "seed": 81000049,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6050,
+  "seed": 81000050,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6051,
+  "seed": 81000051,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6052,
+  "seed": 81000052,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6053,
+  "seed": 81000053,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6054,
+  "seed": 81000054,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6055,
+  "seed": 81000055,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6056,
+  "seed": 81000056,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6057,
+  "seed": 81000057,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6058,
+  "seed": 81000058,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6059,
+  "seed": 81000059,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6060,
+  "seed": 81000060,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6061,
+  "seed": 81000061,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6062,
+  "seed": 81000062,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6063,
+  "seed": 81000063,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6064,
+  "seed": 81000064,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6065,
+  "seed": 81000065,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6066,
+  "seed": 81000066,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6067,
+  "seed": 81000067,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6068,
+  "seed": 81000068,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6069,
+  "seed": 81000069,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6070,
+  "seed": 81000070,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6071,
+  "seed": 81000071,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6072,
+  "seed": 81000072,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6073,
+  "seed": 81000073,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6074,
+  "seed": 81000074,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6075,
+  "seed": 81000075,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6076,
+  "seed": 81000076,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6077,
+  "seed": 81000077,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6078,
+  "seed": 81000078,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6079,
+  "seed": 81000079,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6080,
+  "seed": 81000080,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6081,
+  "seed": 81000081,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6082,
+  "seed": 81000082,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6083,
+  "seed": 81000083,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6084,
+  "seed": 81000084,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6085,
+  "seed": 81000085,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6086,
+  "seed": 81000086,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6087,
+  "seed": 81000087,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6088,
+  "seed": 81000088,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6089,
+  "seed": 81000089,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6090,
+  "seed": 81000090,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6091,
+  "seed": 81000091,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6092,
+  "seed": 81000092,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6093,
+  "seed": 81000093,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6094,
+  "seed": 81000094,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6095,
+  "seed": 81000095,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6096,
+  "seed": 81000096,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6097,
+  "seed": 81000097,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6098,
+  "seed": 81000098,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6099,
+  "seed": 81000099,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6100,
+  "seed": 81000100,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6101,
+  "seed": 81000101,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6102,
+  "seed": 81000102,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6103,
+  "seed": 81000103,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6104,
+  "seed": 81000104,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6105,
+  "seed": 81000105,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6106,
+  "seed": 81000106,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6107,
+  "seed": 81000107,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6108,
+  "seed": 81000108,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6109,
+  "seed": 81000109,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6110,
+  "seed": 81000110,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6111,
+  "seed": 81000111,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6112,
+  "seed": 81000112,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6113,
+  "seed": 81000113,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6114,
+  "seed": 81000114,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6115,
+  "seed": 81000115,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6116,
+  "seed": 81000116,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6117,
+  "seed": 81000117,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6118,
+  "seed": 81000118,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6119,
+  "seed": 81000119,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6120,
+  "seed": 81000120,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6121,
+  "seed": 81000121,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6122,
+  "seed": 81000122,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6123,
+  "seed": 81000123,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6124,
+  "seed": 81000124,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6125,
+  "seed": 81000125,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6126,
+  "seed": 81000126,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6127,
+  "seed": 81000127,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6128,
+  "seed": 81000128,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6129,
+  "seed": 81000129,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6130,
+  "seed": 81000130,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6131,
+  "seed": 81000131,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6132,
+  "seed": 81000132,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6133,
+  "seed": 81000133,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6134,
+  "seed": 81000134,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6135,
+  "seed": 81000135,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6136,
+  "seed": 81000136,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6137,
+  "seed": 81000137,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6138,
+  "seed": 81000138,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6139,
+  "seed": 81000139,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6140,
+  "seed": 81000140,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6141,
+  "seed": 81000141,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6142,
+  "seed": 81000142,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6143,
+  "seed": 81000143,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6144,
+  "seed": 81000144,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6145,
+  "seed": 81000145,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6146,
+  "seed": 81000146,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6147,
+  "seed": 81000147,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6148,
+  "seed": 81000148,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6149,
+  "seed": 81000149,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6150,
+  "seed": 81000150,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6151,
+  "seed": 81000151,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6152,
+  "seed": 81000152,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6153,
+  "seed": 81000153,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6154,
+  "seed": 81000154,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6155,
+  "seed": 81000155,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6156,
+  "seed": 81000156,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6157,
+  "seed": 81000157,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6158,
+  "seed": 81000158,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6159,
+  "seed": 81000159,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6160,
+  "seed": 81000160,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6161,
+  "seed": 81000161,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6162,
+  "seed": 81000162,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6163,
+  "seed": 81000163,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6164,
+  "seed": 81000164,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6165,
+  "seed": 81000165,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6166,
+  "seed": 81000166,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6167,
+  "seed": 81000167,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6168,
+  "seed": 81000168,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6169,
+  "seed": 81000169,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6170,
+  "seed": 81000170,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6171,
+  "seed": 81000171,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6172,
+  "seed": 81000172,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6173,
+  "seed": 81000173,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6174,
+  "seed": 81000174,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6175,
+  "seed": 81000175,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6176,
+  "seed": 81000176,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6177,
+  "seed": 81000177,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6178,
+  "seed": 81000178,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6179,
+  "seed": 81000179,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6180,
+  "seed": 81000180,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6181,
+  "seed": 81000181,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6182,
+  "seed": 81000182,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6183,
+  "seed": 81000183,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6184,
+  "seed": 81000184,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6185,
+  "seed": 81000185,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6186,
+  "seed": 81000186,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6187,
+  "seed": 81000187,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6188,
+  "seed": 81000188,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6189,
+  "seed": 81000189,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6190,
+  "seed": 81000190,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6191,
+  "seed": 81000191,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6192,
+  "seed": 81000192,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6193,
+  "seed": 81000193,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6194,
+  "seed": 81000194,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6195,
+  "seed": 81000195,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6196,
+  "seed": 81000196,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6197,
+  "seed": 81000197,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6198,
+  "seed": 81000198,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6199,
+  "seed": 81000199,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6200,
+  "seed": 81000200,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6201,
+  "seed": 81000201,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6202,
+  "seed": 81000202,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6203,
+  "seed": 81000203,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6204,
+  "seed": 81000204,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6205,
+  "seed": 81000205,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6206,
+  "seed": 81000206,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6207,
+  "seed": 81000207,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6208,
+  "seed": 81000208,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6209,
+  "seed": 81000209,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6210,
+  "seed": 81000210,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6211,
+  "seed": 81000211,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6212,
+  "seed": 81000212,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6213,
+  "seed": 81000213,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6214,
+  "seed": 81000214,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6215,
+  "seed": 81000215,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6216,
+  "seed": 81000216,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6217,
+  "seed": 81000217,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6218,
+  "seed": 81000218,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6219,
+  "seed": 81000219,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6220,
+  "seed": 81000220,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6221,
+  "seed": 81000221,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6222,
+  "seed": 81000222,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6223,
+  "seed": 81000223,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6224,
+  "seed": 81000224,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6225,
+  "seed": 81000225,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6226,
+  "seed": 81000226,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6227,
+  "seed": 81000227,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6228,
+  "seed": 81000228,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6229,
+  "seed": 81000229,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6230,
+  "seed": 81000230,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6231,
+  "seed": 81000231,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6232,
+  "seed": 81000232,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6233,
+  "seed": 81000233,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6234,
+  "seed": 81000234,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6235,
+  "seed": 81000235,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6236,
+  "seed": 81000236,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6237,
+  "seed": 81000237,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6238,
+  "seed": 81000238,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6239,
+  "seed": 81000239,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6240,
+  "seed": 81000240,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6241,
+  "seed": 81000241,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6242,
+  "seed": 81000242,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6243,
+  "seed": 81000243,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6244,
+  "seed": 81000244,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6245,
+  "seed": 81000245,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6246,
+  "seed": 81000246,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6247,
+  "seed": 81000247,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6248,
+  "seed": 81000248,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6249,
+  "seed": 81000249,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6250,
+  "seed": 81000250,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6251,
+  "seed": 81000251,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6252,
+  "seed": 81000252,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6253,
+  "seed": 81000253,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6254,
+  "seed": 81000254,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6255,
+  "seed": 81000255,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6256,
+  "seed": 81000256,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6257,
+  "seed": 81000257,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6258,
+  "seed": 81000258,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6259,
+  "seed": 81000259,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6260,
+  "seed": 81000260,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6261,
+  "seed": 81000261,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6262,
+  "seed": 81000262,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6263,
+  "seed": 81000263,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6264,
+  "seed": 81000264,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6265,
+  "seed": 81000265,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6266,
+  "seed": 81000266,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6267,
+  "seed": 81000267,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6268,
+  "seed": 81000268,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "random",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6269,
+  "seed": 81000269,
+  "radiant": "random",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6270,
+  "seed": 81000270,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6271,
+  "seed": 81000271,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 944,
+  "winner": 1
+ },
+ {
+  "game_index": 6272,
+  "seed": 81000272,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6273,
+  "seed": 81000273,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 861,
+  "winner": 1
+ },
+ {
+  "game_index": 6274,
+  "seed": 81000274,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6275,
+  "seed": 81000275,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 847,
+  "winner": 1
+ },
+ {
+  "game_index": 6276,
+  "seed": 81000276,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6277,
+  "seed": 81000277,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 901,
+  "winner": 1
+ },
+ {
+  "game_index": 6278,
+  "seed": 81000278,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6279,
+  "seed": 81000279,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1057,
+  "winner": 1
+ },
+ {
+  "game_index": 6280,
+  "seed": 81000280,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6281,
+  "seed": 81000281,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 921,
+  "winner": 1
+ },
+ {
+  "game_index": 6282,
+  "seed": 81000282,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6283,
+  "seed": 81000283,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 895,
+  "winner": 1
+ },
+ {
+  "game_index": 6284,
+  "seed": 81000284,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6285,
+  "seed": 81000285,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 747,
+  "winner": 1
+ },
+ {
+  "game_index": 6286,
+  "seed": 81000286,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6287,
+  "seed": 81000287,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 954,
+  "winner": 1
+ },
+ {
+  "game_index": 6288,
+  "seed": 81000288,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6289,
+  "seed": 81000289,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 877,
+  "winner": 1
+ },
+ {
+  "game_index": 6290,
+  "seed": 81000290,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6291,
+  "seed": 81000291,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 957,
+  "winner": 1
+ },
+ {
+  "game_index": 6292,
+  "seed": 81000292,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6293,
+  "seed": 81000293,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 933,
+  "winner": 1
+ },
+ {
+  "game_index": 6294,
+  "seed": 81000294,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6295,
+  "seed": 81000295,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 856,
+  "winner": 1
+ },
+ {
+  "game_index": 6296,
+  "seed": 81000296,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6297,
+  "seed": 81000297,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 872,
+  "winner": 1
+ },
+ {
+  "game_index": 6298,
+  "seed": 81000298,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6299,
+  "seed": 81000299,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 859,
+  "winner": 1
+ },
+ {
+  "game_index": 6300,
+  "seed": 81000300,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6301,
+  "seed": 81000301,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 995,
+  "winner": 1
+ },
+ {
+  "game_index": 6302,
+  "seed": 81000302,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6303,
+  "seed": 81000303,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1059,
+  "winner": 1
+ },
+ {
+  "game_index": 6304,
+  "seed": 81000304,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6305,
+  "seed": 81000305,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1018,
+  "winner": 1
+ },
+ {
+  "game_index": 6306,
+  "seed": 81000306,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6307,
+  "seed": 81000307,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 991,
+  "winner": 1
+ },
+ {
+  "game_index": 6308,
+  "seed": 81000308,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6309,
+  "seed": 81000309,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 992,
+  "winner": 1
+ },
+ {
+  "game_index": 6310,
+  "seed": 81000310,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6311,
+  "seed": 81000311,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1037,
+  "winner": 1
+ },
+ {
+  "game_index": 6312,
+  "seed": 81000312,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6313,
+  "seed": 81000313,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 881,
+  "winner": 1
+ },
+ {
+  "game_index": 6314,
+  "seed": 81000314,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6315,
+  "seed": 81000315,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 854,
+  "winner": 1
+ },
+ {
+  "game_index": 6316,
+  "seed": 81000316,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6317,
+  "seed": 81000317,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1123,
+  "winner": 1
+ },
+ {
+  "game_index": 6318,
+  "seed": 81000318,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6319,
+  "seed": 81000319,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 882,
+  "winner": 1
+ },
+ {
+  "game_index": 6320,
+  "seed": 81000320,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6321,
+  "seed": 81000321,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 885,
+  "winner": 1
+ },
+ {
+  "game_index": 6322,
+  "seed": 81000322,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6323,
+  "seed": 81000323,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 828,
+  "winner": 1
+ },
+ {
+  "game_index": 6324,
+  "seed": 81000324,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6325,
+  "seed": 81000325,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1012,
+  "winner": 1
+ },
+ {
+  "game_index": 6326,
+  "seed": 81000326,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6327,
+  "seed": 81000327,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1004,
+  "winner": 1
+ },
+ {
+  "game_index": 6328,
+  "seed": 81000328,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6329,
+  "seed": 81000329,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1154,
+  "winner": 1
+ },
+ {
+  "game_index": 6330,
+  "seed": 81000330,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6331,
+  "seed": 81000331,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 917,
+  "winner": 1
+ },
+ {
+  "game_index": 6332,
+  "seed": 81000332,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6333,
+  "seed": 81000333,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 864,
+  "winner": 1
+ },
+ {
+  "game_index": 6334,
+  "seed": 81000334,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6335,
+  "seed": 81000335,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 927,
+  "winner": 1
+ },
+ {
+  "game_index": 6336,
+  "seed": 81000336,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6337,
+  "seed": 81000337,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 981,
+  "winner": 1
+ },
+ {
+  "game_index": 6338,
+  "seed": 81000338,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6339,
+  "seed": 81000339,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 891,
+  "winner": 1
+ },
+ {
+  "game_index": 6340,
+  "seed": 81000340,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6341,
+  "seed": 81000341,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 997,
+  "winner": 1
+ },
+ {
+  "game_index": 6342,
+  "seed": 81000342,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6343,
+  "seed": 81000343,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1156,
+  "winner": 1
+ },
+ {
+  "game_index": 6344,
+  "seed": 81000344,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6345,
+  "seed": 81000345,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1040,
+  "winner": 1
+ },
+ {
+  "game_index": 6346,
+  "seed": 81000346,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6347,
+  "seed": 81000347,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 992,
+  "winner": 1
+ },
+ {
+  "game_index": 6348,
+  "seed": 81000348,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6349,
+  "seed": 81000349,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 843,
+  "winner": 1
+ },
+ {
+  "game_index": 6350,
+  "seed": 81000350,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6351,
+  "seed": 81000351,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1039,
+  "winner": 1
+ },
+ {
+  "game_index": 6352,
+  "seed": 81000352,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6353,
+  "seed": 81000353,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 937,
+  "winner": 1
+ },
+ {
+  "game_index": 6354,
+  "seed": 81000354,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6355,
+  "seed": 81000355,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1011,
+  "winner": 1
+ },
+ {
+  "game_index": 6356,
+  "seed": 81000356,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6357,
+  "seed": 81000357,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 897,
+  "winner": 1
+ },
+ {
+  "game_index": 6358,
+  "seed": 81000358,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6359,
+  "seed": 81000359,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1150,
+  "winner": 1
+ },
+ {
+  "game_index": 6360,
+  "seed": 81000360,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6361,
+  "seed": 81000361,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1006,
+  "winner": 1
+ },
+ {
+  "game_index": 6362,
+  "seed": 81000362,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6363,
+  "seed": 81000363,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1194,
+  "winner": 1
+ },
+ {
+  "game_index": 6364,
+  "seed": 81000364,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6365,
+  "seed": 81000365,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 962,
+  "winner": 1
+ },
+ {
+  "game_index": 6366,
+  "seed": 81000366,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6367,
+  "seed": 81000367,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 824,
+  "winner": 1
+ },
+ {
+  "game_index": 6368,
+  "seed": 81000368,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6369,
+  "seed": 81000369,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 995,
+  "winner": 1
+ },
+ {
+  "game_index": 6370,
+  "seed": 81000370,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6371,
+  "seed": 81000371,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 968,
+  "winner": 1
+ },
+ {
+  "game_index": 6372,
+  "seed": 81000372,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6373,
+  "seed": 81000373,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1129,
+  "winner": 1
+ },
+ {
+  "game_index": 6374,
+  "seed": 81000374,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6375,
+  "seed": 81000375,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1299,
+  "winner": 1
+ },
+ {
+  "game_index": 6376,
+  "seed": 81000376,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6377,
+  "seed": 81000377,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1008,
+  "winner": 1
+ },
+ {
+  "game_index": 6378,
+  "seed": 81000378,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6379,
+  "seed": 81000379,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 897,
+  "winner": 1
+ },
+ {
+  "game_index": 6380,
+  "seed": 81000380,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6381,
+  "seed": 81000381,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1065,
+  "winner": 1
+ },
+ {
+  "game_index": 6382,
+  "seed": 81000382,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6383,
+  "seed": 81000383,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 934,
+  "winner": 1
+ },
+ {
+  "game_index": 6384,
+  "seed": 81000384,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6385,
+  "seed": 81000385,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 955,
+  "winner": 1
+ },
+ {
+  "game_index": 6386,
+  "seed": 81000386,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6387,
+  "seed": 81000387,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1076,
+  "winner": 1
+ },
+ {
+  "game_index": 6388,
+  "seed": 81000388,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6389,
+  "seed": 81000389,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1007,
+  "winner": 1
+ },
+ {
+  "game_index": 6390,
+  "seed": 81000390,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6391,
+  "seed": 81000391,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 999,
+  "winner": 1
+ },
+ {
+  "game_index": 6392,
+  "seed": 81000392,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6393,
+  "seed": 81000393,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1045,
+  "winner": 1
+ },
+ {
+  "game_index": 6394,
+  "seed": 81000394,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6395,
+  "seed": 81000395,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1125,
+  "winner": 1
+ },
+ {
+  "game_index": 6396,
+  "seed": 81000396,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6397,
+  "seed": 81000397,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 983,
+  "winner": 1
+ },
+ {
+  "game_index": 6398,
+  "seed": 81000398,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6399,
+  "seed": 81000399,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1030,
+  "winner": 1
+ },
+ {
+  "game_index": 6400,
+  "seed": 81000400,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6401,
+  "seed": 81000401,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1037,
+  "winner": 1
+ },
+ {
+  "game_index": 6402,
+  "seed": 81000402,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6403,
+  "seed": 81000403,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 948,
+  "winner": 1
+ },
+ {
+  "game_index": 6404,
+  "seed": 81000404,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6405,
+  "seed": 81000405,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 964,
+  "winner": 1
+ },
+ {
+  "game_index": 6406,
+  "seed": 81000406,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6407,
+  "seed": 81000407,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1008,
+  "winner": 1
+ },
+ {
+  "game_index": 6408,
+  "seed": 81000408,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6409,
+  "seed": 81000409,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 850,
+  "winner": 1
+ },
+ {
+  "game_index": 6410,
+  "seed": 81000410,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6411,
+  "seed": 81000411,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 874,
+  "winner": 1
+ },
+ {
+  "game_index": 6412,
+  "seed": 81000412,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6413,
+  "seed": 81000413,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1042,
+  "winner": 1
+ },
+ {
+  "game_index": 6414,
+  "seed": 81000414,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6415,
+  "seed": 81000415,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 963,
+  "winner": 1
+ },
+ {
+  "game_index": 6416,
+  "seed": 81000416,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6417,
+  "seed": 81000417,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1021,
+  "winner": 1
+ },
+ {
+  "game_index": 6418,
+  "seed": 81000418,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6419,
+  "seed": 81000419,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 864,
+  "winner": 1
+ },
+ {
+  "game_index": 6420,
+  "seed": 81000420,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6421,
+  "seed": 81000421,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1033,
+  "winner": 1
+ },
+ {
+  "game_index": 6422,
+  "seed": 81000422,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6423,
+  "seed": 81000423,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1136,
+  "winner": 1
+ },
+ {
+  "game_index": 6424,
+  "seed": 81000424,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6425,
+  "seed": 81000425,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 980,
+  "winner": 1
+ },
+ {
+  "game_index": 6426,
+  "seed": 81000426,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6427,
+  "seed": 81000427,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 894,
+  "winner": 1
+ },
+ {
+  "game_index": 6428,
+  "seed": 81000428,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6429,
+  "seed": 81000429,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1049,
+  "winner": 1
+ },
+ {
+  "game_index": 6430,
+  "seed": 81000430,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6431,
+  "seed": 81000431,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 892,
+  "winner": 1
+ },
+ {
+  "game_index": 6432,
+  "seed": 81000432,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6433,
+  "seed": 81000433,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 870,
+  "winner": 1
+ },
+ {
+  "game_index": 6434,
+  "seed": 81000434,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6435,
+  "seed": 81000435,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1038,
+  "winner": 1
+ },
+ {
+  "game_index": 6436,
+  "seed": 81000436,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6437,
+  "seed": 81000437,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1030,
+  "winner": 1
+ },
+ {
+  "game_index": 6438,
+  "seed": 81000438,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6439,
+  "seed": 81000439,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 869,
+  "winner": 1
+ },
+ {
+  "game_index": 6440,
+  "seed": 81000440,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6441,
+  "seed": 81000441,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1013,
+  "winner": 1
+ },
+ {
+  "game_index": 6442,
+  "seed": 81000442,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6443,
+  "seed": 81000443,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 838,
+  "winner": 1
+ },
+ {
+  "game_index": 6444,
+  "seed": 81000444,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6445,
+  "seed": 81000445,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 952,
+  "winner": 1
+ },
+ {
+  "game_index": 6446,
+  "seed": 81000446,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6447,
+  "seed": 81000447,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1026,
+  "winner": 1
+ },
+ {
+  "game_index": 6448,
+  "seed": 81000448,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6449,
+  "seed": 81000449,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 850,
+  "winner": 1
+ },
+ {
+  "game_index": 6450,
+  "seed": 81000450,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6451,
+  "seed": 81000451,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1055,
+  "winner": 1
+ },
+ {
+  "game_index": 6452,
+  "seed": 81000452,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6453,
+  "seed": 81000453,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 961,
+  "winner": 1
+ },
+ {
+  "game_index": 6454,
+  "seed": 81000454,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6455,
+  "seed": 81000455,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 840,
+  "winner": 1
+ },
+ {
+  "game_index": 6456,
+  "seed": 81000456,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6457,
+  "seed": 81000457,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 821,
+  "winner": 1
+ },
+ {
+  "game_index": 6458,
+  "seed": 81000458,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6459,
+  "seed": 81000459,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 987,
+  "winner": 1
+ },
+ {
+  "game_index": 6460,
+  "seed": 81000460,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6461,
+  "seed": 81000461,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 902,
+  "winner": 1
+ },
+ {
+  "game_index": 6462,
+  "seed": 81000462,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6463,
+  "seed": 81000463,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1016,
+  "winner": 1
+ },
+ {
+  "game_index": 6464,
+  "seed": 81000464,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6465,
+  "seed": 81000465,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1180,
+  "winner": 1
+ },
+ {
+  "game_index": 6466,
+  "seed": 81000466,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6467,
+  "seed": 81000467,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 995,
+  "winner": 1
+ },
+ {
+  "game_index": 6468,
+  "seed": 81000468,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6469,
+  "seed": 81000469,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 897,
+  "winner": 1
+ },
+ {
+  "game_index": 6470,
+  "seed": 81000470,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6471,
+  "seed": 81000471,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 908,
+  "winner": 1
+ },
+ {
+  "game_index": 6472,
+  "seed": 81000472,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6473,
+  "seed": 81000473,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1027,
+  "winner": 1
+ },
+ {
+  "game_index": 6474,
+  "seed": 81000474,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6475,
+  "seed": 81000475,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 958,
+  "winner": 1
+ },
+ {
+  "game_index": 6476,
+  "seed": 81000476,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6477,
+  "seed": 81000477,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 906,
+  "winner": 1
+ },
+ {
+  "game_index": 6478,
+  "seed": 81000478,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6479,
+  "seed": 81000479,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 860,
+  "winner": 1
+ },
+ {
+  "game_index": 6480,
+  "seed": 81000480,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6481,
+  "seed": 81000481,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 847,
+  "winner": 1
+ },
+ {
+  "game_index": 6482,
+  "seed": 81000482,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6483,
+  "seed": 81000483,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 944,
+  "winner": 1
+ },
+ {
+  "game_index": 6484,
+  "seed": 81000484,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6485,
+  "seed": 81000485,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 864,
+  "winner": 1
+ },
+ {
+  "game_index": 6486,
+  "seed": 81000486,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6487,
+  "seed": 81000487,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 948,
+  "winner": 1
+ },
+ {
+  "game_index": 6488,
+  "seed": 81000488,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6489,
+  "seed": 81000489,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1069,
+  "winner": 1
+ },
+ {
+  "game_index": 6490,
+  "seed": 81000490,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6491,
+  "seed": 81000491,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 881,
+  "winner": 1
+ },
+ {
+  "game_index": 6492,
+  "seed": 81000492,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6493,
+  "seed": 81000493,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 949,
+  "winner": 1
+ },
+ {
+  "game_index": 6494,
+  "seed": 81000494,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6495,
+  "seed": 81000495,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 895,
+  "winner": 1
+ },
+ {
+  "game_index": 6496,
+  "seed": 81000496,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6497,
+  "seed": 81000497,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 850,
+  "winner": 1
+ },
+ {
+  "game_index": 6498,
+  "seed": 81000498,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6499,
+  "seed": 81000499,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 802,
+  "winner": 1
+ },
+ {
+  "game_index": 6500,
+  "seed": 81000500,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6501,
+  "seed": 81000501,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 967,
+  "winner": 1
+ },
+ {
+  "game_index": 6502,
+  "seed": 81000502,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6503,
+  "seed": 81000503,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1032,
+  "winner": 1
+ },
+ {
+  "game_index": 6504,
+  "seed": 81000504,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6505,
+  "seed": 81000505,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 848,
+  "winner": 1
+ },
+ {
+  "game_index": 6506,
+  "seed": 81000506,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6507,
+  "seed": 81000507,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 863,
+  "winner": 1
+ },
+ {
+  "game_index": 6508,
+  "seed": 81000508,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6509,
+  "seed": 81000509,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 990,
+  "winner": 1
+ },
+ {
+  "game_index": 6510,
+  "seed": 81000510,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6511,
+  "seed": 81000511,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 871,
+  "winner": 1
+ },
+ {
+  "game_index": 6512,
+  "seed": 81000512,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6513,
+  "seed": 81000513,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 987,
+  "winner": 1
+ },
+ {
+  "game_index": 6514,
+  "seed": 81000514,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6515,
+  "seed": 81000515,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 955,
+  "winner": 1
+ },
+ {
+  "game_index": 6516,
+  "seed": 81000516,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6517,
+  "seed": 81000517,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 841,
+  "winner": 1
+ },
+ {
+  "game_index": 6518,
+  "seed": 81000518,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6519,
+  "seed": 81000519,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1031,
+  "winner": 1
+ },
+ {
+  "game_index": 6520,
+  "seed": 81000520,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6521,
+  "seed": 81000521,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 995,
+  "winner": 1
+ },
+ {
+  "game_index": 6522,
+  "seed": 81000522,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6523,
+  "seed": 81000523,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 940,
+  "winner": 1
+ },
+ {
+  "game_index": 6524,
+  "seed": 81000524,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6525,
+  "seed": 81000525,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1113,
+  "winner": 1
+ },
+ {
+  "game_index": 6526,
+  "seed": 81000526,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6527,
+  "seed": 81000527,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 1168,
+  "winner": 1
+ },
+ {
+  "game_index": 6528,
+  "seed": 81000528,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6529,
+  "seed": 81000529,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 822,
+  "winner": 1
+ },
+ {
+  "game_index": 6530,
+  "seed": 81000530,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6531,
+  "seed": 81000531,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 909,
+  "winner": 1
+ },
+ {
+  "game_index": 6532,
+  "seed": 81000532,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6533,
+  "seed": 81000533,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 980,
+  "winner": 1
+ },
+ {
+  "game_index": 6534,
+  "seed": 81000534,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6535,
+  "seed": 81000535,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 870,
+  "winner": 1
+ },
+ {
+  "game_index": 6536,
+  "seed": 81000536,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6537,
+  "seed": 81000537,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 1033,
+  "winner": 1
+ },
+ {
+  "game_index": 6538,
+  "seed": 81000538,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "net",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6539,
+  "seed": 81000539,
+  "radiant": "net",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 857,
+  "winner": 1
+ },
+ {
+  "game_index": 6540,
+  "seed": 81000540,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6541,
+  "seed": 81000541,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6542,
+  "seed": 81000542,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6543,
+  "seed": 81000543,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6544,
+  "seed": 81000544,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6545,
+  "seed": 81000545,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6546,
+  "seed": 81000546,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6547,
+  "seed": 81000547,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6548,
+  "seed": 81000548,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6549,
+  "seed": 81000549,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6550,
+  "seed": 81000550,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6551,
+  "seed": 81000551,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6552,
+  "seed": 81000552,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6553,
+  "seed": 81000553,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6554,
+  "seed": 81000554,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6555,
+  "seed": 81000555,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6556,
+  "seed": 81000556,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6557,
+  "seed": 81000557,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6558,
+  "seed": 81000558,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6559,
+  "seed": 81000559,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6560,
+  "seed": 81000560,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6561,
+  "seed": 81000561,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6562,
+  "seed": 81000562,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6563,
+  "seed": 81000563,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6564,
+  "seed": 81000564,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6565,
+  "seed": 81000565,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6566,
+  "seed": 81000566,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6567,
+  "seed": 81000567,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6568,
+  "seed": 81000568,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6569,
+  "seed": 81000569,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6570,
+  "seed": 81000570,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6571,
+  "seed": 81000571,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6572,
+  "seed": 81000572,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6573,
+  "seed": 81000573,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6574,
+  "seed": 81000574,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6575,
+  "seed": 81000575,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6576,
+  "seed": 81000576,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6577,
+  "seed": 81000577,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6578,
+  "seed": 81000578,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6579,
+  "seed": 81000579,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6580,
+  "seed": 81000580,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6581,
+  "seed": 81000581,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6582,
+  "seed": 81000582,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6583,
+  "seed": 81000583,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6584,
+  "seed": 81000584,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6585,
+  "seed": 81000585,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6586,
+  "seed": 81000586,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6587,
+  "seed": 81000587,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6588,
+  "seed": 81000588,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6589,
+  "seed": 81000589,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6590,
+  "seed": 81000590,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6591,
+  "seed": 81000591,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6592,
+  "seed": 81000592,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6593,
+  "seed": 81000593,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6594,
+  "seed": 81000594,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6595,
+  "seed": 81000595,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6596,
+  "seed": 81000596,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6597,
+  "seed": 81000597,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6598,
+  "seed": 81000598,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6599,
+  "seed": 81000599,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6600,
+  "seed": 81000600,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6601,
+  "seed": 81000601,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6602,
+  "seed": 81000602,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6603,
+  "seed": 81000603,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6604,
+  "seed": 81000604,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6605,
+  "seed": 81000605,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6606,
+  "seed": 81000606,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6607,
+  "seed": 81000607,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6608,
+  "seed": 81000608,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6609,
+  "seed": 81000609,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6610,
+  "seed": 81000610,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6611,
+  "seed": 81000611,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6612,
+  "seed": 81000612,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6613,
+  "seed": 81000613,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6614,
+  "seed": 81000614,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6615,
+  "seed": 81000615,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6616,
+  "seed": 81000616,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6617,
+  "seed": 81000617,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6618,
+  "seed": 81000618,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6619,
+  "seed": 81000619,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6620,
+  "seed": 81000620,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6621,
+  "seed": 81000621,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6622,
+  "seed": 81000622,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6623,
+  "seed": 81000623,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6624,
+  "seed": 81000624,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6625,
+  "seed": 81000625,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6626,
+  "seed": 81000626,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6627,
+  "seed": 81000627,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6628,
+  "seed": 81000628,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6629,
+  "seed": 81000629,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6630,
+  "seed": 81000630,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6631,
+  "seed": 81000631,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6632,
+  "seed": 81000632,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6633,
+  "seed": 81000633,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6634,
+  "seed": 81000634,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6635,
+  "seed": 81000635,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6636,
+  "seed": 81000636,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6637,
+  "seed": 81000637,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6638,
+  "seed": 81000638,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6639,
+  "seed": 81000639,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6640,
+  "seed": 81000640,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6641,
+  "seed": 81000641,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6642,
+  "seed": 81000642,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6643,
+  "seed": 81000643,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6644,
+  "seed": 81000644,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6645,
+  "seed": 81000645,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6646,
+  "seed": 81000646,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6647,
+  "seed": 81000647,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6648,
+  "seed": 81000648,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6649,
+  "seed": 81000649,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6650,
+  "seed": 81000650,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6651,
+  "seed": 81000651,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6652,
+  "seed": 81000652,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6653,
+  "seed": 81000653,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6654,
+  "seed": 81000654,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6655,
+  "seed": 81000655,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6656,
+  "seed": 81000656,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6657,
+  "seed": 81000657,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6658,
+  "seed": 81000658,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6659,
+  "seed": 81000659,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6660,
+  "seed": 81000660,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6661,
+  "seed": 81000661,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6662,
+  "seed": 81000662,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6663,
+  "seed": 81000663,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6664,
+  "seed": 81000664,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6665,
+  "seed": 81000665,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6666,
+  "seed": 81000666,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6667,
+  "seed": 81000667,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6668,
+  "seed": 81000668,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6669,
+  "seed": 81000669,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6670,
+  "seed": 81000670,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6671,
+  "seed": 81000671,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6672,
+  "seed": 81000672,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6673,
+  "seed": 81000673,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6674,
+  "seed": 81000674,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6675,
+  "seed": 81000675,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6676,
+  "seed": 81000676,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6677,
+  "seed": 81000677,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6678,
+  "seed": 81000678,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6679,
+  "seed": 81000679,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6680,
+  "seed": 81000680,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6681,
+  "seed": 81000681,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6682,
+  "seed": 81000682,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6683,
+  "seed": 81000683,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6684,
+  "seed": 81000684,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6685,
+  "seed": 81000685,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6686,
+  "seed": 81000686,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6687,
+  "seed": 81000687,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6688,
+  "seed": 81000688,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6689,
+  "seed": 81000689,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6690,
+  "seed": 81000690,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6691,
+  "seed": 81000691,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6692,
+  "seed": 81000692,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6693,
+  "seed": 81000693,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6694,
+  "seed": 81000694,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6695,
+  "seed": 81000695,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6696,
+  "seed": 81000696,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6697,
+  "seed": 81000697,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6698,
+  "seed": 81000698,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6699,
+  "seed": 81000699,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6700,
+  "seed": 81000700,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6701,
+  "seed": 81000701,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6702,
+  "seed": 81000702,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6703,
+  "seed": 81000703,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6704,
+  "seed": 81000704,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6705,
+  "seed": 81000705,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6706,
+  "seed": 81000706,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6707,
+  "seed": 81000707,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6708,
+  "seed": 81000708,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6709,
+  "seed": 81000709,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6710,
+  "seed": 81000710,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6711,
+  "seed": 81000711,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6712,
+  "seed": 81000712,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6713,
+  "seed": 81000713,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6714,
+  "seed": 81000714,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6715,
+  "seed": 81000715,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6716,
+  "seed": 81000716,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6717,
+  "seed": 81000717,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6718,
+  "seed": 81000718,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6719,
+  "seed": 81000719,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6720,
+  "seed": 81000720,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6721,
+  "seed": 81000721,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6722,
+  "seed": 81000722,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6723,
+  "seed": 81000723,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6724,
+  "seed": 81000724,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6725,
+  "seed": 81000725,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6726,
+  "seed": 81000726,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6727,
+  "seed": 81000727,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6728,
+  "seed": 81000728,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6729,
+  "seed": 81000729,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6730,
+  "seed": 81000730,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6731,
+  "seed": 81000731,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6732,
+  "seed": 81000732,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6733,
+  "seed": 81000733,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6734,
+  "seed": 81000734,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6735,
+  "seed": 81000735,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6736,
+  "seed": 81000736,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6737,
+  "seed": 81000737,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6738,
+  "seed": 81000738,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6739,
+  "seed": 81000739,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6740,
+  "seed": 81000740,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6741,
+  "seed": 81000741,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6742,
+  "seed": 81000742,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6743,
+  "seed": 81000743,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6744,
+  "seed": 81000744,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6745,
+  "seed": 81000745,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6746,
+  "seed": 81000746,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6747,
+  "seed": 81000747,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6748,
+  "seed": 81000748,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6749,
+  "seed": 81000749,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6750,
+  "seed": 81000750,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6751,
+  "seed": 81000751,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6752,
+  "seed": 81000752,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6753,
+  "seed": 81000753,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6754,
+  "seed": 81000754,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6755,
+  "seed": 81000755,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6756,
+  "seed": 81000756,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6757,
+  "seed": 81000757,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6758,
+  "seed": 81000758,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6759,
+  "seed": 81000759,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6760,
+  "seed": 81000760,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6761,
+  "seed": 81000761,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6762,
+  "seed": 81000762,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6763,
+  "seed": 81000763,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6764,
+  "seed": 81000764,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6765,
+  "seed": 81000765,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6766,
+  "seed": 81000766,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6767,
+  "seed": 81000767,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6768,
+  "seed": 81000768,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6769,
+  "seed": 81000769,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6770,
+  "seed": 81000770,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6771,
+  "seed": 81000771,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6772,
+  "seed": 81000772,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6773,
+  "seed": 81000773,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6774,
+  "seed": 81000774,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6775,
+  "seed": 81000775,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6776,
+  "seed": 81000776,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6777,
+  "seed": 81000777,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6778,
+  "seed": 81000778,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6779,
+  "seed": 81000779,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6780,
+  "seed": 81000780,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6781,
+  "seed": 81000781,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6782,
+  "seed": 81000782,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6783,
+  "seed": 81000783,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6784,
+  "seed": 81000784,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6785,
+  "seed": 81000785,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6786,
+  "seed": 81000786,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6787,
+  "seed": 81000787,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6788,
+  "seed": 81000788,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6789,
+  "seed": 81000789,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6790,
+  "seed": 81000790,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6791,
+  "seed": 81000791,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6792,
+  "seed": 81000792,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6793,
+  "seed": 81000793,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6794,
+  "seed": 81000794,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6795,
+  "seed": 81000795,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6796,
+  "seed": 81000796,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6797,
+  "seed": 81000797,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6798,
+  "seed": 81000798,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6799,
+  "seed": 81000799,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6800,
+  "seed": 81000800,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6801,
+  "seed": 81000801,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6802,
+  "seed": 81000802,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6803,
+  "seed": 81000803,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6804,
+  "seed": 81000804,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6805,
+  "seed": 81000805,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6806,
+  "seed": 81000806,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6807,
+  "seed": 81000807,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6808,
+  "seed": 81000808,
+  "radiant": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ },
+ {
+  "game_index": 6809,
+  "seed": 81000809,
+  "radiant": "runs/dream_ppo/p3/vs_net/policy.pt",
+  "dire": "runs/dream_ppo/p3/selfplay_rerun/policy.pt",
+  "ticks": 3000,
+  "winner": 0
+ }
+]

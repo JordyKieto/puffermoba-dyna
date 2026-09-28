@@ -98,6 +98,28 @@ checkpoints, E4's final checkpoint and the whole E5 continuation. The runs
 that survived (on the Mac) were backed up to `moba/runs/`: `e4_baseline_v2_1h`,
 `e5_rollout`, `e5_rollout_at3500`, `e6b_cf_effect`.
 
+## CPU pods and memory limits (measured 2026-09-28)
+
+- **`POD=cpu tools/pod.py create --cpu 32 --confirm`** makes a CPU-only pod: 32 vCPUs,
+  $0.96/hr, SSH in ~50 s, no network volume. `bootstrap` works there too; it builds
+  `moba_collect` and `libmobaarena`. Use it for game collection, so collection never
+  steals the GPU pod's CPUs.
+- **Container memory is capped** (cgroup `memory.limit_in_bytes`): 64 GB on the 32-vCPU CPU
+  pod, 251 GB on the H100 NVL pod. A process over the cap is killed silently (empty log;
+  `oom_kill` count in `memory.oom_control`).
+- **Each real game in `libmobaarena` costs ~270 MB on Linux** (upstream `init_moba`), so
+  about 200 games fit at once in 64 GB. `collect_policy_games.py --slice lo:hi` splits a
+  corpus into memory-sized jobs with unchanged game indices and seeds, and
+  `--replay-jobs` limits concurrent replays (~2.2 GB each).
+- **`/dev/shm` is a 117 GB tmpfs on the H100 NVL pod.** The training loader used to go
+  through it and failed for stores above that (E12, 145.5 GB). It now uses anonymous
+  shared mappings (`mobawm/wm/data.py _load_store_anon`), limited only by the container
+  cap, and a `--store-cpu` store uses them in place.
+- **Don't start one process per core:** `arena.py` with default workers on a 192-core pod
+  used up the thread limit and crashed a concurrent PPO run. Pass `--workers 32`.
+- **`pkill -f <pattern>` over `pod.py ssh` can kill its own ssh command** (exit 255). Use
+  a `[p]attern`.
+
 ## Why this shape
 
 - **Pod size.** The full-state entity tensor is 206 × 26 fp32 = 21 KB per

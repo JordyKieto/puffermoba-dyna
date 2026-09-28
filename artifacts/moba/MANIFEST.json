@@ -255,6 +255,61 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/e11_at1500",
+   "path": "runs/token_wm/e11_at1500/model.pt",
+   "present": true,
+   "wandb_run": "mlbh5d3l",
+   "description": "E11 @1500 (E5 resumed on mix1k + mixrand1k): the world model the P4/P4b/P5 dream policies trained in",
+   "bytes": 2673474,
+   "md5": "a41eb79537ef0bfd3940fd890f3023a2",
+   "s3": "s3://puffertank/moba/runs/e11_at1500/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e11_at2000",
+   "path": "runs/token_wm/e11_random_resume/model_002000.pt",
+   "present": true,
+   "wandb_run": "mlbh5d3l",
+   "description": "E11 @2000, E11's last checkpoint; E12 starts from it",
+   "bytes": 2679074,
+   "md5": "a67d4c41a123f5c7fd1f5343073df79a",
+   "s3": "s3://puffertank/moba/runs/e11_random_resume/model_002000.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P4_mix_e11",
+   "path": "runs/dream_ppo/p4/mix_e11/policy.pt",
+   "present": true,
+   "wandb_run": "msjwyq7r",
+   "description": "P4: dream PPO in E11 @1500, 50% self-play / 50% vs net, expert starts, 4.5 min, 2.12M steps",
+   "bytes": 4028610,
+   "md5": "f27cf68523ccac259a6a91ca1b9541ee",
+   "s3": "s3://puffertank/moba/runs/p4_mix_e11/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "rl/P4b_mix_e11_mixstarts",
+   "path": "runs/dream_ppo/p4/mix_e11_mixstarts/policy.pt",
+   "present": true,
+   "wandb_run": "ahoexos3",
+   "description": "P4b: as P4 + expert and random-play start states, 4.5 min, 1.70M steps",
+   "bytes": 4028674,
+   "md5": "13259dd90515efef9c9d1801290a3be6",
+   "s3": "s3://puffertank/moba/runs/p4_mix_e11_mixstarts/policy.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260928_0215",
+   "path": "runs/code_snapshots/code_snapshot_20260928_0215.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E11-E13: train.py --held2-games, anonymous-mmap loader (data.py), dream_ppo --opponent mix, collect_policy_games --matchups/--slice, pod.py CPU pods. HEAD baf8d7c + tracked diff + files.",
+   "bytes": 119729,
+   "md5": "2b46ba452a3e84e0f8901df7322607c1",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260928_0215.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260928_0015",
    "path": "runs/code_snapshots/code_snapshot_20260928_0015.tar.gz",
    "present": true,

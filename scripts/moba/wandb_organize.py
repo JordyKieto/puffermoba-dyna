@@ -42,9 +42,26 @@ E = {
                  "Dyna smoke control: E5 @20,500 + ~125 updates on mix1k only, batch 384, H100 NVL. " + REC + "E9-dyna-smoke.md"),
     "tnnlmx2e": ("E9-dyna-smoke", ["wm", "rollout", "dyna", "policy-games", "store-cpu"],
                  "Dyna smoke: E5 @20,500 + ~125 updates on mix1k + 100 real P3-policy games (game ids 5000-5099). " + REC + "E9-dyna-smoke.md"),
+    "mlbh5d3l": ("E11-random-data", ["wm", "rollout", "random-data", "store-cpu"],
+                 "E11: E5 @20,500 resumed on mix1k + mixrand1k (random-controller games), 2,300 updates; held-out "
+                 "random games (random/...) are the main metric. Stopped for E12. " + REC + "E11-random-data.md"),
+    "xfldazic": ("E12-dyna2", ["wm", "rollout", "random-data", "dyna", "store-cpu", "main"],
+                 "E12: E11 @2000 + dyna2 (810 real games of the dream policies vs random/net/self). " + REC + "E12-dyna2.md"),
     "d9xnnj0a": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "effect-loss", "main"],
                  "E6b: E5@3500 + counterfactual siblings + effect aux losses, 3,550 updates. Checkpoints kept. "
                  + REC + "E6-counterfactual-siblings.md"),
+}
+
+# moba-dream-rl runs made after the backfill (their group is set at launch; this adds tags/notes).
+DREAM = {
+    "msjwyq7r": ("P4-mix-e11", ["dream-ppo", "opponent-mix", "e11"],
+                 "P4: dream PPO in E11 @1500, 50% self-play / 50% vs net, expert start states, 4.5 min. " + REC + "E13-dream-ppo-e11.md"),
+    "gqwfjvhm": ("P4-mix-e11", ["dream-ppo", "crashed"],
+                 "P4b first launch: crashed at wandb init (thread limit, an evaluation started at the same time). " + REC + "E13-dream-ppo-e11.md"),
+    "ahoexos3": ("P4-mix-e11", ["dream-ppo", "opponent-mix", "e11", "mixed-starts"],
+                 "P4b: as P4 + start states from expert AND random-play games, 4.5 min. " + REC + "E13-dream-ppo-e11.md"),
+    "jfw1p3b5": ("P5-100x", ["dream-ppo", "opponent-mix", "e11", "mixed-starts", "main"],
+                 "P5: the P4b recipe for 100x P4b's steps (169.5M). " + REC + "E13-dream-ppo-e11.md"),
 }
 
 
@@ -76,6 +93,13 @@ def main():
         if args.apply:
             run.group, run.tags, run.notes = group, sorted(set(tags)), note
             run.update()
+    for run in api.runs(f"{ENTITY}/moba-dream-rl"):
+        if run.id in DREAM:
+            group, tags, note = DREAM[run.id]
+            print(f"{run.id}  {run.name:<32} -> group {group:<20} tags {tags}")
+            if args.apply:
+                run.group, run.tags, run.notes = group, sorted(set(tags)), note
+                run.update()
     if missing:
         print(f"NOT MAPPED (add them to E): {missing}")
         sys.exit(1)

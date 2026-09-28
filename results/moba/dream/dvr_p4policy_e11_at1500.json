@@ -1,0 +1,104 @@
+{
+ "args": {
+  "policy": "runs/dream_ppo/p4/mix_e11/policy.pt",
+  "wm": "runs/token_wm/e11_at1500",
+  "games": 8,
+  "ticks": 900,
+  "horizon": 128,
+  "teams": "ppo,net,random",
+  "device": "cuda",
+  "no_xp_clamp": false,
+  "signed_xp_reward": false,
+  "out": "results/moba/dream/dvr_p4policy_e11_at1500.json"
+ },
+ "note": "per 1k hero-steps of OUR team (radiant, heroes 0-4) vs the shipped net; events: deaths, XP points, tower kills",
+ "teams": {
+  "ppo": {
+   "real_per_1k": [
+    0.3333333432674408,
+    225.5554962158203,
+    0.0,
+    0.0
+   ],
+   "teacher_forced_dream_per_1k": [
+    -0.0,
+    2873.63916015625,
+    0.0,
+    0.0
+   ],
+   "openloop_real_per_1k": [
+    0.3906250298023224,
+    224.60934448242188,
+    0.0,
+    0.0
+   ],
+   "openloop_dream_per_1k": [
+    -0.0,
+    847.7216186523438,
+    0.0,
+    0.0
+   ],
+   "hero_steps_tf": 36000,
+   "hero_steps_ol": 30720,
+   "episodes": 48
+  },
+  "net": {
+   "real_per_1k": [
+    2.9444456100463867,
+    623.5836791992188,
+    0.0,
+    0.1944444477558136
+   ],
+   "teacher_forced_dream_per_1k": [
+    0.3611111044883728,
+    1361.7236328125,
+    0.0,
+    2.8611137866973877
+   ],
+   "openloop_real_per_1k": [
+    3.0598959922790527,
+    611.8167724609375,
+    0.0,
+    0.1627604365348816
+   ],
+   "openloop_dream_per_1k": [
+    1.7578126192092896,
+    267.77301025390625,
+    0.0,
+    0.3255208730697632
+   ],
+   "hero_steps_tf": 36000,
+   "hero_steps_ol": 30720,
+   "episodes": 48
+  },
+  "random": {
+   "real_per_1k": [
+    0.02777777798473835,
+    14.583333015441895,
+    0.0,
+    0.0
+   ],
+   "teacher_forced_dream_per_1k": [
+    -0.0,
+    53.72222137451172,
+    0.0,
+    0.0
+   ],
+   "openloop_real_per_1k": [
+    -0.0,
+    12.532552719116211,
+    0.0,
+    0.0
+   ],
+   "openloop_dream_per_1k": [
+    -0.0,
+    0.2604166865348816,
+    0.0,
+    0.0
+   ],
+   "hero_steps_tf": 36000,
+   "hero_steps_ol": 30720,
+   "episodes": 48
+  }
+ }
+}

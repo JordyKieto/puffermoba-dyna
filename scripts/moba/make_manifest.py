@@ -47,6 +47,23 @@ ARTIFACTS += [("rl/P3_vs_net", "runs/dream_ppo/p3/vs_net/policy.pt", "iluni10r",
                "E7-P3 dream PPO trained AGAINST the shipped net (4.5 min, 1.10M steps); real game: 0 wins, below random."),
               ("rl/P3_selfplay_rerun", "runs/dream_ppo/p3/selfplay_rerun/policy.pt", "1q729jk7",
                "E7-P3 self-play rerun of the P1 best config (4.5 min, 9.74M steps); real game: 0 wins, below random vs net.")]
+ARTIFACTS += [("wm/e11_at1500", "runs/token_wm/e11_at1500/model.pt", "mlbh5d3l",
+               "E11 @1500 (E5 resumed on mix1k + mixrand1k): the world model the P4/P4b/P5 dream policies trained in"),
+              ("wm/e11_at2000", "runs/token_wm/e11_random_resume/model_002000.pt", "mlbh5d3l",
+               "E11 @2000, E11's last checkpoint; E12 starts from it"),
+              ("rl/P4_mix_e11", "runs/dream_ppo/p4/mix_e11/policy.pt", "msjwyq7r",
+               "P4: dream PPO in E11 @1500, 50% self-play / 50% vs net, expert starts, 4.5 min, 2.12M steps"),
+              ("rl/P4b_mix_e11_mixstarts", "runs/dream_ppo/p4/mix_e11_mixstarts/policy.pt", "ahoexos3",
+               "P4b: as P4 + expert and random-play start states, 4.5 min, 1.70M steps")]
+# uploads that do not follow the path -> key rule in main()
+S3KEY = {"wm/e11_at1500": "moba/runs/e11_at1500/model.pt",
+         "wm/e11_at2000": "moba/runs/e11_random_resume/model_002000.pt",
+         "rl/P4_mix_e11": "moba/runs/p4_mix_e11/policy.pt",
+         "rl/P4b_mix_e11_mixstarts": "moba/runs/p4_mix_e11_mixstarts/policy.pt"}
+ARTIFACTS += [("code/code_snapshot_20260928_0215", "runs/code_snapshots/code_snapshot_20260928_0215.tar.gz", None,
+               "Snapshot of the uncommitted code behind E11-E13: train.py --held2-games, anonymous-mmap loader "
+               "(data.py), dream_ppo --opponent mix, collect_policy_games --matchups/--slice, pod.py CPU pods. "
+               "HEAD baf8d7c + tracked diff + files.")]
 ARTIFACTS += [("code/code_snapshot_20260928_0015", "runs/code_snapshots/code_snapshot_20260928_0015.tar.gz", None,
                "Snapshot of the uncommitted code behind E8-E11: collector random controller (moba_collect.c, "
                "shards.CONTROLLERS), ma_multi_final_hash, plan_mpc realtime/batched planner, XP clamp flags, "
@@ -79,6 +96,7 @@ def main():
             e["bytes"], e["md5"] = p.stat().st_size, md5(p)
             # training uploads go to moba/runs/<run>/ (tools/pod.py train); dream runs to moba/runs/dream_ppo/...
             key = "moba/runs/" + rel[len("runs/token_wm/"):] if rel.startswith("runs/token_wm/") else "moba/" + rel
+            key = S3KEY.get(name, key)
             try:
                 h = c.head_object(Bucket=bucket, Key=key)
                 e["s3"] = f"s3://{bucket}/{key}"

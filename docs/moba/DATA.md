@@ -104,6 +104,7 @@ per hero.
 | `mix1k` | 1,000 (0–999) | net 64.2%, script 35.8% | ε = 0: **no random actions**. The data behind E1–E10 |
 | `mixrand1k` | 1,000 (1000–1999) | random 69.0%, net 12.7%, script 18.3% | blocks: random/net 1000–1159, net/random 1160–1329, random/random 1330–1659, random/script 1660–1829, script/random 1830–1999; 3,000-tick cap |
 | `dyna1` | 100 (5000–5099) | dream_ppo 50%, net 50% | the two P3 policies vs the net, 0 replay mismatches |
+| `dyna2` | 810 (6000–6809) | dream_ppo 66.7%, random 16.7%, net 16.7% | the two P3 policies: vs random 6000–6269, vs net 6270–6539, vs each other 6540–6809 (sides and policies balanced); 3,000-tick cap; 2,154,814 ticks; 0 replay mismatches; game list `results/moba/dyna/dyna2_games.json` |
 
 All three are in `s3://puffertank/moba/<corpus>/{logs,dense}/`.
 

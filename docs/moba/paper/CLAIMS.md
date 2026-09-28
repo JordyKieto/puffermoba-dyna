@@ -60,6 +60,10 @@ Any claim about "the model predicts X" is about the learned part only.
 | W17 | A 100× XP loss weight does not fix it: better one-step, worse open loop | M (smoke, ~30 updates, single seed) | Dream `xpsmoke_xp1.json` vs `xpsmoke_xp100.json`; Tab `xp_audit_fixes.md`; E8 |
 | W18 | The one-sided XP clamp (rule R7) hides two-sided XP noise; removing it (eval-only or fine-tuned) makes XP worse | M (smoke, single seed) | Dream `xpclamp_eval_noclamp*.json`, `xpsmoke_noclamp.json`; Tab `xp_audit_fixes.md`; E8 |
 | W19 | Adding 100 real games played by the dream policies (Dyna) cuts XP hallucination on those policies' states 7× teacher-forced and 3× open loop vs the same fine-tune without them | M (smoke, ~125 updates, single seed) | Runs `usrc41qc` (control), `tnnlmx2e` (Dyna); Dyna `dyna1_*_xp_audit.json`; Tab `dyna1_xp_audit.md`; [E9](../experiments/E9-dyna-smoke.md) |
+| W20 | Adding 1,000 random-controller games removes the dream's XP hallucination for random actions: teacher-forced 8,298 → 54 XP per 1k hero-steps (real 15), open loop 1,031 → 0 | M (one audit seed set) | Dream `dvr_p4policy_{e5_rollout,e11_at1500}.json`; Tab `dream_vs_real_e11.md`; [E11](../experiments/E11-random-data.md) |
+| W21 | On held-out random-play games, E11 cuts open-loop loss 4–8× at h16–h256 and ~3–4× at h1024 vs E5 (from update 500 on) | M (single run, 32 windows per horizon) | Runs `mlbh5d3l`; Tab `e11_horizons.md` |
+| W22 | The price on expert play: E11's one-step (h1) loss is 1.4–2.2× E5's and h4096 1.4–2.5×; 16–1,024 ticks stay within ~0–30% | M (single run) | same |
+| W23 | E11's dream still over-pays a dream-trained policy (open loop 5.64 vs real 1.43 per 1k) and under-pays the shipped net (1.70 vs 3.68), so it ranks them the wrong way round | M (one audit) | Tab `dream_vs_real_e11.md` |
 
 ## RL track (R)
 
@@ -73,6 +77,9 @@ Any claim about "the model predicts X" is about the learned part only.
 | R6 | Training against the shipped net in the dream (instead of self-play) does not fix transfer: 0 real wins, and below the untrained policy against the net | M (single seed; compute not matched: 1.10M vs 9.74M agent steps) | Runs `iluni10r`, `1q729jk7`; Dream `arena_real_game_p3_*.jsonl` |
 | R7 | More dream optimisation makes real play worse: a rerun with ~4× the steps and 2× the dream reward scores lower in the real game than P2 | M (single seed) | Runs `1q729jk7` vs `v22f5ut6`; Dream `arena_real_game_p3_selfplay_rerun.jsonl` vs `arena_real_game_lr3e-4_mb2.jsonl` |
 | R8 | A world-model planner (anytime MPC in E5's dream, 60 fps on a laptop CPU per game) wins 0/120 real games vs the shipped net; return 1.84 ≈ random 1.47, net 10.46; it picks the net's own action 2% of the time | M | Planner `realtime_vs_net.jsonl`, `baselines_vs_net.jsonl`, `calibration_mac.json`, `realtime_single_game_timing.jsonl`; Tab `planner_vs_net.md`; [E10](../experiments/E10-wm-planner-60fps.md) |
+| R9 | Dream PPO in E11 (50/50 self-play / vs-net curriculum) beats the untrained policy in the real game vs the shipped net: return 3.38 vs 1.53 per hero (P4) | M (single seed, 20 games vs net) | Runs `msjwyq7r`; Dream `arena_real_game_p4_mix_e11.jsonl`; Tab `arena_e11_ppo_vs_net.md`; [E13](../experiments/E13-dream-ppo-e11.md) |
+| R10 | Adding random-play start states roughly doubles it: return 6.40 (57% of the net's 11.21), creep kills 11.0 vs the net's 11.4; 0 wins | M (single seed; 1.70M vs 2.12M steps) | Runs `ahoexos3`; Dream `arena_real_game_p4_mix_e11_mixstarts.jsonl`; same table |
+| R11 | The improvement comes from the random-data world model rather than the curriculum | **U** | World model and curriculum changed together in P4; no ablation run |
 
 ## Method claims that need a control before use
 

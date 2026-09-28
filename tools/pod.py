@@ -123,6 +123,8 @@ def load_state() -> dict:
 
 def cmd_create(a):
     gpus = a.gpu.split(",") if a.gpu else GPUS
+    if a.cpu:
+        return create_cpu(a)
     bal = gql("query { myself { clientBalance currentSpendPerHr } }")["myself"]
     log(f"plan: 1 GPU pod, priority {gpus}, secure cloud, image {IMAGE}, disk 80 GB + volume 300 GB")
     log(f"balance ${bal['clientBalance']:.2f}, current spend ${bal['currentSpendPerHr']:.2f}/hr")
@@ -141,8 +143,26 @@ def cmd_create(a):
             time.sleep(20)
     else:
         raise SystemExit("create failed 4 times")
-    pid = pod["id"]
-    log(f"created {pid} ({pod.get('machine', {}).get('gpuTypeId', gpus[0])}); waiting for SSH ...")
+    wait_ssh(pod["id"], pod.get("machine", {}).get("gpuTypeId", gpus[0]))
+
+
+def create_cpu(a):
+    """A CPU-only pod (e.g. game collection, which must not steal the GPU pod's CPUs).
+    No network volume; everything lives on the container disk, results go to S3."""
+    log(f"plan: 1 CPU pod, {a.cpu} vCPUs (flavors cpu5c/cpu3c), secure cloud, image {IMAGE}, disk 80 GB")
+    if not a.confirm:
+        log("dry run: add --confirm to create (the pod bills by the hour until `kill --confirm`)")
+        return
+    pub = (SSH_KEY.with_suffix(".pub")).read_text().strip()
+    body = dict(name=f"puffertank-{a.name}", computeType="CPU", cpuFlavorIds=["cpu5c", "cpu3c"], vcpuCount=a.cpu,
+                cloudType="SECURE", env={"PUBLIC_KEY": pub}, imageName=IMAGE, containerDiskInGb=80,
+                ports=["22/tcp"])
+    pod = api("POST", "/pods", json=body)
+    wait_ssh(pod["id"], f"cpu x{a.cpu}")
+
+
+def wait_ssh(pid, what):
+    log(f"created {pid} ({what}); waiting for SSH ...")
     t0 = time.time()
     while time.time() - t0 < 900:
         p = api("GET", f"/pods/{pid}")
@@ -222,11 +242,11 @@ def cmd_bootstrap(a):
         "tmux rsync curl libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev > /tmp/apt.log 2>&1) || (tail -20 /tmp/apt.log; exit 1)")
     push_code()
     run(f"cd {R_REPO} && pip install -q numpy requests wandb 2>&1 | tail -2; "
-        f"python -c 'import torch; print(\"torch\", torch.__version__, torch.cuda.get_device_name(0))'")
-    run(f"cd {R_REPO} && (tools/build.sh moba-collect > /tmp/build.log 2>&1 || (tail -20 /tmp/build.log; exit 1)) "
+        f"python -c 'import torch; print(\"torch\", torch.__version__, torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"cpu\")'")
+    run(f"cd {R_REPO} && ((tools/build.sh moba-collect && tools/build.sh moba-arena) > /tmp/build.log 2>&1 || (tail -20 /tmp/build.log; exit 1)) "
         f"&& tail -1 /tmp/build.log")
-    out = run("nproc; free -g | awk '/Mem/{print $2\" GB RAM\"}'; nvidia-smi --query-gpu=name,memory.total "
-              "--format=csv,noheader; df -h /workspace | tail -1", capture=True)
+    out = run("nproc; free -g | awk '/Mem/{print $2\" GB RAM\"}'; (nvidia-smi --query-gpu=name,memory.total "
+              "--format=csv,noheader 2>/dev/null || echo no GPU); df -h /root | tail -1", capture=True)
     log(f"bootstrap done in {time.time() - t0:.0f}s:\n{out.strip()}")
 
 
@@ -280,9 +300,9 @@ def cmd_data(a):
     script.parent.mkdir(parents=True, exist_ok=True)
     script.write_text("\n".join(lines) + "\n")
     script.chmod(0o600)
-    rsync_to([script], "/workspace/data.sh")
+    rsync_to([script], "/root/data.sh")
     t0 = time.time()
-    out = run("bash /workspace/data.sh && rm /workspace/data.sh", capture=True)
+    out = run("bash /root/data.sh && rm /root/data.sh", capture=True)
     script.unlink()
     log(f"data on pod in {time.time() - t0:.0f}s ({len(dense_have)} dense pulled, {len(todo)} regenerated "
         f"+ pushed to S3):\n{out.strip()}")
@@ -374,10 +394,10 @@ def cmd_push(a):
     script = REPO / "runs" / "pod" / "push.sh"
     script.write_text("\n".join(lines) + "\n")
     script.chmod(0o600)
-    rsync_to([script], "/workspace/push.sh")
+    rsync_to([script], "/root/push.sh")
     script.unlink()
     t0 = time.time()
-    out = run("bash /workspace/push.sh; rm -f /workspace/push.sh", capture=True)
+    out = run("bash /root/push.sh; rm -f /root/push.sh", capture=True)
     fails = [l for l in out.splitlines() if l.startswith("FAIL")]
     s3_sizes = {o["Key"].split(f"{a.corpus}/", 1)[1]: o["Size"]
                 for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=f"{S3_PREFIX}/{a.corpus}/")
@@ -482,10 +502,12 @@ def cmd_s3pull(a):
     for p in c.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix):
         for o in p.get("Contents", []):
             f = dest / o["Key"][len(prefix):]
+            if f.exists() and f.stat().st_size == o["Size"] and f.stat().st_mtime >= o["LastModified"].timestamp():
+                continue                                # unchanged since the last pull
             f.parent.mkdir(parents=True, exist_ok=True)
             c.download_file(bucket, o["Key"], str(f))
             n += 1
-    log(f"{n} files -> {dest}")
+    log(f"{n} new/changed files -> {dest}")
 
 
 def cmd_ssh(a):
@@ -498,6 +520,7 @@ def main():
     sub.add_parser("template")
     p = sub.add_parser("create"); p.add_argument("--confirm", action="store_true")
     p.add_argument("--gpu"); p.add_argument("--name", default="moba-wm")
+    p.add_argument("--cpu", type=int, default=0, help="create a CPU-only pod with this many vCPUs")
     p = sub.add_parser("kill"); p.add_argument("--confirm", action="store_true")
     sub.add_parser("bootstrap")
     p = sub.add_parser("data"); p.add_argument("--corpus", default="mix100")

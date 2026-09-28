@@ -269,6 +269,72 @@
   "dir": "results/moba/iluni10r/"
  },
  {
+  "project": "moba-dream-rl",
+  "run_id": "msjwyq7r",
+  "name": "p4/mix_e11",
+  "group": "P4-mix-e11",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "opponent-mix"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T01:28:09Z",
+  "history_rows": 35,
+  "max_step": 35,
+  "dir": "results/moba/msjwyq7r/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "gqwfjvhm",
+  "name": "p4/mix_e11_mixstarts",
+  "group": "P4-mix-e11",
+  "tags": [
+   "crashed",
+   "dream-ppo"
+  ],
+  "state": "failed",
+  "created_at": "2026-09-28T01:33:54Z",
+  "history_rows": 0,
+  "max_step": 0,
+  "dir": "results/moba/gqwfjvhm/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "ahoexos3",
+  "name": "p4/mix_e11_mixstarts",
+  "group": "P4-mix-e11",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "mixed-starts",
+   "opponent-mix"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-28T01:34:46Z",
+  "history_rows": 28,
+  "max_step": 28,
+  "dir": "results/moba/ahoexos3/"
+ },
+ {
+  "project": "moba-dream-rl",
+  "run_id": "jfw1p3b5",
+  "name": "p5/mix_e11_mixstarts_100x",
+  "group": "P5-100x",
+  "tags": [
+   "dream-ppo",
+   "e11",
+   "main",
+   "mixed-starts",
+   "opponent-mix"
+  ],
+  "state": "running",
+  "created_at": "2026-09-28T01:51:58Z",
+  "history_rows": 88,
+  "max_step": 88,
+  "dir": "results/moba/jfw1p3b5/"
+ },
+ {
   "project": "moba-wm",
   "run_id": "vuzjgdh8",
   "name": "smoke",
@@ -1201,5 +1267,41 @@
   "history_rows": 7,
   "max_step": 143,
   "dir": "results/moba/tnnlmx2e/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "mlbh5d3l",
+  "name": "e11_random_resume",
+  "group": "E11-random-data",
+  "tags": [
+   "random-data",
+   "rollout",
+   "store-cpu",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-28T00:20:23Z",
+  "history_rows": 48,
+  "max_step": 2350,
+  "dir": "results/moba/mlbh5d3l/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "xfldazic",
+  "name": "e12_dyna2",
+  "group": "E12-dyna2",
+  "tags": [
+   "dyna",
+   "main",
+   "random-data",
+   "rollout",
+   "store-cpu",
+   "wm"
+  ],
+  "state": "running",
+  "created_at": "2026-09-28T02:00:57Z",
+  "history_rows": 0,
+  "max_step": 0,
+  "dir": "results/moba/xfldazic/"
  }
 ]

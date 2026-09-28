@@ -257,6 +257,60 @@ def tab_planner():
              f"{ch.tolist()} = net's action {100 * ch[0] / ch.sum():.0f}%.")
 
 
+def tab_resume_horizons(run, out, title):
+    """Held-out loss by open-loop horizon at every eval of a resumed run, x = vs its step 0."""
+    H = [1, 4, 16, 64, 256, 1024, 4096]
+    rows = []
+    for pre, name in (("random/horizon", "random held-out"), ("horizon", "mix1k held-out 900-999")):
+        ev = [r for r in history(run) if f"{pre}/loss@1" in r]
+        if not ev:
+            continue
+        base = ev[0]
+        hs = [h for h in H if f"{pre}/loss@{h}" in base]
+        for r in ev:
+            cells = [f"{r[f'{pre}/loss@{h}']:.2f}" + ("" if r is base else f" ({r[f'{pre}/loss@{h}'] / base[f'{pre}/loss@{h}']:.2f}x)")
+                     for h in H if h in hs] + ["-"] * (len(H) - len(hs))
+            rows.append([name, int(r["_step"]), *cells, f"{r[f'{pre}/hero_pos_L1@1024']:.1f}"])
+    md_table(TAB / out, ["held-out set", "update", *[f"h{h}" for h in H], "hero cells @1024"], rows, title)
+
+
+def tab_arena_e11():
+    import numpy as np
+    D = R / "dream"
+    arms = [("P3 self-play (E5 dream, 4.5 min)", "arena_real_game_p3_selfplay_rerun.jsonl", "ppo"),
+            ("P3 vs net (E5 dream, 4.5 min)", "arena_real_game_p3_vs_net.jsonl", "ppo"),
+            ("P4 mix, expert starts (E11 @1500, 4.5 min)", "arena_real_game_p4_mix_e11.jsonl", "ppo"),
+            ("P4b mix, expert + random starts (E11 @1500, 4.5 min)", "arena_real_game_p4_mix_e11_mixstarts.jsonl", "ppo"),
+            ("random actions", "arena_real_game_p4_mix_e11.jsonl", "random"),
+            ("shipped net", "arena_real_game_p4_mix_e11.jsonl", "net")]
+    rows = []
+    for label, f, team in arms:
+        g = [x for x in map(json.loads, open(D / f)) if x["team"] == team and x["opp"] == "net"]
+        m = lambda k: np.mean([float(x[k]) for x in g])
+        rows.append([label, len(g), f"{100 * m('won'):.0f}", f"{m('return_ours'):.2f}", f"{m('ours_deaths'):.2f}",
+                     f"{m('ours_level'):.2f}", f"{m('ours_creeps_killed'):.2f}", f"{m('ours_towers_killed'):.2f}"])
+    md_table(TAB / "arena_e11_ppo_vs_net.md", ["our team (vs shipped net)", "games", "win %", "return/hero", "deaths",
+                                               "level", "creeps", "towers"], rows,
+             "Real game, seeds 50000000+, 10 games per side, max 6,000 ticks (mobawm/rl/arena.py, the P2/P3 harness).")
+
+
+def tab_dvr_e11():
+    W = (-0.163764, 0.00665677, 0.0, 0.642119)
+    ret = lambda v: sum(a * b for a, b in zip(v, W))
+    rows = []
+    for team in ("ppo", "random", "net"):
+        for f, lab in (("dvr_p4policy_e5_rollout.json", "E5 @20,500"), ("dvr_p4policy_e11_at1500.json", "E11 @1500")):
+            r = json.load(open(R / "dream" / f))["teams"][team]
+            Rl, TF, OR, OL = (r[k] for k in ("real_per_1k", "teacher_forced_dream_per_1k", "openloop_real_per_1k",
+                                             "openloop_dream_per_1k"))
+            rows.append([{"ppo": "P4 policy"}.get(team, team), lab, f"{ret(Rl):.2f}", f"{ret(TF):.2f}",
+                         f"{ret(OL):.2f} (real {ret(OR):.2f})", f"{Rl[1]:.0f}", f"{TF[1]:.0f}", f"{OL[1]:.0f} (real {OR[1]:.0f})"])
+    md_table(TAB / "dream_vs_real_e11.md", ["our team", "world model", "real reward/1k", "dream, teacher-forced",
+                                            "dream, open loop 128", "real XP/1k", "dream XP TF", "dream XP OL"], rows,
+             "scripts/moba/dream_vs_real_reward.py: 8 real games x 900 ticks vs the shipped net, seeds 70000000+; "
+             "reward = death + XP + tower terms per 1k hero-steps of our team.")
+
+
 def main():
     FIG.mkdir(exist_ok=True)
     TAB.mkdir(exist_ok=True)
@@ -268,6 +322,10 @@ def main():
     tab_xp()
     tab_dyna()
     tab_planner()
+    tab_resume_horizons("mlbh5d3l", "e11_horizons.md", "E11 (W&B mlbh5d3l): update 0 = E5 @20,500. "
+                        "32 fixed windows per horizon; x = loss relative to update 0.")
+    tab_arena_e11()
+    tab_dvr_e11()
     for f in sorted(FIG.iterdir()):
         print(f.relative_to(R.parent.parent))
 
