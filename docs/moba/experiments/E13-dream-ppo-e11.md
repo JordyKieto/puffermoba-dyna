@@ -9,7 +9,7 @@ E5-dream policy (E7) was below random.
 - **Status:**
   - P4 and P4b concluded (4.5 min each, single seed).
   - **P5, the P4b recipe at 100× the steps (169,543,500):** stopped by the author at
-    ~88M steps (2026-09-28). W&B `moba-dream-rl/jfw1p3b5`. All 57 files (the latest
+    83.8M steps (2026-09-28). W&B `moba-dream-rl/jfw1p3b5`. All 57 files (the latest
     policy plus numbered checkpoints every ~1.6M steps) are in
     `s3://puffertank/moba/runs/p5_mix_e11_mixstarts_100x/` and in
     `runs/token_wm/p5_mix_e11_mixstarts_100x/`.
