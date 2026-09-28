@@ -80,6 +80,7 @@ Any claim about "the model predicts X" is about the learned part only.
 | R9 | Dream PPO in E11 (50/50 self-play / vs-net curriculum) beats the untrained policy in the real game vs the shipped net: return 3.38 vs 1.53 per hero (P4) | M (single seed, 20 games vs net) | Runs `msjwyq7r`; Dream `arena_real_game_p4_mix_e11.jsonl`; Tab `arena_e11_ppo_vs_net.md`; [E13](../experiments/E13-dream-ppo-e11.md) |
 | R10 | Adding random-play start states roughly doubles it: return 6.40 (57% of the net's 11.21), creep kills 11.0 vs the net's 11.4; 0 wins | M (single seed; 1.70M vs 2.12M steps) | Runs `ahoexos3`; Dream `arena_real_game_p4_mix_e11_mixstarts.jsonl`; same table |
 | R11 | The improvement comes from the random-data world model rather than the curriculum | **U** | World model and curriculum changed together in P4; no ablation run |
+| R12 | 48× more dream training (P5, 81.3M steps) lowers real return from 6.40 to 2.34 vs the shipped net | M (single seed, one checkpoint, 20 games) | Runs `jfw1p3b5`; Dream `arena_real_game_p5_policy_081342665.jsonl`; Tab `arena_e11_ppo_vs_net.md` |
 
 ## Method claims that need a control before use
 

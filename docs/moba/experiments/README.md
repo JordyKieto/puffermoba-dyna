@@ -61,8 +61,8 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
 | **E9** | Dyna smoke: + the dream policies' own real games | concluded (smoke): 3–7× less XP hallucination | `E9-dyna-smoke`: `usrc41qc`, `tnnlmx2e` | [E9-dyna-smoke.md](E9-dyna-smoke.md) |
 | **E10** | WM planner at 60 fps vs the shipped net, 120 games | **concluded: negative** (0 wins, ≈ random) | — (eval only) | [E10-wm-planner-60fps.md](E10-wm-planner-60fps.md) |
 | **E11** | E5 @20,500 resumed on mix1k + mixrand1k (random play); held-out random games are the main metric | stopped @2,300 for E12: random-play hallucination fixed | `E11-random-data`: `mlbh5d3l` | [E11-random-data.md](E11-random-data.md) |
-| E12 | E11 @2000 + dyna2 (the dream policies' own real games) | **running** | `E12-dyna2`: `xfldazic` | [E12-dyna2.md](E12-dyna2.md) |
-| **E13** | Dream PPO in E11: P4 (mix curriculum), P4b (+ random start states), P5 (100× steps) | P4/P4b concluded; **P5 running** | `moba-dream-rl` `P4-mix-e11`, `P5-100x` | [E13-dream-ppo-e11.md](E13-dream-ppo-e11.md) |
+| E12 | E11 @2000 + dyna2 (the dream policies' own real games) | stopped @~4,350; random h1024 60 → 44 | `E12-dyna2`: `xfldazic` | [E12-dyna2.md](E12-dyna2.md) |
+| **E13** | Dream PPO in E11: P4 (mix curriculum), P4b (+ random start states), P5 (100× steps) | P4/P4b concluded; P5 stopped @83.8M: real return fell to 2.34 (P4b 6.40) | `moba-dream-rl` `P4-mix-e11`, `P5-100x` | [E13-dream-ppo-e11.md](E13-dream-ppo-e11.md) |
 | **E7** | PPO in E5's dream (P0 first run, P1 LR × minibatch sweep, P2 real-game evaluation) | **concluded: negative** | `moba-dream-rl`: `P0-first-5min`, `P1-sweep-mac`, `P1-sweep-h200`, `P2-arena-real` | [E7-dream-ppo.md](E7-dream-ppo.md) |
 
 The pre-E4 work stays in the single legacy log, [../EXPERIMENTS.md](../EXPERIMENTS.md),

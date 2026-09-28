@@ -101,8 +101,8 @@ Cite the directory, not the link.
 | E9 | 09-27 ~23:40 | Dyna smoke: + 100 real P3-policy games, H100 NVL | `usrc41qc`, `tnnlmx2e` | 2 × 10 min | 3–7× less XP hallucination vs control | [E9](experiments/E9-dyna-smoke.md) |
 | E10 | 09-27 | WM planner at 60 fps, 120 games vs net (eval only) | — (`results/moba/planner/`) | — | 0 wins, ≈ random | [E10](experiments/E10-wm-planner-60fps.md) |
 | E11 | 09-28 00:20 → 01:51 | E5 @20,500 resumed on mix1k + mixrand1k, 2,300 updates | `mlbh5d3l` | 1.5 h | random-play hallucination fixed; expert h1/h4096 worse | [E11](experiments/E11-random-data.md) |
-| E12 | 09-28 ~02:00 → running | E11 @2000 + dyna2 | `xfldazic` | running | — | [E12](experiments/E12-dyna2.md) |
-| E13 | 09-28 01:28 → running | dream PPO in E11 @1500: P4, P4b (4.5 min), P5 (100×) | `msjwyq7r`, `ahoexos3`, `gqwfjvhm`, `jfw1p3b5` | 2 × 4.5 min + running | first dream policies above random in the real game; 0 wins | [E13](experiments/E13-dream-ppo-e11.md) |
+| E12 | 09-28 ~02:00 → ~04:45 | E11 @2000 + dyna2 | `xfldazic` | running | — | [E12](experiments/E12-dyna2.md) |
+| E13 | 09-28 01:28 → ~04:45 | dream PPO in E11 @1500: P4, P4b (4.5 min), P5 (100×) | `msjwyq7r`, `ahoexos3`, `gqwfjvhm`, `jfw1p3b5` | 2 × 4.5 min + running | first dream policies above random in the real game; 0 wins | [E13](experiments/E13-dream-ppo-e11.md) |
 | E5 continued | 09-27 03:20 → ~05:45 | E5 from 20,500, H100 NVL, `--store-cpu` | `hm9mnnoy` (OOM), `soeosr9h` (1,700 updates) | 0.93 h | best one-step E5 so far (h1 1.51 @+1,500); **all its checkpoints lost** | [E5](experiments/E5-rollout-training.md) |
 
 Figures and tables, regenerated with `results/moba/make_figures.py`:

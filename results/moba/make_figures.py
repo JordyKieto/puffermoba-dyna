@@ -281,6 +281,7 @@ def tab_arena_e11():
             ("P3 vs net (E5 dream, 4.5 min)", "arena_real_game_p3_vs_net.jsonl", "ppo"),
             ("P4 mix, expert starts (E11 @1500, 4.5 min)", "arena_real_game_p4_mix_e11.jsonl", "ppo"),
             ("P4b mix, expert + random starts (E11 @1500, 4.5 min)", "arena_real_game_p4_mix_e11_mixstarts.jsonl", "ppo"),
+            ("P5 = P4b recipe @81.3M steps (policy_081342665)", "arena_real_game_p5_policy_081342665.jsonl", "ppo"),
             ("random actions", "arena_real_game_p4_mix_e11.jsonl", "random"),
             ("shipped net", "arena_real_game_p4_mix_e11.jsonl", "net")]
     rows = []
@@ -323,6 +324,8 @@ def main():
     tab_dyna()
     tab_planner()
     tab_resume_horizons("mlbh5d3l", "e11_horizons.md", "E11 (W&B mlbh5d3l): update 0 = E5 @20,500. "
+                        "32 fixed windows per horizon; x = loss relative to update 0.")
+    tab_resume_horizons("xfldazic", "e12_horizons.md", "E12 (W&B xfldazic): update 0 = E11 @2000. "
                         "32 fixed windows per horizon; x = loss relative to update 0.")
     tab_arena_e11()
     tab_dvr_e11()

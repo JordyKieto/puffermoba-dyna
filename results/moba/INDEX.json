@@ -330,8 +330,8 @@
   ],
   "state": "running",
   "created_at": "2026-09-28T01:51:58Z",
-  "history_rows": 88,
-  "max_step": 88,
+  "history_rows": 1364,
+  "max_step": 1364,
   "dir": "results/moba/jfw1p3b5/"
  },
  {
@@ -1300,8 +1300,8 @@
   ],
   "state": "running",
   "created_at": "2026-09-28T02:00:57Z",
-  "history_rows": 0,
-  "max_step": 0,
+  "history_rows": 87,
+  "max_step": 4300,
   "dir": "results/moba/xfldazic/"
  }
 ]

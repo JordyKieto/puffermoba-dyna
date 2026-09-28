@@ -1,7 +1,7 @@
-# E12 — E11 continued with the dream policies' own real games (dyna2) — RUNNING
+# E12 — E11 continued with the dream policies' own real games (dyna2)
 
-- **Status:** running since 2026-09-28 ~02:00 UTC on the H100 NVL. No stop set
-  (`--max-updates 6000000`).
+- **Status:** stopped by the author at update ~4,350 (2026-09-28, ~2.8 h). Checkpoints
+  every 500 updates (`model_000500` … `model_004000`) are in S3 and on the Mac.
 - **W&B:** `moba-wm/xfldazic` (group `E12-dyna2`).
 - **S3:** `s3://puffertank/moba/runs/e12_dyna2/`. Every eval checkpoint (every 500 updates) is
   kept as `model_<it>.pt` and uploaded with md5 verification. The Mac mirrors it every 10 min
@@ -35,4 +35,15 @@ on this pod, so the first launch died (BrokenProcessPool).
 - Checked on the pod: CPU and GPU stores built from the same files are identical in
   entities, actions, ticks and spans.
 
-Results: to be filled from the W&B export when evaluations land.
+## Result
+
+See the generated table `results/moba/tables/e12_horizons.md` (x = relative to update 0 =
+E11 @2000).
+
+- **Random held-out:** h1024 fell from 60.4 to 44.1 (update 4000; E5 182) and hero error at
+  1,024 ticks from 21.5 to 14.8 cells (E5 72).
+- **Expert held-out:** around E5's level from update 1000, with evaluations swinging a lot
+  (h4096 35–75).
+- **Update 4000 has a short-horizon spike on both sets** (h4 ~9.3–9.8).
+- **Not measured:** whether dyna2 reduced the dream's over-payment of the policy. That needs
+  `scripts/moba/dream_vs_real_reward.py` on `model_004000`.

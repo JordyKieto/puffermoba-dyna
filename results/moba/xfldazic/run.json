@@ -14,7 +14,7 @@
   "notes": "E12: E11 @2000 + dyna2 (810 real games of the dream policies vs random/net/self). docs/moba/experiments/E12-dyna2.md",
   "state": "running",
   "created_at": "2026-09-28T02:00:57Z",
-  "heartbeat_at": "2026-09-28T02:03:28Z",
-  "exported_rows": 0,
-  "max_step": 0
+  "heartbeat_at": "2026-09-28T04:52:13Z",
+  "exported_rows": 87,
+  "max_step": 4300
 }
