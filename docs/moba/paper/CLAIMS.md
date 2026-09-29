@@ -73,6 +73,7 @@ Any claim about "the model predicts X" is about the learned part only.
 | W30 | The dream under-predicts tower damage: going into a real fall, dream tower health is at a median 13% of max vs 2% in reality; forcing death from health (author-approved rule) drops recall to 0–33% | M (75 falls; rule evaluation-time only) | `scripts/moba/tower_health_diag.py`; Tab `tower_audit_e19.md`; [E15 § 8](../experiments/E15-tower-dynamics.md) |
 | D2 | The full training dataset has 2,810 games / 7,426,723 frames and 15,625 tower deaths (1 per ~475 frames); 58% of the deaths are in expert games | M | `results/moba/data/tower_counts.json` |
 | D3 | From 12,794 training tower-death events, the real simulator yields 2,014,178 varied 128-tick slices, balanced 1,011,007 died / 1,003,171 survived, each exactly regenerable | M | [E20](../experiments/E20-scenario-mining.md); `results/moba/scenarios/summary_*.json` |
+| W31 | Adding scenario lanes (tower-dive slices, per-lane weight, 2.6% of the corpus seen) to E12 @4000 + attack graph at lr 1e-3 does not teach tower-dive outcomes (held-out accuracy 46–57%) and does not stop tower precision degrading (50% → 7–19%) | M (one run, 128 held-out slices, 23-fall windows) | Runs `2t1xkbtz`; Tab `e21_scenario_training.md` |
 
 ## RL track (R)
 

@@ -1948,5 +1948,40 @@
   "history_rows": 13,
   "max_step": 252,
   "dir": "results/moba/rer7ogt1/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "2t1xkbtz",
+  "name": "e21_scenarios",
+  "group": "E21-scenario-training",
+  "tags": [
+   "attack-graph",
+   "lr1e-3",
+   "rollout",
+   "scenarios",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-29T06:21:00Z",
+  "history_rows": 132,
+  "max_step": 3275,
+  "dir": "results/moba/2t1xkbtz/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "09pk4awu",
+  "name": "e22_lr3e4",
+  "group": "E21-scenario-training",
+  "tags": [
+   "aborted",
+   "lr3e-4",
+   "scenarios",
+   "wm"
+  ],
+  "state": "running",
+  "created_at": "2026-09-29T08:20:47Z",
+  "history_rows": 0,
+  "max_step": 0,
+  "dir": "results/moba/09pk4awu/"
  }
 ]

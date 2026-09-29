@@ -115,6 +115,8 @@ Cite the directory, not the link.
 | E18 | 09-28 23:16 → 23:55 (stopped at ~1,350) | E12 @4000 + real attack graph, full data | `tz9mc91w` | running | — | [E15 § 6](experiments/E15-tower-dynamics.md) |
 | E19 | 09-29 00:00 → 00:40 | full-config A/B: E12 @4000 + 250 updates, control vs real attack graph; E18 checkpoints audited; tower-death rule smoke (eval only) | `y9yxv13e`, `rer7ogt1` | ~0.5 h GPU | attack graph modest (+9 pts over control); long training degrades towers; rule fails | [E15 § 7–8](experiments/E15-tower-dynamics.md) |
 | E20 | 09-29 ~01:30 | scenario mining: tower-death slices, 4 × 32-vCPU CPU pods | — (no training) | minutes | 2.01M slices, balanced | [E20](experiments/E20-scenario-mining.md) |
+| E21 | 09-29 ~06:30 → 08:17 | E12 @4000 + attack graph + scenario lanes, full data, lr 1e-3 | `2t1xkbtz` | 1.8 h | dives not learned (acc 46–57%); tower precision 50% → 7–19% | [E20 § E21](experiments/E20-scenario-mining.md) |
+| E22 | 09-29 08:19 → | same at lr 3e-4 (first launch `09pk4awu` killed by RunPod: balance) | running | — | — | [E20](experiments/E20-scenario-mining.md) |
 | E5 continued | 09-27 03:20 → ~05:45 | E5 from 20,500, H100 NVL, `--store-cpu` | `hm9mnnoy` (OOM), `soeosr9h` (1,700 updates) | 0.93 h | best one-step E5 so far (h1 1.51 @+1,500); **all its checkpoints lost** | [E5](experiments/E5-rollout-training.md) |
 
 Figures and tables, regenerated with `results/moba/make_figures.py`:

@@ -475,6 +475,28 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/e21_at250",
+   "path": "runs/token_wm/e21_scenarios/model_000250.pt",
+   "present": true,
+   "wandb_run": "2t1xkbtz",
+   "description": "E21 @250 (best tower precision of the run, 50%)",
+   "bytes": 2685350,
+   "md5": "131739bae6e73903902739002e20d60e",
+   "s3": "s3://puffertank/moba/runs/e21_scenarios/model_000250.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e21_at3250",
+   "path": "runs/token_wm/e21_scenarios/model_003250.pt",
+   "present": true,
+   "wandb_run": "2t1xkbtz",
+   "description": "E21 @3250 (last checkpoint; towers degraded)",
+   "bytes": 2685350,
+   "md5": "fb6ce3d80e8cc7e85aa8a6af9d2cb21c",
+   "s3": "s3://puffertank/moba/runs/e21_scenarios/model_003250.pt",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260929_0200",
    "path": "runs/code_snapshots/code_snapshot_20260929_0200.tar.gz",
    "present": true,

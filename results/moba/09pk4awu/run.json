@@ -1,0 +1,18 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/09pk4awu",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/09pk4awu",
+  "name": "e22_lr3e4",
+  "group": "E21-scenario-training",
+  "tags": [
+    "aborted",
+    "lr3e-4",
+    "scenarios",
+    "wm"
+  ],
+  "notes": "E22 first launch: pod exited by RunPod (account balance) during the update-0 evaluation. docs/moba/experiments/E20-scenario-mining.md",
+  "state": "running",
+  "created_at": "2026-09-29T08:20:47Z",
+  "heartbeat_at": "2026-09-29T08:26:02Z",
+  "exported_rows": 0,
+  "max_step": 0
+}

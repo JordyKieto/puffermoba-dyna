@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/2t1xkbtz",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/2t1xkbtz",
+  "name": "e21_scenarios",
+  "group": "E21-scenario-training",
+  "tags": [
+    "attack-graph",
+    "lr1e-3",
+    "rollout",
+    "scenarios",
+    "wm"
+  ],
+  "notes": "E21: E12 @4000 + real attack graph + scenario lanes (128 of 896 lanes, per-lane weight), full data, lr 1e-3; stopped at ~3,300 updates: tower dives not learned, tower precision degrades. docs/moba/experiments/E20-scenario-mining.md",
+  "state": "crashed",
+  "created_at": "2026-09-29T06:21:00Z",
+  "heartbeat_at": "2026-09-29T08:19:01Z",
+  "exported_rows": 132,
+  "max_step": 3275
+}

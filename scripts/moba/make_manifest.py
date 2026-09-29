@@ -76,6 +76,9 @@ ARTIFACTS += [("wm/e19_control", "runs/token_wm/e19_control/model.pt", "y9yxv13e
 ARTIFACTS += [(f"wm/e18_at{i}", f"runs/token_wm/e18_attack/model_{i}.pt", "tz9mc91w", f"E18 checkpoint @{int(i)} (tower precision degrades)")
               for i in ("000500", "001000", "001500")]
 S3KEY.update({f"wm/e18_at{i}": f"moba/runs/e18_attack/model_{i}.pt" for i in ("000500", "001000", "001500")})
+ARTIFACTS += [("wm/e21_at250", "runs/token_wm/e21_scenarios/model_000250.pt", "2t1xkbtz", "E21 @250 (best tower precision of the run, 50%)"),
+              ("wm/e21_at3250", "runs/token_wm/e21_scenarios/model_003250.pt", "2t1xkbtz", "E21 @3250 (last checkpoint; towers degraded)")]
+S3KEY.update({"wm/e21_at250": "moba/runs/e21_scenarios/model_000250.pt", "wm/e21_at3250": "moba/runs/e21_scenarios/model_003250.pt"})
 ARTIFACTS += [("code/code_snapshot_20260929_0200", "runs/code_snapshots/code_snapshot_20260929_0200.tar.gz", None,
                "Snapshot of the uncommitted code behind E20 scenario mining: moba_fork.c ms_run/ms_replay, "
                "scripts/moba/mine_scenarios.py.")]

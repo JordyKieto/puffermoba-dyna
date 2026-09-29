@@ -73,6 +73,8 @@ E = {
     "tz9mc91w": ("E18-attack", ["wm", "rollout", "attack-graph", "dyna", "store-cpu", "main"], "E18: E12 @4000 + real attack graph only, full data, stopped at ~1,350 updates; tower precision degrades with training (26/40/11% at 500/1000/1500). " + REC + "E15-tower-dynamics.md"),
     "y9yxv13e": ("E19-full-config-ab", ["wm", "tower", "250-updates", "control"], "E19 control: E12 @4000 + 250 updates, full data, no attack graph ('crashed' = end-of-run report stopped after the model was saved). " + REC + "E15-tower-dynamics.md"),
     "rer7ogt1": ("E19-full-config-ab", ["wm", "tower", "250-updates", "attack-graph", "main"], "E19: E12 @4000 + 250 updates, full data, real attack graph. " + REC + "E15-tower-dynamics.md"),
+    "2t1xkbtz": ("E21-scenario-training", ["wm", "rollout", "attack-graph", "scenarios", "lr1e-3"], "E21: E12 @4000 + real attack graph + scenario lanes (128 of 896 lanes, per-lane weight), full data, lr 1e-3; stopped at ~3,300 updates: tower dives not learned, tower precision degrades. " + REC + "E20-scenario-mining.md"),
+    "09pk4awu": ("E21-scenario-training", ["wm", "scenarios", "lr3e-4", "aborted"], "E22 first launch: pod exited by RunPod (account balance) during the update-0 evaluation. " + REC + "E20-scenario-mining.md"),
     "d9xnnj0a": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "effect-loss", "main"],
                  "E6b: E5@3500 + counterfactual siblings + effect aux losses, 3,550 updates. Checkpoints kept. "
                  + REC + "E6-counterfactual-siblings.md"),

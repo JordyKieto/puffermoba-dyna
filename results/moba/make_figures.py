@@ -347,6 +347,32 @@ def tab_tower_audit(out, arms, note):
                          "hits", "open-loop precision", "open-loop recall"], rows, note)
 
 
+def tab_scen_training(run, out, title):
+    """Per-validation: held-out tower-dive slices + normal held-out tower windows + expert horizons."""
+    rows = []
+    for r in history(run):
+        if "scen_val/outcome_acc" not in r:
+            continue
+        h = [r.get(f"horizon/loss@{k}") for k in (1, 16, 256, 1024)]
+        hz = [x for x in h if x is not None]
+        rows.append([int(r["_step"]), f"{100 * r['scen_val/outcome_acc']:.0f}%", f"{100 * r['scen_val/survivor_false_death']:.0f}%",
+                     f"{100 * r['scen_val/died_precision']:.0f}% / {100 * r['scen_val/died_recall']:.0f}%",
+                     f"{r['scen_val/tower_loss']:.3f}",
+                     f"{100 * r.get('tower/ol_precision', float('nan')):.0f}% / {100 * r.get('tower/ol_recall', float('nan')):.0f}%"
+                     f" ({int(r.get('tower/ol_pred', 0))}/{int(r.get('tower/ol_real', 0))})"])
+    by = {}
+    for r in history(run):
+        for k in (1, 16, 256, 1024):
+            if f"horizon/loss@{k}" in r:
+                by.setdefault(int(r["_step"]), {})[k] = r[f"horizon/loss@{k}"]
+    for row in rows:
+        hz = by.get(row[0], {})
+        row.append(" / ".join(f"{hz[k]:.2f}" for k in (1, 16, 256, 1024) if k in hz))
+    md_table(TAB / out, ["update", "dives: outcome acc", "dives: survivors killed", "dives: 'dies' precision / recall",
+                         "dives: tower loss", "towers OL128 precision / recall (pred/real)", "expert h1 / h16 / h256 / h1024"],
+             rows, title)
+
+
 def main():
     FIG.mkdir(exist_ok=True)
     TAB.mkdir(exist_ok=True)
@@ -413,6 +439,10 @@ def main():
         ("E12 @4000 + RULE death at <=8% health", "tower_audit_rule0.08_e12.json")],
         "Full-run configuration: E12 @4000, full data (expert+random+dyna2), batch 768, lr 1e-3; held-out games 900-909. "
         "RULE rows: author-approved smoke test, evaluation-time only (data.TOWER_DEATH_RULE); health <= 0 gave 0 predicted falls.")
+    tab_scen_training("2t1xkbtz", "e21_scenario_training.md",
+                      "E21 (W&B 2t1xkbtz): E12 @4000 + real attack graph + scenario lanes (128 of 896, per-lane weight), full data, "
+                      "batch 768, lr 1e-3. Dives: 128 fixed held-out slices (64 died / 64 survived) from held-out games 900-999; "
+                      "towers: 64 fixed held-out windows (23 real falls).")
     tab_arena_sides("arena_e14_tower_shaping.md", [
         ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
         ("P12 tower damage (k2, boost 2)", "arena_real_game_p12_dmg.jsonl", "ppo"),
