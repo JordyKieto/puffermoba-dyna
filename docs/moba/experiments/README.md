@@ -32,7 +32,10 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
   128-tick dream, 2 of 3 predicted tower falls never happen (35% precision). The game records
   who attacks whom every tick, but the model threw it away. Feeding the real attack graph
   raises precision to 58–60%. An update-matched A/B (E17) shows the consistency loss and
-  event sampling don't add to it. E18 (E12 @4000 + attack graph, all data) is running.
+  event sampling don't add to it. **At the full-run configuration the effect is modest** (E19:
+  47% vs control's 38%), and **tower prediction degrades with longer training** (E18: 11%
+  at +1,500 updates). The root cause is that the dream under-predicts tower damage (13% vs
+  2% health at a real fall).
 - **Best dream policy: arm C (E14).** PufferLib's recurrent MinGRU + our PPO, 1.70M steps in
   E11's dream. Over 120 real games vs the shipped net: as radiant return 18.1 vs the net's
   14.3 with 2× creeps, but 0% wins (no pushing); as dire 100% lost. Longer or harder
@@ -72,7 +75,7 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
 | **E10** | WM planner at 60 fps vs the shipped net, 120 games | **concluded: negative** (0 wins, ≈ random) | — (eval only) | [E10-wm-planner-60fps.md](E10-wm-planner-60fps.md) |
 | **E11** | E5 @20,500 resumed on mix1k + mixrand1k (random play); held-out random games are the main metric | stopped @2,300 for E12: random-play hallucination fixed | `E11-random-data`: `mlbh5d3l` | [E11-random-data.md](E11-random-data.md) |
 | E12 | E11 @2000 + dyna2 (the dream policies' own real games) | stopped @~4,350; random h1024 60 → 44 | `E12-dyna2`: `xfldazic` | [E12-dyna2.md](E12-dyna2.md) |
-| **E15** | Tower deaths in the dream: audit, attack-graph analysis, 6-arm fix ablation; E16 combined run | E15/E17 concluded: **real attack graph alone 32% → 58–60% precision**, additions don't pay (E17); **E18 running** (E12 @4000 + attack graph, full data) | `E15-tower-dynamics`, `E16-towers`, `E17-attack-ab`, `E18-attack` (`tz9mc91w`) | [E15-tower-dynamics.md](E15-tower-dynamics.md) |
+| **E15** | Tower deaths in the dream: audit, attack-graph analysis, 6-arm fix ablation; E16 combined run | concluded: at full scale the attack graph beats control modestly (47% vs 38%, E19), but tower prediction degrades with longer training (11% at +1,500, E18); dream tower damage lags reality (13% vs 2% health at death); a death-from-health rule doesn't fix it | `E15-tower-dynamics`, `E16-towers`, `E17-attack-ab`, `E18-attack`, `E19-full-config-ab` | [E15-tower-dynamics.md](E15-tower-dynamics.md) |
 | **E14** | Dream PPO policy: role heads, PufferLib MinGRU vs MLP, entropy, 2× steps, E12 dream, reward shaping (P6–P11) | concluded: **arm C best** (radiant 18.1 vs the net's 14.3, 0 wins; dire 100% lost); shaping negative | `P6-roleheads` … `P11-reward-sweep` | [E14-dream-ppo-policy.md](E14-dream-ppo-policy.md) |
 | **E13** | Dream PPO in E11: P4 (mix curriculum), P4b (+ random start states), P5 (100× steps) | P4/P4b concluded; P5 stopped @83.8M: real return fell to 2.34 (P4b 6.40) | `moba-dream-rl` `P4-mix-e11`, `P5-100x` | [E13-dream-ppo-e11.md](E13-dream-ppo-e11.md) |
 | **E7** | PPO in E5's dream (P0 first run, P1 LR × minibatch sweep, P2 real-game evaluation) | **concluded: negative** | `moba-dream-rl`: `P0-first-5min`, `P1-sweep-mac`, `P1-sweep-h200`, `P2-arena-real` | [E7-dream-ppo.md](E7-dream-ppo.md) |

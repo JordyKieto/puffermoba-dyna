@@ -1908,10 +1908,45 @@
    "store-cpu",
    "wm"
   ],
-  "state": "running",
+  "state": "crashed",
   "created_at": "2026-09-28T23:13:12Z",
-  "history_rows": 4,
-  "max_step": 150,
+  "history_rows": 31,
+  "max_step": 1500,
   "dir": "results/moba/tz9mc91w/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "y9yxv13e",
+  "name": "e19_control",
+  "group": "E19-full-config-ab",
+  "tags": [
+   "250-updates",
+   "control",
+   "tower",
+   "wm"
+  ],
+  "state": "crashed",
+  "created_at": "2026-09-29T00:02:51Z",
+  "history_rows": 10,
+  "max_step": 225,
+  "dir": "results/moba/y9yxv13e/"
+ },
+ {
+  "project": "moba-wm",
+  "run_id": "rer7ogt1",
+  "name": "e19_real",
+  "group": "E19-full-config-ab",
+  "tags": [
+   "250-updates",
+   "attack-graph",
+   "main",
+   "tower",
+   "wm"
+  ],
+  "state": "finished",
+  "created_at": "2026-09-29T00:13:50Z",
+  "history_rows": 13,
+  "max_step": 252,
+  "dir": "results/moba/rer7ogt1/"
  }
 ]

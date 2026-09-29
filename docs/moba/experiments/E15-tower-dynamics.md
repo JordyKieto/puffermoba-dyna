@@ -162,7 +162,7 @@ In-training metric (64 fixed windows, 24 real falls), open-loop precision / reca
 - **The combined recipe** (52% / 67%) is worse than the attack graph alone on precision.
 - **Caveats:** single seed, 60 updates.
 
-## 6. E18: E12 @4000 + real attack graph only, full data (running)
+## 6. E18: E12 @4000 + real attack graph only, full data (stopped at ~1,350 updates)
 
 - **Recipe:** the recipe E17 selected, from E12 @4000 (expert + random + dyna2), all 2,560
   training games, E5's settings (batch 768, lr 1e-3), open-ended.
@@ -170,3 +170,70 @@ In-training metric (64 fixed windows, 24 real falls), open-loop precision / reca
 - **Runs:** W&B `tz9mc91w`; S3 `moba/runs/e18_attack/`.
 - **Launched 2026-09-28 23:16 UTC,** 0.6 updates/s.
 - **Update 0 (= E12 @4000):** tower open-loop precision 41%, recall 61%; the number to beat.
+
+- **Stopped** 2026-09-28 ~23:55 UTC, after its in-training tower metric fell from 41% to 21%
+  (update 500) and 30% (update 1000).
+- **Checkpoints** @500, @1000 and @1500 are in S3 and the manifest.
+
+## 7. E19: the ablation at the full-run configuration, and E18's checkpoints audited
+
+**The earlier quick ablations (E15/E17) were a misleading predictor of the full run.** They
+differed from it in the starting model (E11 vs E12), the data (440 games vs 2,560 incl.
+dyna2), the batch (384 vs 768), the length (60 vs 500+ updates) and the tower metric. E18 also
+had no control arm.
+
+- **E19** repeats the question at the full-run configuration: E12 @4000, full data, batch 768,
+  lr 1e-3, exactly 250 updates, **control (no attack graph) vs real attack graph**, run one after
+  the other on the same H200.
+- **Runs:** W&B `y9yxv13e` (control; "crashed" = its end-of-run report was stopped after the
+  model was saved) and `rer7ogt1` (real).
+- **E18's saved checkpoints** were audited with the same 75-fall test.
+
+Full-run configuration: E12 @4000, full data (expert+random+dyna2), batch 768, lr 1e-3; held-out games 900-909. RULE rows: author-approved smoke test, evaluation-time only (data.TOWER_DEATH_RULE); health <= 0 gave 0 predicted falls.
+
+| world model | games | real falls | one step recall | one step precision (exact) | one step precision (incl. early) | false alarms | open-loop real | open-loop predicted | hits | open-loop precision | open-loop recall |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| E12 @4000 (start) | 10 | 87 | 77% | 60% | 70% | 33 | 75 | 119 | 51 | 43% | 68% |
+| E19 control: +250 updates, no attack graph | 10 | 87 | 55% | 41% | 60% | 47 | 75 | 128 | 48 | 38% | 64% |
+| E19 real attack graph: +250 updates | 10 | 87 | 70% | 60% | 80% | 20 | 75 | 111 | 52 | 47% | 69% |
+| E18 real attack graph: +500 updates | 10 | 87 | 48% | 48% | 70% | 26 | 75 | 186 | 48 | 26% | 64% |
+| E18 real attack graph: +1000 updates | 10 | 87 | 15% | 50% | 96% | 1 | 75 | 138 | 55 | 40% | 73% |
+| E18 real attack graph: +1500 updates | 10 | 87 | 85% | 71% | 83% | 18 | 75 | 506 | 58 | 11% | 77% |
+| E12 @4000 + RULE death at <=3% health | 10 | 87 | 37% | 33% | 70% | 29 | 75 | 21 | 9 | 43% | 12% |
+| E12 @4000 + RULE death at <=8% health | 10 | 87 | 78% | 57% | 80% | 24 | 75 | 51 | 25 | 49% | 33% |
+
+- **At 250 updates the attack graph beats control** (47% / 69% vs 38% / 64%) and the start
+  (43% / 68%). A real but modest effect, far smaller than the E11-subset ablation suggested.
+- **Continued training alone degrades tower prediction** (control). That, not the attack graph,
+  explains E18's early drop.
+- **Tower-death prediction is unstable over longer training, even with the attack graph:**
+  precision 47% → 26% → 40% → 11% at 250 / 500 / 1,000 / 1,500 updates, while recall creeps up
+  (64% → 77%). At 1,500 updates the dream predicts **506 tower falls for 75 real ones.**
+  **E18 should not be resumed.**
+
+## 8. Tower death from health (author-approved rule, evaluation-time smoke test) and why it fails
+
+- **The rule:** `data.TOWER_DEATH_RULE`, off by default. A tower is alive only while its
+  predicted health is above x × max health; the learned alive flip is ignored for towers, and
+  dead towers stay dead. It's applied at evaluation only, to E12 @4000 (no training); rows in
+  the table above.
+- **Results:**
+  - **health ≤ 0:** the dream predicts **zero** tower falls (recall 0%);
+  - **≤ 3%:** 43% / 12%;
+  - **≤ 8%:** 49% / 33%;
+  - **the learned alive output alone:** 43% / 68%.
+- **Why** (`scripts/moba/tower_health_diag.py`, 75 falls): the tower's health fraction going
+  into the tick it really falls:
+
+| | p10 | p25 | median | p75 | p90 |
+|---|---|---|---|---|---|
+| real, 1 tick before | 0.00 | 0.01 | 0.02 | 0.04 | 0.07 |
+| real, 8 ticks before | 0.02 | 0.04 | 0.07 | 0.12 | 0.18 |
+| dream (open loop) | 0.00 | 0.00 | **0.13** | 0.23 | 0.40 |
+
+- **The dream's tower damage runs behind reality.** A tower that really dies at about 2% is
+  still at about 13% in the dream, and the killing blow is essentially never predicted. The
+  learned alive output catches falls **despite** the health prediction.
+- **So the tower problem is under-predicted damage over open-loop rollouts, not the death
+  decision.** A death rule can't fix it. Candidate fixes (not run): weight tower health change in
+  the rollout loss, and select checkpoints by tower metrics.

@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e19_control",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 1011,
+  "hits": 48,
+  "precision": 0.04747774480712166,
+  "recall": 0.5517241379310345
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 118,
+  "alarm_hit": 48,
+  "early": 23,
+  "false": 47,
+  "caught": 48,
+  "precision_exact": 0.4067796610169492,
+  "precision_incl_early": 0.6016949152542372,
+  "recall": 0.5517241379310345
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 128,
+   "hits": 48,
+   "precision": 0.375,
+   "recall": 0.64,
+   "windows": 203,
+   "mean_abs_lag": 9.375
+  }
+ }
+}

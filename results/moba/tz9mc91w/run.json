@@ -11,10 +11,10 @@
     "store-cpu",
     "wm"
   ],
-  "notes": "E18: E12 @4000 + real attack graph only, full data (expert+random+dyna2), open-ended. docs/moba/experiments/E15-tower-dynamics.md",
-  "state": "running",
+  "notes": "E18: E12 @4000 + real attack graph only, full data, stopped at ~1,350 updates; tower precision degrades with training (26/40/11% at 500/1000/1500). docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "crashed",
   "created_at": "2026-09-28T23:13:12Z",
-  "heartbeat_at": "2026-09-28T23:19:42Z",
-  "exported_rows": 4,
-  "max_step": 150
+  "heartbeat_at": "2026-09-29T00:00:42Z",
+  "exported_rows": 31,
+  "max_step": 1500
 }

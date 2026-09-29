@@ -71,6 +71,14 @@ ARTIFACTS += [(f"wm/e15_{k}", f"runs/token_wm/e15_{k}/model.pt", i, f"E15 arm {k
 ARTIFACTS += [(f"wm/e17_{k}", f"runs/token_wm/e17_{k}/model.pt", i, f"E17 A/B arm {k}: E11 @1500 + 60 updates")
               for k, i in (("real", "02klseww"), ("real_consist", "08wrb6xw"), ("real_events", "sdmvluu5"),
                            ("real_consist_events", "h5jt4gw8"))]
+ARTIFACTS += [("wm/e19_control", "runs/token_wm/e19_control/model.pt", "y9yxv13e", "E19 control: E12 @4000 + 250 updates, no attack graph"),
+              ("wm/e19_real", "runs/token_wm/e19_real/model.pt", "rer7ogt1", "E19: E12 @4000 + 250 updates, real attack graph (best tower checkpoint at full config)")]
+ARTIFACTS += [(f"wm/e18_at{i}", f"runs/token_wm/e18_attack/model_{i}.pt", "tz9mc91w", f"E18 checkpoint @{int(i)} (tower precision degrades)")
+              for i in ("000500", "001000", "001500")]
+S3KEY.update({f"wm/e18_at{i}": f"moba/runs/e18_attack/model_{i}.pt" for i in ("000500", "001000", "001500")})
+ARTIFACTS += [("code/code_snapshot_20260929_0100", "runs/code_snapshots/code_snapshot_20260929_0100.tar.gz", None,
+               "Snapshot of the uncommitted code behind E18/E19 and the tower-death rule smoke test (data.TOWER_DEATH_RULE, "
+               "tower_event_audit --tower-death-rule, tower_health_diag.py).")]
 ARTIFACTS += [("code/code_snapshot_20260928_2300", "runs/code_snapshots/code_snapshot_20260928_2300.tar.gz", None,
                "Snapshot of the uncommitted code behind E15/E16 and P12/P13: attack graph (data.derived_targets, "
                "attack_inputs, model atk_in), tower consistency/weight/event lanes, tower_eval, tower_event_audit.py, "

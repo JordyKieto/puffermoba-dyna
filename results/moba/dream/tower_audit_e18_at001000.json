@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e18_at001000",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 75,
+  "hits": 13,
+  "precision": 0.17333333333333334,
+  "recall": 0.14942528735632185
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 26,
+  "alarm_hit": 13,
+  "early": 12,
+  "false": 1,
+  "caught": 13,
+  "precision_exact": 0.5,
+  "precision_incl_early": 0.9615384615384616,
+  "recall": 0.14942528735632185
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 138,
+   "hits": 55,
+   "precision": 0.39855072463768115,
+   "recall": 0.7333333333333333,
+   "windows": 203,
+   "mean_abs_lag": 10.090909090909092
+  }
+ }
+}

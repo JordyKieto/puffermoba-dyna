@@ -1,0 +1,19 @@
+{
+  "entity_project_run": "drift-ai-models/moba-wm/rer7ogt1",
+  "url": "https://wandb.ai/drift-ai-models/moba-wm/runs/rer7ogt1",
+  "name": "e19_real",
+  "group": "E19-full-config-ab",
+  "tags": [
+    "250-updates",
+    "attack-graph",
+    "main",
+    "tower",
+    "wm"
+  ],
+  "notes": "E19: E12 @4000 + 250 updates, full data, real attack graph. docs/moba/experiments/E15-tower-dynamics.md",
+  "state": "finished",
+  "created_at": "2026-09-29T00:13:50Z",
+  "heartbeat_at": "2026-09-29T00:26:03Z",
+  "exported_rows": 13,
+  "max_step": 252
+}

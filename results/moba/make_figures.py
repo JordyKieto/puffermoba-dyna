@@ -402,6 +402,17 @@ def main():
         ("real + event sampling", "tower_audit_e17_real_events.json"),
         ("real + consistency + events (combined)", "tower_audit_e17_real_consist_events.json")],
         "E17 update-matched A/B: E11 @1500 fine-tuned exactly 60 updates each (batch 384, same data), held-out games 900-909.")
+    tab_tower_audit("tower_audit_e19.md", [
+        ("E12 @4000 (start)", "tower_audit_e12_at4000.json"),
+        ("E19 control: +250 updates, no attack graph", "tower_audit_e19_control.json"),
+        ("E19 real attack graph: +250 updates", "tower_audit_e19_real.json"),
+        ("E18 real attack graph: +500 updates", "tower_audit_e18_at000500.json"),
+        ("E18 real attack graph: +1000 updates", "tower_audit_e18_at001000.json"),
+        ("E18 real attack graph: +1500 updates", "tower_audit_e18_at001500.json"),
+        ("E12 @4000 + RULE death at <=3% health", "tower_audit_rule0.03_e12.json"),
+        ("E12 @4000 + RULE death at <=8% health", "tower_audit_rule0.08_e12.json")],
+        "Full-run configuration: E12 @4000, full data (expert+random+dyna2), batch 768, lr 1e-3; held-out games 900-909. "
+        "RULE rows: author-approved smoke test, evaluation-time only (data.TOWER_DEATH_RULE); health <= 0 gave 0 predicted falls.")
     tab_arena_sides("arena_e14_tower_shaping.md", [
         ("arm C: game reward", "arena_real_game_p7_puffer_ours.jsonl", "ppo"),
         ("P12 tower damage (k2, boost 2)", "arena_real_game_p12_dmg.jsonl", "ppo"),

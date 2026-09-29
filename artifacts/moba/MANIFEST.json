@@ -420,6 +420,72 @@
    "s3_byte_identical": true
   },
   {
+   "name": "wm/e19_control",
+   "path": "runs/token_wm/e19_control/model.pt",
+   "present": true,
+   "wandb_run": "y9yxv13e",
+   "description": "E19 control: E12 @4000 + 250 updates, no attack graph",
+   "bytes": 2673474,
+   "md5": "cdd67e927b4cc81f6d838d19ff41b831",
+   "s3": "s3://puffertank/moba/runs/e19_control/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e19_real",
+   "path": "runs/token_wm/e19_real/model.pt",
+   "present": true,
+   "wandb_run": "rer7ogt1",
+   "description": "E19: E12 @4000 + 250 updates, real attack graph (best tower checkpoint at full config)",
+   "bytes": 2679608,
+   "md5": "9fc74d1bd959d756c745b04d1b82e05b",
+   "s3": "s3://puffertank/moba/runs/e19_real/model.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e18_at000500",
+   "path": "runs/token_wm/e18_attack/model_000500.pt",
+   "present": true,
+   "wandb_run": "tz9mc91w",
+   "description": "E18 checkpoint @500 (tower precision degrades)",
+   "bytes": 2685350,
+   "md5": "db479987ed5dcc1f53a0fe955da589c1",
+   "s3": "s3://puffertank/moba/runs/e18_attack/model_000500.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e18_at001000",
+   "path": "runs/token_wm/e18_attack/model_001000.pt",
+   "present": true,
+   "wandb_run": "tz9mc91w",
+   "description": "E18 checkpoint @1000 (tower precision degrades)",
+   "bytes": 2685350,
+   "md5": "0e1b7cbf0108884d73300b5bca8629c2",
+   "s3": "s3://puffertank/moba/runs/e18_attack/model_001000.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "wm/e18_at001500",
+   "path": "runs/token_wm/e18_attack/model_001500.pt",
+   "present": true,
+   "wandb_run": "tz9mc91w",
+   "description": "E18 checkpoint @1500 (tower precision degrades)",
+   "bytes": 2685350,
+   "md5": "996f6d34f94834574380e73d9bc5c5c5",
+   "s3": "s3://puffertank/moba/runs/e18_attack/model_001500.pt",
+   "s3_byte_identical": true
+  },
+  {
+   "name": "code/code_snapshot_20260929_0100",
+   "path": "runs/code_snapshots/code_snapshot_20260929_0100.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E18/E19 and the tower-death rule smoke test (data.TOWER_DEATH_RULE, tower_event_audit --tower-death-rule, tower_health_diag.py).",
+   "bytes": 157855,
+   "md5": "48833f696ffcb32d7a3eb2f7bc029871",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260929_0100.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260928_2300",
    "path": "runs/code_snapshots/code_snapshot_20260928_2300.tar.gz",
    "present": true,

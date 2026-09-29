@@ -70,7 +70,9 @@ E = {
     "08wrb6xw": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + consistency loss, 60 updates. " + REC + "E15-tower-dynamics.md"),
     "sdmvluu5": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + tower-event sampling, 60 updates. " + REC + "E15-tower-dynamics.md"),
     "h5jt4gw8": ("E17-attack-ab", ["wm", "tower", "attack-graph", "60-updates"], "E17: real attack graph + consistency + event sampling (combined), 60 updates. " + REC + "E15-tower-dynamics.md"),
-    "tz9mc91w": ("E18-attack", ["wm", "rollout", "attack-graph", "dyna", "store-cpu", "main"], "E18: E12 @4000 + real attack graph only, full data (expert+random+dyna2), open-ended. " + REC + "E15-tower-dynamics.md"),
+    "tz9mc91w": ("E18-attack", ["wm", "rollout", "attack-graph", "dyna", "store-cpu", "main"], "E18: E12 @4000 + real attack graph only, full data, stopped at ~1,350 updates; tower precision degrades with training (26/40/11% at 500/1000/1500). " + REC + "E15-tower-dynamics.md"),
+    "y9yxv13e": ("E19-full-config-ab", ["wm", "tower", "250-updates", "control"], "E19 control: E12 @4000 + 250 updates, full data, no attack graph ('crashed' = end-of-run report stopped after the model was saved). " + REC + "E15-tower-dynamics.md"),
+    "rer7ogt1": ("E19-full-config-ab", ["wm", "tower", "250-updates", "attack-graph", "main"], "E19: E12 @4000 + 250 updates, full data, real attack graph. " + REC + "E15-tower-dynamics.md"),
     "d9xnnj0a": ("E6-counterfactual", ["wm", "rollout", "counterfactual", "effect-loss", "main"],
                  "E6b: E5@3500 + counterfactual siblings + effect aux losses, 3,550 updates. Checkpoints kept. "
                  + REC + "E6-counterfactual-siblings.md"),

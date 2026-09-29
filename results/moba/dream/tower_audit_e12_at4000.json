@@ -1,0 +1,34 @@
+{
+ "wm": "runs/token_wm/e12_at4000",
+ "games": 10,
+ "tol": 32,
+ "teacher_forced": {
+  "real": 87,
+  "predicted": 1232,
+  "hits": 67,
+  "precision": 0.05438311688311688,
+  "recall": 0.7701149425287356
+ },
+ "teacher_forced_alarms": {
+  "real": 87,
+  "alarms": 111,
+  "alarm_hit": 67,
+  "early": 11,
+  "false": 33,
+  "caught": 67,
+  "precision_exact": 0.6036036036036037,
+  "precision_incl_early": 0.7027027027027027,
+  "recall": 0.7701149425287356
+ },
+ "open_loop": {
+  "128": {
+   "real": 75,
+   "predicted": 119,
+   "hits": 51,
+   "precision": 0.42857142857142855,
+   "recall": 0.68,
+   "windows": 203,
+   "mean_abs_lag": 10.196078431372548
+  }
+ }
+}
