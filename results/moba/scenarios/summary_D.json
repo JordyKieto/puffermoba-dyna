@@ -1,0 +1,20 @@
+{
+ "args": {
+  "logs": [
+   "data/moba/dyna2/logs"
+  ],
+  "games": "6000-6259,6270-6529,6540-6799",
+  "quota": 72,
+  "max_attempts": 600,
+  "var_seed": 0,
+  "games_per_shard": 10,
+  "workers": 30,
+  "out": "runs/scenarios_tower_v1/D",
+  "persist": true
+ },
+ "slices": 184336,
+ "died": 114398,
+ "events": 1603,
+ "games": 780,
+ "seconds": 43.216312408447266
+}

@@ -22,8 +22,8 @@ worse.
 - **Data:** mix1k 0–899 + mixrand1k minus the held-out files: 1,780 games, 4,691,545 transitions.
 - **Held-out sets** (neither trained on):
   - **random held-out (main metric):** the last whole files of each mixrand1k matchup block,
-    100 games: 1140–1159 random/net, 1310–1329 net/random, 1620–1659 random/random,
-    1810–1829 random/script, 1980–1999 script/random. `train.py --held2-games`, logged as
+    1140–1159 random/net, 1310–1329 net/random, 1620–1659 random/random,
+    1810–1829 random/script, 1980–1999 script/random (120 games; earlier versions of this record said 100 by mistake). `train.py --held2-games`, logged as
     `random/...`.
   - **mix1k 900–999,** E5's own held-out set, for comparability.
 - **mixrand1k:** 1,000 games (DATA.md), replayed on the pod with 0 hash and 0 observation

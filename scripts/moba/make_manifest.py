@@ -76,6 +76,9 @@ ARTIFACTS += [("wm/e19_control", "runs/token_wm/e19_control/model.pt", "y9yxv13e
 ARTIFACTS += [(f"wm/e18_at{i}", f"runs/token_wm/e18_attack/model_{i}.pt", "tz9mc91w", f"E18 checkpoint @{int(i)} (tower precision degrades)")
               for i in ("000500", "001000", "001500")]
 S3KEY.update({f"wm/e18_at{i}": f"moba/runs/e18_attack/model_{i}.pt" for i in ("000500", "001000", "001500")})
+ARTIFACTS += [("code/code_snapshot_20260929_0200", "runs/code_snapshots/code_snapshot_20260929_0200.tar.gz", None,
+               "Snapshot of the uncommitted code behind E20 scenario mining: moba_fork.c ms_run/ms_replay, "
+               "scripts/moba/mine_scenarios.py.")]
 ARTIFACTS += [("code/code_snapshot_20260929_0100", "runs/code_snapshots/code_snapshot_20260929_0100.tar.gz", None,
                "Snapshot of the uncommitted code behind E18/E19 and the tower-death rule smoke test (data.TOWER_DEATH_RULE, "
                "tower_event_audit --tower-death-rule, tower_health_diag.py).")]

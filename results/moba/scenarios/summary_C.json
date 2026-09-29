@@ -1,0 +1,20 @@
+{
+ "args": {
+  "logs": [
+   "data/moba/mixrand1k/logs"
+  ],
+  "games": "1000-1139,1160-1309,1330-1619,1660-1809,1830-1979",
+  "quota": 72,
+  "max_attempts": 600,
+  "var_seed": 0,
+  "games_per_shard": 10,
+  "workers": 30,
+  "out": "runs/scenarios_tower_v1/C",
+  "persist": true
+ },
+ "slices": 516175,
+ "died": 277791,
+ "events": 3901,
+ "games": 880,
+ "seconds": 77.6910388469696
+}

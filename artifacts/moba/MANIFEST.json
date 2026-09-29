@@ -475,6 +475,17 @@
    "s3_byte_identical": true
   },
   {
+   "name": "code/code_snapshot_20260929_0200",
+   "path": "runs/code_snapshots/code_snapshot_20260929_0200.tar.gz",
+   "present": true,
+   "wandb_run": null,
+   "description": "Snapshot of the uncommitted code behind E20 scenario mining: moba_fork.c ms_run/ms_replay, scripts/moba/mine_scenarios.py.",
+   "bytes": 161052,
+   "md5": "cac4982b0afd092db5fb368660da3ed2",
+   "s3": "s3://puffertank/moba/runs/code_snapshots/code_snapshot_20260929_0200.tar.gz",
+   "s3_byte_identical": true
+  },
+  {
    "name": "code/code_snapshot_20260929_0100",
    "path": "runs/code_snapshots/code_snapshot_20260929_0100.tar.gz",
    "present": true,

@@ -108,6 +108,19 @@ per hero.
 
 All three are in `s3://puffertank/moba/<corpus>/{logs,dense}/`.
 
+**Full-dataset counts** (2026-09-29, every game in S3; `results/moba/data/tower_counts.json`):
+
+| corpus | games | frames | tower deaths | per game | ancients |
+|---|---|---|---|---|---|
+| mix1k | 1,000 | 2,663,317 | 9,085 | 9.1 | 1,000 |
+| mixrand1k | 1,000 | 2,608,592 | 4,740 | 4.7 | 317 |
+| dyna2 | 810 | 2,154,814 | 1,800 | 2.2 | 135 |
+| **total** | **2,810** | **7,426,723** | **15,625** | 5.6 | 1,452 |
+
+**Scenario corpus `scenarios_tower_v1`** (E20): 2,014,178 128-tick slices mined from the 12,794 tower deaths of the
+training games (1,011,007 where the tower dies, 1,003,171 where it survives), each a real-simulator variation of the
+event (random stream, state nudges, random action stretches); `s3://puffertank/moba/runs/scenarios_tower_v1/`, 16.25 GB.
+
 - **`net`** is the upstream pretrained policy (`resources/moba/moba_weights.bin`,
   encoder → 5×MinGRU → decoder). It runs on each hero's own observation and
   samples from its own RNG. It was trained only as Radiant against scripted

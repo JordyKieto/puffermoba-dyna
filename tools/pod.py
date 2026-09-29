@@ -340,13 +340,15 @@ def s3_sync_to_pod(prefix: str, dest: str, games=None):
         keep = {f for f, nxt in zip(firsts, firsts[1:] + [10 ** 9]) if any(f <= g < nxt for g in games)}
         objs = [o for o in objs if not o["Key"].endswith((".mbs", ".mbl")) or int(o["Key"].rsplit(".", 2)[-2]) in keep]
     env = s3_read_credentials(prefix)
-    f = REPO / "runs" / "pod" / ".s3_read.env"
+    # per-pod local temp names: several pods may sync at the same time
+    f = REPO / "runs" / "pod" / f".s3_read_{POD_NAME or 'default'}.env"
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text("".join(f"export {k}='{v}'\n" for k, v in env.items()))
     f.chmod(0o600)
-    cmds = REPO / "runs" / "pod" / "s5cmd.txt"
+    cmds = REPO / "runs" / "pod" / f"s5cmd_{POD_NAME or 'default'}.txt"
     cmds.write_text("".join(f"cp -s s3://{bucket}/{o['Key']} {dest}/{o['Key'][len(prefix):]}\n" for o in objs))
-    rsync_to([f, cmds], "/root/")
+    rsync_to([f], "/root/.s3_read.env")
+    rsync_to([cmds], "/root/s5cmd.txt")
     f.unlink()
     cmds.unlink()
     t0 = time.time()
