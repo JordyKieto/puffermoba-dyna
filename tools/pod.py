@@ -57,6 +57,11 @@ SSH_KEY = Path.home() / ".ssh" / "id_ed25519"
 S3_PREFIX = "moba"
 
 
+def _tmp_tag() -> str:
+    """Local temp-file tag, unique per pod and process: several launches can run at once."""
+    return f"{POD_NAME or 'default'}_{os.getpid()}"
+
+
 def log(msg):
     print(f"[pod] {msg}", flush=True)
 
@@ -341,11 +346,11 @@ def s3_sync_to_pod(prefix: str, dest: str, games=None):
         objs = [o for o in objs if not o["Key"].endswith((".mbs", ".mbl")) or int(o["Key"].rsplit(".", 2)[-2]) in keep]
     env = s3_read_credentials(prefix)
     # per-pod local temp names: several pods may sync at the same time
-    f = REPO / "runs" / "pod" / f".s3_read_{POD_NAME or 'default'}.env"
+    f = REPO / "runs" / "pod" / f".s3_read_{_tmp_tag()}.env"
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text("".join(f"export {k}='{v}'\n" for k, v in env.items()))
     f.chmod(0o600)
-    cmds = REPO / "runs" / "pod" / f"s5cmd_{POD_NAME or 'default'}.txt"
+    cmds = REPO / "runs" / "pod" / f"s5cmd_{_tmp_tag()}.txt"
     cmds.write_text("".join(f"cp -s s3://{bucket}/{o['Key']} {dest}/{o['Key'][len(prefix):]}\n" for o in objs))
     rsync_to([f], "/root/.s3_read.env")
     rsync_to([cmds], "/root/s5cmd.txt")
@@ -432,14 +437,14 @@ def cmd_train(a):
     push_code()
     wandb_key = secrets.get("WANDB_API_KEY")
     if wandb_key:
-        sec = REPO / "runs" / "pod" / ".pod_secrets"
+        sec = REPO / "runs" / "pod" / f".pod_secrets_{_tmp_tag()}"     # unique: parallel launches must not clobber
         sec.write_text(f"export WANDB_API_KEY='{wandb_key}'\n")
         sec.chmod(0o600)
         rsync_to([sec], f"{R_REPO}/.pod_secrets")
         sec.unlink()
     out = f"runs/token_wm/{a.name}"
     # automatic off-pod persistence: the trainer uploads every checkpoint/log to S3 (mobawm/s3persist.py)
-    pol = REPO / "runs" / "pod" / ".s3_policy.json"
+    pol = REPO / "runs" / "pod" / f".s3_policy_{_tmp_tag()}.json"
     pol.write_text(json.dumps(s3_upload_policy(a.name)))
     pol.chmod(0o600)
     run(f"mkdir -p {R_REPO}/{out}")
@@ -476,7 +481,7 @@ def cmd_sync(a):
 
 def cmd_s3renew(a):
     """Push a fresh 7-day upload policy to a running run (the uploader re-reads it per file)."""
-    pol = REPO / "runs" / "pod" / ".s3_policy.json"
+    pol = REPO / "runs" / "pod" / f".s3_policy_{_tmp_tag()}.json"
     pol.write_text(json.dumps(s3_upload_policy(a.name)))
     pol.chmod(0o600)
     rsync_to([pol], f"{R_REPO}/runs/token_wm/{a.name}/.s3_policy.json")
