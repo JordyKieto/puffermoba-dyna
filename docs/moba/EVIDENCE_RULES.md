@@ -71,8 +71,19 @@ spawns" were rules.
   rubric metrics (circle hit, jitter, speed ratio), not the training loss.
 - **Dream RL:** the real C game (`mobawm/rl/arena.py`) against the untrained policy
   and the shipped net on the same seeds, not dream reward.
+- **Towers:** `scripts/moba/tower_eval_big.py` on all 100 held-out games (900–999): 128-tick
+  open-loop windows every 64 ticks (4,017 windows, 1,561 real falls), precision and recall of
+  tower falls (±32 ticks), siege damage (dream / real HP for towers losing ≥ 800), with
+  per-game bootstrap 90% intervals. About 7–9 minutes per checkpoint on one H200;
+  `scripts/moba/eval_watch.py` scores every checkpoint of a run as it is written. The
+  in-training tower line (64 windows, about 23 real falls) is a smoke signal only.
 
 *Incident:* dream reward rose 3× while the real game got worse than random (E7).
+
+*Incident:* the 64-window in-training tower eval swung 13% → 48% precision between
+checkpoints of one run and ranked arms wrongly (A1b looked better than the control). On the
+100-game eval, A1b was not better; the same model also predicts 9 vs 11 falls on one game
+on CPU vs MPS, so tower outcomes in the dream are chaotic and need many games.
 
 ## 8. One seed is not a measurement
 
