@@ -58,8 +58,9 @@ S3_PREFIX = "moba"
 
 
 def _tmp_tag() -> str:
-    """Local temp-file tag, unique per pod and process: several launches can run at once."""
-    return f"{POD_NAME or 'default'}_{os.getpid()}"
+    """Local temp-file tag, unique per pod, process and thread: several launches (and parallel syncs) can run at once."""
+    import threading
+    return f"{POD_NAME or 'default'}_{os.getpid()}_{threading.get_ident()}"
 
 
 def log(msg):
@@ -104,7 +105,7 @@ def gql(query):
 
 
 def pod_spec() -> dict:
-    return dict(imageName=IMAGE, containerDiskInGb=80, volumeInGb=300, volumeMountPath="/workspace",
+    return dict(imageName=IMAGE, containerDiskInGb=400, volumeInGb=300, volumeMountPath="/workspace",
                 ports=["22/tcp", "6006/http"])
 
 
@@ -352,18 +353,20 @@ def s3_sync_to_pod(prefix: str, dest: str, games=None):
     f.chmod(0o600)
     cmds = REPO / "runs" / "pod" / f"s5cmd_{_tmp_tag()}.txt"
     cmds.write_text("".join(f"cp -s s3://{bucket}/{o['Key']} {dest}/{o['Key'][len(prefix):]}\n" for o in objs))
-    rsync_to([f], "/root/.s3_read.env")
-    rsync_to([cmds], "/root/s5cmd.txt")
+    tag = _tmp_tag()                                  # remote names unique too: parallel syncs on one pod
+    renv, rcmd = f"/root/.s3_read_{tag}.env", f"/root/s5cmd_{tag}.txt"
+    rsync_to([f], renv)
+    rsync_to([cmds], rcmd)
     f.unlink()
     cmds.unlink()
     t0 = time.time()
     try:
-        run("chmod 600 /root/.s3_read.env; command -v s5cmd >/dev/null || (cd /tmp && curl -sL "
+        run(f"chmod 600 {renv}; command -v s5cmd >/dev/null || (cd /tmp && curl -sL "
             "https://github.com/peak/s5cmd/releases/download/v2.2.2/s5cmd_2.2.2_Linux-64bit.tar.gz | tar xz s5cmd "
-            f"&& mv s5cmd /usr/local/bin/); mkdir -p {dest}; . /root/.s3_read.env && "
-            "s5cmd --numworkers 128 run /root/s5cmd.txt > /dev/null")
+            f"&& mv -n s5cmd /usr/local/bin/ 2>/dev/null; true); mkdir -p {dest}; . {renv} && "
+            f"s5cmd --numworkers 128 run {rcmd} > /dev/null")
     finally:
-        run("rm -f /root/.s3_read.env /root/s5cmd.txt", check=False)
+        run(f"rm -f {renv} {rcmd}", check=False)
     want = {o["Key"][len(prefix):]: o["Size"] for o in objs}
     have = dict(l.split(" ", 1)[::-1] for l in run(f"cd {dest} && find . -type f -printf '%s %P\\n'",
                                                     capture=True).splitlines() if l.strip())
@@ -436,9 +439,12 @@ def s3_upload_policy(run: str, days: float = 7.0) -> dict:
 def cmd_train(a):
     push_code()
     wandb_key = secrets.get("WANDB_API_KEY")
+    sp = Path.home() / "Documents/dev/sunnypilot/secrets.yaml"     # Upstash (fleet weight averaging), zelda-RL's keys
+    kv = dict(l.split("=", 1) for l in (sp.read_text().splitlines() if sp.exists() else []) if "=" in l)
+    extra = "".join(f"export {k}='{kv[k].strip()}'\n" for k in ("UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN") if kv.get(k))
     if wandb_key:
         sec = REPO / "runs" / "pod" / f".pod_secrets_{_tmp_tag()}"     # unique: parallel launches must not clobber
-        sec.write_text(f"export WANDB_API_KEY='{wandb_key}'\n")
+        sec.write_text(f"export WANDB_API_KEY='{wandb_key}'\n" + extra)
         sec.chmod(0o600)
         rsync_to([sec], f"{R_REPO}/.pod_secrets")
         sec.unlink()
@@ -454,7 +460,8 @@ def cmd_train(a):
     log(f"S3 persistence: every checkpoint/log -> s3://{secrets.get('S3_BUCKET')}/{S3_PREFIX}/runs/{a.name}/ "
         f"(upload policy valid 7 days)")
     args = " ".join(shlex.quote(x) for x in a.train_args)
-    launch = (f"cd {R_REPO} && mkdir -p {out} && [ -f .pod_secrets ] && . ./.pod_secrets; "
+    lw = os.environ.get("LOAD_WORKERS_REMOTE")       # small-RAM pods (A40: 50 GB cgroup): fewer decompression workers
+    launch = (f"cd {R_REPO} && mkdir -p {out} && [ -f .pod_secrets ] && . ./.pod_secrets; " + (f"export LOAD_WORKERS={lw}; " if lw else "") +
               f"python -u -m mobawm.wm.train --out {out} {args} 2>&1 | tee {out}/train.log")
     run(f"mkdir -p {R_REPO}/{out} && cat > {R_REPO}/{out}/launch.sh <<'EOF'\n{launch}\nEOF")
     run(f"tmux kill-session -t {a.name} 2>/dev/null; true", check=False)

@@ -109,6 +109,12 @@ def load_model(run: Path, dense: Path, dev):
         print(f"WARNING: {run}/stats.pt missing; refitting stats locally on games {sorted(idx)} of {src}",
               flush=True)
         stats = fit_stats(Store(load_games([src], idx, log=lambda *_: None), torch.device("cpu")))
+    if config.get("list_state"):                 # the stored target lists are part of the state
+        import mobawm.wm.data as _wdl
+        _wdl.enable_list_state()
+    if config.get("attack_mode"):                  # the featurizer must build the same attack-graph inputs
+        import mobawm.wm.data as _wd
+        _wd.ATTACK_MODE = config["attack_mode"]
     model = TokenWM(**config)
     model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
     print(f"model {config}, {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M params", flush=True)

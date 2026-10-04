@@ -103,6 +103,33 @@ case "$TARGET" in
         -lm -lpthread -DPLATFORM_DESKTOP
     echo "Built: build/moba_collect"
     ;;
+  moba-fork)
+    # Counterfactual fork generator as a shared library for ctypes
+    # (mobawm/wm/cf.py). No raylib: nothing it calls renders.
+    echo "Compiling libmobafork ($ARCH)..."
+    LIB="$ROOT/build/libmobafork.$([ "$PLATFORM" = "Linux" ] && echo so || echo dylib)"
+    # Only mf_* are exported; the renderer upstream's moba.h defines is never
+    # called, so hiding everything else lets the linker drop it (and raylib).
+    GC=$([ "$PLATFORM" = "Linux" ] && echo "-Wl,--gc-sections" || echo "-Wl,-dead_strip")
+    clang -O2 -DNDEBUG -fPIC -shared -fvisibility=hidden -ffunction-sections -fdata-sections $GC \
+        ${SIMD[@]+"${SIMD[@]}"} \
+        -I"$PUFFER/$RAYLIB_NAME/include" -I"$PUFFER/src" -I"$PUFFER/ocean/moba" -I"$ROOT/moba" \
+        "$ROOT/moba/moba_fork.c" -o "$LIB" -lm
+    echo "Built: $LIB"
+    ;;
+  moba-arena)
+    # Real games with one team driven from Python (mobawm/rl/arena.py); reuses
+    # moba_collect.c's net and scripted controllers unchanged. Links raylib like
+    # the collector (the included code references it).
+    echo "Compiling libmobaarena ($ARCH)..."
+    LIB="$ROOT/build/libmobaarena.$([ "$PLATFORM" = "Linux" ] && echo so || echo dylib)"
+    GC=$([ "$PLATFORM" = "Linux" ] && echo "-Wl,--gc-sections" || echo "-Wl,-dead_strip")
+    clang -O2 -DNDEBUG -fPIC -shared -fvisibility=hidden -ffunction-sections -fdata-sections $GC \
+        ${SIMD[@]+"${SIMD[@]}"} \
+        -I"$PUFFER/$RAYLIB_NAME/include" -I"$PUFFER/src" -I"$PUFFER/ocean/moba" -I"$ROOT/moba" \
+        "$ROOT/moba/moba_arena.c" -o "$LIB" -lz -lm
+    echo "Built: $LIB"
+    ;;
   moba-demo)
     # Upstream demo: pretrained radiant vs scripted dire. Run it from
     # third_party/pufferlib, which is where its asset paths are relative to.
@@ -121,7 +148,7 @@ case "$TARGET" in
     ( cd "$PUFFER" && bash build.sh race --cpu )
     ;;
   *)
-    echo "usage: tools/build.sh [eval|play|capi|demo|moba-collect|moba-demo|module|link]" >&2
+    echo "usage: tools/build.sh [eval|play|capi|demo|moba-collect|moba-fork|moba-arena|moba-demo|module|link]" >&2
     exit 1
     ;;
 esac

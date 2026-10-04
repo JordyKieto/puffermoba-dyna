@@ -46,7 +46,8 @@
 
 #define CTRL_NET 0
 #define CTRL_SCRIPT 1
-static const char* CTRL_NAMES[] = {"net", "script"};
+#define CTRL_RANDOM 3     // uniform over every action head each tick, on the game's own seeded prng
+static const char* CTRL_NAMES[] = {"net", "script", "dream_ppo", "random"};
 
 typedef struct {
     uint32_t magic;
@@ -286,6 +287,7 @@ static uint64_t hash_state(uint64_t h, const MobaGame* g, MobaState* buf) {
 static int parse_ctrl(const char* s) {
     if (!strcmp(s, "net")) return CTRL_NET;
     if (!strcmp(s, "script")) return CTRL_SCRIPT;
+    if (!strcmp(s, "random")) return CTRL_RANDOM;
     return -1;
 }
 
@@ -380,6 +382,9 @@ static int cmd_collect(int argc, char** argv) {
                 float* act = &env->actions[a * MOBA_ATNS];
                 if (ctrl[a >= 5] == CTRL_NET)
                     memcpy(act, &net_actions[a * MOBA_ATNS], sizeof(float) * MOBA_ATNS);
+                else if (ctrl[a >= 5] == CTRL_RANDOM)
+                    for (int k = 0; k < MOBA_ATNS; k++)
+                        act[k] = (float)(splitmix64(&prng) % MOBA_ACTION_SIZES[k]);
                 else
                     scripted_action(env, a, act, &mem);
                 if (eps > 0 && rng_uniform(&prng) < eps)

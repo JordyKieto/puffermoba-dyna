@@ -8,6 +8,26 @@ Evidence standard: [../EVIDENCE_RULES.md](../EVIDENCE_RULES.md). Claims with evi
 classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from:
 [../PROVENANCE.md](../PROVENANCE.md). Doc map: [../MAP.md](../MAP.md).
 
+## Headline (2026-10-04)
+
+- **New best world model: P1 @1000 (E33)**, which is E12 @4000 plus 1,000 updates with only the learning rate
+  lowered to 1e-4.
+  - **vs E12 on the 100-game tower evaluation:** precision equal (40%), recall 71% vs 65%, siege damage 0.77×
+    vs 0.65×.
+  - **Other measures:** events 60% vs 57%; hero position error 3.85 vs 4.59.
+  - It is the default dream.
+  - The architecture additions (predicted attack edges E29, stored target lists E30, grid CNN E31) did not
+    beat it. The instability at lr 1e-3 was the learning rate (E32).
+- **Training is 11× faster per pod and runs on 20 pods (E34).**
+  - **Per pod:** one attention-bias einsum backward was 88% of GPU time; replacing it with masked adds, plus
+    `--compile`, cut A40 updates from 11 s to 0.94 s.
+  - **Fleet:** 20 pods (zelda-RL FedAvg over Upstash) run at about 6,950 lanes/s, about 43× the old
+    single-H200 run. `fleet20` is training 20,000 updates per pod from P1 @1000.
+- **Tower metric:** use the 100-game evaluation (`scripts/moba/tower_eval_big.py`, EVIDENCE_RULES §7). The
+  64-window in-training line ranked arms wrongly.
+- **Not yet written up:** E21–E28 (scenario training, LR/freeze sweeps, P14/P15, event sampling,
+  E26/E27 strata, E28 attack-graph from scratch). Their runs are in S3 and W&B.
+
 ## Headline (2026-09-28)
 
 - **⚠ The world model is not fully learned.** Spawns, creep constants, hero level
@@ -57,12 +77,18 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
   numbered, and all of E5-continued. Their metrics survive; see
   [PROVENANCE §3.3](../PROVENANCE.md). Every run now uploads checkpoints to S3 as it
   trains.
-- **Nothing is running.** No pods.
+- **Running:** `fleet20` (20 pods, E34).
 
 ## Experiments
 
 | id | what | status | W&B group → `results/moba/` | record |
 |---|---|---|---|---|
+| **E34** | Throughput: einsum-backward fix + `--compile` (11× per pod); 20-pod FedAvg fleet via Upstash | **running** (`fleet20`, 20,000 updates/pod) | `fleet20_r0` | [E34-throughput-fleet.md](E34-throughput-fleet.md) |
+| **E33** | Plain E12 @4000 at lr 1e-4, 1,000 updates (P1) | **concluded: new best; default dream** | `p1_e12_lr1e-4` | [E33-e12-lr1e-4.md](E33-e12-lr1e-4.md) |
+| **E32** | Stability sweep: lr 1e-3/3e-4/1e-4 × EMA (S1–S4, G2) | concluded: lr 1e-4 stable; EMA doesn't fix 1e-3 | `s1`…`s4`, `g2_grid_long` | [E32-lr-ema-sweep.md](E32-lr-ema-sweep.md) |
+| E31 | Global 64×64 map + CNN encoder (G1, G2) | concluded: no stable tower gain | `g1_e12_grid` (`6odugwtq`) | [E31-grid-cnn.md](E31-grid-cnn.md) |
+| E30 | Stored target lists as state + aggro inputs (A0 vs A1b) | concluded: no tower gain on the 100-game eval | `a0_e12_control` (`pvgc94tc`), `a1b_e12_lists` | [E30-target-lists.md](E30-target-lists.md) |
+| E29 | Predicted attack edges: decay, distance bias, rebuilt kill edges (K0–K3) | concluded: edges improve, towers don't | `k0`…`k3` | [E29-attack-edges.md](E29-attack-edges.md) |
 | E1 | first TokenWM smoke runs (mix100) | done | `E1-smoke`: `vuzjgdh8`, `ox4cx47i` | [../EXPERIMENTS.md](../EXPERIMENTS.md) (legacy) |
 | E2 | first full mix1k run | done | `E2-mix1k`: `asdg1vl1` | legacy |
 | E3 | change gate + event sampling | done | `E3-gate-events`: `65j98z3b`, `s3ilbx02` | legacy |

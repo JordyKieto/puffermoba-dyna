@@ -36,7 +36,7 @@ ACTION_SIZES = (7, 7, 3, 2, 2, 2)  # move_y, move_x, target mode, q, w, e
 MAP = 128
 SCAN_CAP = 64
 NONE = 255                    # empty cell in pids / end of a target list
-CONTROLLERS = {0: "net", 1: "script"}
+CONTROLLERS = {0: "net", 1: "script", 2: "dream_ppo", 3: "random"}   # 2: games played by a dream-trained policy (Dyna)
 
 # Per-entity fields that change during a game (moba_state.h). team, grid_id,
 # lane, entity_type, basic_attack_cd and xp_on_kill are here because creep

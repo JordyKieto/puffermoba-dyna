@@ -15,6 +15,12 @@ Arms (each its own model and optimizer, same init seed):
   walk_only    baseline model and inputs, loss on hero x/y only (diagnostic)
   hero_mlp     per-hero MLP on its own stats + action + wall patch, walk-only loss (reference)
   walk_x5/x10  baseline with the hero x/y loss terms weighted x5 / x10
+  health_x5/x10  baseline (v2) with the hero health loss term weighted x5 / x10
+  health_only  baseline model, loss on hero health only (diagnostic)
+  baseline_regen  baseline (v2) with hero health/mana regen (+2/tick) applied by rule
+  regen_ungated_hm  baseline_regen with health and mana not gated
+  regen_cast   baseline_regen + "can this press fire" (cast rule) input on the hero token
+  health_only_ungated  same, with health not gated
 
 Every round draws one uniform batch and one event batch; arms without event
 sampling train on the uniform batch, arms with it on the event batch, so
@@ -83,6 +89,20 @@ ARMS = {
     "walk_only": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
                       walk_only=True),
     "hero_mlp": dict(model="hero_mlp", gate=False, weights={}, events=False, walk_only=True),
+    "health_x5": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                      walk_w=10.0, health_w=5.0),
+    "health_x10": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                       walk_w=10.0, health_w=10.0),
+    "baseline_regen": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                           walk_w=10.0, regen=True),
+    "regen_ungated_hm": dict(gate=True, gate_fields=tuple(f for f in SPARSE if f not in ("health", "mana")),
+                             gate_w=0.2, value_norm="all", weights={}, events=False, walk_w=10.0, regen=True),
+    "regen_cast": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                       walk_w=10.0, regen=True, cast=True),
+    "health_only": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False,
+                        only=("health",)),
+    "health_only_ungated": dict(gate=True, gate_fields=tuple(f for f in SPARSE if f != "health"), gate_w=0.2,
+                                value_norm="all", weights={}, events=False, only=("health",)),
     "walk_x5": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False, walk_w=5.0),
     "walk_x10": dict(gate=True, gate_fields=SPARSE, gate_w=0.2, value_norm="all", weights={}, events=False, walk_w=10.0),
     "events": dict(gate=False, weights=dict(abilities=3, health=3, deaths=3, attack=2), events=True),
@@ -132,7 +152,8 @@ def main():
         if cfg.get("model") == "hero_mlp":
             m = HeroMLP().to(dev)
         else:
-            m = TokenWM(gate=cfg["gate"], gate_fields=cfg.get("gate_fields")).to(dev)
+            m = TokenWM(gate=cfg["gate"], gate_fields=cfg.get("gate_fields"),
+                        cast_features=cfg.get("cast", False)).to(dev)
         m.set_change_prior(stats.change_rate)
         run = None
         if args.wandb:
@@ -140,8 +161,11 @@ def main():
             run = wandb.init(project="moba-wm", group=args.name, name=f"{args.name}/{name}",
                              config=vars(args) | dict(arm=name, **{k: str(v) for k, v in cfg.items()}),
                              reinit="create_new")
+        arm_stats = fit_stats(tr, regen_rule=True) if cfg.get("regen") else stats
+        if cfg.get("regen"):
+            m.set_change_prior(arm_stats.change_rate)
         arms[name] = dict(cfg=cfg, model=m, opt=torch.optim.AdamW(m.parameters(), lr=args.lr, weight_decay=0.01),
-                          run=run, hist=[])
+                          run=run, hist=[], stats=arm_stats)
 
     val_args = argparse.Namespace(val_batches=args.val_batches, batch=args.batch, window=args.window, burn=args.burn)
 
@@ -153,15 +177,17 @@ def main():
             T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
             T.WALK_ONLY = a["cfg"].get("walk_only", False)
             T.HERO_WALK_WEIGHT = a["cfg"].get("walk_w", 1.0)
-            sk = T.skill_eval(a["model"], fz, he, stats, kind, dev, val_args)
+            T.HERO_HEALTH_WEIGHT = a["cfg"].get("health_w", 1.0)
+            T.ONLY_HERO_FIELDS = a["cfg"].get("only", ())
+            sk = T.event_eval(a["model"], fz, he, a["stats"], kind, dev, val_args)
             a["hist"].append(dict(round=rnd, **sk))
             if a["run"]:
                 a["run"].log({f"skill/{k}": v for k, v in sk.items()}, step=rnd)
-            line.append(f"{name:6s} " + " ".join(
-                f"{r} {sk.get(f'hero/{r}/better_than_copy_pct', float('nan')):+4.0f}/"
-                f"{sk.get(f'hero/{r}/action_dependence_pct', float('nan')):+4.0f}" for r in ROWS)
-                + f" deaths {sk['deaths/recall_pct']:.0f}%")
-        print(f"--- round {rnd}  ({time.time() - t_train:.0f}s)  better-than-copy / error-with-wrong-actions, %", flush=True)
+            line.append(f"{name:14s} walk {sk['walking/better_than_copy_pct']:+4.0f}%/{sk['walking/wrong_actions_extra_error_pct']:+4.0f}%  " + "  ".join(
+                f"{r} {sk[f'{r}/caught_pct']:3.0f}%/{sk[f'{r}/false_alarms_per_real']:.1f}/{sk[f'{r}/caught_wrong_actions_pct']:3.0f}%"
+                for r in T.EVENT_ROWS))
+        print(f"--- round {rnd}  ({time.time() - t_train:.0f}s)  walk: better than copy / extra error w/ wrong actions;"
+              f"  events: caught % / false alarms per real / caught % w/ wrong actions", flush=True)
         print("\n".join(line), flush=True)
 
     gen = torch.Generator(device=dev); gen.manual_seed(0)
@@ -178,11 +204,13 @@ def main():
             T.GATE_VALUE_NORM = a["cfg"].get("value_norm", "changed")
             T.WALK_ONLY = a["cfg"].get("walk_only", False)
             T.HERO_WALK_WEIGHT = a["cfg"].get("walk_w", 1.0)
+            T.HERO_HEALTH_WEIGHT = a["cfg"].get("health_w", 1.0)
+            T.ONLY_HERO_FIELDS = a["cfg"].get("only", ())
             lr = args.lr * min(1.0, rnd / 50)
             for g in a["opt"].param_groups:
                 g["lr"] = lr
             loss, _, _, _ = T.run_window(a["model"], fz, event if a["cfg"]["events"] else uniform,
-                                         stats, kind, args.burn, dev)
+                                         a["stats"], kind, args.burn, dev)
             a["opt"].zero_grad()
             loss.backward()
             gn = torch.nn.utils.clip_grad_norm_(a["model"].parameters(), args.clip).item()

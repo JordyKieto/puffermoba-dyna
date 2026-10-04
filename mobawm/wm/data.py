@@ -7,6 +7,7 @@ See docs/moba/TOKEN_WM_DESIGN.md.
 """
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -121,7 +122,10 @@ def _load_one(job):
     path, k, off = job
     r = S.load_dense(path).load_game(k)
     n = len(r)
-    _SHM["ent"][1][off:off + n] = r["state"]["entity"]
+    arr = _SHM["ent"][1]
+    arr[off:off + n, :, :N_BASE] = r["state"]["entity"]
+    if arr.shape[-1] > N_BASE:                      # LIST_STATE: the stored target lists as membership bits
+        arr[off:off + n, :, N_BASE:N_BASE + LIST_NF] = pack_lists_np(r["state"]["scan"])
     _SHM["act"][1][off:off + n - 1] = r["actions"][:-1]
     _SHM["tick"][1][off:off + n] = r["state"]["tick"]
     _SHM["cidx"][1][off:off + n] = r["state"]["creep_idx"]
@@ -149,10 +153,14 @@ def usable_cpus() -> int:
     return os.cpu_count() or 2
 
 
-def load_store(dense_files, game_indices, device, workers=None) -> "Store":
+def load_store(dense_files, game_indices, device, workers=None, packed=None) -> "Store":
     """Decompress the selected games with one process per core straight into
     shared memory, then copy to the device in chunks. No per-game Python
-    objects, no temporary files."""
+    objects, no temporary files.
+
+    packed: a directory for a raw (uncompressed) copy of exactly this store, keyed by the files, games and
+    field count. If it exists the arrays are memory-mapped (seconds instead of minutes of decompression);
+    otherwise the store is built as usual and written there once (CPU stores only)."""
     import os
     from concurrent.futures import ProcessPoolExecutor
     from multiprocessing import get_context, shared_memory
@@ -166,13 +174,54 @@ def load_store(dense_files, game_indices, device, workers=None) -> "Store":
                 off += n_rec
     shapes = dict(ent=(off, N_ENT, len(F)), act=(off, 10, 6), tick=(off,), cidx=(off,))
     dtypes = dict(ent=np.float32, act=np.uint8, tick=np.int32, cidx=np.int32)
+    pdir = None
+    if packed:
+        import hashlib, json
+        key = hashlib.sha1(json.dumps([[Path(j[0]).name, j[1]] for j in jobs] + [len(F)]).encode()).hexdigest()[:16]
+        pdir = Path(packed) / key
+        if (pdir / "done").exists():
+            import time as _t
+            t0 = _t.time()
+            # copy into ordinary RAM with many threads (parallel reads): training straight off a copy-on-write file
+            # mapping was CPU-bound (0.16 vs 0.45 updates/s), and a single-threaded np.load reads ~100 MB/s
+            from concurrent.futures import ThreadPoolExecutor
+            arrays = {}
+            for k in shapes:
+                m = np.load(pdir / f"{k}.npy", mmap_mode="r")
+                out = np.empty(m.shape, m.dtype)
+                step = max(1, len(m) // 256)
+                with ThreadPoolExecutor(32) as ex:
+                    list(ex.map(lambda i: out.__setitem__(slice(i, i + step), m[i:i + step]), range(0, len(m), step)))
+                arrays[k] = out
+            print(f"packed store {pdir}: read {arrays['ent'].nbytes / 1e9:.1f} GB in {_t.time() - t0:.0f}s", flush=True)
+            return Store.from_arrays(arrays, spans, device, share=device.type == "cpu")
+    if os.name == "posix" and os.uname().sysname == "Linux":
+        st = _load_store_anon(jobs, spans, shapes, dtypes, device, workers)
+        import shutil
+        need = st.ent.numel() * 4 * 1.05
+        if pdir is not None and os.environ.get("RANK", "0") != "0":
+            pdir = None                                   # multi-GPU: only rank 0 may write the packed copy
+        if pdir is not None and device.type == "cpu" and shutil.disk_usage(Path(packed).parent if not Path(packed).exists() else packed).free < need:
+            print(f"packed store skipped: {need / 1e9:.0f} GB needed, not enough free disk", flush=True)
+            pdir = None
+        if pdir is not None and device.type == "cpu":
+            import time as _t
+            t0 = _t.time()
+            pdir.mkdir(parents=True, exist_ok=True)
+            np.save(pdir / "ent.npy", st.ent.numpy())
+            np.save(pdir / "act.npy", st.act.cpu().numpy().astype(np.uint8))
+            np.save(pdir / "tick.npy", st.tick.cpu().numpy().astype(np.int32))
+            np.save(pdir / "cidx.npy", st.cidx.cpu().numpy().astype(np.int32))
+            (pdir / "done").write_text("ok")
+            print(f"packed store written to {pdir} in {_t.time() - t0:.0f}s", flush=True)
+        return st
     shms = {k: shared_memory.SharedMemory(create=True, size=max(1, int(np.prod(shapes[k])) * np.dtype(dtypes[k]).itemsize))
             for k in shapes}
     names = {k: v.name for k, v in shms.items()}
     try:
         arrays = {k: np.ndarray(shapes[k], dtype=dtypes[k], buffer=shms[k].buf) for k in shapes}
         arrays["act"][:] = 0
-        workers = workers or min(len(jobs), usable_cpus())
+        workers = workers or min(len(jobs), usable_cpus(), int(os.environ.get("LOAD_WORKERS", "1000")))   # small-RAM pods
         ctx = get_context("fork") if os.name == "posix" and os.uname().sysname == "Linux" else get_context("spawn")
         with ProcessPoolExecutor(workers, mp_context=ctx, initializer=_attach,
                                  initargs=(names, shapes, dtypes)) as ex:
@@ -182,6 +231,33 @@ def load_store(dense_files, game_indices, device, workers=None) -> "Store":
         for v in shms.values():
             v.close()
             v.unlink()
+
+
+def _load_store_anon(jobs, spans, shapes, dtypes, device, workers):
+    """Linux: decompress into anonymous shared mappings made before the workers fork.
+    Unlike /dev/shm (a tmpfs capped at e.g. 117 GB on RunPod), these are limited only by
+    the container's memory, and a CPU store uses them in place: no second copy."""
+    import mmap
+    from concurrent.futures import ProcessPoolExecutor
+    from multiprocessing import get_context
+    mms = {k: mmap.mmap(-1, max(1, int(np.prod(shapes[k])) * np.dtype(dtypes[k]).itemsize)) for k in shapes}
+    arrays = {k: np.ndarray(shapes[k], dtype=dtypes[k], buffer=mms[k]) for k in shapes}
+    _SHM.clear()
+    _SHM.update({k: (mms[k], arrays[k]) for k in shapes})          # inherited by the forked workers
+    try:
+        workers = workers or min(len(jobs), usable_cpus(), int(os.environ.get("LOAD_WORKERS", "1000")))   # small-RAM pods
+        with ProcessPoolExecutor(workers, mp_context=get_context("fork")) as ex:
+            list(ex.map(_load_one, jobs, chunksize=1))
+    finally:
+        _SHM.clear()
+    st = Store.from_arrays(arrays, spans, device, share=device.type == "cpu")
+    if device.type == "cpu":
+        st._mms = mms                   # the store's ent tensor lives in these mappings
+    else:
+        del arrays
+        for m in mms.values():
+            m.close()
+    return st
 
 
 class Store:
@@ -213,14 +289,18 @@ class Store:
         self._starts = {}
 
     @classmethod
-    def from_arrays(cls, a, spans, device, chunk=8192):
-        """Build from contiguous host arrays (see load_store), copying in chunks."""
+    def from_arrays(cls, a, spans, device, chunk=8192, share=False):
+        """Build from contiguous host arrays (see load_store), copying in chunks; with
+        share (CPU store) the entity tensor uses the host array's memory in place."""
         st = cls.__new__(cls)
         st.device, st.spans, st._starts = device, spans, {}
         n = len(a["ent"])
-        st.ent = torch.empty(n, N_ENT, len(F), dtype=torch.float32, device=device)
-        for i in range(0, n, chunk):
-            st.ent[i:i + chunk] = torch.from_numpy(a["ent"][i:i + chunk]).to(device)
+        if share:
+            st.ent = torch.from_numpy(a["ent"])
+        else:
+            st.ent = torch.empty(n, N_ENT, len(F), dtype=torch.float32, device=device)
+            for i in range(0, n, chunk):
+                st.ent[i:i + chunk] = torch.from_numpy(a["ent"][i:i + chunk]).to(device)
         st.act = torch.from_numpy(a["act"].copy()).to(device)   # copy: the shared memory is freed after
         st.tick = torch.from_numpy(a["tick"].astype(np.int64)).to(device)
         st.cidx = torch.from_numpy(a["cidx"].astype(np.int64)).to(device)
@@ -378,6 +458,200 @@ def fit_stats(store: "Store", chunk: int = 16384, regen_rule: bool = False) -> S
 # Featurization (torch): raw entity array -> typed inputs for the tokenizer.
 # ---------------------------------------------------------------------------
 
+# --- who attacks whom (the attack graph) --------------------------------------
+# ATTACK_MODE None: no attack inputs (E1-E13). "derived": each unit's target from the game's
+# own targeting rule on positions (moba.h: heroes nearest enemy in their 11x11 box, towers
+# nearest non-neutral enemy within 5, creeps within 7 and hitting at L1 < 2, neutrals heroes
+# within 3). "real": the recorded target_pid where the state has any (real states), else derived
+# (model-generated states, whose target_pid rule R9 blanks).
+ATTACK_MODE = None
+ATTACK_DIM = 12   # what I attack (has target, target kind x4, distance) + who attacks me (count, damage, by hero/creep/neutral/tower)
+_KIND_T = torch.from_numpy(KIND)
+_BOX = torch.tensor([5.0, 7.0, 3.0, 5.0])                    # per kind: hero, creep, neutral, tower
+
+
+def derived_targets(ent):
+    """(..., 206, F) -> (..., 206) long: the unit each one would attack (-1 none)."""
+    kind = _KIND_T.to(ent.device)
+    x, y, team = ent[..., F["x"]], ent[..., F["y"]], ent[..., F["team"]]
+    alive = ent[..., F["alive"]] > 0
+    dx = (x.unsqueeze(-1) - x.unsqueeze(-2)).abs()
+    dy = (y.unsqueeze(-1) - y.unsqueeze(-2)).abs()
+    box = _BOX.to(ent.device)[kind]                                            # (206,)
+    ok = (torch.maximum(dx, dy) <= box.unsqueeze(-1)) & alive.unsqueeze(-1) & alive.unsqueeze(-2)
+    ok &= team.unsqueeze(-1) != team.unsqueeze(-2)
+    tk = kind.view(*([1] * (ent.dim() - 2)), 1, -1)
+    ak = kind.view(*([1] * (ent.dim() - 2)), -1, 1)
+    ok &= ~(((ak == 1) | (ak == 3)) & (tk == 2))                              # creeps, towers: no neutrals
+    ok &= ~((ak == 2) & (tk != 0))                                             # neutrals: heroes only
+    l1 = torch.where(ok, dx + dy, torch.full_like(dx, 1e9))
+    d, j = l1.min(-1)
+    return torch.where(d < 1e9, j, torch.full_like(j, -1))
+
+
+def attack_inputs(ent, tgt):
+    """(..., 206, F), (..., 206) targets -> (..., 206, ATTACK_DIM): what I attack, who attacks me."""
+    kind = _KIND_T.to(ent.device)
+    has = tgt >= 0
+    t = tgt.clamp(min=0)
+    tkind = kind[t] * has + (-1) * (~has)
+    gx = torch.gather(ent[..., F["x"]], -1, t)
+    gy = torch.gather(ent[..., F["y"]], -1, t)
+    dist = ((ent[..., F["x"]] - gx).abs() + (ent[..., F["y"]] - gy).abs()) * has
+    oh = torch.stack([(tkind == k) for k in range(4)], -1).float()
+    src = has.float()
+    n_att = torch.zeros_like(src).scatter_add_(-1, t, src)
+    dmg = torch.zeros_like(src).scatter_add_(-1, t, src * ent[..., F["damage"]])
+    by = [torch.zeros_like(src).scatter_add_(-1, t, src * (kind == k).float()) for k in range(4)]
+    return torch.stack([src, *oh.unbind(-1), (dist / 8).clamp(max=4), n_att / 5, dmg / 300, by[0] / 5,
+                        by[1] / 5, by[2] / 5, by[3].clamp(max=1)], -1)
+
+
+def rebuild_kill_edges(ent, chunk=1024):
+    """In place on consecutive states of ONE game (T, 206, F): the game records no target_pid for a
+    killing blow (moba.h attack(): the kill branch returns before setting it). Rebuild it: a unit whose
+    basic-attack timer was <= 1 and is reset to its full cooldown at t+1, with no recorded target, hit
+    the nearest enemy that died on t -> t+1 (alive 1 -> 0, or a hero respawn jump) within 12 cells
+    (82% of such resets match one, ~4% ambiguous; 3 held-out games). Returns the number of edges added."""
+    kind = _KIND_T.to(ent.device)
+    added = 0
+    for lo in range(0, len(ent) - 1, chunk):
+        hi = min(len(ent) - 1, lo + chunk)
+        a, b = ent[lo:hi], ent[lo + 1:hi + 1]
+        al0, al1 = a[..., F["alive"]] > 0, b[..., F["alive"]] > 0
+        jump = (b[..., F["x"]] - a[..., F["x"]]).abs() + (b[..., F["y"]] - a[..., F["y"]]).abs()
+        respawn = (kind == 0) & (jump > 12) & (b[..., F["health"]] >= b[..., F["max_health"]] - 0.5)
+        died = (al0 & ~al1) | (al0 & respawn)
+        fired = al0 & al1 & (b[..., F["target_pid"]] < 0) & (a[..., F["basic_attack_timer"]] <= 1) & \
+            (b[..., F["basic_attack_timer"]] == b[..., F["basic_attack_cd"]])
+        rows = torch.nonzero(fired.any(-1) & died.any(-1)).flatten()
+        if len(rows) == 0:
+            continue
+        a_, d_, f_ = a[rows], died[rows], fired[rows]
+        x, y, team = a_[..., F["x"]], a_[..., F["y"]], a_[..., F["team"]]
+        l1 = (x.unsqueeze(-1) - x.unsqueeze(-2)).abs() + (y.unsqueeze(-1) - y.unsqueeze(-2)).abs()
+        ok = d_.unsqueeze(-2) & (team.unsqueeze(-1) != team.unsqueeze(-2)) & (l1 <= 12)
+        dist, j = torch.where(ok, l1, torch.full_like(l1, 1e9)).min(-1)
+        new = f_ & (dist < 1e9)
+        tp = b[rows][..., F["target_pid"]]
+        b[rows, :, F["target_pid"]] = torch.where(new, j.to(tp.dtype), tp)
+        added += int(new.sum())
+    return added
+
+
+def rebuild_kill_edges_store(store, dev=None):
+    """rebuild_kill_edges over every game of a Store, computed on `dev` (default: the store's device)."""
+    n = 0
+    for off, steps in store.spans:
+        g = store.ent[off:off + steps + 1]
+        x = g.to(dev) if dev is not None else g
+        n += rebuild_kill_edges(x)
+        if x is not g:
+            g[..., F["target_pid"]] = x[..., F["target_pid"]].to(g.device)
+    return n
+
+
+# --- stored target lists (LIST_STATE) -------------------------------------------
+# The game keeps, per unit, a stored target list (env->scanned_targets) and attacks the nearest unit in it.
+# Towers rescan every 3 ticks, creeps every 5; in between the list is stale. The dense files record it
+# (state['scan']), the 26 entity fields don't. With LIST_STATE the lists of creeps and towers (OWNERS) over
+# heroes, creeps and towers (MEMBERS) become 6 extra entity fields (24 membership bits each), so every data
+# path and the dream carry them; the model predicts next-tick membership (no rule), and the featurizer
+# derives aggro inputs from them (who each unit will hit, whether it is ready, incoming damage).
+LIST_STATE = False
+N_BASE = len(F)                                               # 26 recorded entity fields
+LIST_NF = 6
+OWNERS = np.r_[10:110, 182:206]                               # creeps, towers (124)
+MEMBERS = np.r_[0:110, 182:206]                               # heroes, creeps, towers (134)
+_MIDX = np.full(256, len(MEMBERS), np.int64)                  # pid -> member column (134 = not a member)
+_MIDX[MEMBERS] = np.arange(len(MEMBERS))
+AGGRO_DIM = 13
+
+
+def enable_list_state():
+    """Add the list fields to the shared field map (call before any store or model is built)."""
+    global LIST_STATE
+    for k in range(LIST_NF):
+        F.setdefault(f"lst{k}", N_BASE + k)
+    LIST_STATE = True
+
+
+def pack_lists_np(scan):
+    """(..., 206, 64) uint8 MOBA_NONE-terminated lists -> (..., 206, LIST_NF) float32 membership bits."""
+    sc = scan[..., OWNERS, :]
+    valid = np.cumprod(sc != 255, -1).astype(bool)
+    col = np.where(valid, _MIDX[sc], len(MEMBERS))
+    bits = np.zeros(sc.shape[:-1] + (len(MEMBERS) + 1,), bool)
+    np.put_along_axis(bits, col, True, -1)
+    bits = np.pad(bits[..., :len(MEMBERS)], [(0, 0)] * (bits.ndim - 1) + [(0, 24 * LIST_NF - len(MEMBERS))])
+    w = (2 ** np.arange(24)).astype(np.float64)
+    packed = (bits.reshape(*bits.shape[:-1], LIST_NF, 24) * w).sum(-1).astype(np.float32)
+    out = np.zeros(scan.shape[:-1] + (LIST_NF,), np.float32)
+    out[..., OWNERS, :] = packed
+    return out
+
+
+def unpack_lists(ent):
+    """(..., 206, F) -> (..., 124, 134) bool membership."""
+    v = ent[..., torch.as_tensor(OWNERS, device=ent.device), N_BASE:N_BASE + LIST_NF].long()
+    bits = (v.unsqueeze(-1) >> torch.arange(24, device=ent.device)) & 1
+    return bits.flatten(-2)[..., :len(MEMBERS)].bool()
+
+
+def pack_lists(bits):
+    """(..., 124, 134) bool -> (..., 124, LIST_NF) float."""
+    b = Fn_pad(bits.long(), (0, 24 * LIST_NF - len(MEMBERS)))
+    w = 1 << torch.arange(24, device=bits.device)
+    return (b.unflatten(-1, (LIST_NF, 24)) * w).sum(-1).float()                # < 2^24: exact in float32
+
+
+def Fn_pad(x, pad):
+    return torch.nn.functional.pad(x, pad)
+
+
+def aggro_inputs(ent, tick):
+    """(..., 206, F), (...) -> (..., 206, AGGRO_DIM): whom each unit will hit (creeps/towers: nearest alive unit
+    in its stored list; heroes/neutrals: nearest enemy in their box, as derived_targets), whether it is ready
+    (attack timer <= 1, in range), incoming damage from ready attackers, how many / whether a tower aim at me,
+    list size, AoE threat (towers: levels of enemy heroes within 2 cells with an ability ready), rescan next."""
+    dev = ent.device
+    kind = _KIND_T.to(dev)
+    own, mem = torch.as_tensor(OWNERS, device=dev), torch.as_tensor(MEMBERS, device=dev)
+    x, y, alive = ent[..., F["x"]], ent[..., F["y"]], ent[..., F["alive"]] > 0
+    L = unpack_lists(ent)
+    d = (x[..., own].unsqueeze(-1) - x[..., mem].unsqueeze(-2)).abs() + (y[..., own].unsqueeze(-1) - y[..., mem].unsqueeze(-2)).abs()
+    d = torch.where(L & alive[..., mem].unsqueeze(-2), d, torch.full_like(d, 1e9))
+    dm, j = d.min(-1)
+    tgt = derived_targets(ent)
+    tgt[..., own] = torch.where(dm < 1e9, mem[j], torch.full_like(j, -1))
+    has = tgt >= 0
+    t = tgt.clamp(min=0)
+    gx, gy = torch.gather(x, -1, t), torch.gather(y, -1, t)
+    dist = ((x - gx).abs() + (y - gy).abs()) * has
+    melee = (kind == 1) | (kind == 2)
+    ready = alive & has & (ent[..., F["basic_attack_timer"]] <= 1) & torch.where(melee, dist < 2, torch.ones_like(has))
+    src = ready.float()
+    inc = torch.zeros_like(src).scatter_add_(-1, t, src * ent[..., F["damage"]])
+    on = (has & alive).float()
+    n_on = torch.zeros_like(src).scatter_add_(-1, t, on)
+    tw_on = torch.zeros_like(src).scatter_add_(-1, t, on * (kind == 3).float()).clamp(max=1)
+    oh = torch.stack([(kind[t] == k) & has for k in range(4)], -1).float()
+    size = torch.zeros_like(src)
+    size[..., own] = L.sum(-1).float()
+    # AoE threat on towers
+    hx, hy, hteam = x[..., :10], y[..., :10], ent[..., :10, F["team"]]
+    tx, ty, tteam = x[..., 182:], y[..., 182:], ent[..., 182:, F["team"]]
+    near = (torch.maximum((hx.unsqueeze(-2) - tx.unsqueeze(-1)).abs(), (hy.unsqueeze(-2) - ty.unsqueeze(-1)).abs()) <= 2) & \
+        (hteam.unsqueeze(-2) != tteam.unsqueeze(-1)) & alive[..., :10].unsqueeze(-2)
+    abil = (ent[..., :10, F["q_timer"]] <= 0) | (ent[..., :10, F["w_timer"]] <= 0) | (ent[..., :10, F["e_timer"]] <= 0)
+    aoe = torch.zeros_like(src)
+    aoe[..., 182:] = (near * (abil * ent[..., :10, F["level"]]).unsqueeze(-2)).sum(-1)
+    tk = tick.unsqueeze(-1)
+    rescan = torch.where(kind == 3, (tk + 1) % 3 == 0, torch.where(melee, (tk + 1) % 5 == 0, torch.ones_like(has))).float()
+    return torch.stack([has.float(), *oh.unbind(-1), (dist / 8).clamp(max=4), ready.float(), inc / 300, n_on / 5, tw_on,
+                        size / 10, aoe / 10, rescan], -1)
+
+
 class Featurizer:
     def __init__(self, device):
         self.device = device
@@ -396,6 +670,16 @@ class Featurizer:
             f("stun_timer") / 20, f("move_timer") / 30, f("basic_attack_timer") / 10, f("is_hit"),
         ], -1)
         pos = torch.stack([f("x") / 128, f("y") / 128], -1)
+        atk = None
+        if ATTACK_MODE:
+            tgt = derived_targets(ent)
+            if ATTACK_MODE == "state":                                          # the state's own targets: real or predicted
+                tgt = ent[..., F["target_pid"]].long()
+            elif ATTACK_MODE == "real":
+                real = ent[..., F["target_pid"]].long()
+                has_real = (real >= 0).any(-1, keepdim=True)                   # a real state records targets
+                tgt = torch.where(has_real, real, tgt)
+            atk = attack_inputs(ent, tgt)
         h = ent[..., HEROES, :]
         g = lambda name: h[..., F[name]]
         hero = torch.stack([
@@ -441,10 +725,17 @@ class Featurizer:
         tgt_minion = (nearest_kind == 1) | (nearest_kind == 2)
         hero_raw = torch.stack([g("mana"), g("max_mana"), g("q_timer"), g("w_timer"), g("e_timer"),
                                 g("stun_timer")], -1)
-        return dict(shared=shared, pos=pos, hero=hero, creep=creep, tower=tower,
-                    team=team, lane=lane, patch=patch, glob=glob, alive=f("alive") > 0,
-                    xy=torch.stack([f("x"), f("y")], -1), hero_raw=hero_raw,
-                    tgt_any=tgt_any, tgt_ht=tgt_ht, near=near, tgt_minion=tgt_minion)
+        out = dict(shared=shared, pos=pos, hero=hero, creep=creep, tower=tower,
+                   team=team, lane=lane, patch=patch, glob=glob, alive=f("alive") > 0,
+                   xy=torch.stack([f("x"), f("y")], -1), hero_raw=hero_raw,
+                   tgt_any=tgt_any, tgt_ht=tgt_ht, near=near, tgt_minion=tgt_minion)
+        if atk is not None:
+            out["atk"] = atk
+        if LIST_STATE:
+            out["aggro"] = aggro_inputs(ent, tick)
+            out["lists"] = unpack_lists(ent)
+            out["tick"] = tick
+        return out
 
 
 # ---------------------------------------------------------------------------
@@ -481,6 +772,10 @@ def wave_respawns(tick, cidx):
     return creep, lane, (tick % 600 == 0)
 
 
+TOWER_DEATH_RULE = False   # smoke-test rule: False = off; a number x = tower dies when predicted health <= x * max (0 = at 0)
+XP_MONOTONE = True   # rule R7 "XP never decreases" in the dream's state update (--no-xp-clamp turns it off)
+
+
 def apply_prediction(ent, tick, cidx, pred, stats: Stats, featurizer: Featurizer):
     """Next raw state from the current one and the model's predictions (no grad)."""
     dev = ent.device
@@ -499,7 +794,8 @@ def apply_prediction(ent, tick, cidx, pred, stats: Stats, featurizer: Featurizer
     for name in ("q_timer", "w_timer", "e_timer", "stun_timer", "move_timer", "basic_attack_timer",
                  "waypoint", "move_modifier", "mana"):
         new[..., F[name]] = new[..., F[name]].clamp(min=0)
-    new[..., F["xp"]] = torch.maximum(new[..., F["xp"]], ent[..., F["xp"]])
+    if XP_MONOTONE:
+        new[..., F["xp"]] = torch.maximum(new[..., F["xp"]], ent[..., F["xp"]])
     new[..., F["mana"]] = torch.minimum(new[..., F["mana"]], new[..., F["max_mana"]])
     new[..., F["health"]] = new[..., F["health"]].clamp(min=0)
     new[..., F["x"]] = new[..., F["x"]].clamp(0, 127.99)
@@ -516,12 +812,27 @@ def apply_prediction(ent, tick, cidx, pred, stats: Stats, featurizer: Featurizer
     flip = (torch.sigmoid(pred["alive_flip"]) > 0.5) & can_flip
     alive0 = ent[..., F["alive"]] > 0
     alive1 = alive0 ^ flip
+    if TOWER_DEATH_RULE:
+        # RULE (smoke test, author-approved 2026-09-29): a tower is alive iff its predicted health > 0;
+        # the learned alive flip is ignored for towers, and a dead tower never comes back
+        t = slice(182, 206)
+        alive1 = alive1.clone()
+        frac = new[..., t, F["health"]] / new[..., t, F["max_health"]].clamp(min=1)
+        alive1[..., t] = alive0[..., t] & (frac > float(TOWER_DEATH_RULE))      # threshold: fraction of max health
     new[..., F["alive"]] = alive1.float()
     died = alive0 & ~alive1
     spawned = ~alive0 & alive1
     for name in ("x", "y", "health"):
         new[..., F[name]] = torch.where(died, torch.zeros_like(new[..., F[name]]), new[..., F[name]])
-    new[..., F["target_pid"]] = -1
+    if "list_logits" in pred:            # predicted stored target lists (LIST_STATE); dead owners keep none
+        bits = (pred["list_logits"] > 0) & alive1[..., torch.as_tensor(OWNERS, device=dev)].unsqueeze(-1)
+        new[..., torch.as_tensor(OWNERS, device=dev), N_BASE:N_BASE + LIST_NF] = pack_lists(bits)
+    if "target_logits" in pred:          # predicted attack graph: who each unit attacks this tick
+        tg = pred["target_logits"].argmax(-1)
+        tg = torch.where((tg >= N_ENT) | ~alive1, torch.full_like(tg, -1), tg)
+        new[..., F["target_pid"]] = tg.to(new.dtype)
+    else:
+        new[..., F["target_pid"]] = -1   # rule R9 (no attack graph in the dream)
 
     # wave respawns (rule): reused creep slots and all neutrals come back fresh, alive
     wc, wlane, wn = wave_respawns(tick, cidx)
