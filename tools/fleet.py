@@ -20,7 +20,7 @@ Path("runs/pod/fleet").mkdir(parents=True, exist_ok=True)
 procs = []
 for r in range(N):
     games = ",".join(f"{f}-{f + 9}" for f in files[r::NS])
-    env = dict(os.environ, POD=f"{exp}{r}")
+    env = dict(os.environ, POD=f"{os.environ.get('FLEET_PODS', exp)}{r}")   # FLEET_PODS: reuse another run's pods
     g = os.environ.get("RANK0_GPU", gpu) if r == 0 else gpu          # rank 0 also holds the held-out sets: bigger GPU
     procs.append(subprocess.Popen([sys.executable, "tools/fleet_rank.py", exp, str(r), str(N), g, batch, n, launch, games, init, *extra],
                                   env=env, stdout=open(f"runs/pod/fleet/{exp}_r{r}.log", "w"), stderr=subprocess.STDOUT))

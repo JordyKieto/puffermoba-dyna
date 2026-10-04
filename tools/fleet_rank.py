@@ -35,7 +35,7 @@ val = ("--held-games 900-999 --held2-games 1140-1159,1310-1329,1620-1659,1810-18
        "--scen-heldout data/moba/scenarios_heldout --event-eval") if rank == 0 else "--held-games 900-901"
 main = (f"--data data/moba/full/dense --train-games {games} {val} --init runs/token_wm/init "
         f"--baseline --rollout --bf16 --batch {batch} --chunk 16 --window 16 --burn 4 --max-span 4096 "
-        "--span-mu 6 --span-sigma 3 --decay-halflife 64 --decay-floor 0.02 --ckpt-every 250 --val-every 250 --val-batches 4 "
+        "--span-mu 6 --span-sigma 3 --decay-halflife 64 --decay-floor 0.02 --ckpt-every 250 --val-every 1000 --val-batches 4 "
         f"--eval-batches 4 --rollouts 4 --log-every 25 --max-updates {n} --minutes 0 --skip-val0 "
         f"--fleet-exp {exp} --fleet-rank {rank} --fleet-world {world} --fleet-launch {launch}" + (" --wandb" if rank == 0 else ""))
 os.environ["LOAD_WORKERS_REMOTE"] = "4"

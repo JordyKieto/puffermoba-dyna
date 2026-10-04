@@ -165,6 +165,11 @@ class FleetLink:
         if self.rank == aggregator:
             live = self.live_peers()
             expected = live if (live or update > 2) else {r for r in range(self.world) if r != self.rank}
+            # ranks blocked in this call send no heartbeats, so a slow aggregator (e.g. validating) would think they
+            # are dead and average only itself; whoever already uploaded this round is in, whatever its heartbeat
+            others = [r for r in range(self.world) if r != self.rank]
+            here = self.u.pipeline([["EXISTS", f"{base}:r{r}:meta"] for r in others])
+            expected |= {r for r, e in zip(others, here) if e}
             peers = {self.rank: local}
             wait = straggler_wait if update > 2 else max(straggler_wait, 120.0)
             from concurrent.futures import ThreadPoolExecutor
