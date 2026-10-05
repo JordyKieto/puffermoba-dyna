@@ -27,7 +27,7 @@ locally (git-ignored).
 ## The 20 arms
 They span sparse rewards (win only; win + towers), the current formula (game reward + win ±100) with less XP, and
 handcrafted rewards (tower damage, fall bonus, champion kills, siege, ancient, zero-sum, team rewards, a defence
-penalty), plus seeds. The definitions are in `runs/pod/gen4.py`.
+penalty), plus seeds. The definitions are in `scripts/moba/sweeps/gen4.py` (run from `runs/pod/`).
 
 ## Results so far
 | arm | reward | peak (real radiant games) | curve |
