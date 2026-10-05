@@ -1,0 +1,734 @@
+{
+ "online_rows": 313,
+ "dream_rows": 590,
+ "wm_rows": 362,
+ "wm_tower_rows": 43,
+ "dyna_tower_rows": 4,
+ "wm_mechanics_rows": 88,
+ "collector_games": 7490,
+ "collector_radiant": {
+  "games": 3745,
+  "wins": 1131,
+  "losses": 0
+ },
+ "collector_dire": {
+  "games": 3745,
+  "wins": 0,
+  "losses": 3745
+ },
+ "seed_evals": [
+  {
+   "label": "ppol4_u69",
+   "team": "ppo",
+   "policy": "results/moba/dream/ppol4_policies/policy_u0069.pt",
+   "policy_md5": "3fe7818b0ae90c085d531c35789fdb2f",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:29",
+   "note": "anchor since 13:42 (fresh 223/300)",
+   "radiant_wins": 213,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.965,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.574,
+   "radiant_deaths": 6.425,
+   "radiant_ticks": 5541.523,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.395,
+   "dire_kills": 0.562,
+   "dire_deaths": 1.268,
+   "dire_ticks": 1290.043,
+   "radiant_rate": 0.71,
+   "radiant_ci95": [
+    0.6562534723961281,
+    0.7584362870048228
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "e38_u0017",
+   "team": "ppo",
+   "policy": "results/moba/dream/g4_policies/all_handcrafted/policy_u0017.pt",
+   "policy_md5": "a077dc64ef28539f446cfcf11765764a",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:33",
+   "note": "start of the Dyna loop (E38 best)",
+   "radiant_wins": 101,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.37,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.247,
+   "radiant_deaths": 5.991,
+   "radiant_ticks": 5743.67,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.265,
+   "dire_kills": 0.508,
+   "dire_deaths": 0.919,
+   "dire_ticks": 1229.647,
+   "radiant_rate": 0.33666666666666667,
+   "radiant_ci95": [
+    0.28555447659565275,
+    0.3919090438702742
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "ppol_u71",
+   "team": "ppo",
+   "policy": "results/moba/dream/ppol_policies/policy_u0071.pt",
+   "policy_md5": "e42aac2d72d819fa44dd850304ef43f5",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:37",
+   "note": "",
+   "radiant_wins": 159,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.77,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.359,
+   "radiant_deaths": 5.803,
+   "radiant_ticks": 5651.55,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.365,
+   "dire_kills": 0.503,
+   "dire_deaths": 1.045,
+   "dire_ticks": 1219.883,
+   "radiant_rate": 0.53,
+   "radiant_ci95": [
+    0.47349920136870094,
+    0.585742192831435
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "ppol4_u10",
+   "team": "ppo",
+   "policy": "results/moba/dream/ppol4_policies/policy_u0010.pt",
+   "policy_md5": "07f1dc98ea91e0c83ae1e06596cce886",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:40",
+   "note": "",
+   "radiant_wins": 167,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.86,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.543,
+   "radiant_deaths": 5.905,
+   "radiant_ticks": 5629.643,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.44,
+   "dire_kills": 0.562,
+   "dire_deaths": 1.127,
+   "dire_ticks": 1262.847,
+   "radiant_rate": 0.5566666666666666,
+   "radiant_ci95": [
+    0.5000863411296723,
+    0.611814070137251
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "ppol4_u49",
+   "team": "ppo",
+   "policy": "results/moba/dream/ppol4_policies/policy_u0049.pt",
+   "policy_md5": "e75274c65cb7f7d300af7edec84a40f9",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:43",
+   "note": "",
+   "radiant_wins": 203,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.905,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.577,
+   "radiant_deaths": 6.274,
+   "radiant_ticks": 5485.627,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.385,
+   "dire_kills": 0.581,
+   "dire_deaths": 1.042,
+   "dire_ticks": 1269.983,
+   "radiant_rate": 0.6766666666666666,
+   "radiant_ci95": [
+    0.6217905083935192,
+    0.7270754796739475
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "ppol4_u69",
+   "team": "ppo",
+   "policy": "results/moba/dream/ppol4_policies/policy_u0069.pt",
+   "policy_md5": "3fe7818b0ae90c085d531c35789fdb2f",
+   "set": "holdout2",
+   "seed_base": 80000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:46",
+   "note": "second untouched seed set",
+   "radiant_wins": 208,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 4.085,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.565,
+   "radiant_deaths": 6.514,
+   "radiant_ticks": 5536.663,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.415,
+   "dire_kills": 0.615,
+   "dire_deaths": 1.341,
+   "dire_ticks": 1286.777,
+   "radiant_rate": 0.6933333333333334,
+   "radiant_ci95": [
+    0.6389827786899308,
+    0.7427950950442782
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "shipped_net",
+   "team": "net",
+   "policy": null,
+   "policy_md5": null,
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:48",
+   "note": "the shipped net against itself: the radiant/dire base rate",
+   "radiant_wins": 300,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 4.395,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 6.587,
+   "radiant_deaths": 6.556,
+   "radiant_ticks": 2268.637,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.395,
+   "dire_kills": 2.796,
+   "dire_deaths": 7.18,
+   "dire_ticks": 2268.637,
+   "radiant_rate": 1.0,
+   "radiant_ci95": [
+    0.9873565700022643,
+    0.9999999999999999
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "random",
+   "team": "random",
+   "policy": null,
+   "policy_md5": null,
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:52",
+   "note": "untrained policy (random init PufferPolicy)",
+   "radiant_wins": 0,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 0.165,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 0.001,
+   "radiant_deaths": 0.393,
+   "radiant_ticks": 6000.0,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.125,
+   "dire_kills": 0.111,
+   "dire_deaths": 0.613,
+   "dire_ticks": 1086.98,
+   "radiant_rate": 0.0,
+   "radiant_ci95": [
+    0.0,
+    0.012643429997735661
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "e14_armC",
+   "team": "ppo",
+   "policy": "runs/dream_ppo/p7/puffer_ours/policy.pt",
+   "policy_md5": "3874281e9b403be346226b9386605c11",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:56",
+   "note": "E14 arm C: recurrent PufferPolicy, dream PPO with the game's reward (short episodes)",
+   "radiant_wins": 0,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 1.65,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 0.149,
+   "radiant_deaths": 2.402,
+   "radiant_ticks": 6000.0,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.235,
+   "dire_kills": 0.717,
+   "dire_deaths": 0.502,
+   "dire_ticks": 1083.0,
+   "radiant_rate": 0.0,
+   "radiant_ci95": [
+    0.0,
+    0.012643429997735661
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "e36_J_envs128_4x_s2",
+   "team": "ppo",
+   "policy": "results/moba/dream/g3/J_envs128_4x_s2/policy.pt",
+   "policy_md5": "ab2b762645ac35e88907056f10a65c71",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 14:59",
+   "note": "E36 best: + long episodes + win reward, calibrated dream",
+   "radiant_wins": 4,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 2.875,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 0.877,
+   "radiant_deaths": 6.079,
+   "radiant_ticks": 5992.6,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.125,
+   "dire_kills": 0.348,
+   "dire_deaths": 0.495,
+   "dire_ticks": 1078.06,
+   "radiant_rate": 0.013333333333333334,
+   "radiant_ci95": [
+    0.005196877684679467,
+    0.03377606084644991
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "e37_pf1_u7",
+   "team": "ppo",
+   "policy": "results/moba/dream/pf1_policies/policy_u0007.pt",
+   "policy_md5": "297e6ac37c83c1f76d4d8f1bdbce76a9",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 15:03",
+   "note": "E37: + 5-pod PPO fleet, best real checkpoint",
+   "radiant_wins": 17,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.025,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.571,
+   "radiant_deaths": 5.014,
+   "radiant_ticks": 5984.363,
+   "dire_wins": 0,
+   "dire_losses": 298,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.905,
+   "dire_kills": 7.371,
+   "dire_deaths": 3.749,
+   "dire_ticks": 2922.103,
+   "radiant_rate": 0.056666666666666664,
+   "radiant_ci95": [
+    0.03567717591318777,
+    0.08886666535147117
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "E40_fz_e38_u40",
+   "team": "ppo",
+   "policy": "results/moba/dream/fz_e38_policies/final.pt",
+   "policy_md5": "73a7bf904bb6f5cc658df50c842c6c0a",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 15:10",
+   "note": "E40 frozen-WM control, final policy (40 updates)",
+   "radiant_wins": 153,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.155,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 0.993,
+   "radiant_deaths": 5.301,
+   "radiant_ticks": 5602.03,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.485,
+   "dire_kills": 0.863,
+   "dire_deaths": 1.465,
+   "dire_ticks": 1383.847,
+   "radiant_rate": 0.51,
+   "radiant_ci95": [
+    0.45366316504261445,
+    0.5660839663574307
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "E40_fz_e38s1_u40",
+   "team": "ppo",
+   "policy": "results/moba/dream/fz_e38s1_policies/final.pt",
+   "policy_md5": "e7992ae3ee06cccf5f5c31231a0b7195",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 15:13",
+   "note": "E40 frozen-WM control, final policy (40 updates)",
+   "radiant_wins": 141,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.305,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.097,
+   "radiant_deaths": 5.675,
+   "radiant_ticks": 5662.687,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.535,
+   "dire_kills": 0.767,
+   "dire_deaths": 1.511,
+   "dire_ticks": 1388.003,
+   "radiant_rate": 0.47,
+   "radiant_ci95": [
+    0.414257807168565,
+    0.5265007986312991
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "E40_fz_dyna_u40",
+   "team": "ppo",
+   "policy": "results/moba/dream/fz_dyna_policies/final.pt",
+   "policy_md5": "ecf93428f37634a04e365beb164085e6",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 15:16",
+   "note": "E40 frozen-WM control, final policy (40 updates)",
+   "radiant_wins": 168,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.53,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.329,
+   "radiant_deaths": 5.566,
+   "radiant_ticks": 5593.897,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.155,
+   "dire_kills": 0.244,
+   "dire_deaths": 0.565,
+   "dire_ticks": 1113.557,
+   "radiant_rate": 0.56,
+   "radiant_ci95": [
+    0.503420997979743,
+    0.6150617904205289
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  },
+  {
+   "label": "E40_fz_dynas1_u40",
+   "team": "ppo",
+   "policy": "results/moba/dream/fz_dynas1_policies/final.pt",
+   "policy_md5": "e050b57d31bdee8b0efaaa5703d7efb3",
+   "set": "holdout",
+   "seed_base": 70000000,
+   "opponent": "shipped net",
+   "date": "2026-10-05 15:20",
+   "note": "E40 frozen-WM control, final policy (40 updates)",
+   "radiant_wins": 181,
+   "radiant_losses": 0,
+   "radiant_games": 300,
+   "radiant_towers_ours": 3.735,
+   "radiant_towers_theirs": 0.0,
+   "radiant_kills": 1.421,
+   "radiant_deaths": 5.567,
+   "radiant_ticks": 5587.383,
+   "dire_wins": 0,
+   "dire_losses": 300,
+   "dire_games": 300,
+   "dire_towers_ours": 0.0,
+   "dire_towers_theirs": 4.295,
+   "dire_kills": 0.269,
+   "dire_deaths": 0.592,
+   "dire_ticks": 1131.33,
+   "radiant_rate": 0.6033333333333334,
+   "radiant_ci95": [
+    0.5470035716380164,
+    0.657050119495785
+   ],
+   "dire_rate": 0.0,
+   "dire_ci95": [
+    0.0,
+    0.012643429997735661
+   ]
+  }
+ ],
+ "headline": {
+  "policy": "ppol4_u69",
+  "set": "holdout",
+  "radiant_wins": 213,
+  "radiant_games": 300,
+  "radiant_rate": 0.71,
+  "radiant_ci95": [
+   0.6562534723961281,
+   0.7584362870048228
+  ],
+  "dire_wins": 0,
+  "dire_games": 300,
+  "dire_ci95": [
+   0.0,
+   0.012643429997735661
+  ],
+  "pooled_untouched": {
+   "radiant_wins": 421,
+   "radiant_games": 600,
+   "rate": 0.7016666666666667,
+   "ci95": [
+    0.6638680212177496,
+    0.7368993323398721
+   ]
+  }
+ },
+ "deltas_vs_headline": {
+  "e38_u0017": {
+   "diff": 0.3733333333333333,
+   "ci95": [
+    0.29625928148331426,
+    0.4437501628037733
+   ],
+   "other_rate": 0.33666666666666667
+  },
+  "ppol_u71": {
+   "diff": 0.17999999999999994,
+   "ci95": [
+    0.10256692379137546,
+    0.2544205223361686
+   ],
+   "other_rate": 0.53
+  },
+  "ppol4_u10": {
+   "diff": 0.15333333333333332,
+   "ci95": [
+    0.07632732487281656,
+    0.22781425126998217
+   ],
+   "other_rate": 0.5566666666666666
+  },
+  "ppol4_u49": {
+   "diff": 0.033333333333333326,
+   "ci95": [
+    -0.04035342028138883,
+    0.10652805066753097
+   ],
+   "other_rate": 0.6766666666666666
+  },
+  "shipped_net": {
+   "diff": -0.29000000000000004,
+   "ci95": [
+    -0.3437465276038719,
+    -0.2399407329166596
+   ],
+   "other_rate": 1.0
+  },
+  "random": {
+   "diff": 0.71,
+   "ci95": [
+    0.6547863644415494,
+    0.7584362870048228
+   ],
+   "other_rate": 0.0
+  },
+  "e14_armC": {
+   "diff": 0.71,
+   "ci95": [
+    0.6547863644415494,
+    0.7584362870048228
+   ],
+   "other_rate": 0.0
+  },
+  "e36_J_envs128_4x_s2": {
+   "diff": 0.6966666666666667,
+   "ci95": [
+    0.6391636725041946,
+    0.7457815911737458
+   ],
+   "other_rate": 0.013333333333333334
+  },
+  "e37_pf1_u7": {
+   "diff": 0.6533333333333333,
+   "ci95": [
+    0.5906792900098958,
+    0.7061218985809695
+   ],
+   "other_rate": 0.056666666666666664
+  },
+  "E40_fz_e38_u40": {
+   "diff": 0.19999999999999996,
+   "ci95": [
+    0.12232052708819921,
+    0.27429611612883453
+   ],
+   "other_rate": 0.51
+  },
+  "E40_fz_e38s1_u40": {
+   "diff": 0.24,
+   "ci95": [
+    0.16201904414891816,
+    0.31384623186372107
+   ],
+   "other_rate": 0.47
+  },
+  "E40_fz_dyna_u40": {
+   "diff": 0.1499999999999999,
+   "ci95": [
+    0.07305527962369336,
+    0.2244799125162067
+   ],
+   "other_rate": 0.56
+  },
+  "E40_fz_dynas1_u40": {
+   "diff": 0.10666666666666658,
+   "ci95": [
+    0.030678625863548678,
+    0.180957419465819
+   ],
+   "other_rate": 0.6033333333333334
+  }
+ },
+ "real_game_budget": {
+  "per_update_eval_games": 28680,
+  "anchor_check_games": 9600,
+  "collector_games": 7490,
+  "holdout_games": 9000,
+  "dream_agent_steps_rank0": {
+   "ppol": 65567770,
+   "ppol2": 55054805,
+   "ppol3": 17684770,
+   "ppol4": 170275995
+  },
+  "dream_agent_steps_total_approx": 2468666720,
+  "note": "the real game never provides policy gradients; it trains the world model (collector games) and selects checkpoints / anchors / resets (evaluation games)"
+ },
+ "anchor": {
+  "path": "results/moba/dream/ppol4_policies/policy_u0069.pt",
+  "update": 69,
+  "fixed": 44,
+  "fresh": 223,
+  "at": 74
+ },
+ "resets": {
+  "resets": 0,
+  "resets_ppol": 5,
+  "resets_ppol2": 4
+ }
+}

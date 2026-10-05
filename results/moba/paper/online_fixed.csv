@@ -1,0 +1,314 @@
+run,update,dire_towers,dire_wins,radiant_deaths,radiant_kills,radiant_ticks,radiant_towers,radiant_wins,setting,t,wm
+ppol,0,0.0,0,,,,3.8,27,"lr 3e-4, death penalty on, no KL",,"start (all_handcrafted u0017, E38)"
+ppol,10,,0,,,,,0,"lr 3e-4, death penalty on, no KL",,wm_00008_000400.pt
+ppol,26,0.02,0,,,,0.4,0,"lr 3e-4, death penalty on, no KL",10:07:25,wm_00018_000600.pt
+ppol,27,0.03,0,,,,0.53,0,"lr 3e-4, death penalty on, no KL",10:08:04,wm_00026_000800.pt
+ppol,30,0.0,0,,,,0.73,0,"lr 3e-4, death penalty on, no KL",10:10:44,wm_00026_000800.pt
+ppol,31,0.0,0,,,,3.15,24,"lr 3e-4, death penalty on, no KL",10:11:31,wm_00026_000800.pt
+ppol,32,0.0,0,,,,3.13,20,"lr 3e-4, death penalty on, no KL",10:12:40,wm_00026_000800.pt
+ppol,33,0.0,0,,,,3.17,21,"lr 3e-4, death penalty on, no KL",10:13:28,wm_00026_000800.pt
+ppol,34,0.0,0,,,,3.2,21,"lr 3e-4, death penalty on, no KL",10:14:17,wm_00026_000800.pt
+ppol,35,0.0,0,,,,3.05,13,"lr 3e-4, death penalty on, no KL",10:15:25,wm_00026_000800.pt
+ppol,36,0.0,0,,,,3.1,13,"lr 3e-4, death penalty on, no KL",10:16:04,wm_00035_001000.pt
+ppol,37,0.0,0,,,,3.23,7,"lr 3e-4, death penalty on, no KL",10:16:53,wm_00035_001000.pt
+ppol,38,0.0,0,,,,3.33,14,"lr 3e-4, death penalty on, no KL",10:18:08,wm_00035_001000.pt
+ppol,39,0.0,0,,,,2.98,3,"lr 3e-4, death penalty on, no KL",10:18:57,wm_00035_001000.pt
+ppol,40,0.0,0,,,,3.58,25,"lr 3e-4, death penalty on, no KL",10:19:44,wm_00035_001000.pt
+ppol,41,0.0,0,,,,3.48,19,"lr 3e-4, death penalty on, no KL",10:20:51,wm_00035_001000.pt
+ppol,42,0.0,0,,,,3.47,14,"lr 3e-4, death penalty on, no KL",10:21:38,wm_00035_001000.pt
+ppol,43,0.0,0,,,,3.43,12,"lr 3e-4, death penalty on, no KL",10:22:25,wm_00035_001000.pt
+ppol,44,0.0,0,,,,3.12,15,"lr 3e-4, death penalty on, no KL",10:23:13,wm_00035_001000.pt
+ppol,45,0.0,0,,,,3.48,15,"lr 3e-4, death penalty on, no KL",10:24:21,wm_00044_001200.pt
+ppol,46,0.0,0,,,,3.23,10,"lr 3e-4, death penalty on, no KL",10:25:10,wm_00044_001200.pt
+ppol,47,0.0,0,,,,3.15,6,"lr 3e-4, death penalty on, no KL",10:26:19,wm_00044_001200.pt
+ppol,48,0.0,0,,,,3.13,4,"lr 3e-4, death penalty on, no KL",10:27:07,wm_00044_001200.pt
+ppol,50,0.0,0,,,,2.98,2,"lr 3e-4, death penalty on, no KL",10:29:29,wm_00044_001200.pt
+ppol,51,0.0,0,,,,3.92,32,"lr 3e-4, death penalty on, no KL",10:30:08,wm_00044_001200.pt
+ppol,52,0.0,0,,,,3.77,29,"lr 3e-4, death penalty on, no KL",10:30:59,wm_00051_001400.pt
+ppol,53,0.0,0,,,,3.52,30,"lr 3e-4, death penalty on, no KL",10:31:47,wm_00051_001400.pt
+ppol,54,0.0,0,,,,3.78,32,"lr 3e-4, death penalty on, no KL",10:32:36,wm_00051_001400.pt
+ppol,55,0.0,0,,,,3.78,24,"lr 3e-4, death penalty on, no KL",10:33:25,wm_00051_001400.pt
+ppol,56,0.0,0,,,,3.42,14,"lr 3e-4, death penalty on, no KL",10:34:36,wm_00051_001400.pt
+ppol,57,0.0,0,,,,3.33,20,"lr 3e-4, death penalty on, no KL",10:35:24,wm_00051_001400.pt
+ppol,58,0.0,0,,,,3.5,20,"lr 3e-4, death penalty on, no KL",10:36:35,wm_00051_001400.pt
+ppol,59,0.0,0,,,,3.38,13,"lr 3e-4, death penalty on, no KL",10:37:13,wm_00058_001600.pt
+ppol,60,0.0,0,,,,2.78,13,"lr 3e-4, death penalty on, no KL",10:38:12,wm_00058_001600.pt
+ppol,61,0.03,0,,,,3.2,6,"lr 3e-4, death penalty on, no KL",10:39:21,wm_00058_001600.pt
+ppol,62,0.02,0,,,,2.78,9,"lr 3e-4, death penalty on, no KL",10:40:12,wm_00058_001600.pt
+ppol,63,0.1,0,,,,2.98,4,"lr 3e-4, death penalty on, no KL",10:41:02,wm_00058_001600.pt
+ppol,64,0.0,0,,,,3.73,25,"lr 3e-4, death penalty on, no KL",10:42:09,wm_00058_001600.pt
+ppol,65,0.0,0,,,,3.68,17,"lr 3e-4, death penalty on, no KL",10:42:47,wm_00058_001600.pt
+ppol,66,0.0,0,,,,3.7,14,"lr 3e-4, death penalty on, no KL",10:43:36,wm_00065_001800.pt
+ppol,67,0.0,0,,,,3.63,8,"lr 3e-4, death penalty on, no KL",10:44:44,wm_00065_001800.pt
+ppol,68,0.0,0,,,,3.43,13,"lr 3e-4, death penalty on, no KL",10:45:33,wm_00065_001800.pt
+ppol,69,0.02,0,,,,3.57,9,"lr 3e-4, death penalty on, no KL",10:46:40,wm_00065_001800.pt
+ppol,70,0.02,0,,,,3.1,3,"lr 3e-4, death penalty on, no KL",10:47:29,wm_00065_001800.pt
+ppol,71,0.0,0,,,,3.67,34,"lr 3e-4, death penalty on, no KL",10:48:16,wm_00065_001800.pt
+ppol,72,0.0,0,,,,3.95,32,"lr 3e-4, death penalty on, no KL",10:49:24,wm_00065_001800.pt
+ppol,73,0.0,0,,,,3.73,22,"lr 3e-4, death penalty on, no KL",10:50:12,wm_00065_001800.pt
+ppol2,0,0.0,0,,,,3.67,34,"lr 5e-5, death penalty on, no KL",10:48:16,wm_00065_001800.pt
+ppol2,1,0.0,0,,,,3.67,31,"lr 5e-5, death penalty on, no KL",10:55:31,start
+ppol2,4,0.0,0,,,,3.17,11,"lr 5e-5, death penalty on, no KL",10:56:26,start
+ppol2,5,0.0,0,,,,3.25,8,"lr 5e-5, death penalty on, no KL",10:57:27,wm_00004_002200.pt
+ppol2,6,0.0,0,,,,3.45,5,"lr 5e-5, death penalty on, no KL",10:58:20,wm_00004_002200.pt
+ppol2,7,0.02,0,,,,3.18,6,"lr 5e-5, death penalty on, no KL",10:59:02,wm_00004_002200.pt
+ppol2,8,0.0,0,,,,3.32,5,"lr 5e-5, death penalty on, no KL",11:00:03,wm_00004_002200.pt
+ppol2,9,0.0,0,,,,3.33,2,"lr 5e-5, death penalty on, no KL",11:00:55,wm_00004_002200.pt
+ppol2,10,0.02,0,,,,2.9,4,"lr 5e-5, death penalty on, no KL",11:01:45,wm_00004_002200.pt
+ppol2,27,0.0,0,,,,1.63,0,"lr 5e-5, death penalty on, no KL",11:17:37,wm_00011_002400.pt
+ppol2,28,0.0,0,,,,1.48,0,"lr 5e-5, death penalty on, no KL",11:18:32,wm_00011_002400.pt
+ppol2,29,0.0,0,,,,1.73,1,"lr 5e-5, death penalty on, no KL",11:19:14,wm_00013_002800.pt
+ppol2,30,0.0,0,,,,1.52,0,"lr 5e-5, death penalty on, no KL",11:20:20,wm_00013_002800.pt
+ppol2,31,0.0,0,,,,4.02,29,"lr 5e-5, death penalty on, no KL",11:20:59,wm_00013_002800.pt
+ppol2,32,0.0,0,,,,4.42,24,"lr 5e-5, death penalty on, no KL",11:21:49,wm_00031_003000.pt
+ppol2,33,0.0,0,,,,3.67,13,"lr 5e-5, death penalty on, no KL",11:22:58,wm_00031_003000.pt
+ppol2,34,0.0,0,,,,3.35,6,"lr 5e-5, death penalty on, no KL",11:23:48,wm_00031_003000.pt
+ppol2,35,0.02,0,,,,3.0,4,"lr 5e-5, death penalty on, no KL",11:24:27,wm_00031_003000.pt
+ppol2,36,0.02,0,,,,3.13,3,"lr 5e-5, death penalty on, no KL",11:25:36,wm_00031_003000.pt
+ppol2,37,0.02,0,,,,3.08,5,"lr 5e-5, death penalty on, no KL",11:26:37,wm_00031_003000.pt
+ppol2,38,0.0,0,,,,3.85,24,"lr 5e-5, death penalty on, no KL",11:27:27,wm_00031_003000.pt
+ppol2,39,0.0,0,,,,3.8,18,"lr 5e-5, death penalty on, no KL",11:28:18,wm_00038_003200.pt
+ppol2,40,0.0,0,,,,3.8,14,"lr 5e-5, death penalty on, no KL",11:29:10,wm_00038_003200.pt
+ppol2,41,0.0,0,,,,3.32,13,"lr 5e-5, death penalty on, no KL",11:30:22,wm_00038_003200.pt
+ppol2,42,0.02,0,,,,2.9,7,"lr 5e-5, death penalty on, no KL",11:31:14,wm_00038_003200.pt
+ppol2,43,0.0,0,,,,2.72,2,"lr 5e-5, death penalty on, no KL",11:32:04,wm_00038_003200.pt
+ppol2,44,0.03,0,,,,2.72,1,"lr 5e-5, death penalty on, no KL",11:33:07,wm_00038_003200.pt
+ppol2,45,0.03,0,,,,2.37,0,"lr 5e-5, death penalty on, no KL",11:33:49,wm_00038_003200.pt
+ppol2,46,0.0,0,,,,4.03,31,"lr 5e-5, death penalty on, no KL",11:34:39,wm_00045_003400.pt
+ppol2,47,0.0,0,,,,3.93,20,"lr 5e-5, death penalty on, no KL",11:36:01,wm_00045_003400.pt
+ppol2,48,0.0,0,,,,3.95,14,"lr 5e-5, death penalty on, no KL",11:36:42,wm_00045_003400.pt
+ppol2,49,0.0,0,,,,4.07,19,"lr 5e-5, death penalty on, no KL",11:37:22,wm_00045_003400.pt
+ppol2,50,0.0,0,,,,3.48,6,"lr 5e-5, death penalty on, no KL",11:38:32,wm_00045_003400.pt
+ppol2,51,0.0,0,,,,3.38,9,"lr 5e-5, death penalty on, no KL",11:39:25,wm_00045_003400.pt
+ppol2,52,0.0,0,,,,3.32,11,"lr 5e-5, death penalty on, no KL",11:40:26,wm_00045_003400.pt
+ppol2,53,0.0,0,,,,3.23,12,"lr 5e-5, death penalty on, no KL",11:41:20,wm_00052_003600.pt
+ppol2,54,0.0,0,,,,3.82,16,"lr 5e-5, death penalty on, no KL",11:42:22,wm_00052_003600.pt
+ppol2,55,0.0,0,,,,4.07,35,"lr 5e-5, death penalty on, no KL",11:43:30,wm_00052_003600.pt
+ppol2,56,0.0,0,,,,4.12,31,"lr 5e-5, death penalty on, no KL",11:44:12,wm_00052_003600.pt
+ppol2,57,0.0,0,,,,3.97,27,"lr 5e-5, death penalty on, no KL",11:45:05,wm_00052_003600.pt
+ppol2,58,0.0,0,,,,3.65,32,"lr 5e-5, death penalty on, no KL",11:46:07,wm_00052_003600.pt
+ppol2,59,0.0,0,,,,3.57,30,"lr 5e-5, death penalty on, no KL",11:46:58,wm_00052_003600.pt
+ppol2,60,0.0,0,,,,3.73,35,"lr 5e-5, death penalty on, no KL",11:47:40,wm_00052_003600.pt
+ppol2,61,0.0,0,,,,3.77,29,"lr 5e-5, death penalty on, no KL",11:48:42,wm_00052_003600.pt
+ppol3,1,0.0,0,,,,4.13,34,"lr 5e-5, death 0, KL 1.0 to anchor",12:15:33,start
+ppol3,3,0.0,0,,,,4.3,37,"lr 5e-5, death 0, KL 1.0 to anchor",12:18:21,start
+ppol3,8,0.0,0,,,,3.75,32,"lr 5e-5, death 0, KL 1.0 to anchor",12:22:04,start
+ppol3,9,0.0,0,,,,3.85,35,"lr 5e-5, death 0, KL 1.0 to anchor",12:23:05,start
+ppol3,13,0.0,0,,,,4.1,36,"lr 5e-5, death 0, KL 1.0 to anchor",12:26:45,start
+ppol3,17,0.0,0,,,,4.05,35,"lr 5e-5, death 0, KL 1.0 to anchor",12:31:00,wm_00014_000200.pt
+ppol4,1,0.0,0,,,,3.73,36,"lr 5e-5, death 0, KL 0.3 to anchor",12:35:11,start
+ppol4,4,0.0,0,,,,3.82,30,"lr 5e-5, death 0, KL 0.3 to anchor",12:39:01,start
+ppol4,5,0.0,0,,,,4.0,35,"lr 5e-5, death 0, KL 0.3 to anchor",12:39:41,start
+ppol4,10,0.0,0,,,,3.88,38,"lr 5e-5, death 0, KL 0.3 to anchor",12:43:48,wm_00007_000600.pt
+ppol4,14,0.0,0,,,,3.82,28,"lr 5e-5, death 0, KL 0.3 to anchor",12:47:40,wm_00013_000800.pt
+ppol4,15,0.0,0,,,,3.68,24,"lr 5e-5, death 0, KL 0.3 to anchor",12:48:22,wm_00013_000800.pt
+ppol4,16,0.0,0,,,,3.78,33,"lr 5e-5, death 0, KL 0.3 to anchor",12:49:34,wm_00013_000800.pt
+ppol4,17,0.0,0,,,,4.32,34,"lr 5e-5, death 0, KL 0.3 to anchor",12:50:18,wm_00013_000800.pt
+ppol4,18,0.0,0,,,,3.6,29,"lr 5e-5, death 0, KL 0.3 to anchor",12:51:20,wm_00013_000800.pt
+ppol4,19,0.0,0,,,,4.07,35,"lr 5e-5, death 0, KL 0.3 to anchor",12:52:02,wm_00013_000800.pt
+ppol4,20,0.0,0,,,,4.07,37,"lr 5e-5, death 0, KL 0.3 to anchor",12:53:24,wm_00013_000800.pt
+ppol4,21,0.0,0,,,,3.82,32,"lr 5e-5, death 0, KL 0.3 to anchor",12:54:17,wm_00013_000800.pt
+ppol4,22,0.0,0,,,,4.08,30,"lr 5e-5, death 0, KL 0.3 to anchor",12:55:07,wm_00021_001000.pt
+ppol4,23,0.0,0,,,,4.15,39,"lr 5e-5, death 0, KL 0.3 to anchor",12:55:49,wm_00021_001000.pt
+ppol4,27,0.0,0,,,,3.8,35,"lr 5e-5, death 0, KL 0.3 to anchor",12:59:47,wm_00021_001000.pt
+ppol4,28,0.0,0,,,,3.6,33,"lr 5e-5, death 0, KL 0.3 to anchor",13:00:29,wm_00021_001000.pt
+ppol4,29,0.0,0,,,,3.7,30,"lr 5e-5, death 0, KL 0.3 to anchor",13:01:31,wm_00021_001000.pt
+ppol4,30,0.0,0,,,,3.62,28,"lr 5e-5, death 0, KL 0.3 to anchor",13:02:44,wm_00029_001200.pt
+ppol4,31,0.0,0,,,,3.75,29,"lr 5e-5, death 0, KL 0.3 to anchor",13:03:37,wm_00029_001200.pt
+ppol4,32,0.0,0,,,,3.43,20,"lr 5e-5, death 0, KL 0.3 to anchor",13:04:20,wm_00029_001200.pt
+ppol4,33,0.0,0,,,,3.92,29,"lr 5e-5, death 0, KL 0.3 to anchor",13:05:24,wm_00029_001200.pt
+ppol4,34,0.0,0,,,,3.95,29,"lr 5e-5, death 0, KL 0.3 to anchor",13:06:07,wm_00029_001200.pt
+ppol4,35,0.0,0,,,,4.1,27,"lr 5e-5, death 0, KL 0.3 to anchor",13:07:19,wm_00029_001200.pt
+ppol4,36,0.0,0,,,,3.93,40,"lr 5e-5, death 0, KL 0.3 to anchor",13:08:21,wm_00035_001400.pt
+ppol4,40,0.0,0,,,,3.98,28,"lr 5e-5, death 0, KL 0.3 to anchor",13:12:34,wm_00035_001400.pt
+ppol4,41,0.0,0,,,,4.0,31,"lr 5e-5, death 0, KL 0.3 to anchor",13:13:21,wm_00035_001400.pt
+ppol4,42,0.0,0,,,,3.88,38,"lr 5e-5, death 0, KL 0.3 to anchor",13:14:05,wm_00041_001600.pt
+ppol4,46,0.0,0,,,,3.87,29,"lr 5e-5, death 0, KL 0.3 to anchor",13:17:52,wm_00041_001600.pt
+ppol4,47,0.0,0,,,,3.93,31,"lr 5e-5, death 0, KL 0.3 to anchor",13:18:43,wm_00041_001600.pt
+ppol4,48,0.0,0,,,,3.52,37,"lr 5e-5, death 0, KL 0.3 to anchor",13:19:41,wm_00041_001600.pt
+ppol4,49,0.0,0,,,,3.72,41,"lr 5e-5, death 0, KL 0.3 to anchor",13:20:20,wm_00048_001800.pt
+ppol4,63,0.0,0,,,,3.47,40,"lr 5e-5, death 0, KL 0.3 to anchor",13:33:48,wm_00048_001800.pt
+ppol4,64,0.0,0,,,,3.67,41,"lr 5e-5, death 0, KL 0.3 to anchor",13:34:28,wm_00048_001800.pt
+ppol4,69,0.0,0,,,,4.25,44,"lr 5e-5, death 0, KL 0.3 to anchor",13:38:55,wm_00055_002200.pt
+ppol4,72,0.0,0,,,,3.78,40,"lr 5e-5, death 0, KL 0.3 to anchor",13:42:52,wm_00067_002400.pt
+ppol4,73,0.0,0,,,,4.27,39,"lr 5e-5, death 0, KL 0.3 to anchor",13:43:33,wm_00067_002400.pt
+ppol4,74,0.0,0,,,,4.37,41,"lr 5e-5, death 0, KL 0.3 to anchor",13:44:17,wm_00067_002400.pt
+ppol4,75,0.0,0,,,,3.87,48,"lr 5e-5, death 0, KL 0.3 to anchor",13:44:59,wm_00067_002400.pt
+ppol4,79,0.0,0,,,,3.9,36,"lr 5e-5, death 0, KL 0.3 to anchor",13:48:52,wm_00077_002600.pt
+ppol4,80,0.0,0,,,,4.05,45,"lr 5e-5, death 0, KL 0.3 to anchor",13:49:34,wm_00077_002600.pt
+ppol4,84,0.0,0,,,,4.1,43,"lr 5e-5, death 0, KL 0.3 to anchor",13:53:26,wm_00077_002600.pt
+ppol4,85,0.0,0,,,,3.65,40,"lr 5e-5, death 0, KL 0.3 to anchor",13:54:19,wm_00077_002600.pt
+ppol4,86,0.0,0,,,,4.13,37,"lr 5e-5, death 0, KL 0.3 to anchor",13:55:12,wm_00085_002800.pt
+ppol4,87,0.0,0,,,,3.9,39,"lr 5e-5, death 0, KL 0.3 to anchor",13:56:16,wm_00085_002800.pt
+ppol4,88,0.0,0,,,,3.82,32,"lr 5e-5, death 0, KL 0.3 to anchor",13:56:59,wm_00085_002800.pt
+ppol4,89,0.0,0,,,,4.15,38,"lr 5e-5, death 0, KL 0.3 to anchor",13:57:53,wm_00085_002800.pt
+ppol4,90,0.0,0,,,,4.13,35,"lr 5e-5, death 0, KL 0.3 to anchor",13:58:46,wm_00085_002800.pt
+ppol4,91,0.0,0,,,,4.43,37,"lr 5e-5, death 0, KL 0.3 to anchor",13:59:50,wm_00085_002800.pt
+ppol4,92,0.0,0,,,,4.12,36,"lr 5e-5, death 0, KL 0.3 to anchor",14:01:19,wm_00085_002800.pt
+ppol4,93,0.0,0,,,,4.22,40,"lr 5e-5, death 0, KL 0.3 to anchor",14:02:02,wm_00085_002800.pt
+ppol4,94,0.0,0,,,,4.22,38,"lr 5e-5, death 0, KL 0.3 to anchor",14:02:46,wm_00085_002800.pt
+ppol4,95,0.0,0,,,,4.2,42,"lr 5e-5, death 0, KL 0.3 to anchor",14:03:38,wm_00094_003000.pt
+ppol4,96,0.0,0,,,,3.75,42,"lr 5e-5, death 0, KL 0.3 to anchor",14:04:22,wm_00094_003000.pt
+ppol4,97,0.0,0,,,,4.17,39,"lr 5e-5, death 0, KL 0.3 to anchor",14:05:59,wm_00094_003000.pt
+ppol4,98,0.0,0,,,,3.92,44,"lr 5e-5, death 0, KL 0.3 to anchor",14:06:43,wm_00094_003000.pt
+ppol4,102,0.0,0,,,,3.78,43,"lr 5e-5, death 0, KL 0.3 to anchor",14:10:48,wm_00094_003000.pt
+ppol4,103,0.0,0,,,,4.13,42,"lr 5e-5, death 0, KL 0.3 to anchor",14:11:36,wm_00102_003200.pt
+ppol4,104,0.0,0,,,,4.1,44,"lr 5e-5, death 0, KL 0.3 to anchor",14:12:21,wm_00102_003200.pt
+ppol4,109,0.0,0,,,,3.65,37,"lr 5e-5, death 0, KL 0.3 to anchor",14:17:01,wm_00102_003200.pt
+ppol4,110,0.0,0,,,,3.8,41,"lr 5e-5, death 0, KL 0.3 to anchor",14:17:45,wm_00102_003200.pt
+ppol4,111,0.0,0,,,,3.9,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:18:38,wm_00110_003400.pt
+ppol4,112,0.0,0,,,,3.87,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:19:24,wm_00110_003400.pt
+ppol4,113,0.0,0,,,,3.65,28,"lr 5e-5, death 0, KL 0.3 to anchor",14:20:20,wm_00110_003400.pt
+ppol4,114,0.0,0,,,,4.08,35,"lr 5e-5, death 0, KL 0.3 to anchor",14:21:26,wm_00110_003400.pt
+ppol4,115,0.0,0,,,,3.68,29,"lr 5e-5, death 0, KL 0.3 to anchor",14:22:29,wm_00110_003400.pt
+ppol4,116,0.0,0,,,,4.15,24,"lr 5e-5, death 0, KL 0.3 to anchor",14:23:14,wm_00110_003400.pt
+ppol4,117,0.0,0,,,,4.13,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:24:30,wm_00110_003400.pt
+ppol4,118,0.0,0,,,,4.07,32,"lr 5e-5, death 0, KL 0.3 to anchor",14:25:16,wm_00110_003400.pt
+ppol4,119,0.0,0,,,,3.78,34,"lr 5e-5, death 0, KL 0.3 to anchor",14:26:38,wm_00118_003600.pt
+ppol4,120,0.0,0,,,,3.77,40,"lr 5e-5, death 0, KL 0.3 to anchor",14:27:24,wm_00118_003600.pt
+ppol4,121,0.0,0,,,,3.75,36,"lr 5e-5, death 0, KL 0.3 to anchor",14:28:49,wm_00118_003600.pt
+ppol4,122,0.0,0,,,,3.9,37,"lr 5e-5, death 0, KL 0.3 to anchor",14:30:56,wm_00118_003600.pt
+ppol4,125,0.0,0,,,,3.98,35,"lr 5e-5, death 0, KL 0.3 to anchor",14:31:57,wm_00118_003600.pt
+ppol4,126,0.0,0,,,,3.88,35,"lr 5e-5, death 0, KL 0.3 to anchor",14:32:40,wm_00118_003600.pt
+ppol4,127,0.0,0,,,,4.22,40,"lr 5e-5, death 0, KL 0.3 to anchor",14:33:57,wm_00118_003600.pt
+ppol4,128,0.0,0,,,,4.27,43,"lr 5e-5, death 0, KL 0.3 to anchor",14:34:42,wm_00127_003800.pt
+ppol4,129,0.0,0,,,,3.97,43,"lr 5e-5, death 0, KL 0.3 to anchor",14:35:37,wm_00127_003800.pt
+ppol4,130,0.0,0,,,,3.57,40,"lr 5e-5, death 0, KL 0.3 to anchor",14:36:32,wm_00127_003800.pt
+ppol4,131,0.0,0,,,,3.77,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:37:16,wm_00127_003800.pt
+ppol4,132,0.0,0,,,,3.65,34,"lr 5e-5, death 0, KL 0.3 to anchor",14:38:35,wm_00127_003800.pt
+ppol4,133,0.0,0,,,,3.62,31,"lr 5e-5, death 0, KL 0.3 to anchor",14:39:19,wm_00127_003800.pt
+ppol4,134,0.0,0,,,,3.42,26,"lr 5e-5, death 0, KL 0.3 to anchor",14:40:14,wm_00127_003800.pt
+ppol4,135,0.0,0,,,,3.42,27,"lr 5e-5, death 0, KL 0.3 to anchor",14:41:01,wm_00127_003800.pt
+ppol4,136,0.0,0,,,,3.43,24,"lr 5e-5, death 0, KL 0.3 to anchor",14:42:17,wm_00127_003800.pt
+ppol4,137,0.0,0,,,,3.53,24,"lr 5e-5, death 0, KL 0.3 to anchor",14:43:03,wm_00127_003800.pt
+ppol4,138,0.0,0,,,,3.1,24,"lr 5e-5, death 0, KL 0.3 to anchor",14:44:10,wm_00127_003800.pt
+ppol4,139,0.02,0,,,,3.3,20,"lr 5e-5, death 0, KL 0.3 to anchor",14:45:06,wm_00127_003800.pt
+ppol4,140,0.0,0,,,,3.55,30,"lr 5e-5, death 0, KL 0.3 to anchor",14:45:52,wm_00139_004000.pt
+ppol4,141,0.0,0,,,,3.55,34,"lr 5e-5, death 0, KL 0.3 to anchor",14:47:08,wm_00139_004000.pt
+ppol4,142,0.0,0,,,,3.75,29,"lr 5e-5, death 0, KL 0.3 to anchor",14:47:56,wm_00139_004000.pt
+ppol4,143,0.0,0,,,,3.93,37,"lr 5e-5, death 0, KL 0.3 to anchor",14:48:40,wm_00139_004000.pt
+ppol4,144,0.0,0,,,,3.35,30,"lr 5e-5, death 0, KL 0.3 to anchor",14:49:42,wm_00139_004000.pt
+ppol4,145,0.0,0,,,,3.78,38,"lr 5e-5, death 0, KL 0.3 to anchor",14:51:06,wm_00139_004000.pt
+ppol4,146,0.0,0,,,,3.62,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:51:54,wm_00139_004000.pt
+ppol4,147,0.0,0,,,,3.85,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:52:41,wm_00139_004000.pt
+ppol4,148,0.0,0,,,,3.8,36,"lr 5e-5, death 0, KL 0.3 to anchor",14:53:30,wm_00139_004000.pt
+ppol4,149,0.0,0,,,,4.03,33,"lr 5e-5, death 0, KL 0.3 to anchor",14:54:29,wm_00139_004000.pt
+ppol4,150,0.0,0,,,,3.9,21,"lr 5e-5, death 0, KL 0.3 to anchor",14:55:17,wm_00149_004200.pt
+ppol4,151,0.0,0,,,,4.13,34,"lr 5e-5, death 0, KL 0.3 to anchor",14:56:34,wm_00149_004200.pt
+ppol4,152,0.0,0,,,,4.05,30,"lr 5e-5, death 0, KL 0.3 to anchor",14:57:53,wm_00149_004200.pt
+ppol4,153,0.0,0,,,,3.98,31,"lr 5e-5, death 0, KL 0.3 to anchor",14:58:38,wm_00149_004200.pt
+ppol4,154,0.0,0,,,,4.07,25,"lr 5e-5, death 0, KL 0.3 to anchor",15:00:13,wm_00149_004200.pt
+ppol4,156,0.0,0,,,,3.75,25,"lr 5e-5, death 0, KL 0.3 to anchor",15:01:41,wm_00149_004200.pt
+ppol4,157,0.0,0,,,,3.97,34,"lr 5e-5, death 0, KL 0.3 to anchor",15:02:54,wm_00156_004400.pt
+ppol4,159,0.0,0,,,,3.73,28,"lr 5e-5, death 0, KL 0.3 to anchor",15:03:40,wm_00156_004400.pt
+ppol4,160,0.0,0,,,,3.82,27,"lr 5e-5, death 0, KL 0.3 to anchor",15:04:54,wm_00156_004400.pt
+ppol4,161,0.0,0,,,,3.73,27,"lr 5e-5, death 0, KL 0.3 to anchor",15:05:37,wm_00156_004400.pt
+ppol4,162,0.0,0,,,,3.83,32,"lr 5e-5, death 0, KL 0.3 to anchor",15:06:31,wm_00156_004400.pt
+ppol4,163,0.0,0,,,,3.5,17,"lr 5e-5, death 0, KL 0.3 to anchor",15:07:36,wm_00156_004400.pt
+ppol4,164,0.0,0,,,,4.42,32,"lr 5e-5, death 0, KL 0.3 to anchor",15:08:31,wm_00156_004400.pt
+ppol4,165,0.0,0,,,,4.28,28,"lr 5e-5, death 0, KL 0.3 to anchor",15:09:15,wm_00156_004400.pt
+ppol4,166,0.0,0,,,,3.92,30,"lr 5e-5, death 0, KL 0.3 to anchor",15:10:28,wm_00156_004400.pt
+ppol4,167,0.0,0,,,,4.07,20,"lr 5e-5, death 0, KL 0.3 to anchor",15:11:17,wm_00166_004600.pt
+ppol4,168,0.0,0,,,,3.92,18,"lr 5e-5, death 0, KL 0.3 to anchor",15:12:22,wm_00166_004600.pt
+ppol4,169,0.0,0,,,,4.08,30,"lr 5e-5, death 0, KL 0.3 to anchor",15:13:30,wm_00166_004600.pt
+ppol4,170,0.0,0,,,,4.1,24,"lr 5e-5, death 0, KL 0.3 to anchor",15:14:13,wm_00166_004600.pt
+ppol4,171,0.0,0,,,,4.1,35,"lr 5e-5, death 0, KL 0.3 to anchor",15:15:09,wm_00166_004600.pt
+ppol4,172,0.0,0,,,,3.88,40,"lr 5e-5, death 0, KL 0.3 to anchor",15:16:45,wm_00166_004600.pt
+ppol4,173,0.0,0,,,,3.93,32,"lr 5e-5, death 0, KL 0.3 to anchor",15:18:20,wm_00166_004600.pt
+ppol4,175,0.0,0,,,,3.78,36,"lr 5e-5, death 0, KL 0.3 to anchor",15:19:37,wm_00166_004600.pt
+ppol4,176,0.0,0,,,,3.48,41,"lr 5e-5, death 0, KL 0.3 to anchor",15:20:22,wm_00175_004800.pt
+ppol4,177,0.0,0,,,,3.78,38,"lr 5e-5, death 0, KL 0.3 to anchor",15:21:06,wm_00175_004800.pt
+ppol4,178,0.0,0,,,,3.77,33,"lr 5e-5, death 0, KL 0.3 to anchor",15:22:00,wm_00175_004800.pt
+ppol4,179,0.0,0,,,,4.53,43,"lr 5e-5, death 0, KL 0.3 to anchor",15:22:57,wm_00175_004800.pt
+ppol4,180,0.0,0,,,,3.87,37,"lr 5e-5, death 0, KL 0.3 to anchor",15:23:42,wm_00175_004800.pt
+ppol4,181,0.0,0,,,,3.9,32,"lr 5e-5, death 0, KL 0.3 to anchor",15:24:42,wm_00175_004800.pt
+ppol4,182,0.0,0,,,,4.03,33,"lr 5e-5, death 0, KL 0.3 to anchor",15:25:36,wm_00175_004800.pt
+ppol4,183,0.0,0,,,,4.18,37,"lr 5e-5, death 0, KL 0.3 to anchor",15:26:32,wm_00175_004800.pt
+ppol4,184,0.0,0,,,,4.12,34,"lr 5e-5, death 0, KL 0.3 to anchor",15:27:37,wm_00175_004800.pt
+ppol4,185,0.0,0,,,,3.77,27,"lr 5e-5, death 0, KL 0.3 to anchor",15:28:20,wm_00175_004800.pt
+ppol4,186,0.0,0,,,,4.02,36,"lr 5e-5, death 0, KL 0.3 to anchor",15:29:34,wm_00175_004800.pt
+ppol4,187,0.0,0,,,,4.02,34,"lr 5e-5, death 0, KL 0.3 to anchor",15:30:19,wm_00175_004800.pt
+ppol4,188,0.0,0,,,,4.0,27,"lr 5e-5, death 0, KL 0.3 to anchor",15:32:13,wm_00175_004800.pt
+ppol4,189,0.0,0,,,,4.03,31,"lr 5e-5, death 0, KL 0.3 to anchor",15:33:00,wm_00175_004800.pt
+ppol4,190,0.0,0,,,,3.77,27,"lr 5e-5, death 0, KL 0.3 to anchor",15:33:54,wm_00175_004800.pt
+ppol4,191,0.0,0,,,,3.78,29,"lr 5e-5, death 0, KL 0.3 to anchor",15:34:54,wm_00190_005000.pt
+ppol4,192,0.0,0,,,,3.78,22,"lr 5e-5, death 0, KL 0.3 to anchor",15:35:38,wm_00190_005000.pt
+ppol4,193,0.0,0,,,,4.28,34,"lr 5e-5, death 0, KL 0.3 to anchor",15:36:38,wm_00190_005000.pt
+ppol4,194,0.0,0,,,,3.83,25,"lr 5e-5, death 0, KL 0.3 to anchor",15:37:40,wm_00190_005000.pt
+ppol4,195,0.0,0,,,,4.43,29,"lr 5e-5, death 0, KL 0.3 to anchor",15:38:23,wm_00190_005000.pt
+ppol4,196,0.0,0,,,,3.98,33,"lr 5e-5, death 0, KL 0.3 to anchor",15:39:05,wm_00190_005000.pt
+ppol4,197,0.0,0,,,,3.92,29,"lr 5e-5, death 0, KL 0.3 to anchor",15:39:56,wm_00190_005000.pt
+abl_ent0,5,0.0,0,6.48,1.52,5768.63,3.85,22,entropy bonus 0,11:55:41,
+abl_ent0,7,0.0,0,6.62,1.49,5772.38,3.95,23,entropy bonus 0,11:57:48,
+abl_ent0,9,0.0,0,6.81,1.48,5798.28,3.4,17,entropy bonus 0,12:00:01,
+abl_ent0,12,0.0,0,6.38,0.97,5955.82,2.7,3,entropy bonus 0,12:02:05,
+abl_ent0,14,0.0,0,6.42,1.04,5967.55,2.85,4,entropy bonus 0,12:04:11,
+abl_ent0,16,0.0,0,6.36,0.97,5957.8,2.7,3,entropy bonus 0,12:06:18,
+abl_ent0,19,0.0,0,6.34,0.88,6000.0,2.6,0,entropy bonus 0,12:08:26,
+abl_ent0,21,0.0,0,4.99,0.61,6000.0,1.95,0,entropy bonus 0,12:10:35,
+abl_death0,6,0.0,0,5.98,1.39,5763.48,3.9,27,death penalty 0,11:56:23,
+abl_death0,8,0.0,0,5.85,1.65,5633.0,3.95,35,death penalty 0,11:58:30,
+abl_death0,11,0.0,0,5.91,1.57,5761.42,3.55,28,death penalty 0,12:00:42,
+abl_death0,13,0.0,0,5.68,1.23,5761.13,3.65,32,death penalty 0,12:02:47,
+abl_death0,15,0.0,0,4.84,0.95,5696.72,3.3,24,death penalty 0,12:04:53,
+abl_death0,18,0.0,0,4.69,0.94,5745.68,3.6,30,death penalty 0,12:07:01,
+abl_death0,20,0.0,0,4.01,0.52,5844.48,2.9,17,death penalty 0,12:09:10,
+abl_death0,22,0.0,0,4.2,0.67,5813.83,2.8,19,death penalty 0,12:11:33,
+abl_kl,6,0.0,0,5.7,1.36,5682.43,3.9,35,KL 1.0 to u71,11:57:05,
+abl_kl,8,0.0,0,6.05,1.57,5655.77,3.45,35,KL 1.0 to u71,11:59:19,
+abl_kl,10,0.0,0,5.83,1.43,5691.93,4.0,30,KL 1.0 to u71,12:01:23,
+abl_kl,13,0.0,0,5.99,1.48,5501.95,3.9,41,KL 1.0 to u71,12:03:29,
+abl_kl,15,0.0,0,5.95,1.6,5672.53,4.1,38,KL 1.0 to u71,12:05:34,
+abl_kl,17,0.0,0,6.1,1.49,5638.27,3.65,29,KL 1.0 to u71,12:07:42,
+abl_kl,20,0.0,0,5.83,1.47,5649.75,3.85,29,KL 1.0 to u71,12:09:52,
+abl_kl,22,0.0,0,6.1,1.52,5616.12,4.0,32,KL 1.0 to u71,12:12:16,
+fz_e38,1,0.0,0,5.72,1.36,5701.55,3.35,28,"frozen E38 dream (no policy games), seed 0",14:33:58,
+fz_e38,4,0.0,0,5.74,1.25,5618.35,3.5,35,"frozen E38 dream (no policy games), seed 0",14:37:02,
+fz_e38,8,0.0,0,5.72,1.38,5696.7,3.6,27,"frozen E38 dream (no policy games), seed 0",14:40:08,
+fz_e38,12,0.0,0,5.55,1.21,5672.87,3.4,30,"frozen E38 dream (no policy games), seed 0",14:43:24,
+fz_e38,15,0.0,0,5.63,1.3,5450.33,3.3,37,"frozen E38 dream (no policy games), seed 0",14:46:44,
+fz_e38,19,0.0,0,5.62,1.01,5624.3,3.3,31,"frozen E38 dream (no policy games), seed 0",14:50:00,
+fz_e38,23,0.0,0,5.65,1.28,5605.32,3.3,28,"frozen E38 dream (no policy games), seed 0",14:53:21,
+fz_e38,27,0.0,0,5.68,1.1,5704.85,3.4,22,"frozen E38 dream (no policy games), seed 0",14:56:41,
+fz_e38,29,0.0,0,5.51,1.09,5552.83,3.4,33,"frozen E38 dream (no policy games), seed 0",14:58:15,
+fz_e38,30,0.0,0,5.67,1.1,5731.57,3.1,24,"frozen E38 dream (no policy games), seed 0",14:59:50,
+fz_e38,33,0.0,0,5.55,0.96,5669.77,3.45,26,"frozen E38 dream (no policy games), seed 0",15:01:36,
+fz_e38,34,0.0,0,6.15,1.33,5797.3,3.5,20,"frozen E38 dream (no policy games), seed 0",15:03:25,
+fz_e38,36,0.0,0,5.5,1.12,5665.65,3.15,30,"frozen E38 dream (no policy games), seed 0",15:05:00,
+fz_e38,37,0.0,0,5.59,1.03,5633.9,3.35,32,"frozen E38 dream (no policy games), seed 0",15:05:52,
+fz_e38,38,0.0,0,5.38,0.92,5698.75,3.35,27,"frozen E38 dream (no policy games), seed 0",15:06:37,
+fz_e38,39,0.0,0,5.65,1.14,5723.08,3.2,24,"frozen E38 dream (no policy games), seed 0",15:07:24,
+fz_e38,40,0.0,0,5.56,0.95,5685.33,3.1,28,"frozen E38 dream (no policy games), seed 0",15:08:10,
+fz_e38,41,0.0,0,5.41,1.03,5661.55,3.2,26,"frozen E38 dream (no policy games), seed 0",15:08:55,
+fz_e38s1,6,0.0,0,5.51,1.04,5611.92,3.4,28,"frozen E38 dream, seed 1",14:29:14,
+fz_e38s1,9,0.0,0,5.61,1.21,5633.42,3.6,32,"frozen E38 dream, seed 1",14:31:42,
+fz_e38s1,14,0.0,0,5.59,1.13,5705.72,3.4,33,"frozen E38 dream, seed 1",14:34:44,
+fz_e38s1,18,0.0,0,5.88,1.22,5749.62,3.15,26,"frozen E38 dream, seed 1",14:37:51,
+fz_e38s1,23,0.0,0,5.73,1.17,5650.45,3.35,29,"frozen E38 dream, seed 1",14:40:53,
+fz_e38s1,27,0.0,0,5.71,1.19,5668.35,3.15,27,"frozen E38 dream, seed 1",14:44:21,
+fz_e38s1,32,0.0,0,5.27,0.91,5588.02,3.4,33,"frozen E38 dream, seed 1",14:47:34,
+fz_e38s1,37,0.0,0,5.56,1.05,5634.43,3.3,25,"frozen E38 dream, seed 1",14:50:46,
+fz_e38s1,41,0.0,0,5.6,1.02,5649.07,3.0,24,"frozen E38 dream, seed 1",14:54:13,
+fz_dyna,8,0.0,0,5.62,1.36,5605.73,3.65,34,"frozen Dyna WM (wml2 @3400), seed 0",14:30:05,
+fz_dyna,12,0.0,0,5.64,1.42,5596.3,3.7,33,"frozen Dyna WM (wml2 @3400), seed 0",14:32:27,
+fz_dyna,16,0.0,0,5.87,1.32,5573.15,3.85,43,"frozen Dyna WM (wml2 @3400), seed 0",14:35:30,
+fz_dyna,21,0.0,0,5.78,1.55,5551.7,4.1,38,"frozen Dyna WM (wml2 @3400), seed 0",14:38:39,
+fz_dyna,26,0.0,0,6.04,1.64,5582.22,3.9,39,"frozen Dyna WM (wml2 @3400), seed 0",14:41:50,
+fz_dyna,31,0.0,0,5.98,1.55,5496.82,3.75,35,"frozen Dyna WM (wml2 @3400), seed 0",14:45:05,
+fz_dyna,36,0.0,0,5.99,1.32,5488.03,3.95,39,"frozen Dyna WM (wml2 @3400), seed 0",14:48:22,
+fz_dyna,40,0.0,0,6.15,1.55,5452.53,3.45,41,"frozen Dyna WM (wml2 @3400), seed 0",14:51:40,
+fz_dyna,41,0.0,0,5.58,1.39,5574.18,3.75,34,"frozen Dyna WM (wml2 @3400), seed 0",14:55:04,
+fz_dynas1,1,0.0,0,5.35,1.51,5697.52,3.9,31,"frozen Dyna WM, seed 1",14:30:54,
+fz_dynas1,4,0.0,0,5.79,1.41,5656.92,3.85,33,"frozen Dyna WM, seed 1",14:33:12,
+fz_dynas1,8,0.0,0,5.99,1.37,5599.55,3.65,35,"frozen Dyna WM, seed 1",14:36:15,
+fz_dynas1,11,0.0,0,5.82,1.38,5616.25,3.7,29,"frozen Dyna WM, seed 1",14:39:23,
+fz_dynas1,15,0.0,0,5.86,1.5,5520.78,3.55,37,"frozen Dyna WM, seed 1",14:42:36,
+fz_dynas1,19,0.0,0,6.04,1.67,5523.3,4.1,41,"frozen Dyna WM, seed 1",14:45:52,
+fz_dynas1,24,0.0,0,5.86,1.45,5483.08,4.0,40,"frozen Dyna WM, seed 1",14:49:13,
+fz_dynas1,28,0.0,0,5.85,1.61,5554.87,3.65,40,"frozen Dyna WM, seed 1",14:52:32,
+fz_dynas1,32,0.0,0,5.75,1.4,5497.9,3.95,44,"frozen Dyna WM, seed 1",14:55:49,
+fz_dynas1,34,0.0,0,5.73,1.55,5476.02,3.8,46,"frozen Dyna WM, seed 1",14:57:28,
+fz_dynas1,36,0.0,0,5.69,1.35,5558.38,3.85,40,"frozen Dyna WM, seed 1",14:59:03,
+fz_dynas1,38,0.0,0,6.23,1.47,5486.72,3.55,38,"frozen Dyna WM, seed 1",15:00:49,
+fz_dynas1,40,0.0,0,5.74,1.49,5571.97,3.4,32,"frozen Dyna WM, seed 1",15:02:28,
+fz_dynas1,41,0.0,0,5.68,1.51,5621.7,3.65,31,"frozen Dyna WM, seed 1",15:04:13,

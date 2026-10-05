@@ -8,6 +8,15 @@ Evidence standard: [../EVIDENCE_RULES.md](../EVIDENCE_RULES.md). Claims with evi
 classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from:
 [../PROVENANCE.md](../PROVENANCE.md). Doc map: [../MAP.md](../MAP.md).
 
+## Headline (2026-10-05, E40)
+
+- **70.2% of real radiant games [66.4, 73.7] on 600 untouched games (E40).** The shipped net wins 100% as radiant against
+  itself, and nobody wins as dire.
+- **The world model's own share, with PPO held fixed:** +9.2 points [3.5, 14.7].
+- **Dyna fixes the dream where the policy plays:** tower-fall over-prediction 1.79× → 1.16×; hero position error at 200
+  ticks 22.8 → 9.7 cells.
+- **How it wins:** the policy wins by map-wide pressure, not teamwork (grouped 9% of ticks vs the net's 54%).
+
 ## Headline (2026-10-05, E39)
 
 - **A continuous Dyna loop doubles real wins: the best dream policy wins 203/300 (68%) real radiant games against the
@@ -108,12 +117,13 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
   numbered, and all of E5-continued. Their metrics survive; see
   [PROVENANCE §3.3](../PROVENANCE.md). Every run now uploads checkpoints to S3 as it
   trains.
-- **Running:** the continuous Dyna loop (7 WM + 8 PPO GPU pods, 2 CPU pods, E39).
+- **Running:** the continuous Dyna loop (7 WM + 8 PPO GPU pods, 2 CPU pods, E39); paper eval pod evc5.
 
 ## Experiments
 
 | id | what | status | W&B group → `results/moba/` | record |
 |---|---|---|---|---|
+| **E40** | Paper evaluations: holdout + holdout2 win rates, shipped-net and random baselines, contribution ladder, frozen-WM control (2 WMs x 2 seeds), Dyna WM metrics on the policy's games, behaviour/cooperation analysis, real-client clips | **concluded: 70.2% radiant (600 games); WM share +9.2 pts; no teamwork** | `E40-frozen-wm` → `results/moba/paper/` | [E40-paper-evaluations.md](E40-paper-evaluations.md) |
 | **E39** | Continuous Dyna loop: WM fleet on the policy's live real games + PPO fleet with hot-swapped WM + collector + evaluator, all concurrent; drift diagnosis + ablation (entropy 0 / death 0 / KL); KL-to-anchor loop | **running; holdout radiant wins 34% → 68%**; death 0 + KL stop the decline; dire 0 | `dyna-loop`, `wml_r0`, `wml2_r0` → `dream/ppol*`, `DYNA_LIVE_TABLE.md` | [E39-continuous-dyna.md](E39-continuous-dyna.md) |
 | **E38** | Reward sweep gen 4: 20 rewards (sparse → handcrafted, XP down, champion kills), 1,400-tick episodes, real-game eval during training | concluded: peaks 27/60 (all_handcrafted) and 17/60 (formula_xp0.25) on the fixed seeds; u0017 is 34% on holdout seeds (E39); decline after peak | `g4_*` | [E38-reward-sweep-gen4.md](E38-reward-sweep-gen4.md) |
 | **E37** | Distributed dream PPO, 613M steps, 5-pod FedAvg fleet; GPU observations + shipped net (`--gpu-opp`); real-game eval after every update | concluded: ≈116k steps/s; real play peaks at 91M then declines (dream overfitting) | `PPO-fleet` (pf1) | [E37-ppo-fleet-600m.md](E37-ppo-fleet-600m.md) |

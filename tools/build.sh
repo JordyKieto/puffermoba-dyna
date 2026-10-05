@@ -117,6 +117,18 @@ case "$TARGET" in
         "$ROOT/moba/moba_fork.c" -o "$LIB" -lm
     echo "Built: $LIB"
     ;;
+  moba-render)
+    # The arena plus the actual PufferLib MOBA client drawing into an offscreen texture
+    # (moba/moba_render.c; scripts/moba/record_clips.py). Links raylib for real.
+    echo "Compiling libmobarender ($ARCH)..."
+    LIB="$ROOT/build/libmobarender.$([ "$PLATFORM" = "Linux" ] && echo so || echo dylib)"
+    clang -O2 -DNDEBUG -fPIC -shared -fvisibility=hidden \
+        ${SIMD[@]+"${SIMD[@]}"} \
+        -I"$PUFFER/$RAYLIB_NAME/include" -I"$PUFFER/src" -I"$PUFFER/ocean/moba" -I"$ROOT/moba" \
+        -DPLATFORM_DESKTOP "$ROOT/moba/moba_render.c" -o "$LIB" -lz -lm \
+        "$PUFFER/$RAYLIB_NAME/lib/libraylib.a" "${FRAMEWORKS[@]}"
+    echo "Built: $LIB"
+    ;;
   moba-arena)
     # Real games with one team driven from Python (mobawm/rl/arena.py); reuses
     # moba_collect.c's net and scripted controllers unchanged. Links raylib like

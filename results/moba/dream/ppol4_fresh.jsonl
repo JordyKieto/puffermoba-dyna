@@ -5,3 +5,8 @@
 {"update": 36, "fixed": 40, "radiant_wins": 169, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 4.02, "anchor": 10, "anchor_fresh": 178}
 {"update": 42, "fixed": 38, "radiant_wins": 157, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 3.91, "anchor": 10, "anchor_fresh": 178}
 {"update": 49, "fixed": 41, "radiant_wins": 193, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 3.88, "anchor": 10, "anchor_fresh": 178}
+{"update": 69, "fixed": 44, "radiant_wins": 223, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 4.12, "anchor": 49, "anchor_fresh": 193}
+{"update": 75, "fixed": 48, "radiant_wins": 211, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 3.82, "anchor": 69, "anchor_fresh": 223}
+{"update": 80, "fixed": 45, "radiant_wins": 200, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 3.98, "anchor": 69, "anchor_fresh": 223}
+{"update": 98, "fixed": 44, "radiant_wins": 225, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 4.11, "anchor": 69, "anchor_fresh": 223}
+{"update": 104, "fixed": 44, "radiant_wins": 180, "radiant_games": 300, "dire_wins": 0, "radiant_towers": 3.78, "anchor": 69, "anchor_fresh": 223}

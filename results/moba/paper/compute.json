@@ -1,0 +1,199 @@
+{
+ "billing_window": [
+  "2026-09-22",
+  "2026-10-05"
+ ],
+ "account_total_usd": 595.99,
+ "attributed_usd": 381.82,
+ "unattributed_usd": 214.17,
+ "network_volumes_usd": 17.77,
+ "pre_billing_estimate": {
+  "usd": 100,
+  "note": "E1-E6 + E5-continued on H200/H100 NVL before 2026-09-22 (PROVENANCE \u00a73.4, I)"
+ },
+ "attributed_pod_hours": 279.1,
+ "attributed_gpu_hours": 272.2,
+ "attributed_cpu_pod_hours": 6.8,
+ "by_purpose": {
+  "Dyna loop: PPO fleet": {
+   "usd": 24.91,
+   "hours": 42.4,
+   "pods": 8
+  },
+  "Dyna loop: world-model fleet": {
+   "usd": 27.68,
+   "hours": 37.2,
+   "pods": 7
+  },
+  "E40 frozen-WM control (PPO)": {
+   "usd": 1.43,
+   "hours": 1.3,
+   "pods": 9
+  },
+  "UNATTRIBUTED": {
+   "usd": 214.17,
+   "hours": 60.2,
+   "pods": 65
+  },
+  "dream PPO (sweeps, fleets)": {
+   "usd": 88.28,
+   "hours": 88.9,
+   "pods": 76
+  },
+  "other (this repository)": {
+   "usd": 22.05,
+   "hours": 6.5,
+   "pods": 28
+  },
+  "world-model training / ablations": {
+   "usd": 217.47,
+   "hours": 102.9,
+   "pods": 58
+  }
+ },
+ "by_gpu": {
+  "A100 80GB (inferred)": {
+   "usd": 15.71,
+   "hours": 9.3,
+   "pods": 4
+  },
+  "A40 (inferred)": {
+   "usd": 120.15,
+   "hours": 203.2,
+   "pods": 95
+  },
+  "CPU 32 vCPU (inferred)": {
+   "usd": 8.19,
+   "hours": 6.8,
+   "pods": 13
+  },
+  "H100 (inferred)": {
+   "usd": 5.76,
+   "hours": 2.6,
+   "pods": 3
+  },
+  "H200 (inferred)": {
+   "usd": 217.03,
+   "hours": 48.7,
+   "pods": 48
+  },
+  "NVIDIA A40": {
+   "usd": 3.77,
+   "hours": 6.0,
+   "pods": 22
+  },
+  "NVIDIA H200": {
+   "usd": 11.22,
+   "hours": 2.4,
+   "pods": 1
+  }
+ },
+ "by_day": {
+  "2026-09-22": {
+   "usd": 18.85,
+   "hours": 5.3,
+   "pods": 1
+  },
+  "2026-09-23": {
+   "usd": 51.7,
+   "hours": 14.7,
+   "pods": 2
+  },
+  "2026-09-25": {
+   "usd": 41.0,
+   "hours": 8.8,
+   "pods": 1
+  },
+  "2026-09-26": {
+   "usd": 58.44,
+   "hours": 12.6,
+   "pods": 2
+  },
+  "2026-09-27": {
+   "usd": 22.56,
+   "hours": 6.9,
+   "pods": 3
+  },
+  "2026-09-28": {
+   "usd": 53.08,
+   "hours": 12.9,
+   "pods": 6
+  },
+  "2026-09-29": {
+   "usd": 28.74,
+   "hours": 6.3,
+   "pods": 11
+  },
+  "2026-09-30": {
+   "usd": 26.13,
+   "hours": 7.2,
+   "pods": 10
+  },
+  "2026-10-01": {
+   "usd": 10.33,
+   "hours": 2.9,
+   "pods": 7
+  },
+  "2026-10-03": {
+   "usd": 76.86,
+   "hours": 16.6,
+   "pods": 14
+  },
+  "2026-10-04": {
+   "usd": 90.04,
+   "hours": 70.2,
+   "pods": 34
+  },
+  "2026-10-05": {
+   "usd": 118.25,
+   "hours": 174.8,
+   "pods": 165
+  }
+ },
+ "note": "RunPod billing per pod per day; 'today' is partial. CPU pods are 32-vCPU.",
+ "data": {
+  "s3_total_gb": 235.1,
+  "corpora": {
+   "mix1k": {
+    "games": 1000,
+    "ticks": 2663317,
+    "controllers": "shipped net / scripted bots (net-net, net-script, script-net)",
+    "gb": 15.3
+   },
+   "mixrand1k": {
+    "games": 1000,
+    "ticks": 2608592,
+    "controllers": "random / net / scripted mixes, 3,000-tick cap",
+    "gb": 14.9
+   },
+   "dyna1": {
+    "games": 100,
+    "controllers": "P3 dream policies vs the net",
+    "gb": 1.1
+   },
+   "dyna2": {
+    "games": 810,
+    "controllers": "P3 dream policies vs random / net / each other",
+    "gb": 12.3
+   },
+   "dyna3_r1": {
+    "games": 300,
+    "controllers": "E38 policies (u0017, u21, u29) vs the net",
+    "gb": 6.4
+   },
+   "dyna_live": {
+    "games": 7490,
+    "ticks": 27035315,
+    "controllers": "205 distinct PPO checkpoints (ppol, ppol2, ppol4) vs the net, alternating sides",
+    "gb": 164.4
+   },
+   "scenarios_tower_v1": {
+    "slices": 2014178,
+    "note": "tower-death slices from 12,794 events of training games (E20)",
+    "gb": 16.3
+   }
+  },
+  "counterfactual_stream": "not stored: regenerated on demand by moba_fork.c (~240M single-edit transitions available, I)",
+  "total_real_games": 10700
+ }
+}
