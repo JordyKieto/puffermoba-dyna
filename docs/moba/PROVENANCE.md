@@ -34,7 +34,7 @@ says so.
 | track | question | status | doc |
 |---|---|---|---|
 | **WM** (world model) | can a learned model roll a full 10-hero MOBA game forward from all heroes' actions, over whole games? | in progress. Long-horizon rollouts are stable (M); jitter and tower health are open | [WM_ARCHITECTURE.md](WM_ARCHITECTURE.md), [experiments/](experiments/README.md) |
-| **RL** (dream PPO) | can a policy trained only inside that model play the real game? | **first attempt negative** (M): 0 real wins, below an untrained policy | [experiments/E7-dream-ppo.md](experiments/E7-dream-ppo.md) |
+| **RL** (dream PPO) | can a policy trained only inside that model play the real game? | **positive since E36** (M): the E39 continuous Dyna loop's policy wins 68% of real radiant games vs the shipped net (holdout seeds); dire 0. The first attempt (E7) was negative | [experiments/E7-dream-ppo.md](experiments/E7-dream-ppo.md) |
 
 The tracks are provenanced separately. A claim about one is not evidence about the other.
 

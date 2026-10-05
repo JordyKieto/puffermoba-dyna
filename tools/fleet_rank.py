@@ -24,7 +24,12 @@ if rank == 0:
 if SETUP:
     with ThreadPoolExecutor(len(jobs)) as ex:
         list(ex.map(lambda j: pod.s3_sync_to_pod(*j), jobs))
-pod.run(f"cd {D} && mkdir -p full/dense && for c in mix1k mixrand1k dyna2; do ls $c/dense/*.mbs >/dev/null 2>&1 && ln -sf {D}/$c/dense/*.mbs full/dense/; done; mkdir -p {R}/runs/token_wm/init")
+# extra corpora (e.g. each Dyna round's policy games): synced every launch, incl. in-place relaunches
+EXTRA = [(c.split(":")[0], parse_games(c.split(":")[1])) for c in os.environ.get("EXTRA_CORPORA", "").split(";") if c]
+for prefix, _ in EXTRA:
+    pod.s3_sync_to_pod(f"moba/{prefix}/", f"{D}/{prefix.split('/')[-1]}", parse_games(games) | held)
+pod.run(f"cd {D} && mkdir -p full/dense && for c in mix1k mixrand1k dyna2 " + " ".join(p.split("/")[-1] for p, _ in EXTRA)
+        + f"; do ls $c/dense/*.mbs >/dev/null 2>&1 && ln -sf {D}/$c/dense/*.mbs full/dense/; done; mkdir -p {R}/runs/token_wm/init")
 pod.rsync_to([f"{init}/model.pt", f"{init}/stats.pt"], f"{R}/runs/token_wm/init/")
 if rank == 0:
     pod.run(f"cd {R} && tools/build.sh moba-fork > /tmp/fork_build.log 2>&1")

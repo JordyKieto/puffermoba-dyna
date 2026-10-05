@@ -1353,6 +1353,11 @@ def main():
     ap.add_argument("--heads", type=int, default=4)
     ap.add_argument("--eval-batches", type=int, default=8)
     ap.add_argument("--val-every", type=int, default=200)
+    ap.add_argument("--live-data", default="", help="continuous Dyna: dir the newest real games of the policy arrive in "
+                    "(games.*.mbs, 10 games each); a --live-frac share of every batch comes from its newest --live-window files")
+    ap.add_argument("--live-frac", type=float, default=0.25)
+    ap.add_argument("--live-window", type=int, default=20, help="files (10 games each)")
+    ap.add_argument("--live-every", type=int, default=50, help="look for new live files every N updates")
     ap.add_argument("--ckpt-every", type=int, default=0, help="also keep model_<it>.pt every N iterations")
     ap.add_argument("--val-batches", type=int, default=4)
     ap.add_argument("--rollouts", type=int, default=16)
@@ -1654,7 +1659,39 @@ def main():
     scen = (ScenarioLanes(ScenarioFeeder(args.scenarios, args.scen_batch, args.scen_workers), args.d, dev,
                           args.decay_halflife, args.decay_floor) if args.scenarios else None)
     scen_hb = load_scen_heldout(args.scen_heldout) if args.scen_heldout else None
-    lanes = Lanes(tr_store, args.batch, args.d, gen, args.max_span, args.span_mu, args.span_sigma,
+    live = dict(names=(), lanes=None, bad=set(), B=max(1, round(args.batch * args.live_frac)) if args.live_data else 0)
+
+    def refresh_live():
+        """Reload the live store when new files arrived (complete files only: the relay hard-links them in after verifying)."""
+        fs = sorted((f for f in Path(args.live_data).glob("games.*.mbs") if f.name not in live["bad"]),
+                    key=lambda f: f.stat().st_mtime)[-args.live_window:]   # newest arrivals
+        names = tuple(sorted(f.name for f in fs))
+        if not fs or names == live["names"]:
+            return
+        t_l = time.time()
+        gid = lambda f: {int(f.name.split(".")[1]) + g for g in range(10)}
+        live["lanes"] = None                         # free the old live store first: peak memory = one live store
+        if dev.type == "cuda":
+            torch.cuda.empty_cache()
+        try:
+            st = load_store(fs, set().union(*map(gid, fs)), dev)
+        except Exception as e:                       # an unreadable file: find it, skip it from now on, retry
+            for f in fs:
+                try:
+                    load_store([f], gid(f), torch.device("cpu"))
+                except Exception:
+                    live["bad"].add(f.name)
+                    print(f"live data: skipping unreadable {f.name} ({e!r})", flush=True)
+            live["names"] = ()
+            return refresh_live()
+        live.update(names=names, lanes=Lanes(st, live["B"], args.d, gen, args.max_span, args.span_mu, args.span_sigma,
+                                             args.decay_halflife, args.decay_floor, args.rubric_circle, args.rubric_traj))
+        print(f"live data: {len(fs)} files ({names[0]} .. {names[-1]}), {st.n_steps} steps, {time.time() - t_l:.1f}s", flush=True)
+
+    if args.live_data:
+        assert args.rollout, "--live-data needs --rollout"
+        refresh_live()
+    lanes = Lanes(tr_store, args.batch - live["B"], args.d, gen, args.max_span, args.span_mu, args.span_sigma,
                   args.decay_halflife, args.decay_floor, args.rubric_circle, args.rubric_traj) if args.rollout else None
     cfb = CFBatcher(args.cf_logs or Path(args.data).parent / "logs", tr_idx, dev, args.cf_forks, args.cf_k,
                     args.cf_stride, args.cf_workers, burn=4, seed=0, w_effect=args.cf_effect,
@@ -1694,6 +1731,11 @@ def main():
                 parts = dict(parts, **{"scen/loss": loss})
             else:
                 loss, parts = lanes.chunk(model, fz, stats, kind, args.chunk)
+                if live["lanes"] is not None:       # the policy's newest real games: their share of the batch
+                    ll, lp = live["lanes"].chunk(model, fz, stats, kind, args.chunk)
+                    f_l = live["B"] / args.batch
+                    loss = (1 - f_l) * loss + f_l * ll
+                    parts = dict(parts, **{"live/loss": ll})
             if scen is not None and not args.scen_only:
                 sl, sp = scen.chunk(model, fz, stats, kind, args.chunk)
                 loss = loss + (args.scen_batch / args.batch if args.scen_weight is None else args.scen_weight) * sl
@@ -1751,6 +1793,8 @@ def main():
             if WORLD > 1:                       # this pod's other GPUs take the averaged weights
                 for v in model.state_dict().values():
                     dist.broadcast(v, 0)
+        if args.live_data and it % args.live_every == 0:
+            refresh_live()
         if it % args.log_every == 0 and MAIN:
             tp = summarize_parts({k: v / part_n for k, v in part_acc.items()})
             part_acc, part_n = {}, 0
@@ -1768,7 +1812,7 @@ def main():
                 rec["scen_epoch"] = scen.seen / len(scen.fd.meta["where"])
             emit(rec)
             print(f"it {it:6d}  {ep_txt}  loss {rec['train/loss']:.4f}  | {kinds}  | grad {gn:.2f}  "
-                  f"{rec['it_per_s']} it/s  {rec['elapsed_s']:.0f}s" + edge_txt(tp) + list_txt(tp) + (
+                  f"{rec['it_per_s']} it/s  {rec['elapsed_s']:.0f}s" + (f"  | live loss {tp['live/loss']:.4f} ({len(live['names'])} files)" if "live/loss" in tp else "") + edge_txt(tp) + list_txt(tp) + (
                   "  | direct: val " + " ".join(f"{v:+.2f}" for v in model.dd_val.tolist()) + "  gate " + " ".join(f"{v:+.2f}" for v in model.dd_gate.tolist())
                   if getattr(model, "direct_damage", False) else "") + (f"  | cf loss {tp.get('cf/total', 0):.3f}  "
                   f"{rec['cf_samples_per_s']} cf samples/s  wait {100 * rec['cf_wait_frac']:.0f}%" if cfb else "")

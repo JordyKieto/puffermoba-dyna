@@ -99,6 +99,12 @@ Any claim about "the model predicts X" is about the learned part only.
 | R18 | Training in the E12 (+dyna2) dream does not beat the E11 dream at this budget (6.21 vs 9.30) | M (single seed) | Runs `jjdb2ezj`; Tab `arena_e14_policy_arms.md` |
 | R19 | A falling-tower proximity bonus (5, radius 8) gives the dream policy the most real towers so far (0.56 vs 0.32 per hero as radiant), no wins; bigger bonuses do not help | M (single seed each, 10 games per side) | Runs `r1titdgl`, `6l122crp ojvhv6dm iuwujj5g j75qsm75`; Tab `arena_e14_tower_shaping.md` |
 | R20 | 512-tick dream episodes produce 4.6× less XP and 3.6× fewer tower falls per step than 128-tick ones (E11 @1500) | M (local smoke, 0.23M steps) | E14 record |
+| R21 | A continuous Dyna loop (WM trained on the policy's live real games, PPO with death penalty 0 and a KL penalty toward the best real-game policy) produces a policy that wins 203/300 real radiant games vs the shipped net, against 101/300 for its starting policy | M (holdout seeds 70000000+ never used for selection; one seed per configuration) | `results/moba/dream/dyna_live_holdout.txt`; Tab `DYNA_LIVE_TABLE.md` §1; [E39](../experiments/E39-continuous-dyna.md) |
+| R22 | Without death penalty 0 + KL, dream PPO's real wins fall from ~30/60 to 0–8 within 4–6 updates, at lr 3e-4 and at lr 5e-5 alike | M (two runs, 89 evaluated updates) | `ppol_eval.jsonl`, `ppol2_eval.jsonl`; Tab `DYNA_LIVE_TABLE.md` §2 |
+| R23 | No dream-side training metric tracks real wins (|r| ≤ 0.37 over 29 updates); real kills, deaths, creeps and game length do | M (one run) | `results/moba/dream/drift/` |
+| R24 | KL toward the anchor holds real wins through 22 updates, death penalty 0 alone only delays the decline, and entropy 0 does not help | M (one seed per arm; arms on 2–3 pods) | `abl_*_eval.jsonl`; Tab `DYNA_LIVE_TABLE.md` §3 |
+| R25 | The continuously trained world model contributes to the gain | **U** | The PPO changes and the WM changed together; no frozen-WM control over the whole run |
+| R26 | Dream policies can win as dire | **Not claimed** | 0 dire wins in every evaluation (E36–E39) |
 
 ## Method claims that need a control before use
 

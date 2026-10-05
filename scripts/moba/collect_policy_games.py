@@ -78,12 +78,7 @@ def main():
     (out / "logs").mkdir(parents=True, exist_ok=True)
     (out / "dense").mkdir(parents=True, exist_ok=True)
     torch.set_num_threads(4)
-    pols = []
-    for p in a.policy:
-        pol = Policy()
-        ck = torch.load(p, map_location="cpu", weights_only=False)
-        pol.load_state_dict(ck["policy"] if "policy" in ck else ck)
-        pols.append(pol.eval())
+    pols = [Policy.load(p).eval() for p in a.policy]       # any dream-PPO policy, incl. the recurrent PufferPolicy
     sides = []                                      # (radiant, dire) controller per game
     if a.matchups:
         for m in a.matchups.split(","):
@@ -103,6 +98,10 @@ def main():
     running, result = np.ones(G, bool), np.zeros(G, int)
     gen = torch.Generator().manual_seed(0)
     o = np.zeros((10, 510), np.uint8)
+    rows = [(ctrl == pi) for pi in range(len(pols))]      # a policy's (game, hero) rows are fixed for the whole run:
+    for pi, pol in enumerate(pols):                       # recurrent policies keep one memory per row, stepped every tick
+        if getattr(pol, "recurrent", False):
+            pol.reset_state(int(rows[pi].sum()), torch.device("cpu"))
     t0, t = time.time(), 0
     while running.any() and t < a.max_ticks:
         net = A.net_actions()                        # the net for everyone; ours overwritten below
@@ -117,7 +116,12 @@ def main():
                 m = (ctrl == pi) & live
                 if not m.any():
                     continue
-                logits, _ = pol(torch.from_numpy(obs[m].reshape(-1, 510)))
+                if getattr(pol, "recurrent", False):          # step every row (memories stay aligned), use the live ones
+                    logits, _ = pol.step(torch.from_numpy(obs[rows[pi]].reshape(-1, 510)))
+                    keep = torch.from_numpy(np.broadcast_to(live, ctrl.shape)[rows[pi]].copy())
+                    logits = [l[keep] for l in logits]
+                else:
+                    logits, _ = pol(torch.from_numpy(obs[m].reshape(-1, 510)))
                 sm = torch.stack([torch.multinomial(torch.softmax(l, -1), 1, generator=gen).squeeze(-1) for l in logits], -1)
                 act[m] = sm.numpy().astype(act.dtype)
         m = (ctrl == RANDOM) & live
@@ -158,7 +162,7 @@ def main():
                              winner=int(result[g])))
         name = f"games.{jobs[chunk[0]][0]:07d}"
         (out / "logs" / f"{name}.mbl").write_bytes(b"".join(parts))
-    (out / "games.json").write_text(json.dumps(meta, indent=1))
+    (out / (f"games_{lo}_{hi}.json" if a.slice else "games.json")).write_text(json.dumps(meta, indent=1))   # slices share --out
     print(f"{G} games, {sum(m['ticks'] for m in meta)} ticks recorded in {time.time() - t0:.0f}s; replaying to dense ...",
           flush=True)
     logs = sorted((out / "logs").glob("*.mbl"))

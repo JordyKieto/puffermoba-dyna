@@ -1,0 +1,102 @@
+[
+ {
+  "game_index": 1050570,
+  "seed": 92050570,
+  "radiant": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "dire": "net",
+  "ticks": 6000,
+  "winner": 0,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050571,
+  "seed": 92050571,
+  "radiant": "net",
+  "dire": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "ticks": 966,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050572,
+  "seed": 92050572,
+  "radiant": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "dire": "net",
+  "ticks": 6000,
+  "winner": 0,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050573,
+  "seed": 92050573,
+  "radiant": "net",
+  "dire": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "ticks": 1000,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050574,
+  "seed": 92050574,
+  "radiant": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "dire": "net",
+  "ticks": 6000,
+  "winner": 0,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050575,
+  "seed": 92050575,
+  "radiant": "net",
+  "dire": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "ticks": 868,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050576,
+  "seed": 92050576,
+  "radiant": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "dire": "net",
+  "ticks": 6000,
+  "winner": 0,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050577,
+  "seed": 92050577,
+  "radiant": "net",
+  "dire": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "ticks": 1366,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050578,
+  "seed": 92050578,
+  "radiant": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "dire": "net",
+  "ticks": 5043,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ },
+ {
+  "game_index": 1050579,
+  "seed": 92050579,
+  "radiant": "net",
+  "dire": "/root/puffertank/dyna/dyna_live/w5/policy.pt",
+  "ticks": 795,
+  "winner": 1,
+  "policy_update": 37,
+  "policy_wm": "wm_00031_003000.pt"
+ }
+]

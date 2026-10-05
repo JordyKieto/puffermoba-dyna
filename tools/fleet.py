@@ -10,7 +10,12 @@ from mobawm.fleet_link import clear_sync_keys
 exp, N, gpu, batch, n, init = sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]
 extra = sys.argv[7:]
 TRAIN = parse_games("0-899,1000-1139,1160-1309,1330-1619,1660-1809,1830-1979,6000-6259,6270-6529,6540-6799")
-files = [f for f in list(range(0, 1000, 10)) + list(range(1000, 2000, 10)) + list(range(6000, 6810, 10))
+# EXTRA_CORPORA: "runs/dyna3_r1:7000-7269;..." extra corpora in S3 (moba/<prefix>/{dense,logs}) and their TRAINING games
+EXTRA = [(c.split(":")[0], parse_games(c.split(":")[1])) for c in os.environ.get("EXTRA_CORPORA", "").split(";") if c]
+for _, g in EXTRA:
+    TRAIN |= g
+extra_firsts = sorted({g - g % 10 for _, gs in EXTRA for g in gs})
+files = [f for f in list(range(0, 1000, 10)) + list(range(1000, 2000, 10)) + list(range(6000, 6810, 10)) + extra_firsts
          if set(range(f, f + 10)) <= TRAIN]
 launch = time.strftime("%Y%m%d%H%M%S")
 NS = int(os.environ.get("FLEET_SHARDS", N))       # shards (a smoke test can run 2 pods with the 20-pod shard size)

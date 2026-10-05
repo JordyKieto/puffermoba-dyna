@@ -449,6 +449,7 @@ class PufferPolicy(nn.Module):
 
     def evaluate_seq(self, obs, a):             # obs (n, T, 510), a (n, T, 6) -> logp, ent, v: (n*T,)
         logits, v = self.net(obs.float())
+        self.last_logits = logits                # for a KL penalty toward an anchor policy
         a = a.reshape(-1, 6)
         dists = [torch.distributions.Categorical(logits=l) for l in logits]
         logp = sum(d.log_prob(a[:, k]) for k, d in enumerate(dists))
@@ -501,6 +502,11 @@ def main():
     ap.add_argument("--fleet-exp", default=""); ap.add_argument("--fleet-rank", type=int, default=0)
     ap.add_argument("--fleet-world", type=int, default=1); ap.add_argument("--fleet-launch", default="0")
     ap.add_argument("--fleet-every", type=int, default=1)
+    ap.add_argument("--kl-anchor", default="", help="a saved policy: add --kl-coef x KL(anchor || policy) to the PPO loss")
+    ap.add_argument("--kl-coef", type=float, default=1.0)
+    ap.add_argument("--anchor-watch", default="", help="continuous Dyna: dir of anchor_<U>.pt; at update >= U the KL anchor becomes it")
+    ap.add_argument("--wm-watch", default="", help="continuous Dyna: dir of wm_<U>_<it>.pt; at update >= U the dream takes those weights")
+    ap.add_argument("--reset-watch", default="", help="continuous Dyna: dir of policy_<U>.pt; at update >= U the policy restarts from it")
     ap.add_argument("--gpu-opp", action="store_true", help="build observations and run the shipped net on the GPU (exact; ~5x+ faster)")
     ap.add_argument("--side", default="both", choices=("both", "radiant", "dire"), help="with --opponent net: which side ours plays")
     ap.add_argument("--xp-scale", type=float, default=1.0, help="dream-only: scale of the game's XP reward (0 = off)")
@@ -535,6 +541,10 @@ def main():
                  death_scale=args.death_scale, push_k=args.push_k, siege_k=args.siege_k, siege_radius=args.siege_radius,
                  anc_k=args.anc_k, team_share=args.team_share, zero_sum=args.zero_sum, kill_k=args.kill_k)
     pol = (PufferPolicy() if args.arch == "puffer" else Policy(role_heads=args.role_heads)).to(dev)
+    anchor = None
+    if args.kl_anchor:
+        anchor = Policy.load(args.kl_anchor).to(dev).eval().requires_grad_(False)
+        print(f"KL anchor {args.kl_anchor}, coef {args.kl_coef}", flush=True)
     if args.init_policy:
         src = Policy.load(args.init_policy)
         pol.load_state_dict(src.state_dict())
@@ -594,7 +604,23 @@ def main():
     ep_ret = torch.zeros(B, 10, device=dev)          # running per-hero return of the current episodes
     finished = []                                    # mean per-hero return of episodes finished this update
     CLS = ("support", "assassin", "burst", "tank", "carry")
+    wm_now, reset_now, anchor_now = "start", "", ""
+    def due(d, pat):                                 # newest file in d whose target update (wm_<U>_..., policy_<U>) has come
+        fs = [f for f in Path(d).glob(pat) if int(f.stem.split("_")[1]) <= update] if d and Path(d).exists() else []
+        return max(fs, key=lambda f: f.name) if fs else None
     while steps < args.steps and not (args.minutes and time.time() - t0 > args.minutes * 60):
+        f = due(args.wm_watch, "wm_*.pt")
+        if f is not None and f.name != wm_now:       # every rank swaps at the same update U (episodes restart each update)
+            env.model.load_state_dict(torch.load(f, map_location=dev)); wm_now = f.name
+            print(f"  update {update}: dream world model -> {f.name}", flush=True)
+        f = due(args.anchor_watch, "anchor_*.pt")
+        if anchor is not None and f is not None and f.name != anchor_now:
+            anchor.load_state_dict(torch.load(f, map_location=dev, weights_only=False)["policy"]); anchor_now = f.name
+            print(f"  update {update}: KL anchor -> {f.name}", flush=True)
+        f = due(args.reset_watch, "policy_*.pt")
+        if f is not None and f.name != reset_now:
+            pol.load_state_dict(torch.load(f, map_location=dev, weights_only=False)["policy"]); opt.state.clear(); reset_now = f.name
+            print(f"  update {update}: policy reset -> {f.name}", flush=True)
         if env.age >= args.episode or not env.alive.any():
             finished.append(float(ep_ret[ours].mean()))
             ep_ret.zero_()
@@ -662,7 +688,7 @@ def main():
             seq = lambda x: x.transpose(0, 1)                       # (T, N, ...) -> (N, T, ...)
             n_h, mb = N, max(1, N // args.minibatches)
             tc = time.time()
-            kls, clips = [], []
+            kls, clips, kl_anchor = [], [], []
             for _ in range(args.epochs):
                 perm = torch.randperm(n_h, device=dev)
                 for s0 in range(0, n_h, mb):
@@ -685,6 +711,14 @@ def main():
                     else:
                         vl = (((v - r_) ** 2) * k).sum() / kn
                     loss = pg + args.vf * vl - args.ent * (ent * k).sum() / kn
+                    if anchor is not None:
+                        with torch.no_grad():
+                            al, _ = anchor.net(seq(obs_b[:, idx]).float())
+                        kl_a = sum((Fn.softmax(x, -1) * (Fn.log_softmax(x, -1) - Fn.log_softmax(y, -1))).sum(-1)
+                                   for x, y in zip(al, pol.last_logits))
+                        kl_a = (kl_a * k).sum() / kn
+                        kl_anchor.append(float(kl_a))
+                        loss = loss + args.kl_coef * kl_a
                     opt.zero_grad()
                     loss.backward()
                     nn.utils.clip_grad_norm_(pol.parameters(), args.max_grad_norm)
@@ -696,7 +730,7 @@ def main():
             adv_f = (adv_f - adv_f.mean()) / (adv_f.std() + 1e-8)
             n, mb = len(o_f), max(1, len(o_f) // args.minibatches)
             tc = time.time()
-            kls, clips = [], []
+            kls, clips, kl_anchor = [], [], []
             for _ in range(args.epochs):
                 perm = torch.randperm(n, device=dev)
                 for s in range(0, n, mb):
@@ -742,14 +776,14 @@ def main():
         rec = dict(update=update, agent_steps=steps, sps=round(steps / (time.time() - t0)),
                    episode_return_per_hero=float(np.mean(finished)) if finished else None,
                    episodes_finished=len(finished), approx_kl=float(np.mean(kls)), clip_frac=float(np.mean(clips)),
-                   explained_var=ev, **detail,
+                   explained_var=ev, kl_anchor=float(np.mean(kl_anchor)) if kl_anchor else None, **detail,
                    reward_per_1k=float(rew_b.sum() / max(int(m.sum()), 1) * 1000),
                    deaths_per_1k=float(per1k[0] / R_DEATH), xp_per_1k=float(per1k[1] / R_XP),
                    tower_kills_per_1k=float(per1k[3] / R_TOWER), entropy=float(ent.mean()),
                    ours_towers_per_episode=float(comp_sum[3] / R_TOWER) / max(B, 1), opp_towers_per_episode=float(comp_opp[3] / R_TOWER) / max(B, 1),
                    value_loss=float(vl), time_env=round(t_env, 1), time_policy=round(t_pol, 1),
                    time_update=round(t_upd, 1), state_repairs=env.repairs,
-                   opponent=args.opponent, ours_reward_per_1k=ours_r / n_valid * 1000,
+                   opponent=args.opponent, wm=wm_now, ours_reward_per_1k=ours_r / n_valid * 1000,
                    opp_reward_per_1k=(opp_r / max(float((env.alive[:, None] & ~ours).sum()) * T, 1) * 1000
                                       if opp is not None else None))
         logf.write(json.dumps(rec) + "\n"); logf.flush()
@@ -765,7 +799,7 @@ def main():
               + f"  | kl {rec['approx_kl']:.4f}  clip {rec['clip_frac']:.2f}  ev {ev:.2f}"
               + (f"  | episode return/hero {rec['episode_return_per_hero']:+.2f}" if finished else ""), flush=True)
         ck = dict(policy=pol.state_dict(), optimizer=opt.state_dict(), update=update, agent_steps=steps,
-                  args=vars(args))
+                  args=vars(args), wm=wm_now, reset=reset_now, anchor=anchor_now)
         torch.save(ck, out / "policy.pt")                             # latest, every update
         persist(out / "policy.pt")
         persist(out / "log.jsonl")

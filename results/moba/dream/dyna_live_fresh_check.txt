@@ -1,0 +1,7 @@
+RESULT u0017 radiant 88/300 wins towers 3.26
+RESULT u0017 dire 0/300 wins towers 0.00
+RESULT ppol_u51 radiant 159/300 wins towers 3.74
+RESULT ppol_u51 dire 0/300 wins towers 0.00
+RESULT ppol_u71 radiant 148/300 wins towers 3.84
+RESULT ppol_u71 dire 0/300 wins towers 0.00
+seeds 60000000-60004059 (5 x 60 per side), never used for selection; evc1 Mon Oct  5 11:16:51 PDT 2026

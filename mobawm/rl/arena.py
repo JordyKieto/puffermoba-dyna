@@ -107,15 +107,16 @@ def main():
     ap.add_argument("--opponents", default="net,script")
     ap.add_argument("--max-ticks", type=int, default=6000)
     ap.add_argument("--workers", type=int, default=0)
+    ap.add_argument("--seed-base", type=int, default=50_000_000, help="game seeds seed_base + i (other bases = fresh games)")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
-    jobs = [(team, args.policy, opp, side, 50_000_000 + i, args.max_ticks)
+    jobs = [(team, args.policy, opp, side, args.seed_base + i, args.max_ticks)
             for team in args.teams.split(",") for opp in args.opponents.split(",")
             for side in ("radiant", "dire") for i in range(args.games)]
     t0 = time.time()
     with mp.get_context("spawn").Pool(args.workers or max(1, (mp.cpu_count() or 2) - 1)) as pool:
         rows = pool.map(play, jobs, chunksize=1)
-    print(f"{len(rows)} games in {time.time() - t0:.0f}s   (seeds 50000000+, max {args.max_ticks} ticks)\n")
+    print(f"{len(rows)} games in {time.time() - t0:.0f}s   (seeds {args.seed_base}+, max {args.max_ticks} ticks)\n")
     if args.out:
         import json
         with open(args.out, "w") as f:
