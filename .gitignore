@@ -39,6 +39,8 @@ runs/
 
 # Viewer captures (videos, screenshots): local only, see tools/moba_viz_capture.py
 media/
+# the paper's own figures media (small GIFs/PNGs referenced by docs/moba/*.md) are part of the artifact
+!docs/moba/paper/media/
 
 # dream-PPO policies live in s3://puffertank/moba/dream_policies/ (same relative paths)
 results/moba/dream/**/*.pt

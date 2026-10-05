@@ -1,3 +1,6 @@
+> **Superseded (2026-10-05)** by [paper.md](paper.md), *Learning in Dreams, Winning in Reality*. Kept as the record of
+> the 2026-09-27 outline, written when transfer was still negative.
+
 # Paper outline (draft for review)
 
 **Working title.** *Learning a World to Teach an Agent: A Full-State World Model of a

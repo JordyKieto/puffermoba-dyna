@@ -1,8 +1,9 @@
 # Race World Model
 
-> **New: the MOBA track ([docs/moba/README.md](docs/moba/README.md)).** A policy trained only inside a learned world model
-> of a ten-hero MOBA wins **70% of real radiant games** against the shipped PufferNet (600 untouched games), via a
-> continuous Dyna loop and a real-game evaluation service. The paper draft is in
+> **New: *Learning in Dreams, Winning in Reality* ([docs/moba/README.md](docs/moba/README.md)).** A policy trained only
+> inside a learned world model of a ten-hero MOBA wins **70% of real radiant games** against the shipped PufferNet (600
+> untouched games), via a continuous Dyna loop and a real-game evaluation service, and inherits the world model's
+> fidelity profile mechanic by mechanic. The paper draft is in
 > [docs/moba/paper/paper.md](docs/moba/paper/paper.md).
 >
 > ![A dream-trained policy in a real MOBA game](docs/moba/paper/media/gameplay_teamfight.gif)

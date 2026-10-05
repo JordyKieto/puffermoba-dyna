@@ -1,4 +1,4 @@
-# Learning a world to teach an agent: MOBA
+# Learning in Dreams, Winning in Reality: a continuous Dyna loop for a ten-hero MOBA
 
 **Can a learned model of a whole ten-hero game be good enough that a policy trained only inside it wins the real game?**
 
@@ -50,7 +50,17 @@ against the shipped PufferNet (dire, red). Drawn by the game's own raylib client
 
 ## The world-model debugger
 
+**The instrument behind the mechanistic findings:**
+- the real game and the dream side by side, from the same state and on the same actions of all ten heroes;
+- a scrubbable timeline;
+- field-by-field decomposition of all 206 units;
+- an event layer for casts, deaths and key presses;
+- divergence against "nothing changes";
+- a headless API that turns every view into a batch metric.
+
 ![The real game (left) next to the dream (right), on identical actions: pre-Dyna world model (top) vs the Dyna world model (bottom)](paper/media/debugger_dyna_vs_e38.gif)
+
+![Entity decomposition: one hero, every field, real vs dream](paper/media/debugger_entity_tooltip_hero.png)
 
 - **What it shows:** the real game (left) and the world model's open-loop dream (right) from the same state, driven by
   the same actions of all ten heroes. Lines join each predicted hero to where it really is.
@@ -72,6 +82,19 @@ against the shipped PufferNet (dire, red). Drawn by the game's own raylib client
   pre-Dyna dream (2 seeds each, frozen model, same recipe; [E40](experiments/E40-paper-evaluations.md)).
 - **Without the KL anchor, every PPO run collapsed within 4–6 updates,** at any learning rate. The real game shows why:
   the policy learns to stop fighting. No in-dream metric shows it (Fig. 4).
+
+## The central finding: the policy inherits its world model's fidelity profile
+
+| the dream models… | …so the policy |
+|---|---|
+| tower falls well (1.06× real) | takes ~10 towers per game, more than the net |
+| lanes and creep waves | pushes every lane with the waves |
+| too few hero deaths (0.42× real) | over-extends: 3.3 deaths per kill |
+| almost no stuns (0.17×) | stuns before only 7% of kills (the net: 26%) |
+| heals at the wrong time | heals itself, not allies |
+
+Mechanic by mechanic, what the world model can represent is what the policy learns ([paper §8.7](paper/paper.md)).
+This is an inference, with an intervention test proposed.
 
 ## How it plays (and whether its heroes cooperate)
 
