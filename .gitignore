@@ -39,3 +39,6 @@ runs/
 
 # Viewer captures (videos, screenshots): local only, see tools/moba_viz_capture.py
 media/
+
+# dream-PPO policies live in s3://puffertank/moba/dream_policies/ (same relative paths)
+results/moba/dream/**/*.pt

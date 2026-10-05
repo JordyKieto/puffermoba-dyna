@@ -1,0 +1,220 @@
+/root/puffertank/tools/moba_viz.py:119: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'attack_mode': None, 'predict_targets': False, 'target_dist': False, 'list_state': False, 'direct_damage': False, 'grid_cnn': False, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+policy initialised from runs/dream_ppo/armC/policy.pt
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 6epjg04m
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /root/puffertank/wandb/run-20261005_054357-6epjg04m
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rw/no_xp
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-dream-rl/runs/6epjg04m
+dream PPO: wm runs/token_wm/wm, 64 envs x 10 heroes, rollout 128, episode 128, 1.7M agent steps on cuda
+upd    1   0.04M steps  3992 sps  | reward/1k +0.00  xp/1k 1472  deaths/1k 0.17  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.031)  | ent 5.81  vloss 0.0019  (env 2s pol 8s upd 0s)
+          radiant r/1k +8.64  dire r/1k +10.97  | by class r/1k: support +5.25  assassin +8.56  burst +16.62  tank +11.61  carry +6.97  | kl 0.0056  clip 0.06  ev 0.78
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 0f8b1a7d)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 73e0a536)
+upd    2   0.08M steps  4130 sps  | reward/1k +0.01  xp/1k 1367  deaths/1k 0.05  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.031)  | ent 5.83  vloss 0.0012  (env 2s pol 7s upd 0s)
+          radiant r/1k +8.26  dire r/1k +9.95  | by class r/1k: support +5.82  assassin +7.25  burst +12.75  tank +12.71  carry +7.01  | kl 0.0011  clip 0.00  ev 0.70
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 4e67afd9)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 40e8d64f)
+upd    3   0.12M steps  4189 sps  | reward/1k +0.03  xp/1k 1347  deaths/1k 0.12  towers/1k 0.073 (towers/episode ours 0.047 vs net 0.109)  | ent 6.01  vloss 0.0016  (env 2s pol 7s upd 0s)
+          radiant r/1k +8.44  dire r/1k +9.55  | by class r/1k: support +4.79  assassin +8.35  burst +14.31  tank +11.74  carry +5.77  | kl 0.0054  clip 0.07  ev 0.76
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 635acd7b)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 69c7d896)
+upd    4   0.16M steps  4218 sps  | reward/1k +0.02  xp/1k 1383  deaths/1k 0.10  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.031)  | ent 5.96  vloss 0.0008  (env 2s pol 7s upd 0s)
+          radiant r/1k +8.63  dire r/1k +9.82  | by class r/1k: support +5.67  assassin +7.44  burst +14.38  tank +10.89  carry +7.72  | kl 0.0004  clip 0.00  ev 0.72
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 0eec127b)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 dde02c5e)
+upd    5   0.20M steps  4211 sps  | reward/1k -0.00  xp/1k 1387  deaths/1k 0.10  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.031)  | ent 6.03  vloss 0.0006  (env 2s pol 8s upd 0s)
+          radiant r/1k +9.80  dire r/1k +8.67  | by class r/1k: support +5.02  assassin +8.10  burst +14.48  tank +11.11  carry +7.46  | kl 0.0021  clip 0.02  ev 0.75
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 f8cfd2d6)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 c8d8a008)
+upd    6   0.25M steps  4230 sps  | reward/1k +0.02  xp/1k 1209  deaths/1k 0.07  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.062)  | ent 6.13  vloss 0.0005  (env 2s pol 7s upd 0s)
+          radiant r/1k +9.68  dire r/1k +6.46  | by class r/1k: support +3.82  assassin +6.22  burst +14.65  tank +9.36  carry +6.29  | kl 0.0014  clip 0.01  ev 0.68
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 f7321154)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 c6d77293)
+upd    7   0.29M steps  4239 sps  | reward/1k -0.02  xp/1k 1083  deaths/1k 0.20  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.078)  | ent 6.24  vloss 0.0006  (env 2s pol 7s upd 0s)
+          radiant r/1k +7.19  dire r/1k +7.19  | by class r/1k: support +3.10  assassin +5.87  burst +13.40  tank +7.82  carry +5.77  | kl 0.0021  clip 0.01  ev 0.57
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 90c27836)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 a0b94cf1)
+upd    8   0.33M steps  4249 sps  | reward/1k +0.01  xp/1k 965  deaths/1k 0.05  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.062)  | ent 6.27  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.41  dire r/1k +6.45  | by class r/1k: support +3.64  assassin +4.81  burst +10.79  tank +8.82  carry +4.09  | kl 0.0006  clip 0.00  ev 0.58
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 4b0c78cc)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 18f13222)
+upd    9   0.37M steps  4239 sps  | reward/1k +0.03  xp/1k 1052  deaths/1k 0.02  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.094)  | ent 6.30  vloss 0.0004  (env 2s pol 8s upd 0s)
+          radiant r/1k +10.75  dire r/1k +3.31  | by class r/1k: support +4.42  assassin +6.15  burst +10.25  tank +9.43  carry +4.90  | kl 0.0012  clip 0.00  ev 0.61
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 1f34c8df)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 05a63058)
+upd   10   0.41M steps  4242 sps  | reward/1k -0.00  xp/1k 946  deaths/1k 0.20  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.094)  | ent 6.36  vloss 0.0006  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.06  dire r/1k +7.54  | by class r/1k: support +2.99  assassin +5.20  burst +9.72  tank +8.86  carry +4.72  | kl 0.0016  clip 0.01  ev 0.55
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 49bc8b32)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 a8816392)
+upd   11   0.45M steps  4248 sps  | reward/1k +0.02  xp/1k 897  deaths/1k 0.17  towers/1k 0.073 (towers/episode ours 0.047 vs net 0.062)  | ent 6.37  vloss 0.0006  (env 2s pol 7s upd 0s)
+          radiant r/1k +8.60  dire r/1k +3.38  | by class r/1k: support +4.12  assassin +5.72  burst +8.52  tank +7.18  carry +4.40  | kl 0.0015  clip 0.01  ev 0.51
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 a7626a02)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 80886f65)
+upd   12   0.49M steps  4251 sps  | reward/1k -0.02  xp/1k 777  deaths/1k 0.12  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.047)  | ent 6.41  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.51  dire r/1k +4.80  | by class r/1k: support +2.79  assassin +4.18  burst +7.81  tank +7.22  carry +3.78  | kl 0.0014  clip 0.01  ev 0.46
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 df20679f)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 51fd37c4)
+upd   13   0.53M steps  4255 sps  | reward/1k -0.02  xp/1k 783  deaths/1k 0.12  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.062)  | ent 6.46  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.59  dire r/1k +3.80  | by class r/1k: support +3.27  assassin +4.29  burst +8.89  tank +5.26  carry +4.26  | kl 0.0020  clip 0.01  ev 0.45
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 2afaedcf)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 99c2bb31)
+upd   14   0.57M steps  4246 sps  | reward/1k -0.00  xp/1k 671  deaths/1k 0.12  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.047)  | ent 6.45  vloss 0.0002  (env 2s pol 8s upd 0s)
+          radiant r/1k +6.40  dire r/1k +2.53  | by class r/1k: support +2.64  assassin +3.97  burst +5.42  tank +6.79  carry +3.50  | kl 0.0008  clip 0.00  ev 0.58
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 972d501c)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 a0871c4d)
+upd   15   0.61M steps  4248 sps  | reward/1k +0.02  xp/1k 839  deaths/1k 0.10  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.078)  | ent 6.48  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.51  dire r/1k +5.69  | by class r/1k: support +2.37  assassin +4.48  burst +9.03  tank +8.67  carry +3.46  | kl 0.0012  clip 0.00  ev 0.58
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 26363464)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 3f581196)
+upd   16   0.66M steps  4253 sps  | reward/1k +0.00  xp/1k 690  deaths/1k 0.07  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.094)  | ent 6.49  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.66  dire r/1k +2.53  | by class r/1k: support +2.96  assassin +3.93  burst +5.97  tank +6.23  carry +3.91  | kl 0.0012  clip 0.00  ev 0.62
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 5b555415)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 ad5d29f9)
+upd   17   0.70M steps  4256 sps  | reward/1k -0.03  xp/1k 614  deaths/1k 0.20  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.016)  | ent 6.52  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.09  dire r/1k +3.01  | by class r/1k: support +2.51  assassin +3.44  burst +5.47  tank +5.85  carry +2.98  | kl 0.0015  clip 0.01  ev 0.67
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 50efa9fe)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 b4acb0c1)
+upd   18   0.74M steps  4260 sps  | reward/1k -0.00  xp/1k 646  deaths/1k 0.10  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.062)  | ent 6.55  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.60  dire r/1k +3.00  | by class r/1k: support +2.76  assassin +3.50  burst +7.19  tank +5.57  carry +2.49  | kl 0.0014  clip 0.01  ev 0.52
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 d3f35649)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 c1e1473e)
+upd   19   0.78M steps  4261 sps  | reward/1k +0.04  xp/1k 562  deaths/1k 0.12  towers/1k 0.098 (towers/episode ours 0.062 vs net 0.156)  | ent 6.55  vloss 0.0004  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.28  dire r/1k +3.29  | by class r/1k: support +1.83  assassin +3.63  burst +5.58  tank +5.50  carry +2.40  | kl 0.0007  clip 0.00  ev 0.60
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 3b937a6a)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 3eb704fe)
+upd   20   0.82M steps  4265 sps  | reward/1k +0.01  xp/1k 605  deaths/1k 0.05  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.109)  | ent 6.55  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.37  dire r/1k +1.70  | by class r/1k: support +2.65  assassin +3.39  burst +5.31  tank +5.28  carry +3.55  | kl 0.0006  clip 0.00  ev 0.73
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 cae3d67e)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 6ab2735d)
+upd   21   0.86M steps  4266 sps  | reward/1k -0.06  xp/1k 636  deaths/1k 0.37  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.078)  | ent 6.59  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.24  dire r/1k +4.11  | by class r/1k: support +2.39  assassin +3.17  burst +6.79  tank +4.97  carry +3.55  | kl 0.0006  clip 0.00  ev 0.67
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 14fcb433)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 e1b9c0fb)
+upd   22   0.90M steps  4269 sps  | reward/1k -0.04  xp/1k 612  deaths/1k 0.34  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.109)  | ent 6.54  vloss 0.0004  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.92  dire r/1k +3.14  | by class r/1k: support +1.93  assassin +4.22  burst +6.13  tank +5.12  carry +2.76  | kl 0.0008  clip 0.00  ev 0.72
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 b71085ba)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 5af89145)
+upd   23   0.94M steps  4268 sps  | reward/1k +0.01  xp/1k 681  deaths/1k 0.15  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.078)  | ent 6.52  vloss 0.0002  (env 2s pol 8s upd 0s)
+          radiant r/1k +5.65  dire r/1k +3.43  | by class r/1k: support +2.12  assassin +4.45  burst +7.26  tank +5.45  carry +3.44  | kl 0.0007  clip 0.00  ev 0.62
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 a48edbb0)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 317716f0)
+upd   24   0.98M steps  4265 sps  | reward/1k -0.02  xp/1k 504  deaths/1k 0.10  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.062)  | ent 6.52  vloss 0.0002  (env 2s pol 8s upd 0s)
+          radiant r/1k +5.68  dire r/1k +1.00  | by class r/1k: support +1.66  assassin +3.61  burst +3.85  tank +4.69  carry +2.89  | kl 0.0007  clip 0.00  ev 0.80
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 963e96b8)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 48b3211f)
+upd   25   1.02M steps  4267 sps  | reward/1k -0.01  xp/1k 446  deaths/1k 0.07  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.078)  | ent 6.51  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +3.68  dire r/1k +2.23  | by class r/1k: support +1.80  assassin +2.93  burst +4.04  tank +4.10  carry +1.89  | kl 0.0010  clip 0.00  ev 0.76
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 14205919)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 e2354fb2)
+S3 ok moba/runs/rw_no_xp/policy_001023730.pt (1.3 MB, md5 133deaa1)
+upd   26   1.06M steps  4256 sps  | reward/1k +0.02  xp/1k 536  deaths/1k -0.00  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.125)  | ent 6.45  vloss 0.0002  (env 2s pol 8s upd 0s)
+          radiant r/1k +5.04  dire r/1k +2.13  | by class r/1k: support +2.16  assassin +3.71  burst +4.82  tank +4.30  carry +2.94  | kl 0.0015  clip 0.01  ev 0.76
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 21c90c54)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 54f4c9b9)
+upd   27   1.11M steps  4253 sps  | reward/1k +0.05  xp/1k 608  deaths/1k 0.10  towers/1k 0.099 (towers/episode ours 0.062 vs net 0.094)  | ent 6.35  vloss 0.0004  (env 2s pol 8s upd 0s)
+          radiant r/1k +6.68  dire r/1k +1.51  | by class r/1k: support +2.80  assassin +3.65  burst +6.97  tank +4.88  carry +2.18  | kl 0.0013  clip 0.00  ev 0.59
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 7a4857f1)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 07d231fb)
+upd   28   1.15M steps  4255 sps  | reward/1k -0.02  xp/1k 482  deaths/1k 0.20  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.141)  | ent 6.35  vloss 0.0004  (env 2s pol 7s upd 0s)
+          radiant r/1k +3.80  dire r/1k +2.58  | by class r/1k: support +1.47  assassin +2.71  burst +5.48  tank +4.04  carry +2.24  | kl 0.0010  clip 0.00  ev 0.60
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 a82d7b6e)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 9849a762)
+upd   29   1.19M steps  4257 sps  | reward/1k -0.04  xp/1k 571  deaths/1k 0.22  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.078)  | ent 6.31  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.49  dire r/1k +3.04  | by class r/1k: support +1.96  assassin +4.69  burst +5.77  tank +3.74  carry +2.68  | kl 0.0012  clip 0.00  ev 0.62
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.0 MB, md5 cce55166)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 179c2172)
+upd   30   1.23M steps  4259 sps  | reward/1k -0.01  xp/1k 568  deaths/1k 0.07  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.156)  | ent 6.40  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.38  dire r/1k +3.15  | by class r/1k: support +1.83  assassin +3.93  burst +5.84  tank +4.80  carry +2.43  | kl 0.0008  clip 0.00  ev 0.62
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 2307992d)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 a5105d5a)
+upd   31   1.27M steps  4260 sps  | reward/1k -0.04  xp/1k 752  deaths/1k 0.22  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.062)  | ent 6.41  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +7.13  dire r/1k +2.81  | by class r/1k: support +2.94  assassin +4.48  burst +7.46  tank +6.71  carry +3.28  | kl 0.0006  clip 0.00  ev 0.67
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 97375c5d)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 ca2561f1)
+upd   32   1.31M steps  4262 sps  | reward/1k -0.02  xp/1k 529  deaths/1k 0.15  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.047)  | ent 6.42  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.49  dire r/1k +2.50  | by class r/1k: support +1.57  assassin +3.64  burst +5.45  tank +4.01  carry +2.81  | kl 0.0011  clip 0.00  ev 0.69
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 966a46ba)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 0a484199)
+upd   33   1.35M steps  4262 sps  | reward/1k -0.02  xp/1k 564  deaths/1k 0.20  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.094)  | ent 6.37  vloss 0.0003  (env 2s pol 8s upd 0s)
+          radiant r/1k +5.04  dire r/1k +2.43  | by class r/1k: support +2.07  assassin +4.04  burst +5.61  tank +3.73  carry +3.24  | kl 0.0016  clip 0.01  ev 0.64
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 b3b1c67b)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 31de9882)
+upd   34   1.39M steps  4262 sps  | reward/1k -0.00  xp/1k 626  deaths/1k 0.20  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.109)  | ent 6.36  vloss 0.0004  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.60  dire r/1k +3.73  | by class r/1k: support +1.69  assassin +3.59  burst +5.95  tank +5.74  carry +3.86  | kl 0.0011  clip 0.00  ev 0.39
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 f5462e65)
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 e8ccdd39)
+upd   35   1.43M steps  4262 sps  | reward/1k +0.01  xp/1k 581  deaths/1k 0.12  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.125)  | ent 6.42  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.05  dire r/1k +1.71  | by class r/1k: support +2.06  assassin +4.72  burst +4.32  tank +5.13  carry +3.16  | kl 0.0010  clip 0.00  ev 0.45
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 c0223efa)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 59577556)
+upd   36   1.47M steps  4264 sps  | reward/1k -0.02  xp/1k 474  deaths/1k 0.10  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.047)  | ent 6.47  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.00  dire r/1k +2.27  | by class r/1k: support +1.67  assassin +2.97  burst +3.86  tank +3.83  carry +3.34  | kl 0.0025  clip 0.02  ev 0.51
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 2291e961)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 215ba418)
+upd   37   1.51M steps  4265 sps  | reward/1k +0.05  xp/1k 580  deaths/1k 0.10  towers/1k 0.098 (towers/episode ours 0.062 vs net 0.031)  | ent 6.46  vloss 0.0006  (env 2s pol 7s upd 0s)
+          radiant r/1k +4.85  dire r/1k +2.97  | by class r/1k: support +2.36  assassin +3.47  burst +5.51  tank +5.00  carry +3.19  | kl 0.0005  clip 0.00  ev 0.44
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 ef5423dd)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 09f459c2)
+upd   38   1.56M steps  4266 sps  | reward/1k -0.06  xp/1k 633  deaths/1k 0.34  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.094)  | ent 6.47  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.00  dire r/1k +3.32  | by class r/1k: support +2.71  assassin +4.39  burst +5.91  tank +5.02  carry +2.76  | kl 0.0004  clip 0.00  ev 0.47
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 159967ac)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 21b16ca6)
+upd   39   1.60M steps  4266 sps  | reward/1k +0.01  xp/1k 636  deaths/1k 0.05  towers/1k 0.024 (towers/episode ours 0.016 vs net 0.125)  | ent 6.52  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.68  dire r/1k +1.81  | by class r/1k: support +2.39  assassin +4.96  burst +5.83  tank +4.51  carry +3.53  | kl 0.0010  clip 0.00  ev 0.59
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 dcb60e45)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 c40af9db)
+upd   40   1.64M steps  4267 sps  | reward/1k -0.00  xp/1k 604  deaths/1k 0.20  towers/1k 0.049 (towers/episode ours 0.031 vs net 0.125)  | ent 6.50  vloss 0.0003  (env 2s pol 7s upd 0s)
+          radiant r/1k +6.02  dire r/1k +2.03  | by class r/1k: support +2.39  assassin +4.61  burst +4.92  tank +5.48  carry +2.71  | kl 0.0010  clip 0.00  ev 0.54
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 70c937dc)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 05af6fb9)
+upd   41   1.68M steps  4268 sps  | reward/1k -0.04  xp/1k 535  deaths/1k 0.24  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.109)  | ent 6.53  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +5.28  dire r/1k +1.76  | by class r/1k: support +1.73  assassin +3.74  burst +5.17  tank +4.22  carry +2.74  | kl 0.0006  clip 0.00  ev 0.58
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 e88ff492)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 b40b44ad)
+upd   42   1.72M steps  4270 sps  | reward/1k -0.02  xp/1k 478  deaths/1k 0.12  towers/1k 0.000 (towers/episode ours 0.000 vs net 0.187)  | ent 6.57  vloss 0.0002  (env 2s pol 7s upd 0s)
+          radiant r/1k +3.93  dire r/1k +2.39  | by class r/1k: support +1.88  assassin +3.02  burst +4.80  tank +3.79  carry +2.31  | kl 0.0009  clip 0.00  ev 0.63
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 f0923b2f)
+S3 ok moba/runs/rw_no_xp/log.jsonl (0.1 MB, md5 f0923b2f)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 42eb4726)
+S3 ok moba/runs/rw_no_xp/policy.pt (1.3 MB, md5 42eb4726)
+wandb: updating run metadata
+wandb: uploading history steps 39-41, summary, console lines 162-171; uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading data
+wandb: 
+wandb: Run history:
+wandb:                  agent_steps ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇██
+wandb:                    approx_kl █▂█▁▃▂▃▁▂▃▂▂▃▂▂▂▃▂▁▁▁▁▁▂▂▂▂▂▁▁▂▃▂▂▄▁▁▂▂▂
+wandb: class/assassin/deaths_per_1k █▃▆▃▅▁▅▁▁▆▅▁▆▁▁▃▁▅▃▁▁▅▁▁▁▃▁▅▃▅▆▁▁▁▅▁▁▁▅▁
+wandb: class/assassin/reward_per_1k █▆█▇▇▅▅▄▅▄▅▃▃▃▃▂▂▂▂▂▃▃▂▁▂▂▁▃▂▃▂▃▂▃▁▂▃▄▃▁
+wandb:     class/assassin/xp_per_1k █▆█▇▇▅▅▃▅▄▅▃▃▂▃▂▂▂▂▂▃▃▂▁▂▂▁▃▂▃▂▃▂▃▁▂▃▄▃▁
+wandb:    class/burst/deaths_per_1k ▁▁▁▁▂▁▂▁▁▁▂▂▂▁▁▂▂▄▁▁▇▂▄▁▁▂▂▇▁▂▂▄▁▁▁▁█▂▇▅
+wandb:    class/burst/reward_per_1k █▆▇▇▇▇▆▅▅▄▄▃▄▂▄▂▂▃▂▂▂▃▁▁▂▃▂▂▂▃▂▂▂▁▁▂▂▂▂▂
+wandb:        class/burst/xp_per_1k █▆▇▇▇▇▆▅▅▄▄▃▄▂▄▂▂▃▂▂▂▃▁▁▁▃▂▂▂▃▂▂▂▁▁▂▂▂▂▂
+wandb:    class/carry/deaths_per_1k ▆▁▁▅▁▃▃▃▃▆▆▅▁▅▁▃▆▁▃▃▆▃▁▁▁▃█▅▁▃▅▅▆▅▃▃▆▁▃▅
+wandb:    class/carry/reward_per_1k ▇▇▆██▆▆▄▅▄▄▃▄▃▃▃▂▂▂▃▂▃▂▁▂▁▁▂▂▃▂▃▃▃▃▃▂▃▂▁
+wandb:                          +34 ...
+wandb: 
+wandb: Run summary:
+wandb:                  agent_steps 1719385
+wandb:                    approx_kl 0.00086
+wandb: class/assassin/deaths_per_1k 0
+wandb: class/assassin/reward_per_1k 3.02122
+wandb:     class/assassin/xp_per_1k 453.85742
+wandb:    class/burst/deaths_per_1k 0.36621
+wandb:    class/burst/reward_per_1k 4.80015
+wandb:        class/burst/xp_per_1k 730.10254
+wandb:    class/carry/deaths_per_1k 0.24414
+wandb:    class/carry/reward_per_1k 2.30517
+wandb:                          +34 ...
+wandb: 
+wandb: 🚀 View run rw/no_xp at: https://wandb.ai/drift-ai-models/moba-dream-rl/runs/6epjg04m
+wandb: ⭐️ View project at: https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20261005_054357-6epjg04m/logs
+done: 1719385 agent steps in 6.8 min -> /root/puffertank/runs/dream_ppo/rw/no_xp

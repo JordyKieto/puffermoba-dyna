@@ -8,6 +8,28 @@ Evidence standard: [../EVIDENCE_RULES.md](../EVIDENCE_RULES.md). Claims with evi
 classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from:
 [../PROVENANCE.md](../PROVENANCE.md). Doc map: [../MAP.md](../MAP.md).
 
+## Headline (2026-10-05, gen 4)
+
+- **Dream policies now win 28–45% of real radiant games against the shipped net at their peak (E38).**
+  - `all_handcrafted` (win + tower damage + fall + champion kills + siege + ancient, XP ×0.5) won **27/60** at 61M steps.
+  - `formula_xp0.25` (game reward + win, XP ×0.25) won **17/60** at 25M steps.
+  - The key is **turning XP down**: the dream overpays for farming. Every curve peaks and then declines, so checkpoints are
+    chosen by the real-game evaluation that runs alongside training. Dire: 0 wins.
+
+## Headline (2026-10-05)
+
+- **Distributed dream PPO runs 26× faster, but scale alone doesn't win (E37).**
+  - **Speed:** the policy side (observations + the shipped net) now runs on the GPU and is exact, giving ≈25k steps/s per A40.
+    A 5-pod FedAvg fleet reaches ≈116k steps/s.
+  - **Real games, evaluated after every update:** play peaked at 91M steps (4/60 wins, 3.25 towers/game) and declined over
+    613M steps. The policy overfits the dream.
+  - **Next:** a Dyna loop (the policy's real games into the world model's data), plus choosing checkpoints by real games.
+- **Dream policies won real games against the shipped net for the first time (E36):** 25 wins in 4,380 radiant games.
+  - The key ingredient is **long dream episodes (512–1,024 ticks) plus a win reward on top of the game's own reward**.
+  - The wins are rare (best arms 3–4/60) and swing with the seed. Dire is 0 wins in 4,380.
+- **Tower precision finally moved (E35):** a false-tower-death penalty in the loss takes precision from 40% to 71–77%.
+  At ×1.5 the dream predicts tower falls at the real rate (1,513 vs 1,561).
+
 ## Headline (2026-10-04)
 
 - **New best world model: P1 @1000 (E33)**, which is E12 @4000 plus 1,000 updates with only the learning rate
@@ -77,12 +99,16 @@ classes: [../paper/CLAIMS.md](../paper/CLAIMS.md). Where every number comes from
   numbered, and all of E5-continued. Their metrics survive; see
   [PROVENANCE §3.3](../PROVENANCE.md). Every run now uploads checkpoints to S3 as it
   trains.
-- **Running:** `fleet20` (20 pods, E34).
+- **Running:** gen-4 reward sweep (20 PPO pods + 2 CPU eval pods, E38).
 
 ## Experiments
 
 | id | what | status | W&B group → `results/moba/` | record |
 |---|---|---|---|---|
+| **E38** | Reward sweep gen 4: 20 rewards (sparse → handcrafted, XP down, champion kills), 1,400-tick episodes, real-game eval during training | **running; peaks 27/60 (all_handcrafted) and 17/60 (formula_xp0.25) radiant wins**; decline after peak | `g4_*` | [E38-reward-sweep-gen4.md](E38-reward-sweep-gen4.md) |
+| **E37** | Distributed dream PPO, 613M steps, 5-pod FedAvg fleet; GPU observations + shipped net (`--gpu-opp`); real-game eval after every update | concluded: ≈116k steps/s; real play peaks at 91M then declines (dream overfitting) | `PPO-fleet` (pf1) | [E37-ppo-fleet-600m.md](E37-ppo-fleet-600m.md) |
+| **E36** | Dream-PPO reward-structure sweep, 3 generations, 73 arms (A40 pod per arm) | **first real wins (25/4,380 radiant)**; long episodes + win reward; dire 0 | `RW-reward-sweep` | [E36-reward-sweep.md](E36-reward-sweep.md) |
+| **E35** | False-tower-death penalty (`--tower-fp-weight`), calibrated dream (fleet20c/d/e), dream PPO P16/P17 | concluded: precision 40% → 71–77%; ×1.5 calibrated; PPO didn't improve | `fleet20c_r0` … | [E35-tower-penalty-calibrated-dream.md](E35-tower-penalty-calibrated-dream.md) |
 | **E34** | Throughput: einsum-backward fix + `--compile` (11× per pod); 20-pod FedAvg fleet via Upstash | **running** (`fleet20`, 20,000 updates/pod) | `fleet20_r0` | [E34-throughput-fleet.md](E34-throughput-fleet.md) |
 | **E33** | Plain E12 @4000 at lr 1e-4, 1,000 updates (P1) | **concluded: new best; default dream** | `p1_e12_lr1e-4` | [E33-e12-lr1e-4.md](E33-e12-lr1e-4.md) |
 | **E32** | Stability sweep: lr 1e-3/3e-4/1e-4 × EMA (S1–S4, G2) | concluded: lr 1e-4 stable; EMA doesn't fix 1e-3 | `s1`…`s4`, `g2_grid_long` | [E32-lr-ema-sweep.md](E32-lr-ema-sweep.md) |

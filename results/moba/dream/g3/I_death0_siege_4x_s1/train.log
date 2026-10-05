@@ -1,0 +1,134 @@
+/root/puffertank/tools/moba_viz.py:119: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'attack_mode': None, 'predict_targets': False, 'target_dist': False, 'list_state': False, 'direct_damage': False, 'grid_cnn': False, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+policy initialised from runs/dream_ppo/armC/policy.pt
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /root/puffertank/wandb/run-20261005_064247-hwrvs28s
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rw/I_death0_siege_4x_s1
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-dream-rl/runs/hwrvs28s
+dream PPO: wm runs/token_wm/wm, 64 envs x 10 heroes, rollout 1024, episode 1024, 6.8M agent steps on cuda
+upd    1   0.33M steps  4303 sps  | reward/1k +12.44  xp/1k 1847  deaths/1k 0.22  towers/1k 0.024 (towers/episode ours 0.125 vs net 0.297)  | ent 5.82  vloss 0.0894  (env 15s pol 60s upd 1s)
+          radiant r/1k +6.35  dire r/1k +18.21  | by class r/1k: support +5.42  assassin +7.39  burst +18.09  tank +20.53  carry +9.97  | kl 0.0036  clip 0.03  ev -0.08
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 300d84d3)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 aa1c9e89)
+upd    2   0.66M steps  4286 sps  | reward/1k +11.72  xp/1k 1745  deaths/1k 0.28  towers/1k 0.015 (towers/episode ours 0.078 vs net 0.266)  | ent 5.82  vloss 0.0849  (env 15s pol 60s upd 1s)
+          radiant r/1k +8.03  dire r/1k +15.13  | by class r/1k: support +4.94  assassin +6.34  burst +18.11  tank +19.19  carry +9.32  | kl 0.0007  clip 0.00  ev 0.08
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 ec436f8e)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 4a0199e8)
+upd    3   0.98M steps  4257 sps  | reward/1k +9.08  xp/1k 1871  deaths/1k 0.15  towers/1k 0.019 (towers/episode ours 0.094 vs net 0.406)  | ent 5.65  vloss 2.8210  (env 15s pol 61s upd 1s)
+          radiant r/1k +8.46  dire r/1k +16.41  | by class r/1k: support +5.48  assassin +7.21  burst +19.54  tank +19.13  carry +10.84  | kl 0.0025  clip 0.02  ev 0.01
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 91a8bd37)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 09094459)
+upd    4   1.31M steps  4253 sps  | reward/1k +14.01  xp/1k 2083  deaths/1k 0.13  towers/1k 0.015 (towers/episode ours 0.078 vs net 0.250)  | ent 5.57  vloss 0.0833  (env 15s pol 61s upd 1s)
+          radiant r/1k +9.19  dire r/1k +18.52  | by class r/1k: support +5.90  assassin +8.34  burst +19.52  tank +24.20  carry +11.32  | kl 0.0020  clip 0.02  ev 0.45
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 d89751c5)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 67eaf67f)
+upd    5   1.63M steps  4256 sps  | reward/1k +13.74  xp/1k 2317  deaths/1k 0.10  towers/1k 0.019 (towers/episode ours 0.094 vs net 0.375)  | ent 5.43  vloss 2.8446  (env 15s pol 60s upd 1s)
+          radiant r/1k +7.18  dire r/1k +23.66  | by class r/1k: support +6.23  assassin +8.49  burst +22.50  tank +27.41  carry +12.46  | kl 0.0022  clip 0.02  ev 0.08
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 102ea9d9)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 18c66f23)
+upd    6   1.96M steps  4265 sps  | reward/1k +17.84  xp/1k 2659  deaths/1k 0.06  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.266)  | ent 5.34  vloss 0.1355  (env 15s pol 60s upd 1s)
+          radiant r/1k +9.68  dire r/1k +25.74  | by class r/1k: support +6.31  assassin +9.45  burst +25.08  tank +32.94  carry +14.76  | kl 0.0022  clip 0.02  ev 0.64
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 0cb8543f)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 10e5fdce)
+upd    7   2.28M steps  4262 sps  | reward/1k +12.14  xp/1k 2834  deaths/1k 0.09  towers/1k 0.034 (towers/episode ours 0.172 vs net 0.469)  | ent 5.40  vloss 7.2913  (env 15s pol 60s upd 1s)
+          radiant r/1k +13.70  dire r/1k +24.05  | by class r/1k: support +7.50  assassin +12.19  burst +26.46  tank +33.61  carry +14.63  | kl 0.0011  clip 0.00  ev 0.05
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 7039e02a)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 84fe4c27)
+upd    8   2.61M steps  4270 sps  | reward/1k +14.07  xp/1k 2324  deaths/1k 0.09  towers/1k 0.037 (towers/episode ours 0.187 vs net 0.531)  | ent 5.53  vloss 1.3050  (env 15s pol 60s upd 1s)
+          radiant r/1k +13.11  dire r/1k +17.85  | by class r/1k: support +7.11  assassin +8.46  burst +22.01  tank +27.79  carry +12.02  | kl 0.0020  clip 0.01  ev 0.19
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 3e0d0644)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 036ecc96)
+upd    9   2.93M steps  4269 sps  | reward/1k +13.99  xp/1k 2377  deaths/1k 0.16  towers/1k 0.031 (towers/episode ours 0.156 vs net 0.438)  | ent 5.52  vloss 0.6681  (env 15s pol 60s upd 1s)
+          radiant r/1k +8.79  dire r/1k +22.85  | by class r/1k: support +5.46  assassin +8.95  burst +19.61  tank +34.13  carry +10.95  | kl 0.0014  clip 0.01  ev 0.25
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 abbc0c31)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 c7b73165)
+upd   10   3.25M steps  4273 sps  | reward/1k +17.59  xp/1k 2878  deaths/1k 0.16  towers/1k 0.037 (towers/episode ours 0.187 vs net 0.469)  | ent 5.53  vloss 2.0659  (env 15s pol 60s upd 1s)
+          radiant r/1k +9.27  dire r/1k +29.05  | by class r/1k: support +6.22  assassin +9.62  burst +24.10  tank +40.72  carry +15.13  | kl 0.0007  clip 0.00  ev 0.34
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 dd93eee9)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 03d5c794)
+upd   11   3.58M steps  4280 sps  | reward/1k +15.00  xp/1k 2218  deaths/1k 0.14  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.500)  | ent 5.57  vloss 0.1320  (env 15s pol 60s upd 1s)
+          radiant r/1k +8.31  dire r/1k +21.21  | by class r/1k: support +5.34  assassin +8.02  burst +16.40  tank +33.98  carry +10.07  | kl 0.0008  clip 0.00  ev 0.83
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 9f2b0edf)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 dfc160d1)
+upd   12   3.91M steps  4285 sps  | reward/1k +13.52  xp/1k 1987  deaths/1k 0.09  towers/1k 0.040 (towers/episode ours 0.203 vs net 0.391)  | ent 5.57  vloss 0.1317  (env 15s pol 60s upd 1s)
+          radiant r/1k +13.03  dire r/1k +13.46  | by class r/1k: support +6.57  assassin +9.25  burst +17.06  tank +26.14  carry +7.19  | kl 0.0010  clip 0.00  ev 0.86
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 675e1010)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 49b90db2)
+upd   13   4.23M steps  4282 sps  | reward/1k +13.05  xp/1k 2163  deaths/1k 0.17  towers/1k 0.031 (towers/episode ours 0.156 vs net 0.594)  | ent 5.55  vloss 1.2582  (env 15s pol 60s upd 1s)
+          radiant r/1k +9.65  dire r/1k +19.13  | by class r/1k: support +5.77  assassin +9.20  burst +15.85  tank +30.98  carry +10.15  | kl 0.0007  clip 0.00  ev 0.44
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 50496a69)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 d99e494b)
+upd   14   4.56M steps  4282 sps  | reward/1k +16.84  xp/1k 2490  deaths/1k 0.16  towers/1k 0.046 (towers/episode ours 0.234 vs net 0.313)  | ent 5.46  vloss 0.1903  (env 15s pol 60s upd 1s)
+          radiant r/1k +12.47  dire r/1k +20.68  | by class r/1k: support +6.53  assassin +9.23  burst +21.70  tank +33.47  carry +11.95  | kl 0.0007  clip 0.00  ev 0.89
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 9aaa7dab)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 a8623013)
+upd   15   4.89M steps  4284 sps  | reward/1k +16.22  xp/1k 2379  deaths/1k 0.15  towers/1k 0.046 (towers/episode ours 0.234 vs net 0.453)  | ent 5.33  vloss 0.1522  (env 15s pol 60s upd 1s)
+          radiant r/1k +13.09  dire r/1k +18.60  | by class r/1k: support +7.38  assassin +10.14  burst +19.50  tank +29.62  carry +12.58  | kl 0.0023  clip 0.01  ev 0.90
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 bcb1108e)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 360b6e5b)
+upd   16   5.22M steps  4288 sps  | reward/1k +17.95  xp/1k 2658  deaths/1k 0.10  towers/1k 0.024 (towers/episode ours 0.125 vs net 0.219)  | ent 5.22  vloss 0.1493  (env 15s pol 60s upd 1s)
+          radiant r/1k +11.54  dire r/1k +23.84  | by class r/1k: support +6.75  assassin +9.24  burst +20.24  tank +37.51  carry +14.71  | kl 0.0009  clip 0.00  ev 0.92
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 4be5eff9)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 d8f88a29)
+upd   17   5.54M steps  4282 sps  | reward/1k +21.46  xp/1k 3442  deaths/1k 0.14  towers/1k 0.028 (towers/episode ours 0.141 vs net 0.375)  | ent 5.10  vloss 0.1836  (env 15s pol 62s upd 1s)
+          radiant r/1k +12.87  dire r/1k +32.95  | by class r/1k: support +10.22  assassin +11.65  burst +27.77  tank +47.92  carry +16.98  | kl 0.0007  clip 0.00  ev 0.63
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 dbd43873)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 8c7dff5f)
+upd   18   5.87M steps  4285 sps  | reward/1k +18.05  xp/1k 2677  deaths/1k 0.15  towers/1k 0.040 (towers/episode ours 0.203 vs net 0.453)  | ent 5.13  vloss 0.1519  (env 15s pol 60s upd 1s)
+          radiant r/1k +9.75  dire r/1k +25.90  | by class r/1k: support +7.09  assassin +9.61  burst +21.31  tank +36.95  carry +14.15  | kl 0.0009  clip 0.00  ev 0.94
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 856c5de6)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 9dd35b7a)
+upd   19   6.20M steps  4288 sps  | reward/1k +21.13  xp/1k 3149  deaths/1k 0.19  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.562)  | ent 4.96  vloss 0.1485  (env 15s pol 60s upd 1s)
+          radiant r/1k +8.13  dire r/1k +33.76  | by class r/1k: support +6.03  assassin +10.40  burst +26.03  tank +44.89  carry +17.38  | kl 0.0022  clip 0.01  ev 0.95
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 46b81e5a)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 4d7535dc)
+upd   20   6.53M steps  4291 sps  | reward/1k +21.18  xp/1k 3149  deaths/1k 0.13  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.313)  | ent 4.95  vloss 0.1484  (env 15s pol 60s upd 1s)
+          radiant r/1k +12.60  dire r/1k +29.32  | by class r/1k: support +7.60  assassin +11.23  burst +26.78  tank +41.06  carry +18.13  | kl 0.0012  clip 0.00  ev 0.95
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 3ee61458)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 919527da)
+upd   21   6.85M steps  4291 sps  | reward/1k +25.34  xp/1k 4055  deaths/1k 0.22  towers/1k 0.022 (towers/episode ours 0.109 vs net 0.469)  | ent 4.81  vloss 1.3554  (env 15s pol 60s upd 1s)
+          radiant r/1k +12.99  dire r/1k +40.96  | by class r/1k: support +8.70  assassin +13.26  burst +34.84  tank +53.71  carry +24.36  | kl 0.0008  clip 0.00  ev 0.72
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 568a76a5)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/log.jsonl (0.0 MB, md5 568a76a5)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 7f0c4c43)
+S3 ok moba/runs/g3_I_death0_siege_4x_s1/policy.pt (1.3 MB, md5 7f0c4c43)
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading history steps 19-20, summary, console lines 81-86
+wandb: 
+wandb: Run history:
+wandb:                  agent_steps ▁▁▂▂▂▃▃▃▄▄▄▅▅▆▆▆▇▇▇██
+wandb:                    approx_kl █▁▅▄▅▅▂▄▃▁▁▂▁▁▅▂▁▂▅▂▁
+wandb: class/assassin/deaths_per_1k ▇█▅▃▃▁▁▂▅▆▆▂█▇█▃▃▂▂▁▅
+wandb: class/assassin/reward_per_1k ▂▁▂▃▃▄▇▃▄▄▃▄▄▄▅▄▆▄▅▆█
+wandb:     class/assassin/xp_per_1k ▂▁▂▃▃▄▇▃▄▄▃▄▄▄▅▄▆▄▅▆█
+wandb:    class/burst/deaths_per_1k ▅▁▁▁▁▅▁▁▅▁██▁▅▁▁▁▅▁▁▅
+wandb:    class/burst/reward_per_1k ▂▂▂▂▃▄▅▃▂▄▁▁▁▃▂▃▅▃▅▅█
+wandb:        class/burst/xp_per_1k ▂▂▂▂▃▄▅▃▂▄▁▁▁▃▂▃▅▃▅▅█
+wandb:    class/carry/deaths_per_1k ▅█▅▅▄▂▃▂▃▃▁▂▃▄▃▂▂▂▂▁▂
+wandb:    class/carry/reward_per_1k ▂▂▂▃▃▄▄▃▃▄▂▁▂▃▃▄▅▄▅▅█
+wandb:                          +34 ...
+wandb: 
+wandb: Run summary:
+wandb:                  agent_steps 6850630
+wandb:                    approx_kl 0.00082
+wandb: class/assassin/deaths_per_1k 0.24595
+wandb: class/assassin/reward_per_1k 13.26338
+wandb:     class/assassin/xp_per_1k 1997.03223
+wandb:    class/burst/deaths_per_1k 0.01537
+wandb:    class/burst/reward_per_1k 34.84202
+wandb:        class/burst/xp_per_1k 5231.48535
+wandb:    class/carry/deaths_per_1k 0.04612
+wandb:    class/carry/reward_per_1k 24.35749
+wandb:                          +34 ...
+wandb: 
+wandb: 🚀 View run rw/I_death0_siege_4x_s1 at: https://wandb.ai/drift-ai-models/moba-dream-rl/runs/hwrvs28s
+wandb: ⭐️ View project at: https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20261005_064247-hwrvs28s/logs
+done: 6850630 agent steps in 26.7 min -> /root/puffertank/runs/dream_ppo/rw/I_death0_siege_4x_s1

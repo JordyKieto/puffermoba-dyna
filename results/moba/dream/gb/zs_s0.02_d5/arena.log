@@ -1,0 +1,5 @@
+120 games in 132s   (seeds 50000000+, max 6000 ticks)
+
+team    vs            games       win%      loss%   timeout%      ticks   ret ours ret theirs      kills     deathstowers_killedcreeps_killed      level    usage_q    usage_w    usage_e
+ppo     net          120.00       0.00      50.00      50.00    3768.85       8.71       6.38       1.72       3.12       0.17      12.12       4.01      54.36      30.53      14.93
+EVAL DONE

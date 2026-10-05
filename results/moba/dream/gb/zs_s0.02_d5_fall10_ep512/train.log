@@ -1,0 +1,95 @@
+/root/puffertank/tools/moba_viz.py:119: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'attack_mode': None, 'predict_targets': False, 'target_dist': False, 'list_state': False, 'direct_damage': False, 'grid_cnn': False, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+policy initialised from runs/dream_ppo/armC/policy.pt
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 4dagt3x7
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /root/puffertank/wandb/run-20261005_061025-4dagt3x7
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rw/zs_s0.02_d5_fall10_ep512
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-dream-rl/runs/4dagt3x7
+dream PPO: wm runs/token_wm/wm, 64 envs x 10 heroes, rollout 512, episode 512, 1.7M agent steps on cuda
+upd    1   0.16M steps  3697 sps  | reward/1k +8.31  xp/1k 1983  deaths/1k 0.18  towers/1k 0.024 (towers/episode ours 0.062 vs net 0.359)  | ent 5.82  vloss 0.1445  (env 9s pol 35s upd 0s)
+          radiant r/1k +8.42  dire r/1k +17.96  | by class r/1k: support +5.88  assassin +8.80  burst +21.72  tank +19.35  carry +10.19  | kl 0.0025  clip 0.02  ev -0.00
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 cacaf3b0)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 d456e61e)
+upd    2   0.33M steps  3861 sps  | reward/1k +8.97  xp/1k 1959  deaths/1k 0.15  towers/1k 0.018 (towers/episode ours 0.047 vs net 0.266)  | ent 5.70  vloss 0.1123  (env 8s pol 32s upd 0s)
+          radiant r/1k +6.74  dire r/1k +19.32  | by class r/1k: support +6.09  assassin +7.91  burst +18.55  tank +20.62  carry +11.97  | kl 0.0029  clip 0.03  ev 0.04
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 5d38b82a)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 4955a363)
+upd    3   0.49M steps  3866 sps  | reward/1k +9.58  xp/1k 2013  deaths/1k 0.13  towers/1k 0.055 (towers/episode ours 0.141 vs net 0.313)  | ent 5.62  vloss 0.1749  (env 8s pol 33s upd 0s)
+          radiant r/1k +8.08  dire r/1k +18.75  | by class r/1k: support +6.57  assassin +8.65  burst +20.04  tank +20.93  carry +10.89  | kl 0.0008  clip 0.00  ev 0.11
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 79d3b1ed)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 fe2fadf1)
+upd    4   0.66M steps  3936 sps  | reward/1k +10.95  xp/1k 2287  deaths/1k 0.14  towers/1k 0.024 (towers/episode ours 0.062 vs net 0.328)  | ent 5.55  vloss 0.1575  (env 8s pol 30s upd 0s)
+          radiant r/1k +9.59  dire r/1k +20.85  | by class r/1k: support +7.20  assassin +9.77  burst +21.99  tank +23.29  carry +13.85  | kl 0.0021  clip 0.02  ev 0.22
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 e95a93db)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 fa38de75)
+upd    5   0.82M steps  3981 sps  | reward/1k +13.78  xp/1k 2562  deaths/1k 0.15  towers/1k 0.061 (towers/episode ours 0.156 vs net 0.219)  | ent 5.47  vloss 0.1956  (env 8s pol 30s upd 0s)
+          radiant r/1k +12.64  dire r/1k +21.50  | by class r/1k: support +8.05  assassin +11.31  burst +25.58  tank +26.57  carry +13.84  | kl 0.0017  clip 0.01  ev 0.33
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 3f7c59a5)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 1b04e011)
+upd    6   0.98M steps  3966 sps  | reward/1k +11.80  xp/1k 2401  deaths/1k 0.09  towers/1k 0.055 (towers/episode ours 0.141 vs net 0.375)  | ent 5.31  vloss 0.1933  (env 9s pol 33s upd 0s)
+          radiant r/1k +14.67  dire r/1k +17.34  | by class r/1k: support +7.58  assassin +11.22  burst +24.36  tank +23.08  carry +13.79  | kl 0.0023  clip 0.02  ev 0.43
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 abcd9f00)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 53dad5c9)
+upd    7   1.15M steps  3993 sps  | reward/1k +13.22  xp/1k 2858  deaths/1k 0.10  towers/1k 0.024 (towers/episode ours 0.062 vs net 0.422)  | ent 5.26  vloss 0.2047  (env 8s pol 30s upd 0s)
+          radiant r/1k +10.47  dire r/1k +27.59  | by class r/1k: support +8.60  assassin +13.09  burst +25.89  tank +29.77  carry +17.79  | kl 0.0012  clip 0.01  ev 0.57
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 0e88c3b4)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 f336e21b)
+upd    8   1.31M steps  4001 sps  | reward/1k +12.37  xp/1k 2610  deaths/1k 0.07  towers/1k 0.012 (towers/episode ours 0.031 vs net 0.359)  | ent 5.22  vloss 0.2092  (env 8s pol 31s upd 0s)
+          radiant r/1k +10.64  dire r/1k +24.10  | by class r/1k: support +8.31  assassin +11.42  burst +23.81  tank +30.06  carry +13.24  | kl 0.0011  clip 0.01  ev 0.68
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 2f764dff)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 4792e290)
+upd    9   1.47M steps  4021 sps  | reward/1k +14.78  xp/1k 2529  deaths/1k 0.04  towers/1k 0.067 (towers/episode ours 0.172 vs net 0.219)  | ent 5.10  vloss 0.2475  (env 8s pol 30s upd 0s)
+          radiant r/1k +17.83  dire r/1k +15.91  | by class r/1k: support +9.95  assassin +12.91  burst +25.97  tank +24.46  carry +11.06  | kl 0.0023  clip 0.02  ev 0.70
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 780c8d39)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 233a0b4e)
+upd   10   1.64M steps  4037 sps  | reward/1k +19.12  xp/1k 3600  deaths/1k 0.10  towers/1k 0.049 (towers/episode ours 0.125 vs net 0.359)  | ent 4.84  vloss 0.3250  (env 8s pol 30s upd 0s)
+          radiant r/1k +13.27  dire r/1k +34.69  | by class r/1k: support +10.07  assassin +14.76  burst +32.98  tank +41.35  carry +20.74  | kl 0.0016  clip 0.01  ev 0.79
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 a8be6875)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 9da17040)
+upd   11   1.80M steps  4042 sps  | reward/1k +17.58  xp/1k 2990  deaths/1k 0.05  towers/1k 0.061 (towers/episode ours 0.156 vs net 0.234)  | ent 4.86  vloss 0.2866  (env 8s pol 31s upd 0s)
+          radiant r/1k +20.09  dire r/1k +19.78  | by class r/1k: support +11.61  assassin +14.55  burst +28.18  tank +28.98  carry +16.36  | kl 0.0008  clip 0.00  ev 0.81
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 d542df89)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/log.jsonl (0.0 MB, md5 d542df89)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 d6ca5fb6)
+S3 ok moba/runs/gb_zs_s0.02_d5_fall10_ep512/policy.pt (1.3 MB, md5 d6ca5fb6)
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading output.log
+wandb: 
+wandb: Run history:
+wandb:                  agent_steps ▁▂▂▃▄▄▅▆▇▇█
+wandb:                    approx_kl ▇█▁▆▄▆▃▂▆▄▁
+wandb: class/assassin/deaths_per_1k ▆▆█▄▅▃▃▂▁▃▁
+wandb: class/assassin/reward_per_1k ▂▁▂▃▄▄▆▅▆██
+wandb:     class/assassin/xp_per_1k ▂▁▂▃▄▄▆▅▆██
+wandb:    class/burst/deaths_per_1k ▆▆█▁▁▁▁▁▁▁▁
+wandb:    class/burst/reward_per_1k ▃▁▂▃▄▄▅▄▅█▆
+wandb:        class/burst/xp_per_1k ▃▁▂▃▄▄▅▄▅█▆
+wandb:    class/carry/deaths_per_1k █▅▃▄▆▄▄▁▁▄▂
+wandb:    class/carry/reward_per_1k ▁▂▁▃▃▃▆▃▂█▅
+wandb:                          +34 ...
+wandb: 
+wandb: Run summary:
+wandb:                  agent_steps 1801885
+wandb:                    approx_kl 0.00085
+wandb: class/assassin/deaths_per_1k 0
+wandb: class/assassin/reward_per_1k 14.54806
+wandb:     class/assassin/xp_per_1k 2179.56616
+wandb:    class/burst/deaths_per_1k 0
+wandb:    class/burst/reward_per_1k 28.17994
+wandb:        class/burst/xp_per_1k 4227.38721
+wandb:    class/carry/deaths_per_1k 0.06104
+wandb:    class/carry/reward_per_1k 16.36153
+wandb:                          +34 ...
+wandb: 
+wandb: 🚀 View run rw/zs_s0.02_d5_fall10_ep512 at: https://wandb.ai/drift-ai-models/moba-dream-rl/runs/4dagt3x7
+wandb: ⭐️ View project at: https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20261005_061025-4dagt3x7/logs
+done: 1801885 agent steps in 7.5 min -> /root/puffertank/runs/dream_ppo/rw/zs_s0.02_d5_fall10_ep512

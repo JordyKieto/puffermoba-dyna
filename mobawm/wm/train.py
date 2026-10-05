@@ -94,6 +94,7 @@ def _wmean(x, m, w):
 TOWER_HEALTH_WEIGHT = 1.0
 TOWER_CONSIST = 0.0
 TOWER_EVENT_P = 0.0
+TOWER_FP_WEIGHT = 1.0   # --tower-fp-weight: weight of "tower does not die" examples in the death loss (precision)
 TARGET_WEIGHT = 1.0   # loss weight of the attack edges (who attacks whom, --target-weight)
 TARGET_DECAY = False  # --target-decay: the edge loss gets the same rollout-depth step weights as every other loss
 LIST_WEIGHT = 1.0     # --list-weight: loss weight of next-tick stored-list membership (LIST_STATE)
@@ -166,6 +167,9 @@ def step_loss(pred, e0, e1, stats, kind, tick, cidx, w=None):
     can_flip = stats.alive_mask.to(dev)
     flip = (alive0 != alive1).float()
     alive_bce = Fn.binary_cross_entropy_with_logits(pred["alive_flip"], flip, reduction="none")
+    if TOWER_FP_WEIGHT != 1.0:            # towers that do NOT die this tick weigh x W: false tower deaths cost W x more
+        tw_ = (kind == 3).view(*([1] * (flip.dim() - 1)), -1)
+        alive_bce = alive_bce * torch.where(tw_ & (flip < 0.5), TOWER_FP_WEIGHT, 1.0)
     hit_bce = Fn.binary_cross_entropy_with_logits(pred["is_hit"], e1[..., F["is_hit"]], reduction="none")
     if WALK_ONLY:
         # hero x, y only (fields 0, 1), same Huber on scaled deltas, same masks
@@ -1313,6 +1317,7 @@ def main():
     ap.add_argument("--fleet-launch", default="0", help="launch id: sync keys are per launch")
     ap.add_argument("--fleet-every", type=int, default=10, help="updates between weight averages")
     ap.add_argument("--fleet-timeout", type=float, default=300.0)
+    ap.add_argument("--tower-fp-weight", type=float, default=1.0, help="x weight on towers that don't die (penalises false tower deaths)")
     ap.add_argument("--compile", action="store_true", help="torch.compile the model step (about 2x on A100/A40)")
     ap.add_argument("--pack-only", action="store_true", help="load the training store, write --packed-dir, exit (before a multi-GPU run)")
     ap.add_argument("--ema", type=float, default=0.0, help="keep an EMA of the weights with this decay; checkpoints "
@@ -1484,6 +1489,8 @@ def main():
     gate_fields = [f for f in args.gate_fields.split(",") if f] or None
     global TOWER_HEALTH_WEIGHT, TOWER_CONSIST, TOWER_EVENT_P, STRATA, TARGET_WEIGHT, LIST_WEIGHT
     TARGET_WEIGHT, LIST_WEIGHT = args.target_weight, args.list_weight
+    global TOWER_FP_WEIGHT
+    TOWER_FP_WEIGHT = args.tower_fp_weight
     TOWER_HEALTH_WEIGHT, TOWER_CONSIST, TOWER_EVENT_P = args.tower_health_weight, args.tower_consist, args.tower_event_p
     STRATA = parse_strata(args.strata) if args.strata else None
     if args.attack_mode:

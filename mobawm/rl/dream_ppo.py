@@ -97,6 +97,13 @@ class DreamEnv:
         self.repairs += n
         return nxt
 
+    def obs_gpu(self):
+        """obs() on the GPU (mobawm/rl/gpu_net.py, byte-identical): (B, 10, 510) uint8 on the env's device."""
+        from .gpu_net import ego_obs_gpu
+        if getattr(self, "_walls_t", None) is None:
+            self._walls_t = torch.from_numpy(WALLS).to(self.dev)
+        return ego_obs_gpu(self.ent, self.last_reward, self._walls_t, self.statics)
+
     def obs(self):
         """(B, 10, 510) uint8 ego observations of the current dreamed states."""
         e = self.ent.cpu().numpy()
@@ -136,7 +143,13 @@ XP_SIGNED = False    # True: the XP term is the signed XP change (noise cancels)
 # XP and +0.642 to the tower's killer; nothing for winning. These bonuses change the TOTAL the
 # policy optimises; the per-component rewards (which the observation shows) stay the game's.
 SHAPE = dict(r_tower=None, tower_team=False, r_win=0.0,
-             dmg_k=0.0, dmg_boost=0.0, dmg_radius=8.0, fall_bonus=0.0, fall_radius=8.0, def_scale=0.0)
+             dmg_k=0.0, dmg_boost=0.0, dmg_radius=8.0, fall_bonus=0.0, fall_radius=8.0, def_scale=0.0,
+             # reward-structure sweep (dream only): scale the game's death / XP terms; push = progress toward the enemy
+             # ancient per cell; siege = per tick within siege_radius of a living enemy tower; anc_k = enemy ancient
+             # health lost (fraction) to the whole attacking team; team_share = every hero gets its team's mean;
+             # zero_sum = minus the enemy team's mean (relative reward)
+             xp_scale=1.0, death_scale=1.0, push_k=0.0, siege_k=0.0, siege_radius=8.0, anc_k=0.0,
+             team_share=False, zero_sum=False, kill_k=0.0, kill_radius=8.0)
 
 
 def reward(prev, nxt):
@@ -163,10 +176,63 @@ def reward(prev, nxt):
         credit = torch.zeros(B, 10, 24, device=prev.device)
         credit.scatter_(1, best[:, None], ok[:, None].float())
         comp[..., 3] = credit.sum(-1) * R_TOWER
-    total = comp.sum(-1)
+    total = comp[..., 0] * SHAPE["death_scale"] + comp[..., 1] * SHAPE["xp_scale"] + comp[..., 2] + comp[..., 3]
     if SHAPE["r_tower"] is not None or SHAPE["r_win"] or SHAPE["dmg_k"] or SHAPE["fall_bonus"] or SHAPE["def_scale"]:
         total = total + shaping(prev, nxt)
+    total = total + structure(prev, nxt)
+    if SHAPE["team_share"] or SHAPE["zero_sum"]:
+        rad, dire = total[:, :5].mean(-1, keepdim=True), total[:, 5:].mean(-1, keepdim=True)
+        own = torch.cat([rad.expand(-1, 5), dire.expand(-1, 5)], -1)
+        other = torch.cat([dire.expand(-1, 5), rad.expand(-1, 5)], -1)
+        if SHAPE["team_share"]:
+            total = own
+        if SHAPE["zero_sum"]:
+            total = total - other
     return total, comp
+
+
+def structure(prev, nxt):
+    """(B,10) reward-structure terms: push toward the enemy ancient, siege presence, enemy ancient damage."""
+    B = prev.shape[0]
+    out = torch.zeros(B, 10, device=prev.device)
+    if not (SHAPE["push_k"] or SHAPE["siege_k"] or SHAPE["anc_k"] or SHAPE["kill_k"]):
+        return out
+    p, n = prev[:, :10], nxt[:, :10]
+    team = p[..., F["team"]]                                                         # (B,10) 0 radiant / 1 dire
+    alive = (p[..., F["alive"]] > 0) & (n[..., F["alive"]] > 0)
+    anc = prev[:, 204:206]                                                           # 204 dire ancient, 205 radiant
+    ateam = anc[..., F["team"]]
+    # the enemy ancient of each hero
+    ei = (ateam[:, None, :] != team[:, :, None]).float().argmax(-1)                  # (B,10) index 0/1 into anc
+    ex = torch.gather(anc[..., F["x"]], 1, ei); ey = torch.gather(anc[..., F["y"]], 1, ei)
+    if SHAPE["push_k"]:
+        d0 = (p[..., F["x"]] - ex).abs() + (p[..., F["y"]] - ey).abs()
+        d1 = (n[..., F["x"]] - ex).abs() + (n[..., F["y"]] - ey).abs()
+        step = d0 - d1
+        out += SHAPE["push_k"] * torch.where(alive & (step.abs() <= 5), step, torch.zeros_like(step))
+    if SHAPE["siege_k"]:
+        tw = prev[:, 182:]
+        dist = (p[..., F["x"]][:, :, None] - tw[..., F["x"]][:, None]).abs() + (p[..., F["y"]][:, :, None] - tw[..., F["y"]][:, None]).abs()
+        enemy = (tw[..., F["team"]][:, None] != team[:, :, None]) & (tw[..., F["alive"]][:, None] > 0)
+        out += SHAPE["siege_k"] * (alive & (enemy & (dist <= SHAPE["siege_radius"])).any(-1)).float()
+    if SHAPE["kill_k"]:                                                      # champion kills: an enemy hero dies ->
+        jump = (n[..., F["x"]] - p[..., F["x"]]).abs() + (n[..., F["y"]] - p[..., F["y"]]).abs()     # the nearest
+        died = (jump > 12) & (n[..., F["health"]] >= n[..., F["max_health"]] - 0.5) & \
+            (p[..., F["health"]] < p[..., F["max_health"]] - 0.5)                                       # living enemy
+        if died.any():                                                                                  # hero in range
+            d = (p[..., F["x"]][:, :, None] - p[..., F["x"]][:, None]).abs() + (p[..., F["y"]][:, :, None] - p[..., F["y"]][:, None]).abs()
+            ok = (team[:, :, None] != team[:, None, :]) & alive[:, :, None] & died[:, None, :] & (d <= SHAPE["kill_radius"])
+            dd = torch.where(ok, d, torch.full_like(d, 1e9))                                             # (B, killer, victim)
+            best = dd.argmin(1)                                                                          # (B, victim)
+            got = (dd.min(1).values < 1e9).float()
+            out += SHAPE["kill_k"] * torch.zeros_like(out).scatter_add_(1, best, got)
+    if SHAPE["anc_k"]:
+        an = nxt[:, 204:206]
+        maxh = anc[..., F["max_health"]].clamp(min=1.0)
+        hp1 = torch.where(an[..., F["alive"]] > 0, an[..., F["health"]], torch.zeros_like(maxh))
+        lost = ((anc[..., F["health"]] - hp1).clamp(min=0) / maxh) * (anc[..., F["alive"]] > 0)        # (B,2)
+        out += SHAPE["anc_k"] * torch.gather(lost, 1, ei)
+    return out
 
 
 def shaping(prev, nxt):
@@ -430,6 +496,22 @@ def main():
     ap.add_argument("--fall-bonus", type=float, default=0.0, help="dream-only: falling-tower bonus, largest for the closest enemy hero")
     ap.add_argument("--fall-radius", type=float, default=8.0)
     ap.add_argument("--def-scale", type=float, default=0.0, help="dream-only: defenders pay def_scale x the tower damage/fall reward")
+    # Distributed dream PPO (zelda-RL pattern): every pod runs the whole PPO loop on its own dream games (own seed);
+    # after every --fleet-every updates the pods average their policy weights through Upstash (mobawm/fleet_link.py)
+    ap.add_argument("--fleet-exp", default=""); ap.add_argument("--fleet-rank", type=int, default=0)
+    ap.add_argument("--fleet-world", type=int, default=1); ap.add_argument("--fleet-launch", default="0")
+    ap.add_argument("--fleet-every", type=int, default=1)
+    ap.add_argument("--gpu-opp", action="store_true", help="build observations and run the shipped net on the GPU (exact; ~5x+ faster)")
+    ap.add_argument("--side", default="both", choices=("both", "radiant", "dire"), help="with --opponent net: which side ours plays")
+    ap.add_argument("--xp-scale", type=float, default=1.0, help="dream-only: scale of the game's XP reward (0 = off)")
+    ap.add_argument("--death-scale", type=float, default=1.0, help="dream-only: scale of the game's death penalty")
+    ap.add_argument("--push-k", type=float, default=0.0, help="dream-only: reward per cell of progress toward the enemy ancient")
+    ap.add_argument("--siege-k", type=float, default=0.0, help="dream-only: reward per tick within --siege-radius of a living enemy tower")
+    ap.add_argument("--siege-radius", type=float, default=8.0)
+    ap.add_argument("--anc-k", type=float, default=0.0, help="dream-only: enemy ancient health lost (fraction) to the attacking team")
+    ap.add_argument("--kill-k", type=float, default=0.0, help="dream-only: reward to the nearest enemy hero (within 8 cells) when a hero dies")
+    ap.add_argument("--team-share", action="store_true", help="dream-only: every hero gets its team's mean reward")
+    ap.add_argument("--zero-sum", action="store_true", help="dream-only: reward minus the enemy team's mean")
     ap.add_argument("--init-policy", default="", help="start from this saved policy (fine-tune)")
     ap.add_argument("--r-win", type=float, default=0.0, help="dream-only: +W to the winning team, -W to the losing team when an ancient falls")
     ap.add_argument("--net-frac", type=float, default=0.5, help="--opponent mix: share of games against the net")
@@ -449,7 +531,9 @@ def main():
     env = DreamEnv(args.wm, files, parse_games(args.games), args.envs, args.episode, dev, seed=args.seed)
     SHAPE.update(r_tower=args.r_tower, tower_team=args.tower_team, r_win=args.r_win, dmg_k=args.dmg_k,
                  dmg_boost=args.dmg_boost, dmg_radius=args.dmg_radius, fall_bonus=args.fall_bonus,
-                 fall_radius=args.fall_radius, def_scale=args.def_scale)
+                 fall_radius=args.fall_radius, def_scale=args.def_scale, xp_scale=args.xp_scale,
+                 death_scale=args.death_scale, push_k=args.push_k, siege_k=args.siege_k, siege_radius=args.siege_radius,
+                 anc_k=args.anc_k, team_share=args.team_share, zero_sum=args.zero_sum, kill_k=args.kill_k)
     pol = (PufferPolicy() if args.arch == "puffer" else Policy(role_heads=args.role_heads)).to(dev)
     if args.init_policy:
         src = Policy.load(args.init_policy)
@@ -461,7 +545,18 @@ def main():
     B, T, N = args.envs, args.rollout, args.envs * 10
     logf = open(out / "log.jsonl", "w")
     from ..s3persist import flush as persist_flush, persist   # no-op without a policy file above `out`
-    opp = NetPool(N, seed=args.seed) if args.opponent in ("net", "mix") else None
+    if args.opponent in ("net", "mix") and args.gpu_opp:      # the shipped net in torch on the GPU (gpu_net.py, exact)
+        from .gpu_net import ShippedNet
+        class _GpuPool:
+            def __init__(s):
+                s.net = ShippedNet(N, dev); s.net.gen.manual_seed(args.seed)
+            def reset(s):
+                s.net.state.zero_()
+            def act(s, o):
+                return s.net.act(o)
+        opp = _GpuPool()
+    else:
+        opp = NetPool(N, seed=args.seed) if args.opponent in ("net", "mix") else None
     side_gen = torch.Generator().manual_seed(args.seed + 1)
 
     def draw_sides():
@@ -469,6 +564,8 @@ def main():
         if opp is None:
             return torch.ones(B, 10, dtype=torch.bool, device=dev)
         radiant = torch.rand(B, generator=side_gen) < 0.5
+        if args.side != "both":                     # train one side only (e.g. dire, which no policy has learned)
+            radiant = torch.full((B,), args.side == "radiant")
         m = torch.zeros(B, 10, dtype=torch.bool)
         m[radiant, :5] = True
         m[~radiant, 5:] = True
@@ -488,6 +585,11 @@ def main():
     print(f"dream PPO: wm {args.wm}, {B} envs x 10 heroes, rollout {T}, episode {args.episode}, "
           f"{args.steps / 1e6:.1f}M agent steps on {dev}", flush=True)
 
+    link = None
+    if args.fleet_exp:
+        from ..fleet_link import FleetLink
+        link = FleetLink(args.fleet_exp, args.fleet_rank, args.fleet_world, args.fleet_launch)
+        print(f"PPO fleet {args.fleet_exp}: rank {args.fleet_rank}/{args.fleet_world}, average every {args.fleet_every} update(s)", flush=True)
     steps, update, t0 = 0, 0, time.time()
     ep_ret = torch.zeros(B, 10, device=dev)          # running per-hero return of the current episodes
     finished = []                                    # mean per-hero return of episodes finished this update
@@ -505,18 +607,22 @@ def main():
         logp_b, val_b, rew_b = (torch.zeros(T, N, device=dev) for _ in range(3))
         done_b, valid_b = torch.zeros(T, N, device=dev), torch.zeros(T, N, device=dev)
         comp_sum = torch.zeros(4, device=dev)
+        comp_opp = torch.zeros(4, device=dev)      # the opponent's (net's) components: who takes towers in the dream
         ours_r = opp_r = 0.0
         comp_hero = torch.zeros(10, 4, device=dev)   # per hero slot: 0-4 radiant, 5-9 dire; class = slot % 5
         t_env = t_pol = 0.0
         for t in range(T):
             ta = time.time()
-            o_np = env.obs().reshape(N, 510)
-            o = torch.from_numpy(o_np).to(dev)
+            if args.gpu_opp:                        # observations built on the GPU: no host round trip
+                o = env.obs_gpu().reshape(N, 510)
+            else:
+                o_np = env.obs().reshape(N, 510)
+                o = torch.from_numpy(o_np).to(dev)
             with torch.no_grad():
                 a, logp, v = pol.act(o)
             a_env = a
             if opp is not None:                      # the shipped net plays the other side
-                net_a = torch.from_numpy(opp.act(o_np)).to(dev)
+                net_a = opp.act(o) if args.gpu_opp else torch.from_numpy(opp.act(o_np)).to(dev)
                 a_env = torch.where(ours.reshape(N, 1), a, net_a)
             tb = time.time()
             valid = (env.alive[:, None] & ours).reshape(N).float()
@@ -529,10 +635,11 @@ def main():
             obs_b[t], act_b[t], logp_b[t], val_b[t] = o, a, logp, v
             rew_b[t], done_b[t], valid_b[t] = r.reshape(N), done.repeat_interleave(10).float(), valid
             comp_sum += (env.last_reward * ours[..., None]).sum((0, 1))
+            comp_opp += (env.last_reward * ~ours[..., None]).sum((0, 1))
             comp_hero += (env.last_reward * ours[..., None]).sum(0)
             ep_ret += r
         with torch.no_grad():
-            o_last = torch.from_numpy(env.obs().reshape(N, 510)).to(dev)
+            o_last = env.obs_gpu().reshape(N, 510) if args.gpu_opp else torch.from_numpy(env.obs().reshape(N, 510)).to(dev)
             v_last = pol.peek_value(o_last) if pol.recurrent else pol(o_last)[1]
         # GAE over the rollout; a finished episode (ancient fell) cuts the bootstrap
         adv = torch.zeros(T, N, device=dev)
@@ -609,6 +716,13 @@ def main():
         t_upd = time.time() - tc
         steps += int(m.sum())
         update += 1
+        if link is not None and update % args.fleet_every == 0:
+            fi = link.average_weights(pol, update // args.fleet_every, timeout=600)
+            link.heartbeat(dict(update=update, steps=steps, sps=steps / (time.time() - t0),
+                                ours_towers=float(comp_sum[3] / R_TOWER) / max(B, 1),
+                                net_towers=float(comp_opp[3] / R_TOWER) / max(B, 1), **fi))
+            if update <= 3 or update % 10 == 0:
+                print(f"  fleet round {update // args.fleet_every}: averaged {fi['sync_ranks']} pods, wait {fi['sync_wait_s']:.1f}s, hash {fi['weight_hash']}", flush=True)
         n_valid = max(int(m.sum()), 1)
         per1k = comp_sum / n_valid * 1000
         hero1k = comp_hero / (n_valid / 10) * 1000                  # per hero slot, per 1k of ITS steps
@@ -632,6 +746,7 @@ def main():
                    reward_per_1k=float(rew_b.sum() / max(int(m.sum()), 1) * 1000),
                    deaths_per_1k=float(per1k[0] / R_DEATH), xp_per_1k=float(per1k[1] / R_XP),
                    tower_kills_per_1k=float(per1k[3] / R_TOWER), entropy=float(ent.mean()),
+                   ours_towers_per_episode=float(comp_sum[3] / R_TOWER) / max(B, 1), opp_towers_per_episode=float(comp_opp[3] / R_TOWER) / max(B, 1),
                    value_loss=float(vl), time_env=round(t_env, 1), time_policy=round(t_pol, 1),
                    time_update=round(t_upd, 1), state_repairs=env.repairs,
                    opponent=args.opponent, ours_reward_per_1k=ours_r / n_valid * 1000,
@@ -643,7 +758,7 @@ def main():
         finished = []
         print(f"upd {update:4d}  {steps / 1e6:5.2f}M steps  {rec['sps']} sps  | reward/1k {rec['reward_per_1k']:+.2f}  "
               f"xp/1k {rec['xp_per_1k']:.0f}  deaths/1k {rec['deaths_per_1k']:.2f}  towers/1k "
-              f"{rec['tower_kills_per_1k']:.3f}  | ent {rec['entropy']:.2f}  vloss {rec['value_loss']:.4f}  "
+              f"{rec['tower_kills_per_1k']:.3f} (towers/episode ours {rec['ours_towers_per_episode']:.3f} vs net {rec['opp_towers_per_episode']:.3f})  | ent {rec['entropy']:.2f}  vloss {rec['value_loss']:.4f}  "
               f"(env {t_env:.0f}s pol {t_pol:.0f}s upd {t_upd:.0f}s)", flush=True)
         print(f"          radiant r/1k {detail['radiant/reward_per_1k']:+.2f}  dire r/1k {detail['dire/reward_per_1k']:+.2f}  "
               f"| by class r/1k: " + "  ".join(f"{c} {detail[f'class/{c}/reward_per_1k']:+.2f}" for c in CLS)

@@ -1,0 +1,94 @@
+/root/puffertank/tools/moba_viz.py:119: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'attack_mode': None, 'predict_targets': False, 'target_dist': False, 'list_state': False, 'direct_damage': False, 'grid_cnn': False, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+policy initialised from runs/dream_ppo/init_E_best_cont_formula_2x_s2/policy.pt
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 4sga2m7j
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /root/puffertank/wandb/run-20261005_064244-4sga2m7j
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rw/E_best_cont_formula_2x_s2
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-dream-rl/runs/4sga2m7j
+dream PPO: wm runs/token_wm/wm, 64 envs x 10 heroes, rollout 1024, episode 1024, 3.4M agent steps on cuda
+upd    1   0.33M steps  3995 sps  | reward/1k +11.68  xp/1k 2221  deaths/1k 0.05  towers/1k 0.061 (towers/episode ours 0.313 vs net 0.422)  | ent 5.50  vloss 0.2080  (env 17s pol 64s upd 1s)
+          radiant r/1k +17.38  dire r/1k +12.25  | by class r/1k: support +7.31  assassin +9.50  burst +19.01  tank +27.41  carry +10.84  | kl 0.0070  clip 0.08  ev 0.77
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 09cc2669)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 93dc977a)
+upd    2   0.65M steps  3938 sps  | reward/1k +8.68  xp/1k 2426  deaths/1k 0.12  towers/1k 0.061 (towers/episode ours 0.313 vs net 0.594)  | ent 5.30  vloss 4.7054  (env 18s pol 65s upd 1s)
+          radiant r/1k +15.24  dire r/1k +17.10  | by class r/1k: support +7.36  assassin +10.90  burst +18.64  tank +31.99  carry +11.95  | kl 0.0052  clip 0.06  ev 0.12
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 1cebaddf)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 b28cefa8)
+upd    3   0.98M steps  3952 sps  | reward/1k +5.03  xp/1k 2113  deaths/1k 0.09  towers/1k 0.049 (towers/episode ours 0.250 vs net 0.734)  | ent 5.66  vloss 4.8598  (env 17s pol 64s upd 1s)
+          radiant r/1k +11.59  dire r/1k +16.58  | by class r/1k: support +5.51  assassin +8.84  burst +16.42  tank +28.82  carry +10.84  | kl 0.0107  clip 0.14  ev 0.14
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 0fb46548)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 1aaccd7f)
+upd    4   1.30M steps  3960 sps  | reward/1k +4.71  xp/1k 1991  deaths/1k 0.15  towers/1k 0.040 (towers/episode ours 0.203 vs net 0.797)  | ent 5.72  vloss 11.0316  (env 17s pol 63s upd 1s)
+          radiant r/1k +10.86  dire r/1k +15.65  | by class r/1k: support +6.21  assassin +8.22  burst +15.43  tank +26.84  carry +9.58  | kl 0.0011  clip 0.00  ev 0.14
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 dce839ef)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 66bfabe1)
+upd    5   1.63M steps  3976 sps  | reward/1k +8.79  xp/1k 1788  deaths/1k 0.06  towers/1k 0.055 (towers/episode ours 0.281 vs net 0.406)  | ent 5.69  vloss 0.1832  (env 17s pol 63s upd 1s)
+          radiant r/1k +12.37  dire r/1k +11.48  | by class r/1k: support +6.08  assassin +6.73  burst +14.81  tank +24.31  carry +7.70  | kl 0.0012  clip 0.00  ev 0.82
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 73e8edb9)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 774bd3a4)
+upd    6   1.96M steps  3985 sps  | reward/1k +15.08  xp/1k 2327  deaths/1k 0.06  towers/1k 0.052 (towers/episode ours 0.266 vs net 0.438)  | ent 5.53  vloss 4.2640  (env 17s pol 62s upd 1s)
+          radiant r/1k +17.77  dire r/1k +13.25  | by class r/1k: support +8.13  assassin +9.14  burst +20.98  tank +27.10  carry +12.20  | kl 0.0041  clip 0.05  ev 0.17
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 10a5fb66)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 afc69ecc)
+upd    7   2.28M steps  3993 sps  | reward/1k +19.59  xp/1k 2444  deaths/1k 0.11  towers/1k 0.077 (towers/episode ours 0.391 vs net 0.391)  | ent 5.36  vloss 10.4354  (env 17s pol 62s upd 1s)
+          radiant r/1k +15.81  dire r/1k +16.80  | by class r/1k: support +7.17  assassin +9.27  burst +19.82  tank +34.28  carry +10.97  | kl 0.0015  clip 0.01  ev 0.13
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 a3f04350)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 4d404fd2)
+upd    8   2.61M steps  4000 sps  | reward/1k +14.33  xp/1k 2647  deaths/1k 0.12  towers/1k 0.070 (towers/episode ours 0.359 vs net 0.453)  | ent 5.42  vloss 0.2327  (env 17s pol 63s upd 1s)
+          radiant r/1k +16.62  dire r/1k +18.66  | by class r/1k: support +8.40  assassin +9.81  burst +22.18  tank +35.51  carry +12.30  | kl 0.0010  clip 0.00  ev 0.88
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 87ace301)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 1cb1292b)
+upd    9   2.94M steps  4005 sps  | reward/1k +16.15  xp/1k 2899  deaths/1k 0.06  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.438)  | ent 5.31  vloss 0.2429  (env 17s pol 63s upd 1s)
+          radiant r/1k +18.25  dire r/1k +20.37  | by class r/1k: support +8.73  assassin +10.30  burst +23.20  tank +39.64  carry +14.67  | kl 0.0017  clip 0.01  ev 0.89
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 a965db30)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 7500f06e)
+upd   10   3.27M steps  4001 sps  | reward/1k +17.44  xp/1k 3126  deaths/1k 0.18  towers/1k 0.027 (towers/episode ours 0.141 vs net 0.531)  | ent 5.15  vloss 0.2280  (env 17s pol 64s upd 1s)
+          radiant r/1k +12.13  dire r/1k +29.46  | by class r/1k: support +6.62  assassin +10.24  burst +22.60  tank +46.88  carry +17.63  | kl 0.0032  clip 0.03  ev 0.93
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 2fa99763)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 5921a22c)
+upd   11   3.59M steps  4002 sps  | reward/1k +21.25  xp/1k 3580  deaths/1k 0.14  towers/1k 0.034 (towers/episode ours 0.172 vs net 0.391)  | ent 5.14  vloss 0.2344  (env 17s pol 63s upd 1s)
+          radiant r/1k +13.91  dire r/1k +33.75  | by class r/1k: support +8.25  assassin +10.98  burst +27.43  tank +49.74  carry +22.74  | kl 0.0006  clip 0.00  ev 0.93
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 7e383094)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 bef9e4ad)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/policy.pt (1.3 MB, md5 bef9e4ad)
+S3 ok moba/runs/g3_E_best_cont_formula_2x_s2/log.jsonl (0.0 MB, md5 7e383094)
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:                  agent_steps ▁▂▂▃▄▄▅▆▇▇█
+wandb:                    approx_kl ▅▄█▁▁▃▂▁▂▃▁
+wandb: class/assassin/deaths_per_1k ▁▄▄█▁▂▄▃▁▅▃
+wandb: class/assassin/reward_per_1k ▆█▄▃▁▅▅▆▇▇█
+wandb:     class/assassin/xp_per_1k ▆█▄▄▁▅▅▆▇▇█
+wandb:    class/burst/deaths_per_1k ▁▁▁█▁▁▁▁█▁▁
+wandb:    class/burst/reward_per_1k ▃▃▂▁▁▄▄▅▆▅█
+wandb:        class/burst/xp_per_1k ▃▃▂▁▁▄▄▅▆▅█
+wandb:    class/carry/deaths_per_1k ▃▄▁█▆▆▆▃▄▄▄
+wandb:    class/carry/reward_per_1k ▂▃▂▂▁▃▃▃▄▆█
+wandb:                          +34 ...
+wandb: 
+wandb: Run summary:
+wandb:                  agent_steps 3593490
+wandb:                    approx_kl 0.00061
+wandb: class/assassin/deaths_per_1k 0.18311
+wandb: class/assassin/reward_per_1k 10.97914
+wandb:     class/assassin/xp_per_1k 1653.82385
+wandb:    class/burst/deaths_per_1k 0
+wandb:    class/burst/reward_per_1k 27.43468
+wandb:        class/burst/xp_per_1k 4115.43262
+wandb:    class/carry/deaths_per_1k 0.03052
+wandb:    class/carry/reward_per_1k 22.74245
+wandb:                          +34 ...
+wandb: 
+wandb: 🚀 View run rw/E_best_cont_formula_2x_s2 at: https://wandb.ai/drift-ai-models/moba-dream-rl/runs/4sga2m7j
+wandb: ⭐️ View project at: https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20261005_064244-4sga2m7j/logs
+done: 3593490 agent steps in 15.0 min -> /root/puffertank/runs/dream_ppo/rw/E_best_cont_formula_2x_s2

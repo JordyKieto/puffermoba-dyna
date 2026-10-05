@@ -1,0 +1,73 @@
+/root/puffertank/tools/moba_viz.py:119: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(run / "model.pt", map_location="cpu"))   # includes change_prior if gated
+model {'d': 128, 'n_heads': 4, 'n_layers': 2, 'gate': True, 'attack_mode': None, 'predict_targets': False, 'target_dist': False, 'list_state': False, 'direct_damage': False, 'grid_cnn': False, 'gate_fields': ['q_timer', 'w_timer', 'e_timer', 'mana', 'health', 'basic_attack_timer', 'stun_timer', 'move_timer', 'move_modifier', 'xp']}, 0.66M params
+policy initialised from runs/dream_ppo/armC/policy.pt
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: moorish-prince (drift-ai-models) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 9tc4bfr7
+wandb: Tracking run with wandb version 0.30.0
+wandb: Run data is saved locally in /root/puffertank/wandb/run-20261005_055856-9tc4bfr7
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run rw/win_game_1024
+wandb: ⭐️ View project at https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: 🚀 View run at https://wandb.ai/drift-ai-models/moba-dream-rl/runs/9tc4bfr7
+dream PPO: wm runs/token_wm/wm, 64 envs x 10 heroes, rollout 1024, episode 1024, 1.7M agent steps on cuda
+upd    1   0.32M steps  4194 sps  | reward/1k +12.65  xp/1k 2153  deaths/1k 0.20  towers/1k 0.022 (towers/episode ours 0.109 vs net 0.375)  | ent 5.87  vloss 1.2652  (env 16s pol 61s upd 1s)
+          radiant r/1k +8.36  dire r/1k +20.27  | by class r/1k: support +5.45  assassin +8.12  burst +22.20  tank +24.48  carry +11.32  | kl 0.0050  clip 0.06  ev -0.01
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 690811a5)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 5c7d1a3e)
+upd    2   0.65M steps  4236 sps  | reward/1k +13.45  xp/1k 2024  deaths/1k 0.20  towers/1k 0.012 (towers/episode ours 0.062 vs net 0.344)  | ent 5.86  vloss 0.1113  (env 15s pol 60s upd 1s)
+          radiant r/1k +6.02  dire r/1k +20.87  | by class r/1k: support +4.66  assassin +6.85  burst +20.55  tank +24.64  carry +10.54  | kl 0.0007  clip 0.00  ev 0.10
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 891f6bd6)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 78a86d5f)
+upd    3   0.98M steps  4258 sps  | reward/1k +13.14  xp/1k 1976  deaths/1k 0.19  towers/1k 0.031 (towers/episode ours 0.156 vs net 0.359)  | ent 5.59  vloss 0.0964  (env 15s pol 60s upd 1s)
+          radiant r/1k +6.42  dire r/1k +19.86  | by class r/1k: support +4.67  assassin +7.01  burst +18.09  tank +24.27  carry +11.66  | kl 0.0072  clip 0.10  ev 0.31
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 b9e26629)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 c1fb42c8)
+upd    4   1.31M steps  4241 sps  | reward/1k +16.20  xp/1k 2695  deaths/1k 0.11  towers/1k 0.015 (towers/episode ours 0.078 vs net 0.391)  | ent 5.58  vloss 2.8602  (env 15s pol 61s upd 1s)
+          radiant r/1k +9.06  dire r/1k +26.81  | by class r/1k: support +6.28  assassin +9.31  burst +24.78  tank +34.55  carry +14.75  | kl 0.0009  clip 0.00  ev 0.07
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 5abbaad7)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 be472c69)
+upd    5   1.63M steps  4223 sps  | reward/1k +12.50  xp/1k 2645  deaths/1k 0.23  towers/1k 0.025 (towers/episode ours 0.125 vs net 0.406)  | ent 5.66  vloss 2.2657  (env 16s pol 61s upd 1s)
+          radiant r/1k +11.72  dire r/1k +23.44  | by class r/1k: support +7.30  assassin +10.18  burst +24.25  tank +32.84  carry +13.35  | kl 0.0013  clip 0.01  ev 0.04
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 78cb2184)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 d077143d)
+upd    6   1.96M steps  4231 sps  | reward/1k +13.65  xp/1k 2051  deaths/1k 0.11  towers/1k 0.031 (towers/episode ours 0.156 vs net 0.359)  | ent 5.68  vloss 0.0894  (env 15s pol 60s upd 1s)
+          radiant r/1k +11.90  dire r/1k +15.41  | by class r/1k: support +6.26  assassin +7.57  burst +20.95  tank +23.27  carry +10.22  | kl 0.0012  clip 0.01  ev 0.69
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 37cb595b)
+S3 ok moba/runs/rw_win_game_1024/log.jsonl (0.0 MB, md5 37cb595b)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 a4adcbf4)
+S3 ok moba/runs/rw_win_game_1024/policy.pt (1.3 MB, md5 a4adcbf4)
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                  agent_steps ▁▂▄▅▇█
+wandb:                    approx_kl ▆▁█▁▂▂
+wandb: class/assassin/deaths_per_1k ▅▆▆▁█▃
+wandb: class/assassin/reward_per_1k ▄▁▁▆█▃
+wandb:     class/assassin/xp_per_1k ▄▁▁▆█▂
+wandb:    class/burst/deaths_per_1k █▁▂▁▁▁
+wandb:    class/burst/reward_per_1k ▅▄▁█▇▄
+wandb:        class/burst/xp_per_1k ▅▄▁█▇▄
+wandb:    class/carry/deaths_per_1k █▆▇▄▅▁
+wandb:    class/carry/reward_per_1k ▃▁▃█▆▁
+wandb:                          +34 ...
+wandb: 
+wandb: Run summary:
+wandb:                  agent_steps 1955630
+wandb:                    approx_kl 0.00115
+wandb: class/assassin/deaths_per_1k 0.13733
+wandb: class/assassin/reward_per_1k 7.56541
+wandb:     class/assassin/xp_per_1k 1139.87732
+wandb:    class/burst/deaths_per_1k 0
+wandb:    class/burst/reward_per_1k 20.94683
+wandb:        class/burst/xp_per_1k 3140.80835
+wandb:    class/carry/deaths_per_1k 0.09155
+wandb:    class/carry/reward_per_1k 10.21876
+wandb:                          +34 ...
+wandb: 
+wandb: 🚀 View run rw/win_game_1024 at: https://wandb.ai/drift-ai-models/moba-dream-rl/runs/9tc4bfr7
+wandb: ⭐️ View project at: https://wandb.ai/drift-ai-models/moba-dream-rl
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20261005_055856-9tc4bfr7/logs
+done: 1955630 agent steps in 7.8 min -> /root/puffertank/runs/dream_ppo/rw/win_game_1024
