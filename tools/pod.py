@@ -70,16 +70,10 @@ def log(msg):
 # --- credentials --------------------------------------------------------------
 
 def runpod_key() -> str:
-    key = secrets.get("RUNPOD", "RUNPOD_API_KEY")
+    key = secrets.get("RUNPOD_API_KEY")
     if key:
         return key
-    # zelda-RL / sunnypilot convention: KEY=VALUE lines in sunnypilot's secrets.yaml
-    p = Path.home() / "Documents/dev/sunnypilot/secrets.yaml"
-    for line in p.read_text().splitlines() if p.exists() else []:
-        k, _, v = line.partition("=")
-        if k.strip() == "RUNPOD" and v.strip():
-            return v.strip()
-    raise SystemExit("RunPod API key not found (Keychain race-wm:RUNPOD or sunnypilot secrets.yaml)")
+    raise SystemExit("RunPod API key not found: python3 ~/Documents/dev/secrets/devsecrets.py set RUNPOD_API_KEY")
 
 
 def s3():
@@ -441,9 +435,8 @@ def s3_upload_policy(run: str, days: float = 7.0) -> dict:
 def cmd_train(a):
     push_code()
     wandb_key = secrets.get("WANDB_API_KEY")
-    sp = Path.home() / "Documents/dev/sunnypilot/secrets.yaml"     # Upstash (fleet weight averaging), zelda-RL's keys
-    kv = dict(l.split("=", 1) for l in (sp.read_text().splitlines() if sp.exists() else []) if "=" in l)
-    extra = "".join(f"export {k}='{kv[k].strip()}'\n" for k in ("UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN") if kv.get(k))
+    # Upstash (fleet weight averaging): from the Keychain, into the pod's mode-600 .pod_secrets
+    extra = "".join(f"export {k}='{secrets.get(k)}'\n" for k in ("UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN") if secrets.get(k))
     if wandb_key:
         sec = REPO / "runs" / "pod" / f".pod_secrets_{_tmp_tag()}"     # unique: parallel launches must not clobber
         sec.write_text(f"export WANDB_API_KEY='{wandb_key}'\n" + extra)

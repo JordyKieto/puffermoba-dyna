@@ -15,9 +15,8 @@ from mobawm import secrets
 R = pod.R_REPO; out = f"{{R}}/runs/dream_ppo/{exp}/r{r}"
 pod.push_code(); pod.run(f"mkdir -p {{out}} {{R}}/runs/dream_ppo/init_{exp}")
 pod.rsync_to(["{INIT}"], f"{{R}}/runs/dream_ppo/init_{exp}/")
-sec = pod.REPO / "runs/pod/.pod_secrets_{exp}_{r}"; sec.write_text("export WANDB_API_KEY='" + secrets.get("WANDB_API_KEY") + "'\\n" + "".join(
-    f"export {{k}}='{{v.strip()}}'\\n" for k, v in (l.split("=", 1) for l in open(os.path.expanduser("~/Documents/dev/sunnypilot/secrets.yaml")) if "=" in l)
-    if k in ("UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN")))
+sec = pod.REPO / "runs/pod/.pod_secrets_{exp}_{r}"; sec.write_text("".join(          # from the Keychain
+    f"export {{k}}='{{secrets.get(k)}}'\\n" for k in ("WANDB_API_KEY", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN") if secrets.get(k)))
 sec.chmod(0o600); pod.rsync_to([sec], f"{{R}}/.pod_secrets"); sec.unlink(); pod.run(f"chmod 600 {{R}}/.pod_secrets")
 pol = pod.REPO / "runs/pod/.s3_policy_{exp}_{r}.json"; pol.write_text(json.dumps(pod.s3_upload_policy("{exp}_r{r}", days=3))); pol.chmod(0o600)
 pod.rsync_to([pol], f"{{out}}/.s3_policy.json"); pol.unlink(); pod.run(f"chmod 600 {{out}}/.s3_policy.json")

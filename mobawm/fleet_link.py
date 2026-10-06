@@ -3,7 +3,7 @@ training on many pods. Ported from zelda-RL (zelda_rl/fleet_link.py), which ran 
 cannot reach each other, so they meet only at shared Upstash keys.
 
 Credentials: UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN from the environment (pods: sourced from the mode-600
-.pod_secrets), else sunnypilot's secrets.yaml (KEY=VALUE) on the Mac. Keys are namespaced `ptk:{experiment}:...`;
+.pod_secrets), else the Mac's Keychain (mobawm.secrets). Keys are namespaced `ptk:{experiment}:...`;
 values are never logged.
 """
 from __future__ import annotations
@@ -25,12 +25,8 @@ BLOB_TTL = 24 * 3600
 
 class Upstash:
     def __init__(self):
-        url, token = os.environ.get("UPSTASH_REDIS_REST_URL"), os.environ.get("UPSTASH_REDIS_REST_TOKEN")
-        if not (url and token):
-            from pathlib import Path
-            p = Path.home() / "Documents/dev/sunnypilot/secrets.yaml"
-            kv = dict(l.split("=", 1) for l in (p.read_text().splitlines() if p.exists() else []) if "=" in l)
-            url, token = (kv.get("UPSTASH_REDIS_REST_URL") or "").strip(), (kv.get("UPSTASH_REDIS_REST_TOKEN") or "").strip()
+        from mobawm import secrets                    # environment (pods) or the Mac's Keychain
+        url, token = secrets.get("UPSTASH_REDIS_REST_URL"), secrets.get("UPSTASH_REDIS_REST_TOKEN")
         if not (url and token):
             raise KeyError("UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN not configured")
         self.url = url.rstrip("/")
