@@ -6,7 +6,7 @@ usage: POD=<pod> python runs/pod/fz_arm.py <exp> <rank> <world> <launch> <local 
 import sys, os, json, argparse, time; sys.path.insert(0, "tools")
 from pathlib import Path
 import pod
-from racewm import secrets
+from mobawm import secrets
 exp, rank, world, launch, wm, seed, updates = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5], int(sys.argv[6]), int(sys.argv[7])
 INIT = "results/moba/dream/ppol_policies/policy_u0071.pt"
 REWARD = ("--r-win 100 --dmg-k 5 --dmg-boost 2 --fall-bonus 10 --fall-radius 8 --kill-k 2 --siege-k 0.02 --anc-k 50 "

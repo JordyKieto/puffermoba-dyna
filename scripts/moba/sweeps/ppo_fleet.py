@@ -11,7 +11,7 @@ import subprocess
 for r, p in enumerate(pods):
     code = f'''
 import sys, os, json; sys.path.insert(0, "tools"); import pod
-from racewm import secrets
+from mobawm import secrets
 R = pod.R_REPO; out = f"{{R}}/runs/dream_ppo/{exp}/r{r}"
 pod.push_code(); pod.run(f"mkdir -p {{out}} {{R}}/runs/dream_ppo/init_{exp}")
 pod.rsync_to(["{INIT}"], f"{{R}}/runs/dream_ppo/init_{exp}/")

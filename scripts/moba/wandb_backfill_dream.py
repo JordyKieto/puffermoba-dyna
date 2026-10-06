@@ -31,7 +31,7 @@ RUNS = [("P0-first-5min", "runs/dream_ppo/e5_selfplay_5min", ["dream-ppo", "self
 
 
 def main():
-    from racewm import secrets
+    from mobawm import secrets
     secrets.export_to_env("WANDB_API_KEY")
     import torch
     import wandb

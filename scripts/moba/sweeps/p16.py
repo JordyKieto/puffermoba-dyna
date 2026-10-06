@@ -3,7 +3,7 @@ tower/win shaping; then 60 real games vs the net per arm (both sides). One A100,
 import sys, os, json, argparse; sys.path.insert(0, 'tools')
 os.environ["POD"] = "p16"
 import pod
-from racewm import secrets
+from mobawm import secrets
 pod.cmd_create(argparse.Namespace(gpu="NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe,NVIDIA H200", name="p16", confirm=True, cpu=0))
 pod.cmd_bootstrap(argparse.Namespace())
 R = pod.R_REPO; D = f"{R}/data/moba"

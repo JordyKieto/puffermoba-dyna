@@ -1,4 +1,5 @@
-"""Credential resolution.
+"""Credential resolution (moved from racewm.secrets when the race code left this repository; the Keychain
+service names and file paths are unchanged, so existing stores keep working).
 
 Precedence, first hit wins:
 

@@ -24,9 +24,11 @@ fi
 
 # --- overlay ---------------------------------------------------------------
 mkdir -p "$ROOT/build"
-rm -rf "$PUFFER/ocean/race"
-ln -s "$ROOT/race" "$PUFFER/ocean/race"
-ln -sf "$ROOT/config/race.ini" "$PUFFER/config/race.ini"
+if [ -d "$ROOT/race" ]; then                     # the race overlay is optional (not part of the MOBA repository)
+  rm -rf "$PUFFER/ocean/race"
+  ln -s "$ROOT/race" "$PUFFER/ocean/race"
+  ln -sf "$ROOT/config/race.ini" "$PUFFER/config/race.ini"
+fi
 [ "$TARGET" = "link" ] && { echo "overlay linked"; exit 0; }
 
 # --- raylib ----------------------------------------------------------------

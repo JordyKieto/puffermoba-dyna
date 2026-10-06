@@ -36,7 +36,7 @@ import requests
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
-from racewm import secrets  # noqa: E402
+from mobawm import secrets  # noqa: E402
 
 # POD=<name> selects a second (third, ...) pod with its own state file; unset = the
 # original pod, runs/pod/state.json, exactly as before.

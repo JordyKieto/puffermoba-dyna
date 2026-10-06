@@ -2,7 +2,7 @@
 (vs the net, ours on a random side) -> 120 real games vs the net (60 per side). usage: POD=<pod> python runs/pod/rw_arm.py <arm> [flags]"""
 import sys, os, json, argparse, time; sys.path.insert(0, 'tools')
 import pod
-from racewm import secrets
+from mobawm import secrets
 arm, flags = sys.argv[1], " ".join(sys.argv[2:]); t0 = time.time()
 SETUP = os.environ.get("SKIP_SETUP") != "1"          # relaunch on an existing pod: data, WM and arm C are already there
 if SETUP:

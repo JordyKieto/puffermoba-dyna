@@ -49,3 +49,11 @@ results/moba/dream/**/*.pt
 **/.s3_policy.json
 **/.pod_secrets*
 **/.s3_read_*.env
+
+# the race world-model track lives outside this repository (puffermoba-dyna is the MOBA track only)
+/race/
+/racewm/
+/optwm/
+/docs/race/
+/config/race.ini
+/tests/

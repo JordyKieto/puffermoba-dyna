@@ -587,7 +587,7 @@ def main():
     ours = draw_sides()
     wb = None
     if args.wandb:
-        from racewm import secrets
+        from mobawm import secrets
         secrets.export_to_env("WANDB_API_KEY")
         import wandb
         wb = wandb.init(entity="drift-ai-models", project="moba-dream-rl", group=args.group or None, name=args.name,

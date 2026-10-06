@@ -128,7 +128,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
-    from racewm import secrets
+    from mobawm import secrets
     secrets.export_to_env("WANDB_API_KEY")
     import wandb
     api = wandb.Api()
