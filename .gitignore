@@ -44,3 +44,8 @@ media/
 
 # dream-PPO policies live in s3://puffertank/moba/dream_policies/ (same relative paths)
 results/moba/dream/**/*.pt
+
+# credentials written onto pods by tools/pod.py: never commit
+**/.s3_policy.json
+**/.pod_secrets*
+**/.s3_read_*.env
