@@ -355,10 +355,12 @@ def s3_sync_to_pod(prefix: str, dest: str, games=None):
     cmds.write_text("".join(f"cp -s s3://{bucket}/{o['Key']} {dest}/{o['Key'][len(prefix):]}\n" for o in objs))
     tag = _tmp_tag()                                  # remote names unique too: parallel syncs on one pod
     renv, rcmd = f"/root/.s3_read_{tag}.env", f"/root/s5cmd_{tag}.txt"
-    rsync_to([f], renv)
-    rsync_to([cmds], rcmd)
-    f.unlink()
-    cmds.unlink()
+    try:                                              # the local credential copy must never outlive this call
+        rsync_to([f], renv)
+        rsync_to([cmds], rcmd)
+    finally:
+        f.unlink(missing_ok=True)
+        cmds.unlink(missing_ok=True)
     t0 = time.time()
     try:
         run(f"chmod 600 {renv}; command -v s5cmd >/dev/null || (cd /tmp && curl -sL "
