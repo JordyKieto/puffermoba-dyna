@@ -110,6 +110,7 @@ in attributed cloud spend (plus $214 unattributed on a shared account).
 | [`tools/`](tools) | `moba_viz.py` (the debugger), `pod.py` (RunPod), `fleet.py` (world-model fleets), `build.sh` |
 | [`scripts/moba/`](scripts/moba) | evaluation (`seed_eval.py`), the paper's data pipeline (`paper_data.py`), mechanics and behaviour analyses, clip recording; `sweeps/` holds every launcher, including the continuous loop (`dyna_live.py`) |
 | [`docs/moba/`](docs/moba) | the paper, the experiment log (E1–E40), the evaluation protocol, provenance and claims |
+| [`artifacts/moba/`](artifacts/moba) | the released checkpoints: the headline policy, every ladder rung, and four world models |
 | [`results/moba/`](results/moba) | every evaluation log and derived table behind the paper |
 
 Every number in the paper regenerates from the logs:
@@ -119,7 +120,8 @@ python scripts/moba/paper_data.py
 jupyter nbconvert --execute --inplace docs/moba/paper/figures.ipynb
 ```
 
-Policies and world models are in `s3://puffertank/moba/`, with md5s in the experiment records. The game is
+The policies and world models behind every result are in [`artifacts/moba/`](artifacts/moba) (8 policies, including
+every rung of the ladder, and the 4 world-model versions compared in the paper), with md5s. The game is
 [PufferLib](https://github.com/PufferAI/PufferLib)'s Ocean MOBA, unmodified.
 
 This is the third report in a line. [*Imitation Learning for Autonomous Driving in CARLA*](https://github.com/JordyKieto/carla-imitation-learning)
