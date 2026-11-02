@@ -4,15 +4,22 @@
 
 <h1 align="center">Learning in Dreams, Winning in Reality</h1>
 <p align="center"><b>A continuous Dyna loop for a ten-hero MOBA</b></p>
+<!-- research-links:start -->
 <p align="center">
-  <a href="https://arxiv.org/abs/2610.08033"><b>📄 arXiv:2610.08033</b></a> ·
-  <a href="docs/moba/paper/paper.pdf"><b>Paper (PDF)</b></a> ·
-  <a href="https://huggingface.co/jordykieto/puffermoba-dyna"><b>🤗 Models</b></a> ·
-  <a href="https://huggingface.co/datasets/jordykieto/puffermoba-dyna-games"><b>🤗 Dataset</b></a> ·
+  <a href="https://arxiv.org/abs/2610.08033"><img alt="Paper: arXiv 2610.08033" src="https://img.shields.io/badge/Paper-arXiv%202610.08033-b31b1b?logo=arxiv&logoColor=white"></a>
+  <a href="https://github.com/JordyKieto/puffermoba-dyna"><img alt="Code: GitHub" src="https://img.shields.io/badge/Code-GitHub-24292f?logo=github&logoColor=white"></a>
+  <a href="https://huggingface.co/jordykieto/puffermoba-dyna"><img alt="Models: Hugging Face" src="https://img.shields.io/badge/Models-Hugging%20Face-ffd21e?logo=huggingface"></a>
+  <a href="https://huggingface.co/datasets/jordykieto/puffermoba-dyna-games"><img alt="Datasets: Hugging Face" src="https://img.shields.io/badge/Datasets-Hugging%20Face-ffd21e?logo=huggingface"></a>
+  <a href="https://youtu.be/Uy0OsZlnd5Y"><img alt="Demo: YouTube" src="https://img.shields.io/badge/Demo-YouTube-ff0000?logo=youtube&logoColor=white"></a>
+</p>
+<p align="center"><sub>More research: <a href="https://github.com/JordyKieto/ppo-hyrule">The Legend of PPO: Learning to Fight in Hyrule</a> · <a href="https://github.com/JordyKieto/neural-simulators">Neural Simulators for Interactive Environments</a> · <a href="https://github.com/JordyKieto/carla-imitation-learning">Imitation Learning for Autonomous Driving in CARLA</a> · <a href="https://jordykieto.tech/research">all research ↗</a></sub></p>
+<!-- research-links:end -->
+<p align="center">
+  In this repo: <a href="docs/moba/paper/paper.pdf">paper (PDF)</a> ·
   <a href="docs/moba/paper/arxiv_submission.zip">arXiv source</a> ·
-  <a href="docs/moba/paper/figures.ipynb">Figures notebook</a> ·
-  <a href="docs/moba/experiments/README.md">Experiment log (E1–E40)</a> ·
-  <a href="docs/moba/EVALUATION.md">Evaluation protocol</a>
+  <a href="docs/moba/paper/figures.ipynb">figures notebook</a> ·
+  <a href="docs/moba/experiments/README.md">experiment log (E1–E40)</a> ·
+  <a href="docs/moba/EVALUATION.md">evaluation protocol</a>
 </p>
 
 ---
