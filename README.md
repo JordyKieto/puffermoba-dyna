@@ -5,7 +5,10 @@
 <h1 align="center">Learning in Dreams, Winning in Reality</h1>
 <p align="center"><b>A continuous Dyna loop for a ten-hero MOBA</b></p>
 <p align="center">
-  <a href="docs/moba/paper/paper.pdf"><b>📄 Paper (PDF)</b></a> ·
+  <a href="https://arxiv.org/abs/2610.08033"><b>📄 arXiv:2610.08033</b></a> ·
+  <a href="docs/moba/paper/paper.pdf"><b>Paper (PDF)</b></a> ·
+  <a href="https://huggingface.co/jordykieto/puffermoba-dyna"><b>🤗 Models</b></a> ·
+  <a href="https://huggingface.co/datasets/jordykieto/puffermoba-dyna-games"><b>🤗 Dataset</b></a> ·
   <a href="docs/moba/paper/arxiv_submission.zip">arXiv source</a> ·
   <a href="docs/moba/paper/figures.ipynb">Figures notebook</a> ·
   <a href="docs/moba/experiments/README.md">Experiment log (E1–E40)</a> ·
